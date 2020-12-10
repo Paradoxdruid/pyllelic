@@ -180,7 +180,7 @@ def run_quma(directory, genomic_seq_file, reads_seq_file):
     command = "perl {0}/quma.pl -g {1}/{2} -q {1}/{3}".format(
         quma_path, directory, genomic_seq_file, reads_seq_file
     )
-    out = subprocess.check_output(command, shell=True)
+    out = subprocess.check_output(command)  # remove shell vulnerability: , shell=True)
     return out
 
 
@@ -311,7 +311,7 @@ def samtools_index(sams):
 
     command = ["samtools", "index", os.fspath(sams)]
 
-    out = subprocess.run(command, shell=True, capture_output=True, text=True)
+    out = subprocess.run(command, capture_output=True, text=True)  # remove shell=True,
     return out
 
 
@@ -504,7 +504,7 @@ def process_means(list_of_dfs, positions, cell_types):
 
         means_df = pd.DataFrame(means_cols).transpose()
 
-        alpha = cell_types[ix]
+        alpha = "cell_types"  # FIXME: not actually unique naming
 
         means_df.to_csv(path_or_buf=RESULTS_DIRECTORY.joinpath(alpha + pos))
         total_means.append(means_df)
@@ -540,10 +540,6 @@ def new_process_means():
 
 
 """Remaining Code:
-
-
-
----------
 
 nums=-1
 df_full_total = []
@@ -715,7 +711,6 @@ writer.save()
 # mut_binned = mut_binned_df.dropna().transpose()
 # mut_binned
 # mut_binned_df.values.tolist()
-
 """
 
 if __name__ == "__main__":
