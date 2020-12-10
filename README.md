@@ -1,5 +1,7 @@
 # pyllelic
 
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Paradoxdruid/pyllelic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Paradoxdruid/pyllelic/context:python)  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+
 pyllelic: a tool for detection of allelic-specific varation in DNA sequencing.
 
 **This is a work-in-progress!**
