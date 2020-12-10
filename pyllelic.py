@@ -170,49 +170,18 @@ def make_list_of_bam_files():
         str(bam).split("/")[7] for bam in indv_bam if str(bam).endswith("bam")
     ]
 
-    # for bam in indv_bam:
-    #     if str(bam).endswith("bam"):
-    #         b = str(bam).split("/")[7]
-    #         init_files_set.append(b)
-
     bai_set = [str(bai).split("/")[7] for bai in indv_bam if str(bai).endswith("bai")]
-
-    # bai_set = []
-    # for bai in indv_bam:
-    #     if str(bai).endswith("bai"):
-    #         b = str(bai).split("/")[7]
-    #         bai_set.append(b)
 
     f_set = [str(bam).split(".")[0] for bam in init_files_set]
 
-    # f_set = []
-    # for bam in init_files_set:
-    #     f_sets = str(bam)
-    #     f_sets = f_sets.split(".")[0]
-    #     f_set.append(f_sets)
-
     baii = [str(bai).split(".")[0] for bai in bai_set]
 
-    # for bai in bai_set:
-    #     b_sets = str(bai)
-    #     b_sets = b_sets.split(".")[0]
-    #     baii.append(b_sets)
-
     files_set = [file + (".TERT.bam") for file in f_set if file in baii]
-
-    # for file in f_set:
-    #     if file in baii:
-    #         file = file + (".TERT.bam")
-    #         files_set.append(file)
 
     final_file_sets = []
 
     # Code truncates to aleviate excel file_name limit of <=31 characters:
     final_file_sets = [data[:29] for data in files_set]
-
-    # for data in files_set:
-    #     data = data[:29]
-    #     final_file_sets.append(data)
 
     return final_file_sets
 
@@ -378,7 +347,6 @@ def quma_full(cell_types, filename):
                             dots.append("FAIL")
                         else:
                             dots.append(fields[13])
-                # print(dots)
                 # NEW: Sort dots output by number of "1"
                 dots2 = sorted(dots, key=lambda t: t.count("1"))
 
