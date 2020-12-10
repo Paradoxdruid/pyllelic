@@ -124,21 +124,39 @@ def set_up_env_variables(
     os.environ["CHROMOSOME"] = chromosome
 
 
+##################################################################################
+##################################################################################
 def main(filename):
-    """Run a given set of Pyllelic analysis, using values from supplied environmental variables."""
+    """Run a given set of Pyllelic analysis, using values from supplied environmental variables.
+
+    Args:
+        filename: filename to write output of analysis to.
+    """
 
     files_set = make_list_of_bam_files()
     positions = index_and_fetch(files_set)
     genome_parsing()
     cell_types = extract_cell_types(files_set)
     df_list = run_quma_and_compile_list_of_df(cell_types, filename)
-    means_df = process_means(df_list, positions, files_set)
-    write_means_to_excel(means_df, files_set)
+    means_df = process_means(df_list, positions, cell_types)
+    write_means_to_excel(means_df, cell_types)
+
+
+##################################################################################
+##################################################################################
 
 
 def genome_range(position, genome_string):
     """Helper to return a genome string (e.g., "ATCGACTAG")
-    given a position and an entire string."""
+    given a position and an entire string.
+
+    Args:
+        position: genomic position on chromesome
+        genome_string: string representation of genomic promoter known sequence
+
+    Returns:
+        str: genomic bases for indicated read / position
+    """
 
     start = 1298163 - (int(position) + 30)
     end = 1298163 - (int(position) + 1)
@@ -147,7 +165,16 @@ def genome_range(position, genome_string):
 
 
 def run_quma(directory, genomic_seq_file, reads_seq_file):
-    """Helper function to run external QUMA tool."""
+    """Helper function to run external QUMA tool.
+
+    Args:
+        directory (str): directory path to analyze
+        genomic_seq_file (str): text file with known genomic sequence
+        reads_seq_file (str): text file with experimental reads
+
+    Returns:
+        bytes: shell output from quma command
+    """
 
     quma_path = os.fspath(BASE_DIRECTORY.joinpath("quma_cui"))
     command = "perl {0}/quma.pl -g {1}/{2} -q {1}/{3}".format(
@@ -187,7 +214,14 @@ def make_list_of_bam_files():
 
 
 def index_and_fetch(files_set):
-    """Wrapper to call processing of each sam file."""
+    """Wrapper to call processing of each sam file.
+
+    Args:
+        files_set (list[str]): list of bam/sam files
+
+    Returns:
+        list[str]: list of genomic positions analyzed
+    """
 
     sam_path = [BASE_DIRECTORY / f for f in files_set]
 
@@ -200,7 +234,14 @@ def index_and_fetch(files_set):
 
 
 def run_sam_and_extract_df(sams):
-    """."""
+    """Process samfiles, pulling out sequence and position data and writing to folders/files.
+
+    Args:
+        sams (str): path to a samfile
+
+    Returns:
+        list: list of unique positions in the samfile
+    """
 
     # Make sure each sam file has an index by calling external samtools index function
     _ = samtools_index(sams)  # we don't care what the output is
@@ -259,7 +300,14 @@ def run_sam_and_extract_df(sams):
 
 
 def samtools_index(sams):
-    """Helper function to run external samtools index tool."""
+    """Helper function to run external samtools index tool.
+
+    Args:
+        sams (str): filepath to samfile
+
+    Returns:
+        str: output from samtools index shell command, usually discarded
+    """
 
     command = ["samtools", "index", os.fspath(sams)]
 
@@ -307,7 +355,12 @@ def genome_parsing():
 
 
 def quma_full(cell_types, filename):
-    """Run external QUMA methylation analysis on all specified cell lines."""
+    """Run external QUMA methylation analysis on all specified cell lines.
+
+    Args:
+        cell_types (list[str]): list of cell lines in our dataset
+        filename (str): desired output filename for xlsx output
+    """
 
     # Grab list of directories
     subfolders = [f.path for f in os.scandir(BAM_DIRECTORY) if f.is_dir()]
@@ -360,22 +413,32 @@ def quma_full(cell_types, filename):
             holding_df.to_excel(writer, os.path.basename(folder)[:29])
 
             del holding_df
-        else:
-            # print("No if")
-            pass
+
     writer.save()
 
 
 def extract_cell_types(file_sets):
+    """Returns a list[str] of cell lines in the dataset."""
+
     return [file.split("_")[1] for file in file_sets]
 
 
 def run_quma_and_compile_list_of_df(cell_types, filename):
-    """."""
+    """Wrapper to run QUMA on all cell lines in the dataset and write output files.
+
+    Args:
+        cell_types (list[str]): list of cell lines in the dataset
+        filename (str): desired output filename
+
+    Returns:
+        list[pd.DataFrame]: list of dataframes of quma results
+    """
 
     df_full_list = []
 
-    quma_full(cell_types, filename)  # Run quma
+    quma_full(
+        cell_types, filename
+    )  # FIXME: every file will overwrite with one filename!
     df = pd.read_excel(BASE_DIRECTORY.joinpath(filename), dtype=str, sheet_name=None)
     df_full_list.append(df)
 
@@ -386,8 +449,17 @@ def run_quma_and_compile_list_of_df(cell_types, filename):
     return df_full_list
 
 
-def process_means(list_of_dfs, positions, files_set):
-    """."""
+def process_means(list_of_dfs, positions, cell_types):
+    """Process the mean values at each position for each cell line.
+
+    Args:
+        list_of_dfs (list[pd.DataFrame]): list of dataframes of quma results
+        positions (list[str]): list of genomic positions to analyze
+        cell_types (list[str]): list of cell lines in the dataset
+
+    Returns:
+        list[pd.DataFrame]): list of dataframes of mean values for each position in each cell line
+    """
 
     bad_values = ["N", "F"]  # for interpreting quma returns
 
@@ -402,7 +474,7 @@ def process_means(list_of_dfs, positions, files_set):
     for pos in positions:
         mean_col = []
         mean_col.append(pos)
-        for each in df_full:
+        for ix, each in enumerate(df_full):
             values_list = []
             if pos in df_full[each].columns:
                 if not (
@@ -432,21 +504,27 @@ def process_means(list_of_dfs, positions, files_set):
 
         means_df = pd.DataFrame(means_cols).transpose()
 
-        alpha = files_set[1]  # FIXME: how to access correct cell_type label??
+        alpha = cell_types[ix]
 
-        means_df.to_csv(path_or_buf=RESULTS_DIRECTORY.joinpath(alpha + files_set[0]))
+        means_df.to_csv(path_or_buf=RESULTS_DIRECTORY.joinpath(alpha + pos))
         total_means.append(means_df)
 
     return total_means
 
 
-def write_means_to_excel(means_df, files_set):
-    """."""
+def write_means_to_excel(means_df, cell_types):
+    """Write means data to a compiled xlsx file.
 
-    for tm in means_df:
-        t = files_set[0]  # FIXME: how to access correct cell_type label??
+    Args:
+        means_df (list[pd.DataFramme]): list of means dataframes for all the cell lines
+        cell_types (list[str]): list of genomic positions analyzed
+    """
+
+    for ix, each in enumerate(means_df):
+        t = cell_types[ix]  # FIXME: how to access correct cell_type label??
         sheet = t
-        excel_book = pxl.load_workbook(BASE_DIRECTORY.joinpath("testT.xlsx"))
+        excel_book = pxl.load_workbook(RESULTS_DIRECTORY.joinpath("testT.xlsx"))
+        # FIXME: Fixed filename??
         with pd.ExcelWriter("testT.xlsx", engine="openpyxl") as writer:
             writer.book = excel_book
             writer.sheets = {
@@ -455,6 +533,10 @@ def write_means_to_excel(means_df, files_set):
 
             means_df.to_excel(writer, sheet, index=True)
         writer.save()
+
+
+def new_process_means():
+    pass
 
 
 """Remaining Code:
