@@ -38,7 +38,7 @@ pyllelic: a tool for detection of allelic-specific varation in DNA sequencing.
 
 ## Example exploratory / step-by-step use in ipython / jupyter notebook:
 
-```
+```python
     import pyllelic
 
     pyllelic.set_up_env_variables(
