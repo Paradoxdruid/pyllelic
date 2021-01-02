@@ -4,7 +4,7 @@
 
 **pyllelic**: a tool for detection of allelic-specific varation in DNA sequencing.
 
-:exclamation: **This is a work-in-progress, and may not be functional at present!** :exclamation:
+:warning: **This is a work-in-progress, and may not be functional at present!** :warning:
 
 ## Example usage in ipython / jupyter notebook:
 ```python
