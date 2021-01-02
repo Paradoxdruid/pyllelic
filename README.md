@@ -2,9 +2,9 @@
 
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Paradoxdruid/pyllelic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Paradoxdruid/pyllelic/context:python)  [![CodeFactor](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic/badge)](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic)  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
-pyllelic: a tool for detection of allelic-specific varation in DNA sequencing.
+**pyllelic**: a tool for detection of allelic-specific varation in DNA sequencing.
 
-**This is a work-in-progress!**
+:exclamation: **This is a work-in-progress, and may not be functional at present!** :exclamation:
 
 ## Example usage in ipython / jupyter notebook:
 ```python
@@ -55,11 +55,11 @@ pyllelic: a tool for detection of allelic-specific varation in DNA sequencing.
 
     pyllelic.genome_parsing()  # writes out genome strings in bam_output folders
 
-    cell_types = extract_cell_types(files_set)  # pulls out the cell types available for analysis
+    cell_types = pyllelic.extract_cell_types(files_set)  # pulls out the cell types available for analysis
 
-    df_list = run_quma_and_compile_list_of_df(cell_types, filename)  # run quma, get dfs
+    df_list = pyllelic.run_quma_and_compile_list_of_df(cell_types, filename)  # run quma, get dfs
 
-    means_df = process_means(df_list, positions, files_set)  # process means data from dataframes
+    means_df = pyllelic.process_means(df_list, positions, files_set)  # process means data from dataframes
 
-    write_means_to_excel(means_df, files_set)  # write means data to excel files
+    pyllelic.write_means_to_excel(means_df, files_set)  # write means data to excel files
 ```
