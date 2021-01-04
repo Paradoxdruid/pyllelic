@@ -70,17 +70,47 @@ from io import StringIO
 import statistics as stat  # noqa
 import openpyxl as pxl
 
+# Define base constants, but run setup_directories() to correctly update them at run time
+BASE_DIRECTORY = (
+    Path(os.environ.get("METHYL_BASE")) if os.environ.get("METHYL_BASE") else Path.cwd()
+)
+BASE_DIRECTORY.mkdir(exist_ok=True)
+
+PROMOTER_FILE = (
+    BASE_DIRECTORY / os.environ.get("PROMOTER_SEQ")
+    if os.environ.get("PROMOTER_SEQ")
+    else BASE_DIRECTORY / "promoter.txt"
+)
+
+RESULTS_DIRECTORY = BASE_DIRECTORY / "results"
+RESULTS_DIRECTORY.mkdir(exist_ok=True)
+
+BAM_DIRECTORY = BASE_DIRECTORY / "bam_output"
+BAM_DIRECTORY.mkdir(exist_ok=True)
+
+ANALYSIS_DIRECTORY = (
+    Path(os.environ.get("ANALYSIS_FOLDER"))
+    if os.environ.get("ANALYSIS_FOLDER")
+    else BASE_DIRECTORY / "test"
+)
+ANALYSIS_DIRECTORY.mkdir(exist_ok=True)
+
+PROMOTER_START = (
+    int(os.environ.get("PROMOTER_START"))
+    if os.environ.get("PROMOTER_START")
+    else 1293000
+)
+
+PROMOTER_END = (
+    int(os.environ.get("PROMOTER_END")) if os.environ.get("PROMOTER_END") else 1296000
+)
+
+CHROMOSOME = os.environ.get("CHROMOSOME") if os.environ.get("CHROMOSOME") else "5"
+
 
 # Set up directories and make output directories as needed
 def setup_directories():
-    global BASE_DIRECTORY
-    global PROMOTER_FILE
-    global RESULTS_DIRECTORY
-    global BAM_DIRECTORY
-    global ANALYSIS_DIRECTORY
-    global PROMOTER_START
-    global PROMOTER_END
-    global CHROMOSOME
+    """Update directory and path constants."""
 
     BASE_DIRECTORY = (
         Path(os.environ.get("METHYL_BASE"))
@@ -89,6 +119,7 @@ def setup_directories():
     )
     BASE_DIRECTORY.mkdir(exist_ok=True)
 
+    global PROMOTER_FILE
     PROMOTER_FILE = (
         BASE_DIRECTORY / os.environ.get("PROMOTER_SEQ")
         if os.environ.get("PROMOTER_SEQ")
@@ -108,18 +139,21 @@ def setup_directories():
     )
     ANALYSIS_DIRECTORY.mkdir(exist_ok=True)
 
+    global PROMOTER_START
     PROMOTER_START = (
         int(os.environ.get("PROMOTER_START"))
         if os.environ.get("PROMOTER_START")
         else 1293000
     )
 
+    global PROMOTER_END
     PROMOTER_END = (
         int(os.environ.get("PROMOTER_END"))
         if os.environ.get("PROMOTER_END")
         else 1296000
     )
 
+    global CHROMOSOME
     CHROMOSOME = os.environ.get("CHROMOSOME") if os.environ.get("CHROMOSOME") else "5"
 
 
@@ -193,12 +227,16 @@ def run_quma(directory, genomic_seq_file, reads_seq_file):
     """
 
     quma_path = os.fspath(BASE_DIRECTORY.joinpath("quma_cui"))
-    command = "perl {0}/quma.pl -g {1}/{2} -q {1}/{3}".format(
-        quma_path, directory, genomic_seq_file, reads_seq_file
-    )
-    out = subprocess.check_output(
-        command, shell=True
-    )  # requires shell=True to function
+    command = [
+        "perl",
+        f"{quma_path}/quma.pl",
+        "-g",
+        f"{directory}/{genomic_seq_file}",
+        "-q",
+        f"{directory}/{reads_seq_file}",
+    ]
+
+    out = subprocess.run(command, text=True, capture_output=True).stdout
     return out
 
 
@@ -695,41 +733,41 @@ writer.save()
 
 ------------
 
-# ## Modes Histogram
-# counts, bins = np.histogram(modes_df.T[1:].set_index(0).values, bins=np.linspace(0,1,5))
-# bins = 0.5 * (bins[:-1] + bins[1:])
-# fig_modes = px.bar(x=bins, y=counts, labels={'x':'Methylation Percent', 'y':'count'})
-# fig_modes.show()
+## Modes Histogram
+counts, bins = np.histogram(modes_df.T[1:].set_index(0).values, bins=np.linspace(0,1,5))
+bins = 0.5 * (bins[:-1] + bins[1:])
+fig_modes = px.bar(x=bins, y=counts, labels={'x':'Methylation Percent', 'y':'count'})
+fig_modes.show()
 
-# newdf = means_df
-# keepdf =newdf.rename(columns=newdf.iloc[0]).drop(newdf.index[0]) #renames columns.
-# keepdf = keepdf.set_index('')
-# keepdf = keepdf.transpose().dropna()
-# keepdf = pd.DataFrame(keepdf)
-# print(keepdf)
-# binned_data = []
-# for col in keepdf.columns:
-#     col_bin_means = stats.binned_statistic(
-    #                                   col,
-    #                                   keepdf[col].values.tolist(),
-    #                                   bins=5,
-    #                                   range=(0, 1)
-    # )[0]
-#     a = np.histogram(keepdf[col].values.tolist(), bins=5, range=(0,1), density=True)[0]
-# #creates histogram of iterative objects in keepdf
-#     a_True = list(a / a.sum())
-# #gives a list of percent of each object by dividing each value by the sum of the values.
-#     a_True.insert(0,str(col))
-#     binned_data.append(a_True)
-# binned_data
+newdf = means_df
+keepdf =newdf.rename(columns=newdf.iloc[0]).drop(newdf.index[0]) #renames columns.
+keepdf = keepdf.set_index('')
+keepdf = keepdf.transpose().dropna()
+keepdf = pd.DataFrame(keepdf)
+print(keepdf)
+binned_data = []
+for col in keepdf.columns:
+    col_bin_means = stats.binned_statistic(
+                                       col,
+                                       keepdf[col].values.tolist(),
+                                       bins=5,
+                                       range=(0, 1)
+     )[0]
+     a = np.histogram(keepdf[col].values.tolist(), bins=5, range=(0,1), density=True)[0]
+#creates histogram of iterative objects in keepdf
+     a_True = list(a / a.sum())
+#gives a list of percent of each object by dividing each value by the sum of the values.
+    a_True.insert(0,str(col))
+    binned_data.append(a_True)
+binned_data
 
-# mut_binned_df = (
-    # pd.DataFrame(binned_data,columns=['position','0%','25%','50%','75%','100%'])
-    # .set_index('position')
-    # )
-# mut_binned = mut_binned_df.dropna().transpose()
-# mut_binned
-# mut_binned_df.values.tolist()
+mut_binned_df = (
+    pd.DataFrame(binned_data,columns=['position','0%','25%','50%','75%','100%'])
+    .set_index('position')
+    )
+mut_binned = mut_binned_df.dropna().transpose()
+mut_binned
+mut_binned_df.values.tolist()
 """
 
 if __name__ == "__main__":
