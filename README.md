@@ -41,13 +41,15 @@
 ```python
     import pyllelic
 
-    pyllelic.set_up_env_variables(
+    pyllelic.set_up_env_variables(  # Specify file and directory locations as env variables
         methyl_base="/Users/abonham/documents/methyl_test",
         promoter_seq="TERT-promoter-genomic-sequence.txt",
         promoter_start="1293000",
         promoter_end="1296000",
         chromosome="5",
     )
+
+    pyllelic.setup_directories()  # Read env variables to set up directories to use
 
     files_set = pyllelic.make_list_of_bam_files()  # finds bam files
 

@@ -70,42 +70,57 @@ from io import StringIO
 import statistics as stat  # noqa
 import openpyxl as pxl
 
+
 # Set up directories and make output directories as needed
-BASE_DIRECTORY = (
-    Path(os.environ.get("METHYL_BASE")) if os.environ.get("METHYL_BASE") else Path.cwd()
-)
-BASE_DIRECTORY.mkdir(exist_ok=True)
+def setup_directories():
+    global BASE_DIRECTORY
+    global PROMOTER_FILE
+    global RESULTS_DIRECTORY
+    global BAM_DIRECTORY
+    global ANALYSIS_DIRECTORY
+    global PROMOTER_START
+    global PROMOTER_END
+    global CHROMOSOME
 
-PROMOTER_FILE = (
-    BASE_DIRECTORY / os.environ.get("PROMOTER_SEQ")
-    if os.environ.get("PROMOTER_SEQ")
-    else BASE_DIRECTORY / "promoter.txt"
-)
+    BASE_DIRECTORY = (
+        Path(os.environ.get("METHYL_BASE"))
+        if os.environ.get("METHYL_BASE")
+        else Path.cwd()
+    )
+    BASE_DIRECTORY.mkdir(exist_ok=True)
 
-RESULTS_DIRECTORY = BASE_DIRECTORY / "results"
-RESULTS_DIRECTORY.mkdir(exist_ok=True)
+    PROMOTER_FILE = (
+        BASE_DIRECTORY / os.environ.get("PROMOTER_SEQ")
+        if os.environ.get("PROMOTER_SEQ")
+        else BASE_DIRECTORY / "promoter.txt"
+    )
 
-BAM_DIRECTORY = BASE_DIRECTORY / "bam_output"
-BAM_DIRECTORY.mkdir(exist_ok=True)
+    RESULTS_DIRECTORY = BASE_DIRECTORY / "results"
+    RESULTS_DIRECTORY.mkdir(exist_ok=True)
 
-ANALYSIS_DIRECTORY = (
-    Path(os.environ.get("ANALYSIS_FOLDER"))
-    if os.environ.get("ANALYSIS_FOLDER")
-    else BASE_DIRECTORY / "test"
-)
-ANALYSIS_DIRECTORY.mkdir(exist_ok=True)
+    BAM_DIRECTORY = BASE_DIRECTORY / "bam_output"
+    BAM_DIRECTORY.mkdir(exist_ok=True)
 
-PROMOTER_START = (
-    int(os.environ.get("PROMOTER_START"))
-    if os.environ.get("PROMOTER_START")
-    else 1293000
-)
+    ANALYSIS_DIRECTORY = (
+        Path(os.environ.get("ANALYSIS_FOLDER"))
+        if os.environ.get("ANALYSIS_FOLDER")
+        else BASE_DIRECTORY / "test"
+    )
+    ANALYSIS_DIRECTORY.mkdir(exist_ok=True)
 
-PROMOTER_END = (
-    int(os.environ.get("PROMOTER_END")) if os.environ.get("PROMOTER_END") else 1296000
-)
+    PROMOTER_START = (
+        int(os.environ.get("PROMOTER_START"))
+        if os.environ.get("PROMOTER_START")
+        else 1293000
+    )
 
-CHROMOSOME = os.environ.get("CHROMOSOME") if os.environ.get("CHROMOSOME") else "5"
+    PROMOTER_END = (
+        int(os.environ.get("PROMOTER_END"))
+        if os.environ.get("PROMOTER_END")
+        else 1296000
+    )
+
+    CHROMOSOME = os.environ.get("CHROMOSOME") if os.environ.get("CHROMOSOME") else "5"
 
 
 def set_up_env_variables(
@@ -133,6 +148,7 @@ def main(filename):
         filename: filename to write output of analysis to.
     """
 
+    setup_directories()
     files_set = make_list_of_bam_files()
     positions = index_and_fetch(files_set)
     genome_parsing()
@@ -180,7 +196,9 @@ def run_quma(directory, genomic_seq_file, reads_seq_file):
     command = "perl {0}/quma.pl -g {1}/{2} -q {1}/{3}".format(
         quma_path, directory, genomic_seq_file, reads_seq_file
     )
-    out = subprocess.check_output(command)  # remove shell vulnerability: , shell=True)
+    out = subprocess.check_output(
+        command, shell=True
+    )  # requires shell=True to function
     return out
 
 
@@ -193,11 +211,9 @@ def make_list_of_bam_files():
 
     indv_bam = [b for b in ANALYSIS_DIRECTORY.iterdir()]
 
-    init_files_set = [
-        str(bam).split("/")[7] for bam in indv_bam if str(bam).endswith("bam")
-    ]
+    init_files_set = [bam.name for bam in indv_bam if bam.suffix == ".bam"]
 
-    bai_set = [str(bai).split("/")[7] for bai in indv_bam if str(bai).endswith("bai")]
+    bai_set = [bai.name for bai in indv_bam if bai.suffix == ".bai"]
 
     f_set = [str(bam).split(".")[0] for bam in init_files_set]
 
@@ -223,14 +239,14 @@ def index_and_fetch(files_set):
         list[str]: list of genomic positions analyzed
     """
 
-    sam_path = [BASE_DIRECTORY / f for f in files_set]
+    sam_path = [BASE_DIRECTORY / "test" / f for f in files_set]
 
-    all_pos = ()
+    all_pos = []
     for sams in sam_path:
         pos = run_sam_and_extract_df(sams)
-        all_pos.update(pos)
+        all_pos.append(pos)
 
-    return list[all_pos].sort()
+    return sorted(all_pos)
 
 
 def run_sam_and_extract_df(sams):
@@ -336,7 +352,9 @@ def genome_parsing():
         read_files = [
             os.path.splitext(i)[0]
             for i in raw_read_files
-            if not i.lstrip().startswith("g") and not i.lstrip().startswith(".ip")
+            if not i.lstrip().startswith("g")
+            and not i.lstrip().startswith(".ip")
+            and not i.lstrip().startswith(".DS")
         ]
 
         # Now, process each file:
@@ -410,7 +428,7 @@ def quma_full(cell_types, filename):
 
             # Now, save it to an excel file
             # writer = pd.ExcelWriter(folder+'/'+os.path.basename(folder)+'.xlsx')
-            holding_df.to_excel(writer, os.path.basename(folder)[:29])
+            holding_df.to_excel(writer, sheet_name=Path(folder).name)
 
             del holding_df
 
@@ -470,7 +488,8 @@ def process_means(list_of_dfs, positions, cell_types):
     # Gives the means of each individual positions-- NOT the mean of the entire dataframe!
 
     means_cols = []
-    means_cols.append(list(df_full.keys()))
+    # FIXME: Need to specify keys correctly, should be dictionary instead?
+    means_cols.append(list(df_full[0].keys()))
     for pos in positions:
         mean_col = []
         mean_col.append(pos)
