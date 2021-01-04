@@ -65,3 +65,33 @@
 
     pyllelic.write_means_to_excel(means_df, files_set)  # write means data to excel files
 ```
+
+<hr />
+
+## Dependencies and Installation
+### Conda Environment
+* Create a new conda environment using python 3.7:
+```bash
+conda create --name methyl python=3.7
+conda activate methyl
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+```
+* Install python dependencies:
+```bash
+conda install pandas numpy scipy plotly dash notebook xlsxwriter xlrd
+conda install -c bioconda samtools pysam scikit-bio
+```
+* Install system dependencies:
+```bash
+conda install -c bioconda emboss
+conda install -c bioconda perl perl-app-cpanminus
+cpan install Statistics::Lite
+```
+* Set up jupyter:
+```bash
+conda install -c conda-forge jupyter_contrib_nbextensions
+```
+### Install quma
+* Download from http://quma.cdb.riken.jp/files/quma_cui-1.0.0.tar.gz
+* Untar
