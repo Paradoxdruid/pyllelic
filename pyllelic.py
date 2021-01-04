@@ -108,9 +108,20 @@ PROMOTER_END = (
 CHROMOSOME = os.environ.get("CHROMOSOME") if os.environ.get("CHROMOSOME") else "5"
 
 
-# Set up directories and make output directories as needed
-def setup_directories():
-    """Update directory and path constants."""
+def set_up_env_variables(
+    methyl_base="/Users/abonham/documents/methyl_test",
+    promoter_seq="TERT-promoter-genomic-sequence.txt",
+    promoter_start="1293000",
+    promoter_end="1296000",
+    chromosome="5",
+):
+    """Helper method to set up all our environmental variables, such as for testing."""
+
+    os.environ["METHYL_BASE"] = methyl_base
+    os.environ["PROMOTER_SEQ"] = promoter_seq
+    os.environ["PROMOTER_START"] = promoter_start
+    os.environ["PROMOTER_END"] = promoter_end
+    os.environ["CHROMOSOME"] = chromosome
 
     BASE_DIRECTORY = (
         Path(os.environ.get("METHYL_BASE"))
@@ -119,7 +130,6 @@ def setup_directories():
     )
     BASE_DIRECTORY.mkdir(exist_ok=True)
 
-    global PROMOTER_FILE
     PROMOTER_FILE = (
         BASE_DIRECTORY / os.environ.get("PROMOTER_SEQ")
         if os.environ.get("PROMOTER_SEQ")
@@ -139,38 +149,19 @@ def setup_directories():
     )
     ANALYSIS_DIRECTORY.mkdir(exist_ok=True)
 
-    global PROMOTER_START
     PROMOTER_START = (
         int(os.environ.get("PROMOTER_START"))
         if os.environ.get("PROMOTER_START")
         else 1293000
     )
 
-    global PROMOTER_END
     PROMOTER_END = (
         int(os.environ.get("PROMOTER_END"))
         if os.environ.get("PROMOTER_END")
         else 1296000
     )
 
-    global CHROMOSOME
     CHROMOSOME = os.environ.get("CHROMOSOME") if os.environ.get("CHROMOSOME") else "5"
-
-
-def set_up_env_variables(
-    methyl_base="/Users/abonham/documents/methyl_test",
-    promoter_seq="TERT-promoter-genomic-sequence.txt",
-    promoter_start="1293000",
-    promoter_end="1296000",
-    chromosome="5",
-):
-    """Helper method to set up all our environmental variables, such as for testing."""
-
-    os.environ["METHYL_BASE"] = methyl_base
-    os.environ["PROMOTER_SEQ"] = promoter_seq
-    os.environ["PROMOTER_START"] = promoter_start
-    os.environ["PROMOTER_END"] = promoter_end
-    os.environ["CHROMOSOME"] = chromosome
 
 
 ##################################################################################
@@ -182,7 +173,6 @@ def main(filename):
         filename: filename to write output of analysis to.
     """
 
-    setup_directories()
     files_set = make_list_of_bam_files()
     positions = index_and_fetch(files_set)
     genome_parsing()
