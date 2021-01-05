@@ -70,7 +70,7 @@ from io import StringIO
 import statistics as stat  # noqa
 import openpyxl as pxl
 
-# Define base constants, but run setup_directories() to correctly update them at run time
+# Define base constants, but run set_up_env_variables() to correctly update them at run time
 BASE_DIRECTORY = (
     Path(os.environ.get("METHYL_BASE")) if os.environ.get("METHYL_BASE") else Path.cwd()
 )
@@ -130,7 +130,7 @@ def set_up_env_variables(
     )
     BASE_DIRECTORY.mkdir(exist_ok=True)
 
-    PROMOTER_FILE = (
+    PROMOTER_FILE = (  # noqa
         BASE_DIRECTORY / os.environ.get("PROMOTER_SEQ")
         if os.environ.get("PROMOTER_SEQ")
         else BASE_DIRECTORY / "promoter.txt"
@@ -149,19 +149,19 @@ def set_up_env_variables(
     )
     ANALYSIS_DIRECTORY.mkdir(exist_ok=True)
 
-    PROMOTER_START = (
+    PROMOTER_START = (  # noqa
         int(os.environ.get("PROMOTER_START"))
         if os.environ.get("PROMOTER_START")
         else 1293000
     )
 
-    PROMOTER_END = (
+    PROMOTER_END = (  # noqa
         int(os.environ.get("PROMOTER_END"))
         if os.environ.get("PROMOTER_END")
         else 1296000
     )
 
-    CHROMOSOME = os.environ.get("CHROMOSOME") if os.environ.get("CHROMOSOME") else "5"
+    CHROMOSOME = os.environ.get("CHROMOSOME") if os.environ.get("CHROMOSOME") else "5"  # noqa
 
 
 ##################################################################################
@@ -364,7 +364,6 @@ def genome_parsing():
 
     # Grab list of directories
     subfolders = [x for x in BAM_DIRECTORY.iterdir() if x.is_dir()]
-    #     print(subfolders)
 
     # Grab genomic sequence
     with open(PROMOTER_FILE, "r") as f:
@@ -410,7 +409,6 @@ def quma_full(cell_types, filename):
 
     # Grab list of directories
     subfolders = [f.path for f in os.scandir(BAM_DIRECTORY) if f.is_dir()]
-    # print(subfolders)
 
     writer = pd.ExcelWriter(BASE_DIRECTORY.joinpath(filename))
 
@@ -418,7 +416,6 @@ def quma_full(cell_types, filename):
     for folder in subfolders:
 
         if any(substring in folder for substring in cell_types):
-            # print("If satisfied")
             # Set up a holding data frame from all the data
             holding_df = pd.DataFrame()
 
@@ -446,7 +443,7 @@ def quma_full(cell_types, filename):
                             dots.append("FAIL")
                         else:
                             dots.append(fields[13])
-                # NEW: Sort dots output by number of "1"
+                # Sort dots output by number of "1"
                 dots2 = sorted(dots, key=lambda t: t.count("1"))
 
                 # Next, add this readname to the holding data frame
@@ -455,7 +452,6 @@ def quma_full(cell_types, filename):
                 # holdng_df[read_name]=dots
 
             # Now, save it to an excel file
-            # writer = pd.ExcelWriter(folder+'/'+os.path.basename(folder)+'.xlsx')
             holding_df.to_excel(writer, sheet_name=Path(folder).name)
 
             del holding_df
@@ -484,7 +480,7 @@ def run_quma_and_compile_list_of_df(cell_types, filename):
 
     quma_full(
         cell_types, filename
-    )  # FIXME: every file will overwrite with one filename!
+    )
     df = pd.read_excel(BASE_DIRECTORY.joinpath(filename), dtype=str, sheet_name=None)
     df_full_list.append(df)
 
