@@ -6,6 +6,8 @@
 
 :warning: **This is a work-in-progress, and may not be functional at present!** :warning:
 
+See `pyllelic_notebook.ipynb` for an interactive demonstration.
+
 ## Example usage in ipython / jupyter notebook:
 ```python
     import pyllelic
@@ -50,10 +52,14 @@
 
     means_df = pyllelic.process_means(df_list, positions, files_set)  # process means data from dataframes
 
-    pyllelic.write_means_to_excel(means_df, files_set)  # write means data to excel files
+    modes_df = pyllelic.process_modes(df_list, positions, cell_types)  # process modes data from dataframes
+    
+    diff_df = pyllelic.find_diffs(means_df, modes_df)  # find difference between mean and mode
+
+    pyllelic.write_means_modes_diffs(means_df, modes_df, diffs_df, filename)  # write output data to excel files
 ```
 
-<hr />
+----------------------------------
 
 ## Dependencies and Installation
 ### Conda Environment

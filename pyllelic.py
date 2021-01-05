@@ -41,8 +41,11 @@
 
     means_df = process_means(df_list, positions, files_set)  # process means data from dataframes
 
-    write_means_to_excel(means_df, files_set)  # write means data to excel files
+    modes_df = process_modes(df_list, positions, cell_types)  # process modes data from dataframes
 
+    diff_df = find_diffs(means_df, modes_df)  # find difference between mean and mode
+
+    write_means_modes_diffs(means_df, modes_df, diffs_df, filename)  # write output to excel files
 """
 
 # Imports
@@ -55,8 +58,8 @@ from skbio.alignment import StripedSmithWaterman
 import plotly.express as px  # noqa
 import subprocess
 from pathlib import Path
-import statistics as stat  # noqa
-import openpyxl as pxl
+from scipy import stats
+from tqdm.notebook import tqdm
 import config
 
 
@@ -97,7 +100,9 @@ def main(filename):
     cell_types = extract_cell_types(files_set)
     df_list = run_quma_and_compile_list_of_df(cell_types, filename)
     means_df = process_means(df_list, positions, cell_types)
-    write_means_to_excel(means_df, cell_types)
+    modes_df = process_modes(df_list, positions, cell_types)
+    diffs_df = find_diffs(means_df, modes_df)
+    write_means_modes_diffs(means_df, modes_df, diffs_df, filename)
 
 
 ##################################################################################
@@ -187,12 +192,12 @@ def index_and_fetch(files_set):
 
     sam_path = [config.base_directory / "test" / f for f in files_set]
 
-    all_pos = []
+    all_pos = set()
     for sams in sam_path:
         pos = run_sam_and_extract_df(sams)
-        all_pos.append(pos)
+        all_pos.update(pos)
 
-    return sorted(all_pos)
+    return sorted(list(all_pos))
 
 
 def run_sam_and_extract_df(sams):
@@ -210,7 +215,9 @@ def run_sam_and_extract_df(sams):
 
     # Grab the promoter region of interest
     samm = pysam.AlignmentFile(sams, "rb")
-    itern = samm.fetch(config.chromosome, int(config.promoter_start), int(config.promoter_end))
+    itern = samm.fetch(
+        config.chromosome, int(config.promoter_start), int(config.promoter_end)
+    )
 
     position = []
     sequence = []
@@ -331,7 +338,7 @@ def quma_full(cell_types, filename):
     writer = pd.ExcelWriter(config.base_directory.joinpath(filename))
 
     # Wrap everything in processing them one at a time
-    for folder in subfolders:
+    for folder in tqdm(subfolders, desc="Cell Lines"):
 
         if any(substring in folder for substring in cell_types):
             # Set up a holding data frame from all the data
@@ -346,7 +353,7 @@ def quma_full(cell_types, filename):
             ]
 
             # Now, process each file:
-            for read_name in read_files:
+            for read_name in tqdm(read_files, desc="Positions"):
                 # file_lines = []
 
                 quma_result = run_quma(
@@ -391,25 +398,21 @@ def run_quma_and_compile_list_of_df(cell_types, filename):
         filename (str): desired output filename
 
     Returns:
-        list[pd.DataFrame]: list of dataframes of quma results
+        Dict[pd.DataFrame]: dict of dataframes of quma results
     """
-
-    df_full_list = []
 
     quma_full(cell_types, filename)
     df = pd.read_excel(
-        config.base_directory.joinpath(filename), dtype=str, sheet_name=None
+        config.base_directory.joinpath(filename),
+        dtype=str,
+        sheet_name=None,
+        index_col=0,
     )
-    df_full_list.append(df)
 
-    for df in df_full_list:
-        for each in df:
-            df[each].replace(to_replace="nan", value=np.nan, inplace=True)
-
-    return df_full_list
+    return df
 
 
-def process_means(list_of_dfs, positions, cell_types):
+def process_means(dict_of_dfs, positions, cell_types):
     """Process the mean values at each position for each cell line.
 
     Args:
@@ -418,225 +421,128 @@ def process_means(list_of_dfs, positions, cell_types):
         cell_types (list[str]): list of cell lines in the dataset
 
     Returns:
-        list[pd.DataFrame]): list of dataframes of mean values for each position in each cell line
+        pd.DataFrame: dataframes of mean values for each position in each cell line
     """
 
     bad_values = ["N", "F"]  # for interpreting quma returns
 
-    df_full = list_of_dfs
-
-    total_means = []
+    df_full = dict_of_dfs
 
     # Gives the means of each individual positions-- NOT the mean of the entire dataframe!
-
-    means_cols = []
-    # FIXME: Need to specify keys correctly, should be dictionary instead?
-    means_cols.append(list(df_full[0].keys()))
+    working_df = pd.DataFrame()
     for pos in positions:
-        mean_col = []
-        mean_col.append(pos)
-        for ix, each in enumerate(df_full):
+        working_df[pos] = ""
+        for key, each in df_full.items():
             values_list = []
-            if pos in df_full[each].columns:
+            if pos in df_full[key].columns:
                 if not (
-                    len(df_full[each].loc[:, pos].dropna().astype(str)) < 5
-                    and not len(df_full[each].loc[:, pos].dropna().astype(str)[0]) < 3
+                    len(df_full[key].loc[:, pos].dropna().astype(str)) < 5
+                    and not len(df_full[key].loc[:, pos].dropna().astype(str)[0]) < 3
                 ):
-
-                    for value in df_full[each].loc[:, pos].dropna().astype(str):
+                    for value in df_full[key].loc[:, pos].dropna().astype(str):
                         if not any(substring in value for substring in bad_values):
-                            values_list.append(
-                                float(value.count("1")) / float(len(value))
-                            )
-                        else:
-                            pass
-                else:
-                    pass
+                            fraction_val = float(value.count("1")) / float(len(value))
+                            values_list.append(fraction_val)
+
+            if values_list:
+                pos_means = np.mean(values_list)
             else:
-                pass
-            a = np.mean(values_list)  # TODO: THIS IS THE DIFFERENT LINE
-            try:
-                b = a.item()
-            except ValueError:
-                b = np.nan
-            mean_col.append(b)
+                pos_means = np.nan
 
-        means_cols.append(mean_col)
+            working_df.loc[key, pos] = pos_means
 
-        means_df = pd.DataFrame(means_cols).transpose()
+    means_df = working_df
 
-        alpha = "cell_types"  # FIXME: not actually unique naming
-
-        means_df.to_csv(path_or_buf=config.results_directory.joinpath(alpha + pos))
-        total_means.append(means_df)
-
-    return total_means
+    return means_df
 
 
-def write_means_to_excel(means_df, cell_types):
-    """Write means data to a compiled xlsx file.
+def process_modes(dict_of_dfs, positions, cell_types):
+    """Process the mode values at each position for each cell line.
 
     Args:
-        means_df (list[pd.DataFramme]): list of means dataframes for all the cell lines
-        cell_types (list[str]): list of genomic positions analyzed
+        list_of_dfs (list[pd.DataFrame]): list of dataframes of quma results
+        positions (list[str]): list of genomic positions to analyze
+        cell_types (list[str]): list of cell lines in the dataset
+
+    Returns:
+        pd.DataFrame: dataframes of mode values for each position in each cell line
     """
 
-    for ix, each in enumerate(means_df):
-        t = cell_types[ix]  # FIXME: how to access correct cell_type label??
-        sheet = t
-        excel_book = pxl.load_workbook(config.results_directory.joinpath("testT.xlsx"))
-        # FIXME: Fixed filename??
-        with pd.ExcelWriter("testT.xlsx", engine="openpyxl") as writer:
-            writer.book = excel_book
-            writer.sheets = {
-                worksheet.title: worksheet for worksheet in excel_book.worksheets
-            }
+    bad_values = ["N", "F"]  # for interpreting quma returns
 
-            means_df.to_excel(writer, sheet, index=True)
-        writer.save()
+    df_full = dict_of_dfs
 
+    # Gives the modes of each individual positions-- NOT the mean of the entire dataframe!
+    working_df = pd.DataFrame()
+    for pos in positions:
+        working_df[pos] = ""
+        for key, each in df_full.items():
+            values_list = []
+            if pos in df_full[key].columns:
+                if not (
+                    len(df_full[key].loc[:, pos].dropna().astype(str)) < 5
+                    and not len(df_full[key].loc[:, pos].dropna().astype(str)[0]) < 3
+                ):
+                    for value in df_full[key].loc[:, pos].dropna().astype(str):
+                        if not any(substring in value for substring in bad_values):
+                            fraction_val = float(value.count("1")) / float(len(value))
+                            values_list.append(fraction_val)
 
-def new_process_means():
-    pass
+            if values_list:
+                pos_modes = stats.mode(values_list)[0][0]
+            else:
+                pos_modes = np.nan
 
+            working_df.loc[key, pos] = pos_modes
 
-"""Remaining Code:
+    modes_df = working_df
 
-nums=-1
-df_full_total = []
-for df in df_full:
-    num = nums + 1
-    file_name = file_sets[num]
-    z = df_full[file_name]
-    df_full_total.append(z)
-   # df_full['fh_CALU1_LUNG.TERT.bam'][1:]
-
-
----------
-
-indiv_mean = []
-n = -1
-num_list = []
-Mean_name = ['',]
-Mean_data = []
-for h in means_df.transpose():
-    n = n + 1
-    num_list.append(n)
+    return modes_df
 
 
-for n in num_list:
-    means_d = means_df.loc[n]
-    indiv_mean.append(means_d)
-for sets in indiv_mean:
-    sets = sets[0]
-    sets=str(sets)
-    if sets == str(sets):
-        #print(sets)
-        Mean_name.append(sets)
-#dic_Mean = pd.DataFrame(indiv_mean)
-# for sets in indiv_mean:
-for sets in indiv_mean:
+def find_diffs(means_df, modes_df):
+    """Find the differences between means and modes for each cell line at each position
+       in means and modes data.
 
-    sets = sets[1:]
-    Mean_data.append(sets)
-#print(Mean_name)
-#print(Means_name)
-#print(Mean_name)
-#print(Mean_data)
-#print(MeaN)
-MeaN = dict(zip(Mean_name,Mean_data))
+    Args:
+        means_df (pd.DataFrame): dataframe of means values
+        modes_df (pd.DataFrame): dataframe of modes values
 
-Means_name = pd.DataFrame(MeaN.items())
+    Returns:
+        pd.DataFrame: dataframe of difference values
+    """
 
-# Mean_data = pd.DataFrame(list(Mean_data.items()))
-# Means_position
-
-means_excel = pd.DataFrame(MeaN).transpose()
-means_excel
-# dic_Mean = df.set_index('id')
-# dic_Mean.transpose()
-
-# combined = pd.merge(Means_name, Mean_data, left_index=True, right_index=True)
-
-------------
-
-total_mean = []
-total_mode = []
-total_percent_diff = []
+    return means_df.subtract(modes_df)
 
 
+def write_means_modes_diffs(means_df, modes_df, diff_df, filename):
+    """Wite out files of means, modes, and diffs for future analysis.
 
-means_np = means_df.to_numpy()[1:]
+    Args:
+        means_df (pd.DataFrame): dataframe of means values
+        modes_df (pd.DataFrame): dataframe of modes values
+        diff_df (pd.DataFrame): dataframe of diff values
+        filename (str): desired root filename
+    """
 
-means_lis = means_np.tolist()
-k = []
-y = -1
-for mean in means_lis:
-    mean=mean[1:]
-
-    mean1 =[]
-
-    for h in mean:
-        if h == float(h):
-
-            mean1.append(h)
-
-    final_mode = stat.mode(mean1)
-    final_mean = stat.mean(mean1)
-    total_mean.append(final_mean)
-    total_mode.append(final_mode)
-
-
-    avg = ((final_mode + final_mean)/2)
-#avg = ((final_mode + final_mean)/2)
-    per_diff = abs((final_mode - final_mean)*100/avg)
-    total_percent_diff.append(per_diff)
-
-# print(total_mode)
-# print(total_mean)
-#print(total_percent_diff)
-
------------
-
-diff= []
-
-for a in total_percent_diff:
-    diff.append(a)
-
-dic_mean = dict(zip(files_set,total_mean),orient ='index')
-dic_mode = dict(zip(files_set,total_mode),orient ='index')
-
-dif_ex = dict(zip(files_set,diff),orient ='index')
-
-diff = pd.DataFrame(list(dif_ex.items()))
-dic_mean = pd.DataFrame(list(dic_mean.items()))
-dic_mode = pd.DataFrame(list(dic_mode.items()))
+    means_df.to_excel(
+        config.base_directory / str(filename + "_means.xlsx"),
+        sheet_name="Means",
+        index=True,
+    )
+    modes_df.to_excel(
+        config.base_directory / str(filename + "_modes.xlsx"),
+        sheet_name="Modes",
+        index=True,
+    )
+    diff_df.to_excel(
+        config.base_directory / str(filename + "_diff.xlsx"),
+        sheet_name="Diff",
+        index=True,
+    )
 
 
-combined = pd.merge(dic_mode, dic_mean, left_index=True, right_index=True)
-all_comb = pd.merge(diff, combined, left_index=True, right_index=True)
-
-all_comb
-
---------
-
-a = 'diff_' +files_set[0]
-sheet = a
-excel_book = pxl.load_workbook(base_path.joinpath('testT.xlsx'))
-with pd.ExcelWriter('testT.xlsx', engine='openpyxl') as writer:
-    writer.book = excel_book
-    writer.sheets = {
-        worksheet.title: worksheet
-        for worksheet in excel_book.worksheets
-    }
-
-    secondMocksDF = all_comb
-    secondMocksDF.to_excel(writer, sheet, index=True)
-
-writer.save()
-
-------------
-
+"""
 ## Modes Histogram
 counts, bins = np.histogram(modes_df.T[1:].set_index(0).values, bins=np.linspace(0,1,5))
 bins = 0.5 * (bins[:-1] + bins[1:])
