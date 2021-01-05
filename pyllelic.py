@@ -6,25 +6,14 @@
     import pyllelic
 
     pyllelic.set_up_env_variables(
-        methyl_base="/Users/abonham/documents/methyl_test",
-        promoter_seq="TERT-promoter-genomic-sequence.txt",
-        promoter_start="1293000",
-        promoter_end="1296000",
-        chromosome="5",
+        base_path="/Users/abonham/documents/test_allelic/",
+        prom_file="TERT-promoter-genomic-sequence.txt",
+        prom_start="1293000",
+        prom_end="1296000",
+        chrom="5",
     )
 
     pyllelic.main("output.xlsx")  # runs every step all at once
-
-----------------------------------
-
-## Example usage from command line:
-
-    $ export METHYL_BASE=/Users/abonham/documents/methyl_test
-    $ export PROMOTER_SEQ=TERT-promoter-genomic-sequence.txt
-    $ export PROMOTER_START=1293000
-    $ export PROMOTER_END=1296000
-    $ export CHROMOSOME=5
-    $ python pyllelic.py output.xlsx
 
 ----------------------------------
 
@@ -33,11 +22,11 @@
     import pyllelic
 
     pyllelic.set_up_env_variables(
-        methyl_base="/Users/abonham/documents/methyl_test",
-        promoter_seq="TERT-promoter-genomic-sequence.txt",
-        promoter_start="1293000",
-        promoter_end="1296000",
-        chromosome="5",
+        base_path="/Users/abonham/documents/test_allelic/",
+        prom_file="TERT-promoter-genomic-sequence.txt",
+        prom_start="1293000",
+        prom_end="1296000",
+        chrom="5",
     )
 
     files_set = pyllelic.make_list_of_bam_files()  # finds bam files
@@ -66,102 +55,31 @@ from skbio.alignment import StripedSmithWaterman
 import plotly.express as px  # noqa
 import subprocess
 from pathlib import Path
-from io import StringIO
 import statistics as stat  # noqa
 import openpyxl as pxl
-
-# Define base constants, but run set_up_env_variables() to correctly update them at run time
-BASE_DIRECTORY = (
-    Path(os.environ.get("METHYL_BASE")) if os.environ.get("METHYL_BASE") else Path.cwd()
-)
-BASE_DIRECTORY.mkdir(exist_ok=True)
-
-PROMOTER_FILE = (
-    BASE_DIRECTORY / os.environ.get("PROMOTER_SEQ")
-    if os.environ.get("PROMOTER_SEQ")
-    else BASE_DIRECTORY / "promoter.txt"
-)
-
-RESULTS_DIRECTORY = BASE_DIRECTORY / "results"
-RESULTS_DIRECTORY.mkdir(exist_ok=True)
-
-BAM_DIRECTORY = BASE_DIRECTORY / "bam_output"
-BAM_DIRECTORY.mkdir(exist_ok=True)
-
-ANALYSIS_DIRECTORY = (
-    Path(os.environ.get("ANALYSIS_FOLDER"))
-    if os.environ.get("ANALYSIS_FOLDER")
-    else BASE_DIRECTORY / "test"
-)
-ANALYSIS_DIRECTORY.mkdir(exist_ok=True)
-
-PROMOTER_START = (
-    int(os.environ.get("PROMOTER_START"))
-    if os.environ.get("PROMOTER_START")
-    else 1293000
-)
-
-PROMOTER_END = (
-    int(os.environ.get("PROMOTER_END")) if os.environ.get("PROMOTER_END") else 1296000
-)
-
-CHROMOSOME = os.environ.get("CHROMOSOME") if os.environ.get("CHROMOSOME") else "5"
+import config
 
 
-def set_up_env_variables(
-    methyl_base="/Users/abonham/documents/methyl_test",
-    promoter_seq="TERT-promoter-genomic-sequence.txt",
-    promoter_start="1293000",
-    promoter_end="1296000",
-    chromosome="5",
-):
-    """Helper method to set up all our environmental variables, such as for testing."""
+def set_up_env_variables(base_path, prom_file, prom_start, prom_end, chrom):
+    """Helper method to set up all our environmental variables, such as for testing.
 
-    os.environ["METHYL_BASE"] = methyl_base
-    os.environ["PROMOTER_SEQ"] = promoter_seq
-    os.environ["PROMOTER_START"] = promoter_start
-    os.environ["PROMOTER_END"] = promoter_end
-    os.environ["CHROMOSOME"] = chromosome
+    Args:
+        base_path (str): directory where all processing will occur, put .bam files in "test"
+                         sub-directory in this folder
+        prom_file (str): filename of genmic sequence of promoter region of interest
+        prom_start (str): start position to analyze in promoter region
+        prom_end (str): final position to analyze in promoter region
+        chrom (str): chromosome promoter is located on
+    """
 
-    BASE_DIRECTORY = (
-        Path(os.environ.get("METHYL_BASE"))
-        if os.environ.get("METHYL_BASE")
-        else Path.cwd()
-    )
-    BASE_DIRECTORY.mkdir(exist_ok=True)
-
-    PROMOTER_FILE = (  # noqa
-        BASE_DIRECTORY / os.environ.get("PROMOTER_SEQ")
-        if os.environ.get("PROMOTER_SEQ")
-        else BASE_DIRECTORY / "promoter.txt"
-    )
-
-    RESULTS_DIRECTORY = BASE_DIRECTORY / "results"
-    RESULTS_DIRECTORY.mkdir(exist_ok=True)
-
-    BAM_DIRECTORY = BASE_DIRECTORY / "bam_output"
-    BAM_DIRECTORY.mkdir(exist_ok=True)
-
-    ANALYSIS_DIRECTORY = (
-        Path(os.environ.get("ANALYSIS_FOLDER"))
-        if os.environ.get("ANALYSIS_FOLDER")
-        else BASE_DIRECTORY / "test"
-    )
-    ANALYSIS_DIRECTORY.mkdir(exist_ok=True)
-
-    PROMOTER_START = (  # noqa
-        int(os.environ.get("PROMOTER_START"))
-        if os.environ.get("PROMOTER_START")
-        else 1293000
-    )
-
-    PROMOTER_END = (  # noqa
-        int(os.environ.get("PROMOTER_END"))
-        if os.environ.get("PROMOTER_END")
-        else 1296000
-    )
-
-    CHROMOSOME = os.environ.get("CHROMOSOME") if os.environ.get("CHROMOSOME") else "5"  # noqa
+    config.base_directory = Path(base_path)
+    config.promoter_file = Path(base_path) / prom_file
+    config.results_directory = Path(base_path) / "results"
+    config.bam_directory = Path(base_path) / "bam_output"
+    config.analysis_directory = Path(base_path) / "test"
+    config.promoter_start = prom_start
+    config.promoter_end = prom_end
+    config.chromosome = chrom
 
 
 ##################################################################################
@@ -216,7 +134,7 @@ def run_quma(directory, genomic_seq_file, reads_seq_file):
         bytes: shell output from quma command
     """
 
-    quma_path = os.fspath(BASE_DIRECTORY.joinpath("quma_cui"))
+    quma_path = os.fspath(config.base_directory.joinpath("quma_cui"))
     command = [
         "perl",
         f"{quma_path}/quma.pl",
@@ -237,7 +155,7 @@ def make_list_of_bam_files():
         list[str]: list of files
     """
 
-    indv_bam = [b for b in ANALYSIS_DIRECTORY.iterdir()]
+    indv_bam = [b for b in config.analysis_directory.iterdir()]
 
     init_files_set = [bam.name for bam in indv_bam if bam.suffix == ".bam"]
 
@@ -267,7 +185,7 @@ def index_and_fetch(files_set):
         list[str]: list of genomic positions analyzed
     """
 
-    sam_path = [BASE_DIRECTORY / "test" / f for f in files_set]
+    sam_path = [config.base_directory / "test" / f for f in files_set]
 
     all_pos = []
     for sams in sam_path:
@@ -292,7 +210,7 @@ def run_sam_and_extract_df(sams):
 
     # Grab the promoter region of interest
     samm = pysam.AlignmentFile(sams, "rb")
-    itern = samm.fetch(CHROMOSOME, PROMOTER_START, PROMOTER_END)
+    itern = samm.fetch(config.chromosome, int(config.promoter_start), int(config.promoter_end))
 
     position = []
     sequence = []
@@ -331,10 +249,10 @@ def run_sam_and_extract_df(sams):
             # returns aligned target sequence
 
         # Make sure bam_output directory and sam subdirectories exist
-        BASE_DIRECTORY.joinpath("bam_output", sams.name).mkdir(
+        config.base_directory.joinpath("bam_output", sams.name).mkdir(
             parents=True, exist_ok=True
         )
-        directory = BASE_DIRECTORY.joinpath("bam_output", sams.name)
+        directory = config.base_directory.joinpath("bam_output", sams.name)
 
         with open(directory.joinpath(str(each1) + ".txt"), "w") as file_handler:
             for item in read_file:
@@ -363,10 +281,10 @@ def genome_parsing():
     """Writes out a list of genomic sequence strings for comparison to read data."""
 
     # Grab list of directories
-    subfolders = [x for x in BAM_DIRECTORY.iterdir() if x.is_dir()]
+    subfolders = [x for x in config.bam_directory.iterdir() if x.is_dir()]
 
     # Grab genomic sequence
-    with open(PROMOTER_FILE, "r") as f:
+    with open(config.promoter_file, "r") as f:
         genome_base = f.readlines()
         genome_base_lines = [s.rstrip("\n") for s in genome_base]
         genome_string = "".join(map(str, genome_base_lines))
@@ -408,9 +326,9 @@ def quma_full(cell_types, filename):
     """
 
     # Grab list of directories
-    subfolders = [f.path for f in os.scandir(BAM_DIRECTORY) if f.is_dir()]
+    subfolders = [f.path for f in os.scandir(config.bam_directory) if f.is_dir()]
 
-    writer = pd.ExcelWriter(BASE_DIRECTORY.joinpath(filename))
+    writer = pd.ExcelWriter(config.base_directory.joinpath(filename))
 
     # Wrap everything in processing them one at a time
     for folder in subfolders:
@@ -436,7 +354,7 @@ def quma_full(cell_types, filename):
                 )
 
                 dots = []
-                for line in StringIO(quma_result.decode("utf-8")):
+                for line in quma_result.splitlines():
                     if not line.lstrip().startswith("g"):
                         fields = line.split("\t")
                         if float(fields[7]) < 80:
@@ -478,10 +396,10 @@ def run_quma_and_compile_list_of_df(cell_types, filename):
 
     df_full_list = []
 
-    quma_full(
-        cell_types, filename
+    quma_full(cell_types, filename)
+    df = pd.read_excel(
+        config.base_directory.joinpath(filename), dtype=str, sheet_name=None
     )
-    df = pd.read_excel(BASE_DIRECTORY.joinpath(filename), dtype=str, sheet_name=None)
     df_full_list.append(df)
 
     for df in df_full_list:
@@ -549,7 +467,7 @@ def process_means(list_of_dfs, positions, cell_types):
 
         alpha = "cell_types"  # FIXME: not actually unique naming
 
-        means_df.to_csv(path_or_buf=RESULTS_DIRECTORY.joinpath(alpha + pos))
+        means_df.to_csv(path_or_buf=config.results_directory.joinpath(alpha + pos))
         total_means.append(means_df)
 
     return total_means
@@ -566,7 +484,7 @@ def write_means_to_excel(means_df, cell_types):
     for ix, each in enumerate(means_df):
         t = cell_types[ix]  # FIXME: how to access correct cell_type label??
         sheet = t
-        excel_book = pxl.load_workbook(RESULTS_DIRECTORY.joinpath("testT.xlsx"))
+        excel_book = pxl.load_workbook(config.results_directory.joinpath("testT.xlsx"))
         # FIXME: Fixed filename??
         with pd.ExcelWriter("testT.xlsx", engine="openpyxl") as writer:
             writer.book = excel_book
