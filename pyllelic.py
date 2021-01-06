@@ -390,18 +390,21 @@ def extract_cell_types(file_sets):
     return [file.split("_")[1] for file in file_sets]
 
 
-def run_quma_and_compile_list_of_df(cell_types, filename):
+def run_quma_and_compile_list_of_df(cell_types, filename, run_quma=True):
     """Wrapper to run QUMA on all cell lines in the dataset and write output files.
 
     Args:
         cell_types (list[str]): list of cell lines in the dataset
         filename (str): desired output filename
+        run_quma (bool): whether we should invoke the external quma run, default True
 
     Returns:
         Dict[pd.DataFrame]: dict of dataframes of quma results
     """
 
-    quma_full(cell_types, filename)
+    if run_quma:
+        quma_full(cell_types, filename)
+
     df = pd.read_excel(
         config.base_directory.joinpath(filename),
         dtype=str,
@@ -416,7 +419,7 @@ def process_means(dict_of_dfs, positions, cell_types):
     """Process the mean values at each position for each cell line.
 
     Args:
-        list_of_dfs (list[pd.DataFrame]): list of dataframes of quma results
+        dict_of_dfs (Dict[pd.DataFrame]): dict of dataframes of quma results
         positions (list[str]): list of genomic positions to analyze
         cell_types (list[str]): list of cell lines in the dataset
 
@@ -460,7 +463,7 @@ def process_modes(dict_of_dfs, positions, cell_types):
     """Process the mode values at each position for each cell line.
 
     Args:
-        list_of_dfs (list[pd.DataFrame]): list of dataframes of quma results
+        dict_of_dfs (Dict[pd.DataFrame]): dict of dataframes of quma results
         positions (list[str]): list of genomic positions to analyze
         cell_types (list[str]): list of cell lines in the dataset
 
@@ -498,6 +501,47 @@ def process_modes(dict_of_dfs, positions, cell_types):
     modes_df = working_df
 
     return modes_df
+
+
+def return_individual_data(dict_of_dfs, positions, cell_types):
+    """Return a dataframe for methylation values at each position for each cell line.
+
+    Args:
+        dict_of_dfs (Dict[pd.DataFrame]): dict of dataframes of quma results
+        positions (list[str]): list of genomic positions to analyze
+        cell_types (list[str]): list of cell lines in the dataset
+
+    Returns:
+        pd.DataFrame: dataframes of methylation values for each position in each cell line
+    """
+
+    bad_values = ["N", "F"]  # for interpreting quma returns
+
+    df_full = dict_of_dfs
+
+    working_df = pd.DataFrame()
+    for pos in positions:
+        working_df[pos] = ""
+        for key, each in df_full.items():
+            values_list = []
+            if pos in df_full[key].columns:
+                if not (
+                    len(df_full[key].loc[:, pos].dropna().astype(str)) < 5
+                    and not len(df_full[key].loc[:, pos].dropna().astype(str)[0]) < 3
+                ):
+                    for value in df_full[key].loc[:, pos].dropna().astype(str):
+                        if not any(substring in value for substring in bad_values):
+                            fraction_val = float(value.count("1")) / float(len(value))
+                            values_list.append(fraction_val)
+
+            if values_list:
+                data_for_df = values_list
+            else:
+                data_for_df = np.nan
+
+            working_df.loc[key, pos] = data_for_df
+
+    return working_df
 
 
 def find_diffs(means_df, modes_df):
