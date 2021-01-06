@@ -109,7 +109,7 @@ def main(filename):
 ##################################################################################
 
 
-def genome_range(position, genome_string):
+def genome_range(position, genome_string):  # TODO: This may be specific only for TERT
     """Helper to return a genome string (e.g., "ATCGACTAG")
     given a position and an entire string.
 
@@ -586,43 +586,22 @@ def write_means_modes_diffs(means_df, modes_df, diff_df, filename):
     )
 
 
-"""
-## Modes Histogram
-counts, bins = np.histogram(modes_df.T[1:].set_index(0).values, bins=np.linspace(0,1,5))
-bins = 0.5 * (bins[:-1] + bins[1:])
-fig_modes = px.bar(x=bins, y=counts, labels={'x':'Methylation Percent', 'y':'count'})
-fig_modes.show()
+def histogram(data_df, cell_line, pos):
+    """Return a histogram of the methylation data at a given cell line and position,
+       using built-in pandas histogram capacilities.
 
-newdf = means_df
-keepdf =newdf.rename(columns=newdf.iloc[0]).drop(newdf.index[0]) #renames columns.
-keepdf = keepdf.set_index('')
-keepdf = keepdf.transpose().dropna()
-keepdf = pd.DataFrame(keepdf)
-print(keepdf)
-binned_data = []
-for col in keepdf.columns:
-    col_bin_means = stats.binned_statistic(
-                                       col,
-                                       keepdf[col].values.tolist(),
-                                       bins=5,
-                                       range=(0, 1)
-     )[0]
-     a = np.histogram(keepdf[col].values.tolist(), bins=5, range=(0,1), density=True)[0]
-#creates histogram of iterative objects in keepdf
-     a_True = list(a / a.sum())
-#gives a list of percent of each object by dividing each value by the sum of the values.
-    a_True.insert(0,str(col))
-    binned_data.append(a_True)
-binned_data
+    Args:
+        data_df (pd.DataFrame): a dataframe of individual methylation data
+        cell_line (str): Name of a cell line in our data_set
+        pos (str): genomic position
 
-mut_binned_df = (
-    pd.DataFrame(binned_data,columns=['position','0%','25%','50%','75%','100%'])
-    .set_index('position')
-    )
-mut_binned = mut_binned_df.dropna().transpose()
-mut_binned
-mut_binned_df.values.tolist()
-"""
+    Returns:
+        histogram: matplotlib histogram figure"""
+
+    data_to_graph = data_df.loc[cell_line, pos]
+
+    return pd.DataFrame(data_to_graph).hist()
+
 
 if __name__ == "__main__":
     main(sys.argv[1])  # run the whole shebang using defaults and env variables!
