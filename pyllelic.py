@@ -353,7 +353,7 @@ def quma_full(cell_types, filename):
             ]
 
             # Now, process each file:
-            for read_name in tqdm(read_files, desc="Positions"):
+            for read_name in tqdm(read_files, desc="Positions", leave=False):
                 # file_lines = []
 
                 quma_result = run_quma(
@@ -376,8 +376,11 @@ def quma_full(cell_types, filename):
                 holding_df = pd.concat([holding_df, int_df], axis=1)
                 # holdng_df[read_name]=dots
 
+            # Get short name of cell_line
+            cell_line_name = Path(folder).name.split('_')[1]
+
             # Now, save it to an excel file
-            holding_df.to_excel(writer, sheet_name=Path(folder).name)
+            holding_df.to_excel(writer, sheet_name=cell_line_name)
 
             del holding_df
 
