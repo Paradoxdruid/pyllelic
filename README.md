@@ -4,9 +4,9 @@
 
 :microscope: **pyllelic**: a tool for detection of allelic-specific methylation variation in DNA sequencing files.
 
-:warning: **This is a work-in-progress, and may not be functional at present!** :warning:
+:warning: This is a work-in-progress, and not all functions are implemented at present. :warning:
 
-See `pyllelic_notebook.ipynb` for an interactive demonstration.
+See [`pyllelic_notebook.ipynb`](https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.ipynb) for an interactive demonstration.
 
 ## Example usage in ipython / jupyter notebook:
 ```python
@@ -88,3 +88,7 @@ conda install -c conda-forge jupyter_contrib_nbextensions
 ### Install quma
 * Download from http://quma.cdb.riken.jp/files/quma_cui-1.0.0.tar.gz
 * Untar into `base_path`
+
+
+## Authors
+This software is developed as academic software by [Dr. Andrew J. Bonham](https://github.com/Paradoxdruid) at the [Metropolitan State University of Denver](https://www.msudenver.edu). It is licensed under the GPL v3.0.
