@@ -67,8 +67,8 @@ def set_up_env_variables(base_path, prom_file, prom_start, prom_end, chrom):
     """Helper method to set up all our environmental variables, such as for testing.
 
     Args:
-        base_path (str): directory where all processing will occur, put .bam files in "test"
-                         sub-directory in this folder
+        base_path (str): directory where all processing will occur, put .bam files
+                         in "test" sub-directory in this folder
         prom_file (str): filename of genmic sequence of promoter region of interest
         prom_start (str): start position to analyze in promoter region
         prom_end (str): final position to analyze in promoter region
@@ -88,7 +88,8 @@ def set_up_env_variables(base_path, prom_file, prom_start, prom_end, chrom):
 ##################################################################################
 ##################################################################################
 def main(filename):
-    """Run a given set of Pyllelic analysis, using values from supplied environmental variables.
+    """Run a given set of Pyllelic analysis, using values from
+    supplied environmental variables.
 
     Args:
         filename: filename to write output of analysis to.
@@ -170,14 +171,14 @@ def make_list_of_bam_files():
 
     baii = [str(bai).split(".")[0] for bai in bai_set]
 
-    files_set = [file + (".TERT.bam") for file in f_set if file in baii]
+    files_set = [name + (".TERT.bam") for name in f_set if name in baii]
 
-    final_file_sets = []
+    # final_file_sets = []
 
-    # Code truncates to aleviate excel file_name limit of <=31 characters:
-    final_file_sets = [data[:29] for data in files_set]
+    # # Code truncates to aleviate excel file_name limit of <=31 characters:
+    # final_file_sets = [data[:29] for data in files_set]
 
-    return final_file_sets
+    return files_set
 
 
 def index_and_fetch(files_set):
@@ -201,7 +202,8 @@ def index_and_fetch(files_set):
 
 
 def run_sam_and_extract_df(sams):
-    """Process samfiles, pulling out sequence and position data and writing to folders/files.
+    """Process samfiles, pulling out sequence and position data
+    and writing to folders/files.
 
     Args:
         sams (str): path to a samfile
@@ -252,7 +254,7 @@ def run_sam_and_extract_df(sams):
         read_file = []
         for index, each in enumerate(alignments):
             read_file.append(str(">read" + str(index)))
-            read_file.append(alignments[0].aligned_target_sequence)
+            read_file.append(each.aligned_target_sequence)
             # returns aligned target sequence
 
         # Make sure bam_output directory and sam subdirectories exist
@@ -340,7 +342,10 @@ def quma_full(cell_types, filename):
     # Wrap everything in processing them one at a time
     for folder in tqdm(subfolders, desc="Cell Lines"):
 
-        if any(substring in folder for substring in cell_types):
+        # Get short name of cell_line
+        cell_line_name = Path(folder).name.split("_")[1]
+
+        if set([cell_line_name]).intersection(set(cell_types)):
             # Set up a holding data frame from all the data
             holding_df = pd.DataFrame()
 
@@ -376,9 +381,6 @@ def quma_full(cell_types, filename):
                 holding_df = pd.concat([holding_df, int_df], axis=1)
                 # holdng_df[read_name]=dots
 
-            # Get short name of cell_line
-            cell_line_name = Path(folder).name.split('_')[1]
-
             # Now, save it to an excel file
             holding_df.to_excel(writer, sheet_name=cell_line_name)
 
@@ -394,7 +396,7 @@ def extract_cell_types(file_sets):
 
 
 def run_quma_and_compile_list_of_df(cell_types, filename, run_quma=True):
-    """Wrapper to run QUMA on all cell lines in the dataset and write output files.
+    """Wrapper to run QUMA on all cell lines in the dataset and write output file.
 
     Args:
         cell_types (list[str]): list of cell lines in the dataset
@@ -430,29 +432,16 @@ def process_means(dict_of_dfs, positions, cell_types):
         pd.DataFrame: dataframes of mean values for each position in each cell line
     """
 
-    bad_values = ["N", "F"]  # for interpreting quma returns
-
-    df_full = dict_of_dfs
-
-    # Gives the means of each individual positions-- NOT the mean of the entire dataframe!
+    # Gives the means of each positions-- NOT the mean of the entire dataframe!
     working_df = pd.DataFrame()
     for pos in positions:
         working_df[pos] = ""
-        for key, each in df_full.items():
-            values_list = []
-            if pos in df_full[key].columns:
-                if not (
-                    len(df_full[key].loc[:, pos].dropna().astype(str)) < 5
-                    and not len(df_full[key].loc[:, pos].dropna().astype(str)[0]) < 3
-                ):
-                    for value in df_full[key].loc[:, pos].dropna().astype(str):
-                        if not any(substring in value for substring in bad_values):
-                            fraction_val = float(value.count("1")) / float(len(value))
-                            values_list.append(fraction_val)
+        for key, each in dict_of_dfs.items():
+            values_list = return_read_values(pos, key, dict_of_dfs)
 
             if values_list:
                 pos_means = np.mean(values_list)
-            else:
+            else:  # No data or data doesn't meet minimums for analysis
                 pos_means = np.nan
 
             working_df.loc[key, pos] = pos_means
@@ -474,29 +463,16 @@ def process_modes(dict_of_dfs, positions, cell_types):
         pd.DataFrame: dataframes of mode values for each position in each cell line
     """
 
-    bad_values = ["N", "F"]  # for interpreting quma returns
-
-    df_full = dict_of_dfs
-
-    # Gives the modes of each individual positions-- NOT the mean of the entire dataframe!
+    # Gives the modes of each positions-- NOT the mean of the entire dataframe!
     working_df = pd.DataFrame()
     for pos in positions:
         working_df[pos] = ""
-        for key, each in df_full.items():
-            values_list = []
-            if pos in df_full[key].columns:
-                if not (
-                    len(df_full[key].loc[:, pos].dropna().astype(str)) < 5
-                    and not len(df_full[key].loc[:, pos].dropna().astype(str)[0]) < 3
-                ):
-                    for value in df_full[key].loc[:, pos].dropna().astype(str):
-                        if not any(substring in value for substring in bad_values):
-                            fraction_val = float(value.count("1")) / float(len(value))
-                            values_list.append(fraction_val)
+        for key, each in dict_of_dfs.items():
+            values_list = return_read_values(pos, key, dict_of_dfs)
 
             if values_list:
                 pos_modes = stats.mode(values_list)[0][0]
-            else:
+            else:  # No data or data doesn't meet minimums for analysis
                 pos_modes = np.nan
 
             working_df.loc[key, pos] = pos_modes
@@ -515,36 +491,59 @@ def return_individual_data(dict_of_dfs, positions, cell_types):
         cell_types (list[str]): list of cell lines in the dataset
 
     Returns:
-        pd.DataFrame: dataframes of methylation values for each position in each cell line
+        pd.DataFrame: methylation values for each position in each cell line
     """
 
-    bad_values = ["N", "F"]  # for interpreting quma returns
-
-    df_full = dict_of_dfs
-
     working_df = pd.DataFrame()
-    for pos in positions:
-        working_df[pos] = ""
-        for key, each in df_full.items():
-            values_list = []
-            if pos in df_full[key].columns:
-                if not (
-                    len(df_full[key].loc[:, pos].dropna().astype(str)) < 5
-                    and not len(df_full[key].loc[:, pos].dropna().astype(str)[0]) < 3
-                ):
-                    for value in df_full[key].loc[:, pos].dropna().astype(str):
-                        if not any(substring in value for substring in bad_values):
-                            fraction_val = float(value.count("1")) / float(len(value))
-                            values_list.append(fraction_val)
-
+    for pos in tqdm(positions, desc="Position"):
+        working_df[pos] = ""  # Create position column in dataframe
+        for key, each in tqdm(dict_of_dfs.items(), desc="Cell Line", leave=False):
+            values_list = return_read_values(pos, key, dict_of_dfs)
             if values_list:
                 data_for_df = values_list
-            else:
+            else:  # No data or data doesn't meet minimums for analysis
                 data_for_df = np.nan
 
             working_df.loc[key, pos] = data_for_df
 
     return working_df
+
+
+def return_read_values(pos, key, dict_of_dfs):
+    """Given a genomic position, cell line, and data, find fractional methylation
+       values for each read in the dataset.
+
+    Args:
+        pos (str): genomic position of read
+        key (str): cell line name
+        dict_of_dfs (Dict[pd.DataFrame]): dictionary of methylation data
+
+    Returns:
+        List[float]: list of fractional methylation for each read
+    """
+
+    bad_values = ["N", "F"]  # for interpreting quma returns
+    min_num_of_reads = 4  # Only include if 5 reads or more
+    min_num_meth_sites = 2  # Only include is read has 3 methylation sites or more
+
+    values_list = []
+    # Check if this cell line has that position
+    if pos in dict_of_dfs.get(key).columns:
+
+        values_to_check = dict_of_dfs.get(key).loc[:, pos].dropna().astype(str)
+        if not len(values_to_check) == 0:  # Skip empty values
+            if (
+                len(values_to_check) > min_num_of_reads
+                and len(values_to_check) > min_num_meth_sites
+            ):
+                for value in values_to_check:
+                    if not any(substring in value for substring in bad_values):
+                        fraction_val = float(value.count("1")) / float(
+                            len(value)
+                        )  # number of methylated sites in each read
+                        values_list.append(fraction_val)
+
+    return values_list
 
 
 def find_diffs(means_df, modes_df):
