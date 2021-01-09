@@ -31,7 +31,7 @@
 
     files_set = pyllelic.make_list_of_bam_files()  # finds bam files
 
-    positions = pyllelic.index_and_fetch(files_set)  # index bam and creates bam_output folders/files
+    positions = pyllelic.index_and_fetch(files_set)  # index and creates bam_output folders/files
 
     pyllelic.genome_parsing()  # writes out genome strings in bam_output folders
 
@@ -173,11 +173,6 @@ def make_list_of_bam_files():
 
     files_set = [name + (".TERT.bam") for name in f_set if name in baii]
 
-    # final_file_sets = []
-
-    # # Code truncates to aleviate excel file_name limit of <=31 characters:
-    # final_file_sets = [data[:29] for data in files_set]
-
     return files_set
 
 
@@ -237,16 +232,31 @@ def run_sam_and_extract_df(sams):
     df3 = df2.stack()
     # if confused, see: https://www.w3resource.com/pandas/dataframe/dataframe-stack.php
 
-    # Now, iterate through the dataframe
-    for each1 in df2.index.unique():
+    # Now, iterate through dataframe and write output files
+    write_bam_output_files(sams, df2.index.unique(), df3)
+
+    return df2.index.unique()  # return all unique positions in the data
+
+
+def write_bam_output_files(sams, positions, df):
+    """Extract alignments from sequencing reads and output text files
+       in bam directory.
+
+    Args:
+        sams (str): path to a sam file
+        positions (List[str]): list of unique positions
+        df (pd.DataFrame): dataframe of sequencing reads
+    """
+
+    for each1 in positions:
         alignments = []
 
         # Set up query using alignment algorithm
-        query_sequence = df3.loc[each1].head(1).tolist()[0]
+        query_sequence = df.loc[each1].head(1).tolist()[0]
         query = StripedSmithWaterman(query_sequence)
 
         # Set up sequences to check for alignment
-        target_sequences = df3.loc[each1].tolist()
+        target_sequences = df.loc[each1].tolist()
         for target_sequence in target_sequences:
             alignment = query(target_sequence)
             alignments.append(alignment)
@@ -266,8 +276,6 @@ def run_sam_and_extract_df(sams):
         with open(directory.joinpath(str(each1) + ".txt"), "w") as file_handler:
             for item in read_file:
                 file_handler.write("{}\n".format(item))
-
-    return df2.index.unique()  # return all unique positions in the data
 
 
 def samtools_index(sams):
@@ -308,7 +316,7 @@ def genome_parsing():
             for i in raw_read_files
             if not i.lstrip().startswith("g")
             and not i.lstrip().startswith(".ip")
-            and not i.lstrip().startswith(".DS")
+            and not i.lstrip().startswith(".DS")  # mac .DS_store files
         ]
 
         # Now, process each file:
@@ -410,14 +418,27 @@ def run_quma_and_compile_list_of_df(cell_types, filename, run_quma=True):
     if run_quma:
         quma_full(cell_types, filename)
 
-    df = pd.read_excel(
+    df = read_df_of_quma_results(filename)
+
+    return df
+
+
+def read_df_of_quma_results(filename):
+    """Read excel output of quma results into dataframe.
+
+    Args:
+        filename (str): filename of quma results
+
+    Returns:
+        pd.DataFrame: dataframe of quma results
+    """
+
+    return pd.read_excel(
         config.base_directory.joinpath(filename),
         dtype=str,
         sheet_name=None,
         index_col=0,
     )
-
-    return df
 
 
 def process_means(dict_of_dfs, positions, cell_types):
@@ -509,7 +530,7 @@ def return_individual_data(dict_of_dfs, positions, cell_types):
     return working_df
 
 
-def return_read_values(pos, key, dict_of_dfs):
+def return_read_values(pos, key, dict_of_dfs, min_reads=4, min_sites=2):
     """Given a genomic position, cell line, and data, find fractional methylation
        values for each read in the dataset.
 
@@ -517,14 +538,16 @@ def return_read_values(pos, key, dict_of_dfs):
         pos (str): genomic position of read
         key (str): cell line name
         dict_of_dfs (Dict[pd.DataFrame]): dictionary of methylation data
+        min_reads (int): minimum bound for # reads to consider
+        min_sites (int): minimum bound for # methylation sites to consider
 
     Returns:
         List[float]: list of fractional methylation for each read
     """
 
     bad_values = ["N", "F"]  # for interpreting quma returns
-    min_num_of_reads = 4  # Only include if 5 reads or more
-    min_num_meth_sites = 2  # Only include is read has 3 methylation sites or more
+    min_num_of_reads = min_reads  # Only include if >4 reads
+    min_num_meth_sites = min_sites  # Only include is read has >2 methylation sites
 
     values_list = []
     # Check if this cell line has that position
