@@ -1,0 +1,9 @@
+pandas
+numpy
+scipy
+plotly
+xlsxwriter
+xlrd
+samtools
+pysam
+scikit-bio

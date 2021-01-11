@@ -60,7 +60,7 @@ import subprocess
 from pathlib import Path
 from scipy import stats
 from tqdm.notebook import tqdm
-import config
+from . import config
 
 
 def set_up_env_variables(base_path, prom_file, prom_start, prom_end, chrom):
