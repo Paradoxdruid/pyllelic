@@ -125,3 +125,4 @@ dmypy.json
 # Ignore tests in work
 test_pyllelic_notebook.ipynb
 .DS_Store
+.vscode/
