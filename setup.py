@@ -5,10 +5,12 @@ conda to install dependencies.
 """
 
 # Always prefer setuptools over distutils
-from setuptools import setup, find_packages, Command
-import subprocess
+from setuptools import setup, find_packages  # , Command
+
+# import subprocess
 import pathlib
-from distutils.command.build import build as _build
+
+# from distutils.command.build import build as _build
 
 here = pathlib.Path(__file__).parent.resolve()
 
@@ -17,58 +19,58 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 # Get version info from __version__.py
 version = {}
-with open(here / "pyllelic" / "version.py") as f:
+with open(here / "pyllelic" / "__version__.py") as f:
     exec(f.read(), version)
 
 # Install non-python dependencies
-CUSTOM_COMMANDS = [
-    ["conda", "install", "-c", "bioconda", "emboss"],
-    ["conda", "install", "-c", "bioconda", "perl", "perl-cpanminus"],
-    ["cpan", "install", "Statistics::Lite"],
-]
+# CUSTOM_COMMANDS = [
+#     ["conda", "install", "-c", "bioconda", "emboss"],
+#     ["conda", "install", "-c", "bioconda", "perl", "perl-cpanminus"],
+#     ["cpan", "install", "Statistics::Lite"],
+# ]
 
 
-class CustomCommands(Command):
-    """A setuptools Command class able to run arbitrary commands."""
+# class CustomCommands(Command):
+#     """A setuptools Command class able to run arbitrary commands."""
 
-    def initialize_options(self):
-        pass
+#     def initialize_options(self):
+#         pass
 
-    def finalize_options(self):
-        pass
+#     def finalize_options(self):
+#         pass
 
-    def RunCustomCommand(self, command_list):
-        print("Running command: %s" % command_list)
-        p = subprocess.Popen(
-            command_list,
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-        )
-        # Can use communicate(input='y\n'.encode()) if the command run requires
-        # some confirmation.
-        stdout_data, _ = p.communicate()
-        print("Command output: %s" % stdout_data)
-        if p.returncode != 0:
-            raise RuntimeError(
-                "Command %s failed: exit code: %s" % (command_list, p.returncode)
-            )
+#     def RunCustomCommand(self, command_list):
+#         print("Running command: %s" % command_list)
+#         p = subprocess.Popen(
+#             command_list,
+#             stdin=subprocess.PIPE,
+#             stdout=subprocess.PIPE,
+#             stderr=subprocess.STDOUT,
+#         )
+#         # Can use communicate(input='y\n'.encode()) if the command run requires
+#         # some confirmation.
+#         stdout_data, _ = p.communicate()
+#         print("Command output: %s" % stdout_data)
+#         if p.returncode != 0:
+#             raise RuntimeError(
+#                 "Command %s failed: exit code: %s" % (command_list, p.returncode)
+#             )
 
-    def run(self):
-        for command in CUSTOM_COMMANDS:
-            self.RunCustomCommand(command)
+#     def run(self):
+#         for command in CUSTOM_COMMANDS:
+#             self.RunCustomCommand(command)
 
 
-# This class handles the pip install mechanism.
-class build(_build):
-    """A build command class that will be invoked during package install.
-    The package built using the current setup.py will be staged and later
-    installed in the worker using `pip install package'. This class will be
-    instantiated during install for this specific scenario and will trigger
-    running the custom commands specified.
-    """
+# # This class handles the pip install mechanism.
+# class build(_build):
+#     """A build command class that will be invoked during package install.
+#     The package built using the current setup.py will be staged and later
+#     installed in the worker using `pip install package'. This class will be
+#     instantiated during install for this specific scenario and will trigger
+#     running the custom commands specified.
+#     """
 
-    sub_commands = _build.sub_commands + [("CustomCommands", None)]
+#     sub_commands = _build.sub_commands + [("CustomCommands", None)]
 
 
 # Setup via pip
@@ -106,9 +108,9 @@ setup(
         "pysam",
         "scikit-bio",
     ],
-    cmdclass={
-        # Command class instantiated and run during pip install scenarios.
-        "build": build,
-        "CustomCommands": CustomCommands,
-    },
+    # cmdclass={
+    #     # Command class instantiated and run during pip install scenarios.
+    #     "build": build,
+    #     "CustomCommands": CustomCommands,
+    # },
 )
