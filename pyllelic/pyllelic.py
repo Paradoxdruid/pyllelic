@@ -13,7 +13,7 @@
         chrom="5",
     )
 
-    pyllelic.main("output.xlsx")  # runs every step all at once
+    pyllelic.main()  # runs every step all at once
 
 ----------------------------------
 
@@ -55,7 +55,7 @@ import pysam
 import os
 import sys
 from skbio.alignment import StripedSmithWaterman
-import plotly.express as px  # noqa
+import plotly.graph_objects as go
 import subprocess
 from pathlib import Path
 from scipy import stats
@@ -87,13 +87,15 @@ def set_up_env_variables(base_path, prom_file, prom_start, prom_end, chrom):
 
 ##################################################################################
 ##################################################################################
-def main(filename):
+def main():
     """Run a given set of Pyllelic analysis, using values from
     supplied environmental variables.
-
-    Args:
-        filename: filename to write output of analysis to.
     """
+
+    if sys.argv[1]:
+        filename = sys.argv[1]
+    else:
+        filename = "output.xlsx"
 
     files_set = make_list_of_bam_files()
     positions = index_and_fetch(files_set)
@@ -110,20 +112,26 @@ def main(filename):
 ##################################################################################
 
 
-def genome_range(position, genome_string):  # TODO: This may be specific only for TERT
+def genome_range(position, genome_string, offset=None):
     """Helper to return a genome string (e.g., "ATCGACTAG")
     given a position and an entire string.
 
     Args:
         position: genomic position on chromesome
         genome_string: string representation of genomic promoter known sequence
+        offset: genomic position of promoter to offset reads
 
     Returns:
         str: genomic bases for indicated read / position
     """
 
-    start = 1298163 - (int(position) + 30)
-    end = 1298163 - (int(position) + 1)
+    OFFSET = 1298163  # TERT offset
+
+    if not offset:
+        offset = OFFSET
+
+    start = offset - (int(position) + 30)
+    end = offset - (int(position) + 1)
 
     return genome_string[start:end]
 
@@ -290,7 +298,7 @@ def samtools_index(sams):
 
     command = ["samtools", "index", os.fspath(sams)]
 
-    out = subprocess.run(command, capture_output=True, text=True)  # remove shell=True,
+    out = subprocess.run(command, capture_output=True, text=True)
     return out
 
 
@@ -387,7 +395,6 @@ def quma_full(cell_types, filename):
                 # Next, add this readname to the holding data frame
                 int_df = pd.DataFrame({read_name: dots2})
                 holding_df = pd.concat([holding_df, int_df], axis=1)
-                # holdng_df[read_name]=dots
 
             # Now, save it to an excel file
             holding_df.to_excel(writer, sheet_name=cell_line_name)
@@ -611,22 +618,53 @@ def write_means_modes_diffs(means_df, modes_df, diff_df, filename):
     )
 
 
-def histogram(data_df, cell_line, pos):
-    """Return a histogram of the methylation data at a given cell line and position,
-       using built-in pandas histogram capacilities.
+def create_histogram(data, cell_line, position):
+    """Generate a graph figure showing fractional methylation in
+       a given cell line at a given site.
 
     Args:
-        data_df (pd.DataFrame): a dataframe of individual methylation data
-        cell_line (str): Name of a cell line in our data_set
-        pos (str): genomic position
+        data (pd.DataFrame): dataframe of individual data
+        cell_line (str): name of cell line
+        position (str): genomic position
 
     Returns:
-        histogram: matplotlib histogram figure"""
+        go._figure.Figure: plotly figure object
+    """
+    fig = go.Figure()
+    fig.add_trace(
+        go.Histogram(
+            x=data.loc[cell_line, position],
+            xbins=dict(
+                start=-0.1,
+                end=1.1,
+                size=0.2,
+            ),  # offset bins to center displayed bars
+        )
+    )
+    fig.update_layout(
+        title_text=f"Methylation at pos: {position} for cell line: {cell_line}",
+        xaxis_title_text="Fraction of Sites Methylated in Read",
+        yaxis_title_text="Read Count",
+        bargap=0.2,
+        template="seaborn",
+    )
 
-    data_to_graph = data_df.loc[cell_line, pos]
+    return fig
 
-    return pd.DataFrame(data_to_graph).hist()
+
+def histogram(data, cell_line, position):
+    """Display a graph figure showing fractional methylation in
+       a given cell line at a given site.
+
+    Args:
+        data (pd.DataFrame): dataframe of individual data
+        cell_line (str): name of cell line
+        position (str): genomic position
+    """
+
+    fig = create_histogram(data, cell_line, position)
+    fig.show()
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])  # run the whole shebang using defaults and env variables!
+    main()
