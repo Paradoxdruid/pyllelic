@@ -18,9 +18,10 @@ here = pathlib.Path(__file__).parent.resolve()
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
 # Get version info from __version__.py
-version = {}
-with open(here / "pyllelic" / "__version__.py") as f:
-    exec(f.read(), version)
+# version = {}
+# with open(here / "pyllelic" / "__version__.py") as f:
+#     exec(f.read(), version)
+import pyllelic.__version__ as version
 
 # Install non-python dependencies
 # CUSTOM_COMMANDS = [
@@ -76,14 +77,14 @@ with open(here / "pyllelic" / "__version__.py") as f:
 # Setup via pip
 setup(
     name="pyllelic",
-    version=version["__version__"],
-    author=version["__author__"],
-    author_email=version["__author_email__"],
-    description=version["__description__"],
-    license=version["__license__"],
+    version=version.__version__,  # ["__version__"],
+    author=version.__author__,  # ["__author__"],
+    author_email=version.__author_email__,  # ["__author_email__"],
+    description=version.__description__,  # ["__description__"],
+    license=version.__license__,  # ["__license__"],
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url=version["__url__"],
+    url=version.__url__,  # ["__url__"],
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
