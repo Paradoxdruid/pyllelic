@@ -285,11 +285,12 @@ def samtools_index(sams: Path) -> str:
     return out
 
 
-def genome_parsing() -> None:
+def genome_parsing(subfolders: List[Path] = None) -> None:
     """Writes out a list of genomic sequence strings for comparison to read data."""
 
     # Grab list of directories
-    subfolders: List[Path] = [x for x in config.bam_directory.iterdir() if x.is_dir()]
+    if not subfolders:
+        subfolders = [x for x in config.bam_directory.iterdir() if x.is_dir()]
 
     # Grab genomic sequence
     with open(config.promoter_file, "r") as f:
@@ -647,9 +648,7 @@ def write_means_modes_diffs(
     )
 
 
-def create_histogram(
-    data: pd.DataFrame, cell_line: str, position: str
-) -> go._figure.Figure:
+def create_histogram(data: pd.DataFrame, cell_line: str, position: str) -> go.Figure:
     """Generate a graph figure showing fractional methylation in
        a given cell line at a given site.
 
@@ -659,7 +658,7 @@ def create_histogram(
         position (str): genomic position
 
     Returns:
-        go._figure.Figure: plotly figure object
+        go.Figure: plotly figure object
     """
     fig: go.Figure = go.Figure()
     fig.add_trace(
