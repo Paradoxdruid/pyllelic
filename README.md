@@ -1,14 +1,14 @@
 # pyllelic
 
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Paradoxdruid/pyllelic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Paradoxdruid/pyllelic/context:python)  [![CodeFactor](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic/badge)](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic)  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black) ![PyPI](https://img.shields.io/pypi/v/pyllelic?color=success)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Paradoxdruid/pyllelic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Paradoxdruid/pyllelic/context:python)  [![CodeFactor](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic/badge)](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic)  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black) [![PyPI](https://img.shields.io/pypi/v/pyllelic?color=success)](https://pypi.org/project/pyllelic/)
 
 :microscope: **pyllelic**: a tool for detection of allelic-specific methylation variation in DNA sequencing files.
 
-:warning: This is a work-in-progress, and not all functions are implemented at present. :warning:
+:warning: This is a work-in-progress. :warning:
 
 See [`pyllelic_notebook.ipynb`](https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.ipynb) for an interactive demonstration.
 
-## Example usage in ipython / jupyter notebook:
+## Example quick usage in ipython / jupyter notebook:
 ```python
     import pyllelic
 
@@ -20,7 +20,7 @@ See [`pyllelic_notebook.ipynb`](https://github.com/Paradoxdruid/pyllelic/blob/ma
         chrom="5",
     )
 
-    pyllelic.main("output.xlsx")  # runs every step all at once
+    pyllelic.main("output.xlsx")  # runs every step, outputting results to excel
 ```
 
 ----------------------------------
@@ -62,7 +62,7 @@ See [`pyllelic_notebook.ipynb`](https://github.com/Paradoxdruid/pyllelic/blob/ma
 ----------------------------------
 
 ## Dependencies and Installation
-### Conda Environment
+### Conda environment
 * Create a new conda environment using python 3.7:
 ```bash
 conda create --name methyl python=3.7
@@ -70,25 +70,32 @@ conda activate methyl
 conda config --add channels conda-forge
 conda config --set channel_priority strict
 ```
-* Install python dependencies:
-```bash
-conda install pandas numpy scipy plotly dash notebook xlsxwriter xlrd
-conda install -c bioconda samtools pysam scikit-bio
-```
-* Install system dependencies:
+### System dependencies
 ```bash
 conda install -c bioconda emboss
 conda install -c bioconda perl perl-app-cpanminus
 cpan install Statistics::Lite
 ```
-* Set up jupyter:
+### jupyter setup
 ```bash
 conda install -c conda-forge jupyter_contrib_nbextensions
 ```
-### Install quma
+### quma instllation
 * Download from http://quma.cdb.riken.jp/files/quma_cui-1.0.0.tar.gz
 * Untar into `base_path`
-
+### Install python dependencies (not needed if installed via `pip install pyllelic`)
+```bash
+conda install pandas numpy scipy plotly dash notebook xlsxwriter xlrd
+conda install -c bioconda samtools pysam scikit-bio
+```
+### Install pyllelic
+```bash
+pip install pyllelic
+```
+or
+```bash
+git clone https://github.com/Paradoxdruid/pyllelic.git
+```
 
 ## Authors
 This software is developed as academic software by [Dr. Andrew J. Bonham](https://github.com/Paradoxdruid) at the [Metropolitan State University of Denver](https://www.msudenver.edu). It is licensed under the GPL v3.0.
