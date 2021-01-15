@@ -60,7 +60,7 @@ import subprocess
 from pathlib import Path
 from scipy import stats
 from tqdm.notebook import tqdm
-from typing import List, Dict
+from typing import List, Dict, Set, Optional
 from . import config
 
 
@@ -96,18 +96,20 @@ def main() -> None:
     """
 
     if sys.argv[1]:
-        filename = sys.argv[1]
+        filename: str = sys.argv[1]
     else:
         filename = "output.xlsx"
 
-    files_set = make_list_of_bam_files()
-    positions = index_and_fetch(files_set)
+    files_set: List[str] = make_list_of_bam_files()
+    positions: List[str] = index_and_fetch(files_set)
     genome_parsing()
-    cell_types = extract_cell_types(files_set)
-    df_list = run_quma_and_compile_list_of_df(cell_types, filename)
-    means_df = process_means(df_list, positions, cell_types)
-    modes_df = process_modes(df_list, positions, cell_types)
-    diffs_df = find_diffs(means_df, modes_df)
+    cell_types: List[str] = extract_cell_types(files_set)
+    df_list: Dict[str, pd.DataFrame] = run_quma_and_compile_list_of_df(
+        cell_types, filename
+    )
+    means_df: pd.DataFrame = process_means(df_list, positions, cell_types)
+    modes_df: pd.DataFrame = process_modes(df_list, positions, cell_types)
+    diffs_df: pd.DataFrame = find_diffs(means_df, modes_df)
     write_means_modes_diffs(means_df, modes_df, diffs_df, filename)
 
 
@@ -115,7 +117,9 @@ def main() -> None:
 ##################################################################################
 
 
-def genome_range(position: str, genome_string: str, offset: int = None) -> str:
+def genome_range(
+    position: str, genome_string: str, offset: Optional[int] = None
+) -> str:
     """Helper to return a genome string (e.g., "ATCGACTAG")
     given a position and an entire string.
 
@@ -128,41 +132,15 @@ def genome_range(position: str, genome_string: str, offset: int = None) -> str:
         str: genomic bases for indicated read / position
     """
 
-    OFFSET = 1298163  # TERT offset
+    OFFSET: int = 1298163  # TERT offset
 
     if not offset:
         offset = OFFSET
 
-    start = offset - (int(position) + 30)
-    end = offset - (int(position) + 1)
+    start: int = offset - (int(position) + 30)
+    end: int = offset - (int(position) + 1)
 
     return genome_string[start:end]
-
-
-def run_quma(directory: str, genomic_seq_file: str, reads_seq_file: str) -> str:
-    """Helper function to run external QUMA tool.
-
-    Args:
-        directory (str): directory path to analyze
-        genomic_seq_file (str): text file with known genomic sequence
-        reads_seq_file (str): text file with experimental reads
-
-    Returns:
-        bytes: shell output from quma command
-    """
-
-    quma_path = os.fspath(config.base_directory.joinpath("quma_cui"))
-    command = [
-        "perl",
-        f"{quma_path}/quma.pl",
-        "-g",
-        f"{directory}/{genomic_seq_file}",
-        "-q",
-        f"{directory}/{reads_seq_file}",
-    ]
-
-    out = subprocess.run(command, text=True, capture_output=True).stdout
-    return out
 
 
 def make_list_of_bam_files() -> List[str]:
@@ -172,17 +150,17 @@ def make_list_of_bam_files() -> List[str]:
         list[str]: list of files
     """
 
-    indv_bam = [b for b in config.analysis_directory.iterdir()]
+    indv_bam: List[Path] = [b for b in config.analysis_directory.iterdir()]
 
-    init_files_set = [bam.name for bam in indv_bam if bam.suffix == ".bam"]
+    init_files_set: List[str] = [bam.name for bam in indv_bam if bam.suffix == ".bam"]
 
-    bai_set = [bai.name for bai in indv_bam if bai.suffix == ".bai"]
+    bai_set: List[str] = [bai.name for bai in indv_bam if bai.suffix == ".bai"]
 
-    f_set = [str(bam).split(".")[0] for bam in init_files_set]
+    f_set: List[str] = [str(bam).split(".")[0] for bam in init_files_set]
 
-    baii = [str(bai).split(".")[0] for bai in bai_set]
+    baii: List[str] = [str(bai).split(".")[0] for bai in bai_set]
 
-    files_set = [name + (".TERT.bam") for name in f_set if name in baii]
+    files_set: List[str] = [name + (".TERT.bam") for name in f_set if name in baii]
 
     return files_set
 
@@ -197,38 +175,38 @@ def index_and_fetch(files_set: List[str]) -> List[str]:
         list[str]: list of genomic positions analyzed
     """
 
-    sam_path = [config.base_directory / "test" / f for f in files_set]
+    sam_path: List[Path] = [config.base_directory / "test" / f for f in files_set]
 
-    all_pos = set()
+    all_pos: Set = set()
     for sams in sam_path:
-        pos = run_sam_and_extract_df(sams)
+        pos: pd.Index = run_sam_and_extract_df(sams)
         all_pos.update(pos)
 
     return sorted(list(all_pos))
 
 
-def run_sam_and_extract_df(sams: str) -> pd.Index:
+def run_sam_and_extract_df(sams: Path) -> pd.Index:
     """Process samfiles, pulling out sequence and position data
     and writing to folders/files.
 
     Args:
-        sams (str): path to a samfile
+        sams (Path): path to a samfile
 
     Returns:
         pd.Index: list of unique positions in the samfile
     """
 
     # Make sure each sam file has an index by calling external samtools index function
-    _ = samtools_index(sams)  # we don't care what the output is
+    _: str = samtools_index(sams)  # we don't care what the output is
 
     # Grab the promoter region of interest
-    samm = pysam.AlignmentFile(sams, "rb")
+    samm: pysam.AlignmentFile = pysam.AlignmentFile(sams, "rb")
     itern = samm.fetch(
         config.chromosome, int(config.promoter_start), int(config.promoter_end)
     )
 
-    position = []
-    sequence = []
+    position: List = []
+    sequence: List = []
 
     for x in itern:
         cols = str(x).split()
@@ -236,11 +214,13 @@ def run_sam_and_extract_df(sams: str) -> pd.Index:
         sequence.append(cols[9])
 
     # Transfer into dataframe for processing
-    df = pd.DataFrame(list(zip(position, sequence)), columns=["positions", "sequence"])
+    df: pd.DataFrame = pd.DataFrame(
+        list(zip(position, sequence)), columns=["positions", "sequence"]
+    )
 
-    df2 = df.set_index("positions")
+    df2: pd.DataFrame = df.set_index("positions")
     # will set the inital index (on the leftmost column) to be position
-    df3 = df2.stack()
+    df3: pd.DataFrame = df2.stack()
     # if confused, see: https://www.w3resource.com/pandas/dataframe/dataframe-stack.php
 
     # Now, iterate through dataframe and write output files
@@ -249,30 +229,30 @@ def run_sam_and_extract_df(sams: str) -> pd.Index:
     return df2.index.unique()  # return all unique positions in the data
 
 
-def write_bam_output_files(sams: str, positions: List[str], df: pd.DataFrame) -> None:
+def write_bam_output_files(sams: Path, positions: List[str], df: pd.DataFrame) -> None:
     """Extract alignments from sequencing reads and output text files
        in bam directory.
 
     Args:
-        sams (str): path to a sam file
+        sams (Path): path to a sam file
         positions (List[str]): list of unique positions
         df (pd.DataFrame): dataframe of sequencing reads
     """
 
     for each1 in positions:
-        alignments = []
+        alignments: List = []
 
         # Set up query using alignment algorithm
-        query_sequence = df.loc[each1].head(1).tolist()[0]
-        query = StripedSmithWaterman(query_sequence)
+        query_sequence: List[str] = df.loc[each1].head(1).tolist()[0]
+        query: StripedSmithWaterman = StripedSmithWaterman(query_sequence)
 
         # Set up sequences to check for alignment
-        target_sequences = df.loc[each1].tolist()
+        target_sequences: List[str] = df.loc[each1].tolist()
         for target_sequence in target_sequences:
             alignment = query(target_sequence)
             alignments.append(alignment)
 
-        read_file = []
+        read_file: List[str] = []
         for index, each in enumerate(alignments):
             read_file.append(str(">read" + str(index)))
             read_file.append(each.aligned_target_sequence)
@@ -282,26 +262,26 @@ def write_bam_output_files(sams: str, positions: List[str], df: pd.DataFrame) ->
         config.base_directory.joinpath("bam_output", sams.name).mkdir(
             parents=True, exist_ok=True
         )
-        directory = config.base_directory.joinpath("bam_output", sams.name)
+        directory: Path = config.base_directory.joinpath("bam_output", sams.name)
 
         with open(directory.joinpath(str(each1) + ".txt"), "w") as file_handler:
             for item in read_file:
                 file_handler.write("{}\n".format(item))
 
 
-def samtools_index(sams: str) -> str:
+def samtools_index(sams: Path) -> str:
     """Helper function to run external samtools index tool.
 
     Args:
-        sams (str): filepath to samfile
+        sams (Path): filepath to samfile
 
     Returns:
         str: output from samtools index shell command, usually discarded
     """
 
-    command = ["samtools", "index", os.fspath(sams)]
+    command: List[str] = ["samtools", "index", os.fspath(sams)]
 
-    out = subprocess.run(command, capture_output=True, text=True)
+    out: str = subprocess.run(command, capture_output=True, text=True).stdout
     return out
 
 
@@ -309,20 +289,20 @@ def genome_parsing() -> None:
     """Writes out a list of genomic sequence strings for comparison to read data."""
 
     # Grab list of directories
-    subfolders = [x for x in config.bam_directory.iterdir() if x.is_dir()]
+    subfolders: List[Path] = [x for x in config.bam_directory.iterdir() if x.is_dir()]
 
     # Grab genomic sequence
     with open(config.promoter_file, "r") as f:
         genome_base = f.readlines()
-        genome_base_lines = [s.rstrip("\n") for s in genome_base]
-        genome_string = "".join(map(str, genome_base_lines))
+        genome_base_lines: List[str] = [s.rstrip("\n") for s in genome_base]
+        genome_string: str = "".join(map(str, genome_base_lines))
 
     # Wrap everything in processing them one at a time
     for folder in subfolders:
 
         # Grab list of read files in that directory:
-        raw_read_files = os.listdir(folder)
-        read_files = [
+        raw_read_files: List[str] = os.listdir(folder)
+        read_files: List[str] = [
             os.path.splitext(i)[0]
             for i in raw_read_files
             if not i.lstrip().startswith("g")
@@ -332,7 +312,7 @@ def genome_parsing() -> None:
 
         # Now, process each file:
         for read_name in read_files:
-            file_lines = []
+            file_lines: List = []
             # Grab the genomic sequence and write it
             file_lines.append(str(">genome" + str(read_name)))
             file_lines.append(str(genome_range(read_name, genome_string)))
@@ -345,6 +325,32 @@ def genome_parsing() -> None:
                     file_handler.write("{}\n".format(item))
 
 
+def run_quma(directory: str, genomic_seq_file: str, reads_seq_file: str) -> str:
+    """Helper function to run external QUMA tool.
+
+    Args:
+        directory (str): directory path to analyze
+        genomic_seq_file (str): text file with known genomic sequence
+        reads_seq_file (str): text file with experimental reads
+
+    Returns:
+        bytes: shell output from quma command
+    """
+
+    quma_path: str = os.fspath(config.base_directory.joinpath("quma_cui"))
+    command: List[str] = [
+        "perl",
+        f"{quma_path}/quma.pl",
+        "-g",
+        f"{directory}/{genomic_seq_file}",
+        "-q",
+        f"{directory}/{reads_seq_file}",
+    ]
+
+    out: str = subprocess.run(command, text=True, capture_output=True).stdout
+    return out
+
+
 def quma_full(cell_types, filename):
     """Run external QUMA methylation analysis on all specified cell lines.
 
@@ -354,23 +360,25 @@ def quma_full(cell_types, filename):
     """
 
     # Grab list of directories
-    subfolders = [f.path for f in os.scandir(config.bam_directory) if f.is_dir()]
+    subfolders: List[str] = [
+        f.path for f in os.scandir(config.bam_directory) if f.is_dir()
+    ]
 
-    writer = pd.ExcelWriter(config.base_directory.joinpath(filename))
+    writer: pd.ExcelWriter = pd.ExcelWriter(config.base_directory.joinpath(filename))
 
     # Wrap everything in processing them one at a time
     for folder in tqdm(subfolders, desc="Cell Lines"):
 
         # Get short name of cell_line
-        cell_line_name = Path(folder).name.split("_")[1]
+        cell_line_name: str = Path(folder).name.split("_")[1]
 
         if set([cell_line_name]).intersection(set(cell_types)):
             # Set up a holding data frame from all the data
-            holding_df = pd.DataFrame()
+            holding_df: pd.DataFrame = pd.DataFrame()
 
             # Grab list of read files in that directory:
-            raw_read_files = os.listdir(folder)
-            read_files = [
+            raw_read_files: List[str] = os.listdir(folder)
+            read_files: List[str] = [
                 os.path.splitext(i)[0]
                 for i in raw_read_files
                 if i.endswith(".txt") and not i.lstrip().startswith("g")
@@ -380,24 +388,24 @@ def quma_full(cell_types, filename):
             for read_name in tqdm(read_files, desc="Positions", leave=False):
                 # file_lines = []
 
-                quma_result = run_quma(
+                quma_result: str = run_quma(
                     folder, "g_{}.txt".format(read_name), "{}.txt".format(read_name)
                 )
 
-                dots = []
+                dots: List[str] = []
                 for line in quma_result.splitlines():
                     if not line.lstrip().startswith("g"):
-                        fields = line.split("\t")
+                        fields: List[str] = line.split("\t")
                         if float(fields[7]) < 80:
                             dots.append("FAIL")
                         else:
                             dots.append(fields[13])
                 # Sort dots output by number of "1"
-                dots2 = sorted(dots, key=lambda t: t.count("1"))
+                dots2: List[str] = sorted(dots, key=lambda t: t.count("1"))
 
                 # Next, add this readname to the holding data frame
-                int_df = pd.DataFrame({read_name: dots2})
-                holding_df = pd.concat([holding_df, int_df], axis=1)
+                int_df: pd.DataFrame = pd.DataFrame({read_name: dots2})
+                holding_df: pd.DataFrame = pd.concat([holding_df, int_df], axis=1)
 
             # Now, save it to an excel file
             holding_df.to_excel(writer, sheet_name=cell_line_name)
@@ -430,7 +438,7 @@ def run_quma_and_compile_list_of_df(
     if run_quma:
         quma_full(cell_types, filename)
 
-    df = read_df_of_quma_results(filename)
+    df: Dict[str, pd.DataFrame] = read_df_of_quma_results(filename)
 
     return df
 
@@ -468,20 +476,20 @@ def process_means(
     """
 
     # Gives the means of each positions-- NOT the mean of the entire dataframe!
-    working_df = pd.DataFrame()
+    working_df: pd.DataFrame = pd.DataFrame()
     for pos in positions:
         working_df[pos] = ""
         for key, each in dict_of_dfs.items():
-            values_list = return_read_values(pos, key, dict_of_dfs)
+            values_list: List[float] = return_read_values(pos, key, dict_of_dfs)
 
             if values_list:
-                pos_means = np.mean(values_list)
+                pos_means: float = np.mean(values_list)
             else:  # No data or data doesn't meet minimums for analysis
                 pos_means = np.nan
 
             working_df.loc[key, pos] = pos_means
 
-    means_df = working_df
+    means_df: pd.DataFrame = working_df
 
     return means_df
 
@@ -501,20 +509,20 @@ def process_modes(
     """
 
     # Gives the modes of each positions-- NOT the mean of the entire dataframe!
-    working_df = pd.DataFrame()
+    working_df: pd.DataFrame = pd.DataFrame()
     for pos in positions:
         working_df[pos] = ""
         for key, each in dict_of_dfs.items():
-            values_list = return_read_values(pos, key, dict_of_dfs)
+            values_list: List[float] = return_read_values(pos, key, dict_of_dfs)
 
             if values_list:
-                pos_modes = stats.mode(values_list)[0][0]
+                pos_modes: float = stats.mode(values_list)[0][0]
             else:  # No data or data doesn't meet minimums for analysis
                 pos_modes = np.nan
 
             working_df.loc[key, pos] = pos_modes
 
-    modes_df = working_df
+    modes_df: pd.DataFrame = working_df
 
     return modes_df
 
@@ -533,13 +541,13 @@ def return_individual_data(
         pd.DataFrame: methylation values for each position in each cell line
     """
 
-    working_df = pd.DataFrame()
+    working_df: pd.DataFrame = pd.DataFrame()
     for pos in tqdm(positions, desc="Position"):
         working_df[pos] = ""  # Create position column in dataframe
         for key, each in tqdm(dict_of_dfs.items(), desc="Cell Line", leave=False):
-            values_list = return_read_values(pos, key, dict_of_dfs)
+            values_list: List[float] = return_read_values(pos, key, dict_of_dfs)
             if values_list:
-                data_for_df = values_list
+                data_for_df: List[float] = values_list
             else:  # No data or data doesn't meet minimums for analysis
                 data_for_df = np.nan
 
@@ -569,15 +577,17 @@ def return_read_values(
         List[float]: list of fractional methylation for each read
     """
 
-    bad_values = ["N", "F"]  # for interpreting quma returns
-    min_num_of_reads = min_reads  # Only include if >4 reads
-    min_num_meth_sites = min_sites  # Only include is read has >2 methylation sites
+    bad_values: List[str] = ["N", "F"]  # for interpreting quma returns
+    min_num_of_reads: int = min_reads  # Only include if >4 reads
+    min_num_meth_sites: int = min_sites  # Only include is read has >2 methylation sites
 
-    values_list = []
+    values_list: List[float] = []
     # Check if this cell line has that position
-    if pos in dict_of_dfs.get(key).columns:
+    if pos in dict_of_dfs.get(key).columns:  # type: ignore[union-attr]
 
-        values_to_check = dict_of_dfs.get(key).loc[:, pos].dropna().astype(str)
+        values_to_check: List[str] = (
+            dict_of_dfs.get(key).loc[:, pos].dropna().astype(str)  # type: ignore[union-attr]
+        )
         if not len(values_to_check) == 0:  # Skip empty values
             if (
                 len(values_to_check) > min_num_of_reads
@@ -585,7 +595,7 @@ def return_read_values(
             ):
                 for value in values_to_check:
                     if not any(substring in value for substring in bad_values):
-                        fraction_val = float(value.count("1")) / float(
+                        fraction_val: float = float(value.count("1")) / float(
                             len(value)
                         )  # number of methylated sites in each read
                         values_list.append(fraction_val)
@@ -651,7 +661,7 @@ def create_histogram(
     Returns:
         go._figure.Figure: plotly figure object
     """
-    fig = go.Figure()
+    fig: go.Figure = go.Figure()
     fig.add_trace(
         go.Histogram(
             x=data.loc[cell_line, position],
@@ -683,7 +693,7 @@ def histogram(data: pd.DataFrame, cell_line: str, position: str) -> None:
         position (str): genomic position
     """
 
-    fig = create_histogram(data, cell_line, position)
+    fig: go.Figure = create_histogram(data, cell_line, position)
     fig.show()
 
 
