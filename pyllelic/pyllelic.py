@@ -60,10 +60,13 @@ import subprocess
 from pathlib import Path
 from scipy import stats
 from tqdm.notebook import tqdm
+from typing import List, Dict
 from . import config
 
 
-def set_up_env_variables(base_path, prom_file, prom_start, prom_end, chrom):
+def set_up_env_variables(
+    base_path: str, prom_file: str, prom_start: str, prom_end: str, chrom: str
+) -> None:
     """Helper method to set up all our environmental variables, such as for testing.
 
     Args:
@@ -87,7 +90,7 @@ def set_up_env_variables(base_path, prom_file, prom_start, prom_end, chrom):
 
 ##################################################################################
 ##################################################################################
-def main():
+def main() -> None:
     """Run a given set of Pyllelic analysis, using values from
     supplied environmental variables.
     """
@@ -112,7 +115,7 @@ def main():
 ##################################################################################
 
 
-def genome_range(position, genome_string, offset=None):
+def genome_range(position: str, genome_string: str, offset: int = None) -> str:
     """Helper to return a genome string (e.g., "ATCGACTAG")
     given a position and an entire string.
 
@@ -136,7 +139,7 @@ def genome_range(position, genome_string, offset=None):
     return genome_string[start:end]
 
 
-def run_quma(directory, genomic_seq_file, reads_seq_file):
+def run_quma(directory: str, genomic_seq_file: str, reads_seq_file: str) -> str:
     """Helper function to run external QUMA tool.
 
     Args:
@@ -162,7 +165,7 @@ def run_quma(directory, genomic_seq_file, reads_seq_file):
     return out
 
 
-def make_list_of_bam_files():
+def make_list_of_bam_files() -> List[str]:
     """Check analysis directory for all valid .bam files.
 
     Returns:
@@ -184,7 +187,7 @@ def make_list_of_bam_files():
     return files_set
 
 
-def index_and_fetch(files_set):
+def index_and_fetch(files_set: List[str]) -> List[str]:
     """Wrapper to call processing of each sam file.
 
     Args:
@@ -204,7 +207,7 @@ def index_and_fetch(files_set):
     return sorted(list(all_pos))
 
 
-def run_sam_and_extract_df(sams):
+def run_sam_and_extract_df(sams: str) -> pd.Index:
     """Process samfiles, pulling out sequence and position data
     and writing to folders/files.
 
@@ -212,7 +215,7 @@ def run_sam_and_extract_df(sams):
         sams (str): path to a samfile
 
     Returns:
-        list: list of unique positions in the samfile
+        pd.Index: list of unique positions in the samfile
     """
 
     # Make sure each sam file has an index by calling external samtools index function
@@ -246,7 +249,7 @@ def run_sam_and_extract_df(sams):
     return df2.index.unique()  # return all unique positions in the data
 
 
-def write_bam_output_files(sams, positions, df):
+def write_bam_output_files(sams: str, positions: List[str], df: pd.DataFrame) -> None:
     """Extract alignments from sequencing reads and output text files
        in bam directory.
 
@@ -286,7 +289,7 @@ def write_bam_output_files(sams, positions, df):
                 file_handler.write("{}\n".format(item))
 
 
-def samtools_index(sams):
+def samtools_index(sams: str) -> str:
     """Helper function to run external samtools index tool.
 
     Args:
@@ -302,7 +305,7 @@ def samtools_index(sams):
     return out
 
 
-def genome_parsing():
+def genome_parsing() -> None:
     """Writes out a list of genomic sequence strings for comparison to read data."""
 
     # Grab list of directories
@@ -404,13 +407,15 @@ def quma_full(cell_types, filename):
     writer.save()
 
 
-def extract_cell_types(file_sets):
-    """Returns a list[str] of cell lines in the dataset."""
+def extract_cell_types(file_sets: List[str]) -> List[str]:
+    """Returns a list[str] of cell line names in the dataset."""
 
     return [file.split("_")[1] for file in file_sets]
 
 
-def run_quma_and_compile_list_of_df(cell_types, filename, run_quma=True):
+def run_quma_and_compile_list_of_df(
+    cell_types: List[str], filename: str, run_quma: bool = True
+) -> Dict[str, pd.DataFrame]:
     """Wrapper to run QUMA on all cell lines in the dataset and write output file.
 
     Args:
@@ -419,7 +424,7 @@ def run_quma_and_compile_list_of_df(cell_types, filename, run_quma=True):
         run_quma (bool): whether we should invoke the external quma run, default True
 
     Returns:
-        Dict[pd.DataFrame]: dict of dataframes of quma results
+        Dict[str, pd.DataFrame]: dataframe of quma results
     """
 
     if run_quma:
@@ -430,14 +435,14 @@ def run_quma_and_compile_list_of_df(cell_types, filename, run_quma=True):
     return df
 
 
-def read_df_of_quma_results(filename):
+def read_df_of_quma_results(filename: str) -> Dict[str, pd.DataFrame]:
     """Read excel output of quma results into dataframe.
 
     Args:
         filename (str): filename of quma results
 
     Returns:
-        pd.DataFrame: dataframe of quma results
+        Dict[str, pd.DataFrame]: dict of dataframes of quma results
     """
 
     return pd.read_excel(
@@ -448,11 +453,13 @@ def read_df_of_quma_results(filename):
     )
 
 
-def process_means(dict_of_dfs, positions, cell_types):
+def process_means(
+    dict_of_dfs: Dict[str, pd.DataFrame], positions: List[str], cell_types: List[str]
+) -> pd.DataFrame:
     """Process the mean values at each position for each cell line.
 
     Args:
-        dict_of_dfs (Dict[pd.DataFrame]): dict of dataframes of quma results
+        dict_of_dfs (Dict[str, pd.DataFrame]): dict of dataframes of quma results
         positions (list[str]): list of genomic positions to analyze
         cell_types (list[str]): list of cell lines in the dataset
 
@@ -479,11 +486,13 @@ def process_means(dict_of_dfs, positions, cell_types):
     return means_df
 
 
-def process_modes(dict_of_dfs, positions, cell_types):
+def process_modes(
+    dict_of_dfs: Dict[str, pd.DataFrame], positions: List[str], cell_types: List[str]
+) -> pd.DataFrame:
     """Process the mode values at each position for each cell line.
 
     Args:
-        dict_of_dfs (Dict[pd.DataFrame]): dict of dataframes of quma results
+        dict_of_dfs (Dict[str, pd.DataFrame]): dict of dataframes of quma results
         positions (list[str]): list of genomic positions to analyze
         cell_types (list[str]): list of cell lines in the dataset
 
@@ -510,11 +519,13 @@ def process_modes(dict_of_dfs, positions, cell_types):
     return modes_df
 
 
-def return_individual_data(dict_of_dfs, positions, cell_types):
+def return_individual_data(
+    dict_of_dfs: Dict[str, pd.DataFrame], positions: List[str], cell_types: List[str]
+) -> pd.DataFrame:
     """Return a dataframe for methylation values at each position for each cell line.
 
     Args:
-        dict_of_dfs (Dict[pd.DataFrame]): dict of dataframes of quma results
+        dict_of_dfs (Dict[str, pd.DataFrame]): dict of dataframes of quma results
         positions (list[str]): list of genomic positions to analyze
         cell_types (list[str]): list of cell lines in the dataset
 
@@ -537,14 +548,20 @@ def return_individual_data(dict_of_dfs, positions, cell_types):
     return working_df
 
 
-def return_read_values(pos, key, dict_of_dfs, min_reads=4, min_sites=2):
+def return_read_values(
+    pos: str,
+    key: str,
+    dict_of_dfs: Dict[str, pd.DataFrame],
+    min_reads: int = 4,
+    min_sites: int = 2,
+) -> List[float]:
     """Given a genomic position, cell line, and data, find fractional methylation
        values for each read in the dataset.
 
     Args:
         pos (str): genomic position of read
         key (str): cell line name
-        dict_of_dfs (Dict[pd.DataFrame]): dictionary of methylation data
+        dict_of_dfs (Dict[str, pd.DataFrame]): dictionary of methylation data
         min_reads (int): minimum bound for # reads to consider
         min_sites (int): minimum bound for # methylation sites to consider
 
@@ -576,7 +593,7 @@ def return_read_values(pos, key, dict_of_dfs, min_reads=4, min_sites=2):
     return values_list
 
 
-def find_diffs(means_df, modes_df):
+def find_diffs(means_df: pd.DataFrame, modes_df: pd.DataFrame) -> pd.DataFrame:
     """Find the differences between means and modes for each cell line at each position
        in means and modes data.
 
@@ -591,7 +608,9 @@ def find_diffs(means_df, modes_df):
     return means_df.subtract(modes_df)
 
 
-def write_means_modes_diffs(means_df, modes_df, diff_df, filename):
+def write_means_modes_diffs(
+    means_df: pd.DataFrame, modes_df: pd.DataFrame, diff_df: pd.DataFrame, filename: str
+) -> None:
     """Wite out files of means, modes, and diffs for future analysis.
 
     Args:
@@ -618,7 +637,9 @@ def write_means_modes_diffs(means_df, modes_df, diff_df, filename):
     )
 
 
-def create_histogram(data, cell_line, position):
+def create_histogram(
+    data: pd.DataFrame, cell_line: str, position: str
+) -> go._figure.Figure:
     """Generate a graph figure showing fractional methylation in
        a given cell line at a given site.
 
@@ -652,7 +673,7 @@ def create_histogram(data, cell_line, position):
     return fig
 
 
-def histogram(data, cell_line, position):
+def histogram(data: pd.DataFrame, cell_line: str, position: str) -> None:
     """Display a graph figure showing fractional methylation in
        a given cell line at a given site.
 

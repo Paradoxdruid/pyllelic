@@ -9,6 +9,7 @@ from setuptools import setup, find_packages  # , Command
 
 # import subprocess
 import pathlib
+import pyllelic.__version__ as version
 
 # from distutils.command.build import build as _build
 
@@ -21,7 +22,6 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 # version = {}
 # with open(here / "pyllelic" / "__version__.py") as f:
 #     exec(f.read(), version)
-import pyllelic.__version__ as version
 
 # Install non-python dependencies
 # CUSTOM_COMMANDS = [
