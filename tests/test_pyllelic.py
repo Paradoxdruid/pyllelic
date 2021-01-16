@@ -37,25 +37,44 @@ def test_process_means():
 
 
 def test_return_read_values():
-    in_pos = 1
+    in_pos = "1"
     in_key = "TEST1"
-    in_dict1 = {}
-    in_dict2 = {}
-    in_dict3 = {}
-    input_list_of_dicts = {
-        "TEST11": pd.DataFrame(in_dict1),
+    in_dict1 = {
+        "1": ["111", "111", "111", "011", "011", "011"],
+        "2": ["111", "111", "111", "011", "011", "011"],
+        "3": ["111", "111", "111", "111", "111", "111"],
+    }
+    in_dict2 = {
+        "1": ["111", "111", "111", "111", "111", "111"],
+        "2": ["111", "111", "111", "111", "111", "111"],
+        "3": ["111", "111", "111", "111", "111", "111"],
+    }
+    in_dict3 = {
+        "1": ["FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL"],
+        "2": ["NaN", "NaN", "NaN", "NaN", "NaN", "NaN"],
+        "3": ["111", "111", "111", "011", "011", "NaN"],
+    }
+    input_dict_of_dfs = {
+        "TEST1": pd.DataFrame(in_dict1),
         "TEST2": pd.DataFrame(in_dict2),
         "TEST3": pd.DataFrame(in_dict3),
     }
-    in_min_reads = 4
-    in_min_sites = 2
+    in_min_reads = 1
+    in_min_sites = 1
 
-    expected = {}
+    expected = [
+        1.0,
+        1.0,
+        1.0,
+        2 / 3,
+        2 / 3,
+        2 / 3,
+    ]
 
     result = pyllelic.return_read_values(
         pos=in_pos,
         key=in_key,
-        dict_of_dfs=input_list_of_dicts,
+        dict_of_dfs=input_dict_of_dfs,
         min_reads=in_min_reads,
         min_sites=in_min_sites,
     )
