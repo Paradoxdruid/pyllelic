@@ -2,7 +2,7 @@
 
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Paradoxdruid/pyllelic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Paradoxdruid/pyllelic/context:python)  [![CodeFactor](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic/badge)](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic)  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black) [![PyPI](https://img.shields.io/pypi/v/pyllelic?color=success)](https://pypi.org/project/pyllelic/)
 
-:microscope: **pyllelic**: a tool for detection of allelic-specific methylation variation in DNA sequencing files.
+:microscope: **pyllelic**: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.
 
 :warning: This is a work-in-progress. :warning:
 
@@ -80,7 +80,7 @@ cpan install Statistics::Lite
 ```bash
 conda install -c conda-forge jupyter_contrib_nbextensions
 ```
-### quma instllation
+### quma installation
 * Download from http://quma.cdb.riken.jp/files/quma_cui-1.0.0.tar.gz
 * Untar into `base_path`
 ### Install python dependencies (not needed if installed via `pip install pyllelic`)
