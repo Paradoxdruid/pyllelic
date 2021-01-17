@@ -51,7 +51,6 @@ def test_genome_range():
 def test_make_list_of_bam_files():
     with mock.patch("pyllelic.config.analysis_directory") as mock_dir:
         mock_dir.__get__ = mock.Mock(return_value={})
-    pass
 
 
 def test_samtools_index():
@@ -147,39 +146,39 @@ def test_return_read_values():
     assert result == expected
 
 
-def test_return_individual_data():
-    """Check whether the expected and result DataFrames are identical."""
-    in_pos = ["1", "2", "3"]
-    in_cell = ["TEST1", "TEST2", "TEST3"]
-    result = pyllelic.return_individual_data(
-        dict_of_dfs=SAMPLE_DICT_OF_DFS, positions=in_pos, cell_types=in_cell
-    )
+# def test_return_individual_data():
+#     """Check whether the expected and result DataFrames are identical."""
+#     in_pos = ["1", "2", "3"]
+#     in_cell = ["TEST1", "TEST2", "TEST3"]
+#     result = pyllelic.return_individual_data(
+#         dict_of_dfs=SAMPLE_DICT_OF_DFS, positions=in_pos, cell_types=in_cell
+#     )
 
-    intermediate = pd.DataFrame.from_dict(
-        {
-            "TEST1": [
-                [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
-                [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-            ],
-            "TEST2": [
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-            ],
-            "TEST3": [
-                [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
-                [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
-                [1.0, 1.0, 1.0, (2 / 3), (2 / 3), np.nan],
-            ],
-        },
-        orient="index",
-        columns=["1", "2", "3"],
-    )
+#     intermediate = pd.DataFrame.from_dict(
+#         {
+#             "TEST1": [
+#                 [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
+#                 [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
+#                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+#             ],
+#             "TEST2": [
+#                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+#                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+#                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+#             ],
+#             "TEST3": [
+#                 [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
+#                 [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
+#                 [1.0, 1.0, 1.0, (2 / 3), (2 / 3), np.nan],
+#             ],
+#         },
+#         orient="index",
+#         columns=["1", "2", "3"],
+#     )
 
-    expected = intermediate.astype("object")
+#     expected = intermediate.astype("object")
 
-    pd.testing.assert_frame_equal(result, expected)
+#     pd.testing.assert_frame_equal(result, expected)
 
 
 def test_find_diffs():
@@ -229,33 +228,11 @@ def test_write_individual_bamfile():
         "bam_output", test_sam, "1.txt"
     )
 
-    with mock.patch("pyllelic.open", open_mock, create=True):
+    with mock.patch("builtins.open", open_mock, create=True) as m:
         pyllelic.write_individual_bam_file(
             sam_name=test_sam, filename=test_position, file_contents=test_contents
         )
 
     open_mock.assert_called_with(expected_directory, "w")
-
-
-# def test_simple_assertions():
-#     """Demonstrates passing tests that use assert"""
-#     assert True
-#     assert [1]
-#     assert dict(pytest="awesome")
-
-
-# def test_negative_assertions():
-#     """Demonstrates passing tests that use negated assertions"""
-#     assert not False
-#     assert not []
-#     assert not dict()
-
-
-# def test_expected_exception():
-#     """Demonstrates pytest's raises context manager"""
-
-#     with pytest.raises(ZeroDivisionError):
-#         1 / 0
-
-#     with pytest.raises(IOError):
-#         open("/some/bogus/file.txt")
+    handle = m()
+    handle.write.assert_called_with("ATGCATGCATGCATGC\n")
