@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
 """pytest unit tests for pyllelic."""
 
+# Testing
 import pytest  # noqa
+import unittest.mock as mock
+
+# Required libraries for test data
 import pandas as pd
-import pyllelic
 import numpy as np
 
+# Module to test
+import pyllelic
+
+
+# Test data
 SAMPLE_DICT_OF_DFS = {
     "TEST1": pd.DataFrame(
         {
@@ -31,12 +39,19 @@ SAMPLE_DICT_OF_DFS = {
 }
 
 
+# Tests
 def test_genome_range():
     """Check if correct genome string is returned."""
     gen_str = "ATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGC"
     result = pyllelic.genome_range(position=2, genome_string=gen_str, offset=40)
     assert result == gen_str[8:37]
     assert isinstance(result, str)
+
+
+def test_make_list_of_bam_files():
+    with mock.patch("pyllelic.config.analysis_directory") as mock_dir:
+        mock_dir.__get__ = mock.Mock(return_value={})
+    pass
 
 
 def test_samtools_index():
@@ -204,24 +219,22 @@ def test_find_diffs():
     pd.testing.assert_frame_equal(result, expected)
 
 
-def test_write_bam_output_files(tmp_path):
+def test_write_individual_bamfile():
     """Check if bam outputs would be correctly written."""
-    pyllelic.config.base_directory = tmp_path
-    test_positions = ["1", "2", "3"]
-    test_df = pd.DataFrame.from_dict(
-        {
-            "TEST1": [],
-        },
-    )
-    test_sams = tmp_path / "fh_TEST1_CELL.TERT.bam"
-
-    pyllelic.write_bam_output_files(
-        sams=test_sams, positions=test_positions, df=test_df
+    open_mock = mock.mock_open()
+    test_position = "1"
+    test_contents = [">read0", "ATGCATGCATGCATGC"]
+    test_sam = "fh_TEST1_CELL.TERT.bam"
+    expected_directory = pyllelic.config.base_directory.joinpath(
+        "bam_output", test_sam, "1.txt"
     )
 
-    expected = tmp_path / "bam_output" / "fh_TEST1_CELL.TERT.bam"
+    with mock.patch("pyllelic.open", open_mock, create=True):
+        pyllelic.write_individual_bam_file(
+            sam_name=test_sam, filename=test_position, file_contents=test_contents
+        )
 
-    assert expected.isdir()
+    open_mock.assert_called_with(expected_directory, "w")
 
 
 # def test_simple_assertions():

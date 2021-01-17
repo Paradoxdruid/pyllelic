@@ -239,6 +239,12 @@ def write_bam_output_files(sams: Path, positions: List[str], df: pd.DataFrame) -
         df (pd.DataFrame): dataframe of sequencing reads
     """
 
+    sam_name: str = sams.name
+
+    # Make sure bam_output directory and sam subdirectories exist
+    config.base_directory.joinpath("bam_output", sam_name).mkdir(
+        parents=True, exist_ok=True
+    )
     for each1 in positions:
         alignments: List = []
 
@@ -258,15 +264,23 @@ def write_bam_output_files(sams: Path, positions: List[str], df: pd.DataFrame) -
             read_file.append(each.aligned_target_sequence)
             # returns aligned target sequence
 
-        # Make sure bam_output directory and sam subdirectories exist
-        config.base_directory.joinpath("bam_output", sams.name).mkdir(
-            parents=True, exist_ok=True
-        )
-        directory: Path = config.base_directory.joinpath("bam_output", sams.name)
+        write_individual_bam_file(sam_name, each1, read_file)
 
-        with open(directory.joinpath(str(each1) + ".txt"), "w") as file_handler:
-            for item in read_file:
-                file_handler.write("{}\n".format(item))
+
+def write_individual_bam_file(
+    sam_name: str, filename: str, file_contents: List[str]
+) -> None:
+    """Write the contents of each bam output file.
+
+    Args:
+        sam_name (str): [description]
+        filename (str): [description]
+        file_contents (List[str]): [description]
+    """
+    directory: Path = config.base_directory.joinpath("bam_output", sam_name)
+    with open(directory.joinpath(filename + ".txt"), "w") as file_handler:
+        for item in file_contents:
+            file_handler.write("{}\n".format(item))
 
 
 def samtools_index(sams: Path) -> str:
