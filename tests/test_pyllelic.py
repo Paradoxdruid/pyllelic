@@ -2,12 +2,13 @@
 """pytest unit tests for pyllelic."""
 
 # Testing
-import pytest  # noqa
+import pytest
 import unittest.mock as mock
 
 # Required libraries for test data
 import pandas as pd
 import numpy as np
+from pathlib import Path
 
 # Module to test
 import pyllelic
@@ -55,6 +56,17 @@ def test_make_list_of_bam_files():
 
 def test_samtools_index():
     pass
+
+
+def test_run_sam_and_extract_df(mocker):
+    """Check if a samfile will be properly aligned and read."""
+    TEST_SAM_FILE = Path("TEST1")
+    mocker.patch.object(pyllelic.pysam, "AlignmentFile", autospec=True)
+    expected = pd.Index([], name="positions")
+
+    result = pyllelic.run_sam_and_extract_df(TEST_SAM_FILE)
+
+    pd.testing.assert_index_equal(result, expected)
 
 
 def test_extract_cell_types():
@@ -218,9 +230,9 @@ def test_find_diffs():
     pd.testing.assert_frame_equal(result, expected)
 
 
-def test_write_individual_bamfile():
+def test_write_individual_bamfile(mocker):
     """Check if bam outputs would be correctly written."""
-    open_mock = mock.mock_open()
+    open_mock = mocker.mock_open()
     test_position = "1"
     test_contents = [">read0", "ATGCATGCATGCATGC"]
     test_sam = "fh_TEST1_CELL.TERT.bam"
