@@ -41,6 +41,32 @@ SAMPLE_DICT_OF_DFS = {
 
 
 # Tests
+def test_set_up_env_variables():
+    #     """Check if config variables would be properly set."""
+    #     # sys.modules["pyllelic.config"] = mocker.MagicMock()
+    #     # pyllelic.config.base_directory = mock.MagicMock()
+    #     mocker.patch("pyllelic.config.base_directory", mock.MagicMock())
+    #     mocker.patch.object(pyllelic.config, "base_directory")
+    #     mocker.patch.object(pyllelic.config, "promoter_file")
+    #     mocker.patch.object(pyllelic.config, "results_directory")
+    #     mocker.patch.object(pyllelic.config, "bam_directory")
+    #     mocker.patch.object(pyllelic.config, "analysis_directory")
+    #     mocker.patch.object(pyllelic.config, "promoter_start")
+    #     mocker.patch.object(pyllelic.config, "promoter_end")
+    #     mocker.patch.object(pyllelic.config, "chromosome")
+
+    #     pyllelic.set_up_env_variables(
+    #         base_path="./", prom_file="test.txt", prom_start="1", prom_end="2", chrom="5"
+    #     )
+
+    #     pyllelic.config.base_directory.assert_called_with(Path("./"))
+    pass
+
+
+def test_main():
+    pass
+
+
 def test_genome_range():
     """Check if correct genome string is returned."""
     gen_str = "ATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGC"
@@ -50,11 +76,12 @@ def test_genome_range():
 
 
 def test_make_list_of_bam_files():
-    with mock.patch("pyllelic.config.analysis_directory") as mock_dir:
-        mock_dir.__get__ = mock.Mock(return_value={})
+    # with mock.patch("pyllelic.config.analysis_directory") as mock_dir:
+    #     mock_dir.__get__ = mock.Mock(return_value=Path())
+    pass
 
 
-def test_samtools_index():
+def test_index_and_fetch():
     pass
 
 
@@ -67,6 +94,46 @@ def test_run_sam_and_extract_df(mocker):
     result = pyllelic.run_sam_and_extract_df(TEST_SAM_FILE)
 
     pd.testing.assert_index_equal(result, expected)
+
+
+def test_write_bam_output_files():
+    pass
+
+
+def test_write_individual_bamfile(mocker):
+    """Check if bam outputs would be correctly written."""
+    open_mock = mocker.mock_open()
+    test_position = "1"
+    test_contents = [">read0", "ATGCATGCATGCATGC"]
+    test_sam = "fh_TEST1_CELL.TERT.bam"
+    expected_directory = pyllelic.config.base_directory.joinpath(
+        "bam_output", test_sam, "1.txt"
+    )
+
+    with mock.patch("builtins.open", open_mock, create=True) as m:
+        pyllelic.write_individual_bam_file(
+            sam_name=test_sam, filename=test_position, file_contents=test_contents
+        )
+
+    open_mock.assert_called_with(expected_directory, "w")
+    handle = m()
+    handle.write.assert_called_with("ATGCATGCATGCATGC\n")
+
+
+def test_samtools_index():
+    pass
+
+
+def test_genome_parsing():
+    pass
+
+
+def test_run_quma():
+    pass
+
+
+def test_quma_full():
+    pass
 
 
 def test_extract_cell_types():
@@ -83,6 +150,14 @@ def test_extract_cell_types():
     with pytest.raises(IndexError):
         bad_input = ["text", "text2_", "_text3"]
         pyllelic.extract_cell_types(bad_input)
+
+
+def test_run_quma_and_compile_list_of_df():
+    pass
+
+
+def test_read_df_of_quma_results():
+    pass
 
 
 def test_process_means():
@@ -131,6 +206,42 @@ def test_process_modes():
     pd.testing.assert_frame_equal(result, expected)
 
 
+def test_return_individual_data():
+    """Check whether the expected and result DataFrames are identical."""
+    #     in_pos = ["1", "2", "3"]
+    #     in_cell = ["TEST1", "TEST2", "TEST3"]
+    #     result = pyllelic.return_individual_data(
+    #         dict_of_dfs=SAMPLE_DICT_OF_DFS, positions=in_pos, cell_types=in_cell
+    #     )
+
+    #     intermediate = pd.DataFrame.from_dict(
+    #         {
+    #             "TEST1": [
+    #                 [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
+    #                 [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
+    #                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+    #             ],
+    #             "TEST2": [
+    #                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+    #                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+    #                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+    #             ],
+    #             "TEST3": [
+    #                 [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
+    #                 [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
+    #                 [1.0, 1.0, 1.0, (2 / 3), (2 / 3), np.nan],
+    #             ],
+    #         },
+    #         orient="index",
+    #         columns=["1", "2", "3"],
+    #     )
+
+    #     expected = intermediate.astype("object")
+
+    #     pd.testing.assert_frame_equal(result, expected)
+    pass
+
+
 def test_return_read_values():
     """Check whether returned fractional methylation list is correct."""
     in_pos = "1"
@@ -156,41 +267,6 @@ def test_return_read_values():
     )
 
     assert result == expected
-
-
-# def test_return_individual_data():
-#     """Check whether the expected and result DataFrames are identical."""
-#     in_pos = ["1", "2", "3"]
-#     in_cell = ["TEST1", "TEST2", "TEST3"]
-#     result = pyllelic.return_individual_data(
-#         dict_of_dfs=SAMPLE_DICT_OF_DFS, positions=in_pos, cell_types=in_cell
-#     )
-
-#     intermediate = pd.DataFrame.from_dict(
-#         {
-#             "TEST1": [
-#                 [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
-#                 [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
-#                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-#             ],
-#             "TEST2": [
-#                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-#                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-#                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-#             ],
-#             "TEST3": [
-#                 [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
-#                 [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
-#                 [1.0, 1.0, 1.0, (2 / 3), (2 / 3), np.nan],
-#             ],
-#         },
-#         orient="index",
-#         columns=["1", "2", "3"],
-#     )
-
-#     expected = intermediate.astype("object")
-
-#     pd.testing.assert_frame_equal(result, expected)
 
 
 def test_find_diffs():
@@ -230,21 +306,13 @@ def test_find_diffs():
     pd.testing.assert_frame_equal(result, expected)
 
 
-def test_write_individual_bamfile(mocker):
-    """Check if bam outputs would be correctly written."""
-    open_mock = mocker.mock_open()
-    test_position = "1"
-    test_contents = [">read0", "ATGCATGCATGCATGC"]
-    test_sam = "fh_TEST1_CELL.TERT.bam"
-    expected_directory = pyllelic.config.base_directory.joinpath(
-        "bam_output", test_sam, "1.txt"
-    )
+def test_write_means_modes_diffs():
+    pass
 
-    with mock.patch("builtins.open", open_mock, create=True) as m:
-        pyllelic.write_individual_bam_file(
-            sam_name=test_sam, filename=test_position, file_contents=test_contents
-        )
 
-    open_mock.assert_called_with(expected_directory, "w")
-    handle = m()
-    handle.write.assert_called_with("ATGCATGCATGCATGC\n")
+def test_create_histogram():
+    pass
+
+
+def test_histogram():
+    pass
