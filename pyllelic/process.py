@@ -31,14 +31,15 @@ def process_fastq_to_list(filepath: Path) -> List[SeqRecord]:
                 record_list.append(record)
         return record_list
 
-    elif ".fastq" in filepath.suffixes[-1]:
+    if ".fastq" in filepath.suffixes[-1]:
         with open(filepath, "rt") as handle:
             for record in SeqIO.parse(handle, "fastq"):
                 record_list.append(record)
         return record_list
-    else:
-        print("Wrong filetype")
-        return None
+
+    # If doesn't match readable suffixes
+    print("Wrong filetype")
+    return None
 
 
 def make_records_to_dictionary(record_list: List[SeqRecord]) -> Dict[str, SeqRecord]:

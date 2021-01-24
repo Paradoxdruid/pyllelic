@@ -4,7 +4,8 @@
 # Testing
 import pytest
 import unittest.mock as mock
-import tempfile
+
+# import tempfile
 
 # Required libraries for test data
 import pandas as pd
@@ -43,6 +44,7 @@ SAMPLE_DICT_OF_DFS = {
 
 # Tests
 def test_set_up_env_variables():
+    """Test setting environment variables with mock object."""
     #     """Check if config variables would be properly set."""
     #     # sys.modules["pyllelic.config"] = mocker.MagicMock()
     #     # pyllelic.config.base_directory = mock.MagicMock()
@@ -61,11 +63,10 @@ def test_set_up_env_variables():
     #     )
 
     #     pyllelic.config.base_directory.assert_called_with(Path("./"))
-    pass
 
 
 def test_main(mocker):
-
+    """Test main module with a bunch of mocks."""
     # Set up, patching all called functions
     # mocker.patch("pyllelic.sys.argv", return_value=["program", "output.xlsx"])
 
@@ -146,7 +147,6 @@ def test_main(mocker):
     # pyllelic.write_means_modes_diffs.assert_called_once_with(
     #     means_expected, modes_expected, diffs_expected, "output.xlsx"
     # )
-    pass
 
 
 def test_genome_range():
@@ -158,9 +158,9 @@ def test_genome_range():
 
 
 def test_make_list_of_bam_files():
+    """Test making list of bam files, mocking config."""
     # with mock.patch("pyllelic.config.analysis_directory") as mock_dir:
     #     mock_dir.__get__ = mock.Mock(return_value=Path())
-    pass
 
 
 def test_index_and_fetch():
@@ -180,9 +180,9 @@ def test_run_sam_and_extract_df(mocker):
 
 
 def test_write_bam_output_files(mocker):
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        mocker.patch.object(pyllelic.config, "base_directory", Path(tmpdirname))
-        pass
+    """Test writing bam files with a mock open."""
+    # with tempfile.TemporaryDirectory() as tmpdirname:
+    #     mocker.patch.object(pyllelic.config, "base_directory", Path(tmpdirname))
 
 
 def test_write_individual_bamfile(mocker):
@@ -324,7 +324,6 @@ def test_return_individual_data():
     #     expected = intermediate.astype("object")
 
     #     pd.testing.assert_frame_equal(result, expected)
-    pass
 
 
 def test_return_read_values():
