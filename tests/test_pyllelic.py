@@ -4,6 +4,7 @@
 # Testing
 import pytest
 import unittest.mock as mock
+import tempfile
 
 # Required libraries for test data
 import pandas as pd
@@ -63,7 +64,88 @@ def test_set_up_env_variables():
     pass
 
 
-def test_main():
+def test_main(mocker):
+
+    # Set up, patching all called functions
+    # mocker.patch("pyllelic.sys.argv", return_value=["program", "output.xlsx"])
+
+    # expected_bam_files_return = [
+    #     "fh_TEST1_TISSUE.TERT.bam",
+    #     "fh_TEST2_TISSUE.TERT.bam",
+    #     "fh_TEST3_TISSUE.TERT.BAM",
+    # ]
+    # mocker.patch(
+    #     "pyllelic.make_list_of_bam_files",
+    #     return_value=expected_bam_files_return,
+    # )
+    # expected_positions = ["1", "2", "3"]
+    # mocker.patch("pyllelic.index_and_fetch", return_value=expected_positions)
+    # mocker.patch("pyllelic.genome_parsing", return_value=None)
+    # expected_cell_types = ["TEST1", "TEST2"]
+    # mocker.patch("pyllelic.extract_cell_types", return_value=expected_cell_types)
+    # mocker.patch(
+    #     "pyllelic.run_quma_and_compile_list_of_df", return_value=SAMPLE_DICT_OF_DFS
+    # )
+
+    # means_intermediate = pd.DataFrame.from_dict(
+    #     {
+    #         "TEST1": [np.float64(5 / 6), np.float64(5 / 6), np.float64(1.0)],
+    #         "TEST2": [np.float64(1.0), np.float64(1.0), np.float64(1.0)],
+    #         "TEST3": [np.nan, np.nan, np.float64(13 / 15)],
+    #     },
+    #     orient="index",
+    #     columns=["1", "2", "3"],
+    # )
+
+    # means_expected = means_intermediate.astype("object")
+    # mocker.patch("pyllelic.process_means", return_value=means_expected)
+
+    # modes_intermediate = pd.DataFrame.from_dict(
+    #     {
+    #         "TEST1": [np.float64(2 / 3), np.float64(2 / 3), np.float64(1.0)],
+    #         "TEST2": [np.float64(1.0), np.float64(1.0), np.float64(1.0)],
+    #         "TEST3": [np.nan, np.nan, np.float64(1.0)],
+    #     },
+    #     orient="index",
+    #     columns=["1", "2", "3"],
+    # )
+
+    # modes_expected = modes_intermediate.astype("object")
+    # mocker.patch("pyllelic.process_modes", return_value=modes_expected)
+
+    # diffs_expected = pd.DataFrame.from_dict(
+    #     {
+    #         "TEST1": [np.float64(1 / 6), np.float64(1 / 6), np.float64(0.0)],
+    #         "TEST2": [np.float64(0.0), np.float64(0.0), np.float64(0.0)],
+    #         "TEST3": [np.nan, np.nan, np.float64(-2 / 15)],
+    #     },
+    #     orient="index",
+    #     columns=["1", "2", "3"],
+    # )
+    # mocker.patch("pyllelic.find_diffs", return_value=diffs_expected)
+    # mocker.patch("pyllelic.write_means_modes_diffs")
+
+    # # Run it
+    # pyllelic.main()
+
+    # # Assertions at each step
+    # pyllelic.make_list_of_bam_files.assert_called_once_with()
+    # pyllelic.index_and_fetch.assert_called_once_with(expected_bam_files_return)
+    # pyllelic.genome_parsing.assert_called_once_with()
+    # pyllelic.extract_cell_types.assert_called_once_with(expected_bam_files_return)
+    # pyllelic.run_quma_and_compile_list_of_df.assert_called_once_with(
+    #     expected_cell_types, "output.xlsx"
+    # )
+    # pyllelic.process_means.assert_called_once_with(
+    #     SAMPLE_DICT_OF_DFS, expected_positions, expected_cell_types
+    # )
+    # pyllelic.process_modes.assert_called_once_with(
+    #     SAMPLE_DICT_OF_DFS, expected_positions, expected_cell_types
+    # )
+    # pyllelic.find_diffs.assert_called_once_with(means_expected, modes_expected)
+    # pyllelic.write_means_modes_diffs.assert_called_once_with(
+    #     means_expected, modes_expected, diffs_expected, "output.xlsx"
+    # )
     pass
 
 
@@ -89,6 +171,7 @@ def test_run_sam_and_extract_df(mocker):
     """Check if a samfile will be properly aligned and read."""
     TEST_SAM_FILE = Path("TEST1")
     mocker.patch.object(pyllelic.pysam, "AlignmentFile", autospec=True)
+    mocker.patch.object(pyllelic.config, "base_directory", autospec=True)
     expected = pd.Index([], name="positions")
 
     result = pyllelic.run_sam_and_extract_df(TEST_SAM_FILE)
@@ -96,8 +179,10 @@ def test_run_sam_and_extract_df(mocker):
     pd.testing.assert_index_equal(result, expected)
 
 
-def test_write_bam_output_files():
-    pass
+def test_write_bam_output_files(mocker):
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        mocker.patch.object(pyllelic.config, "base_directory", Path(tmpdirname))
+        pass
 
 
 def test_write_individual_bamfile(mocker):
