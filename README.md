@@ -1,5 +1,9 @@
 # pyllelic
 
+<p align="right">
+  ⭐ &nbsp;&nbsp;the project to show your appreciation. :arrow_upper_right:
+</p>
+
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Paradoxdruid/pyllelic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Paradoxdruid/pyllelic/context:python)  [![CodeFactor](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic/badge)](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic)  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black) [![PyPI](https://img.shields.io/pypi/v/pyllelic?color=success)](https://pypi.org/project/pyllelic/)
 
 :microscope: **pyllelic**: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.
