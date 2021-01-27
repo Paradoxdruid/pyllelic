@@ -313,7 +313,7 @@ def genome_parsing(subfolders: List[Path] = None) -> None:
         genome_string: str = "".join(map(str, genome_base_lines))
 
     # Wrap everything in processing them one at a time
-    for folder in subfolders:
+    for folder in tqdm(subfolders, desc="Cell Lines: "):
 
         # Grab list of read files in that directory:
         raw_read_files: List[str] = os.listdir(folder)
@@ -326,7 +326,7 @@ def genome_parsing(subfolders: List[Path] = None) -> None:
         ]
 
         # Now, process each file:
-        for read_name in read_files:
+        for read_name in tqdm(read_files, desc="Reads: ", leave=False):
             file_lines: List = []
             # Grab the genomic sequence and write it
             file_lines.append(str(">genome" + str(read_name)))
