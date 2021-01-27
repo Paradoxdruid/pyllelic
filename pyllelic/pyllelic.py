@@ -326,7 +326,7 @@ def genome_parsing(subfolders: List[Path] = None) -> None:
         ]
 
         # Now, process each file:
-        for read_name in tqdm(read_files, desc="Reads: ", leave=False):
+        for read_name in read_files:
             file_lines: List = []
             # Grab the genomic sequence and write it
             file_lines.append(str(">genome" + str(read_name)))
