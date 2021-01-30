@@ -196,8 +196,9 @@ def run_sam_and_extract_df(sams: Path) -> pd.Index:
         pd.Index: list of unique positions in the samfile
     """
 
-    # Make sure each sam file has an index by calling external samtools index function
-    _: str = samtools_index(sams)  # we don't care what the output is
+    # Index samfile if index file doesn't exist
+    if not sams.with_suffix(".bai").exists():
+        _: str = samtools_index(sams)  # we don't care what the output is
 
     # Grab the promoter region of interest
     samm: pysam.AlignmentFile = pysam.AlignmentFile(sams, "rb")
@@ -213,7 +214,6 @@ def run_sam_and_extract_df(sams: Path) -> pd.Index:
         position.append(cols[3])
         sequence.append(cols[9])
 
-    # Transfer into dataframe for processing
     df: pd.DataFrame = pd.DataFrame(
         list(zip(position, sequence)), columns=["positions", "sequence"]
     )
@@ -223,10 +223,9 @@ def run_sam_and_extract_df(sams: Path) -> pd.Index:
     df3: pd.DataFrame = df2.stack()
     # if confused, see: https://www.w3resource.com/pandas/dataframe/dataframe-stack.php
 
-    # Now, iterate through dataframe and write output files
     write_bam_output_files(sams, df2.index.unique(), df3)
 
-    return df2.index.unique()  # return all unique positions in the data
+    return df2.index.unique()
 
 
 def write_bam_output_files(sams: Path, positions: List[str], df: pd.DataFrame) -> None:
