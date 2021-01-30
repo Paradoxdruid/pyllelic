@@ -5,10 +5,10 @@
 import gzip
 from Bio import SeqIO
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 
-def process_fastq_to_list(filepath: Path) -> List[Any]:
+def process_fastq_to_list(filepath: Path) -> Optional[List[Any]]:
     """Read a .fastq or fastq.gz file into an in-memory record_list.
 
     This is a time and memory intensive operation!

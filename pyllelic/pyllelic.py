@@ -294,7 +294,11 @@ def samtools_index(sams: Path) -> str:
 
     command: List[str] = ["samtools", "index", os.fspath(sams)]
 
-    out: str = subprocess.run(command, capture_output=True, text=True).stdout
+    output: subprocess.CompletedProcess = subprocess.run(
+        command, capture_output=True, text=True, check=True
+    )
+    out: str = output.stdout
+
     return out
 
 
@@ -322,12 +326,12 @@ def genome_parsing(subfolders: List[Path] = None) -> None:
             if not i.lstrip().startswith("g")
             and not i.lstrip().startswith(".ip")
             and not i.lstrip().startswith(".DS")  # mac .DS_store files
-        ]
+        ]  # replace with regex?
 
         # Now, process each file:
         for read_name in read_files:
             file_lines: List = []
-            # Grab the genomic sequence and write it
+            # Grab the genomic sequence
             file_lines.append(str(">genome" + str(read_name)))
             file_lines.append(str(genome_range(read_name, genome_string)))
 
@@ -361,7 +365,10 @@ def run_quma(directory: str, genomic_seq_file: str, reads_seq_file: str) -> str:
         f"{directory}/{reads_seq_file}",
     ]
 
-    out: str = subprocess.run(command, text=True, capture_output=True).stdout
+    output: subprocess.CompletedProcess = subprocess.run(
+        command, text=True, capture_output=True, check=True
+    )
+    out: str = output.stdout
     return out
 
 
@@ -374,9 +381,7 @@ def quma_full(cell_types, filename):
     """
 
     # Grab list of directories
-    subfolders: List[str] = [
-        f.path for f in os.scandir(config.bam_directory) if f.is_dir()
-    ]
+    subfolders: List[Path] = [p for p in config.bam_directory.iterdir() if p.is_dir()]
 
     writer: pd.ExcelWriter = pd.ExcelWriter(config.base_directory.joinpath(filename))
 
@@ -384,7 +389,7 @@ def quma_full(cell_types, filename):
     for folder in tqdm(subfolders, desc="Cell Lines"):
 
         # Get short name of cell_line
-        cell_line_name: str = Path(folder).name.split("_")[1]
+        cell_line_name: str = folder.name.split("_")[1]
 
         if set([cell_line_name]).intersection(set(cell_types)):
             # Set up a holding data frame from all the data
