@@ -5,10 +5,10 @@
 import gzip
 from Bio import SeqIO
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Optional
 
 
-def process_fastq_to_list(filepath: Path) -> Optional[List[Any]]:
+def process_fastq_to_list(filepath: Path) -> Optional[List[SeqIO.SeqRecord]]:
     """Read a .fastq or fastq.gz file into an in-memory record_list.
 
     This is a time and memory intensive operation!
@@ -24,7 +24,7 @@ def process_fastq_to_list(filepath: Path) -> Optional[List[Any]]:
         print("Wrong filetype")
         return None
 
-    record_list: List[Any] = []
+    record_list: List[SeqIO.SeqRecord] = []
     if ".gz" in filepath.suffixes[-1]:
         with gzip.open(filepath, "rt") as handle:
             for record in SeqIO.parse(handle, "fastq"):
@@ -42,7 +42,9 @@ def process_fastq_to_list(filepath: Path) -> Optional[List[Any]]:
     return None
 
 
-def make_records_to_dictionary(record_list: List[Any]) -> Dict[str, Any]:
+def make_records_to_dictionary(
+    record_list: List[SeqIO.SeqRecord],
+) -> Dict[str, SeqIO.SeqRecord]:
     """Take in list of biopython SeqRecords and output a dictionary
        with keys of the record name.
 

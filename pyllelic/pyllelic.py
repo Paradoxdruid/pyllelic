@@ -637,6 +637,18 @@ def find_diffs(means_df: pd.DataFrame, modes_df: pd.DataFrame) -> pd.DataFrame:
     return means_df.subtract(modes_df)
 
 
+def truncate_diffs(diffs_df: pd.DataFrame) -> pd.DataFrame:
+    """Remove missing or non-interesting diffs, and sort by magnitude.
+
+    Args:
+        diffs_df (pd.DataFrame): dataframe of diffs values
+
+    Returns:
+        pd.DataFrame: truncated dataframe
+    """
+    return diffs_df.dropna(how="all")
+
+
 def write_means_modes_diffs(
     means_df: pd.DataFrame, modes_df: pd.DataFrame, diff_df: pd.DataFrame, filename: str
 ) -> None:
