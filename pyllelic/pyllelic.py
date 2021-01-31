@@ -61,7 +61,9 @@ from pathlib import Path
 from scipy import stats
 from tqdm.notebook import tqdm
 from typing import List, Dict, Set, Optional
-from . import config
+from .config import Config
+
+config = Config()
 
 
 def set_up_env_variables(
@@ -149,20 +151,14 @@ def make_list_of_bam_files() -> List[str]:
     Returns:
         list[str]: list of files
     """
-
-    indv_bam: List[Path] = [b for b in config.analysis_directory.iterdir()]
-
-    init_files_set: List[str] = [bam.name for bam in indv_bam if bam.suffix == ".bam"]
-
-    bai_set: List[str] = [bai.name for bai in indv_bam if bai.suffix == ".bai"]
-
-    f_set: List[str] = [str(bam).split(".")[0] for bam in init_files_set]
-
-    baii: List[str] = [str(bai).split(".")[0] for bai in bai_set]
-
-    files_set: List[str] = [name + (".TERT.bam") for name in f_set if name in baii]
-
-    return files_set
+    # indv_bam: List[Path] = [b for b in config.analysis_directory.iterdir()]
+    # init_files_set: List[str] = [bam.name for bam in indv_bam if bam.suffix == ".bam"]
+    # bai_set: List[str] = [bai.name for bai in indv_bam if bai.suffix == ".bai"]
+    # f_set: List[str] = [str(bam).split(".")[0] for bam in init_files_set]
+    # baii: List[str] = [str(bai).split(".")[0] for bai in bai_set]
+    # files_set: List[str] = [name + (".TERT.bam") for name in f_set if name in baii]
+    # return files_set
+    return [f.name for f in config.analysis_directory.iterdir() if f.suffix == ".bam"]
 
 
 def index_and_fetch(files_set: List[str]) -> List[str]:
@@ -336,11 +332,9 @@ def genome_parsing(subfolders: List[Path] = None) -> None:
             file_lines.append(str(genome_range(read_name, genome_string)))
 
             # Save the reads as a text file for each position
-            with open(
-                folder.joinpath("g_" + str(read_name) + ".txt"), "w"
-            ) as file_handler:
+            with open(folder.joinpath(f"g_{read_name}.txt"), "w") as file_handler:
                 for item in file_lines:
-                    file_handler.write("{}\n".format(item))
+                    file_handler.write(f"{item}\n")
 
 
 def run_quma(directory: str, genomic_seq_file: str, reads_seq_file: str) -> str:
@@ -408,22 +402,12 @@ def quma_full(cell_types, filename):
                 # file_lines = []
 
                 quma_result: str = run_quma(
-                    folder, "g_{}.txt".format(read_name), "{}.txt".format(read_name)
+                    folder, f"g_{read_name}.txt", f"{read_name}.txt"
                 )
-
-                dots: List[str] = []
-                for line in quma_result.splitlines():
-                    if not line.lstrip().startswith("g"):
-                        fields: List[str] = line.split("\t")
-                        if float(fields[7]) < 80:
-                            dots.append("FAIL")
-                        else:
-                            dots.append(fields[13])
-                # Sort dots output by number of "1"
-                dots2: List[str] = sorted(dots, key=lambda t: t.count("1"))
+                processed_quma: List[str] = process_raw_quma(quma_result)
 
                 # Next, add this readname to the holding data frame
-                int_df: pd.DataFrame = pd.DataFrame({read_name: dots2})
+                int_df: pd.DataFrame = pd.DataFrame({read_name: processed_quma})
                 holding_df: pd.DataFrame = pd.concat([holding_df, int_df], axis=1)
 
             # Now, save it to an excel file
@@ -432,6 +416,28 @@ def quma_full(cell_types, filename):
             del holding_df
 
     writer.save()
+
+
+def process_raw_quma(quma_result: str) -> List[str]:
+    """Spit and process raw quma results into a pandas dataframe.
+
+    Args:
+        quma_result (str): console output from quma program.
+
+    Returns:
+        pd.DataFrame: intermediate dataframe to append
+    """
+
+    dots: List[str] = []
+    for line in quma_result.splitlines():
+        if not line.lstrip().startswith("g"):
+            fields: List[str] = line.split("\t")
+            if float(fields[7]) < 80:
+                dots.append("FAIL")
+            else:
+                dots.append(fields[13])
+    # Sort dots output by number of "1"
+    return sorted(dots, key=lambda t: t.count("1"))
 
 
 def extract_cell_types(file_sets: List[str]) -> List[str]:
@@ -457,9 +463,9 @@ def run_quma_and_compile_list_of_df(
     if run_quma:
         quma_full(cell_types, filename)
 
-    df: Dict[str, pd.DataFrame] = read_df_of_quma_results(filename)
+    dict_of_df: Dict[str, pd.DataFrame] = read_df_of_quma_results(filename)
 
-    return df
+    return dict_of_df
 
 
 def read_df_of_quma_results(filename: str) -> Dict[str, pd.DataFrame]:
