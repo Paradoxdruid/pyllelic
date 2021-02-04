@@ -6,6 +6,8 @@ import gzip
 from Bio import SeqIO
 from pathlib import Path
 from typing import List, Dict, Optional
+import subprocess
+import os
 
 
 def process_fastq_to_list(filepath: Path) -> Optional[List[SeqIO.SeqRecord]]:
@@ -55,3 +57,57 @@ def make_records_to_dictionary(
         Dict[str, SeqRecord]: dict of biopython SeqRecords from a fastq file
     """
     return dict(zip([record.id for record in record_list], record_list))
+
+
+def build_bowtie2_index(fasta: Path) -> str:
+    """Helper function to run external bowtie2-build tool.
+
+    Args:
+        fasta (Path): filepath to fasta file to build index from
+
+    Returns:
+        str: output from bowtie2-build shell command, usually discarded
+    """
+
+    command: List[str] = ["bowtie2-build", "index", os.fspath(fasta)]
+
+    output: subprocess.CompletedProcess = subprocess.run(
+        command, capture_output=True, text=True, check=True
+    )
+    out: str = output.stdout
+
+    return out
+
+
+def bowtie2_fastq_to_bam(index: Path, fastq: Path) -> str:
+    """Helper function to run external bowtie2-build tool.
+
+    Args:
+        fasta (Path): filepath to bowtie index file
+        fastq (Path): filepath to fastq file to convert to bam
+
+    Returns:
+        str: output from bowtie2 and samtools shell command, usually discarded
+    """
+
+    command: List[str] = [
+        "bowtie2",
+        "-x",
+        os.fspath(index),
+        "-U",
+        os.fspath(fastq),
+        "|",
+        "samtools",
+        "view",
+        "-bS",
+        "-",
+        ">",
+        fastq.stem + ".bam",
+    ]
+
+    output: subprocess.CompletedProcess = subprocess.run(
+        command, capture_output=True, text=True, check=True
+    )
+    out: str = output.stdout
+
+    return out
