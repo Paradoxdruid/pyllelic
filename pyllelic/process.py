@@ -111,3 +111,53 @@ def bowtie2_fastq_to_bam(index: Path, fastq: Path) -> str:
     out: str = output.stdout
 
     return out
+
+
+def samtools_sort(bamfile: Path) -> str:
+    """Helper function to run external samtools sort.
+
+    Args:
+        bamfile (Path): filepath to bam file
+
+    Returns:
+        str: output from samtools shell command, usually discarded
+    """
+
+    command: List[str] = [
+        "samtools",
+        "sort",
+        os.fspath(bamfile),
+        ">",
+        bamfile.stem + "_sorted.bam",
+    ]
+
+    output: subprocess.CompletedProcess = subprocess.run(
+        command, capture_output=True, text=True, check=True
+    )
+    out: str = output.stdout
+
+    return out
+
+
+def samtools_index(bamfile: Path) -> str:
+    """Helper function to run external samtools index.
+
+    Args:
+        bamfile (Path): filepath to bam file
+
+    Returns:
+        str: output from samtools shell command, usually discarded
+    """
+
+    command: List[str] = [
+        "samtools",
+        "index",
+        os.fspath(bamfile),
+    ]
+
+    output: subprocess.CompletedProcess = subprocess.run(
+        command, capture_output=True, text=True, check=True
+    )
+    out: str = output.stdout
+
+    return out
