@@ -174,7 +174,7 @@ def index_and_fetch(files_set: List[str]) -> List[str]:
     sam_path: List[Path] = [config.base_directory / "test" / f for f in files_set]
 
     all_pos: Set = set()
-    for sams in sam_path:
+    for sams in tqdm(sam_path):
         pos: pd.Index = run_sam_and_extract_df(sams)
         all_pos.update(pos)
 
@@ -512,7 +512,7 @@ def process_means(
             else:  # No data or data doesn't meet minimums for analysis
                 pos_means = np.nan
 
-            working_df.loc[key, pos] = pos_means
+            working_df.at[key, pos] = pos_means
 
     means_df: pd.DataFrame = working_df
 
@@ -545,7 +545,7 @@ def process_modes(
             else:  # No data or data doesn't meet minimums for analysis
                 pos_modes = np.nan
 
-            working_df.loc[key, pos] = pos_modes
+            working_df.at[key, pos] = pos_modes
 
     modes_df: pd.DataFrame = working_df
 
@@ -576,7 +576,7 @@ def return_individual_data(
             else:  # No data or data doesn't meet minimums for analysis
                 data_for_df = np.nan
 
-            working_df.loc[key, pos] = data_for_df
+            working_df.at[key, pos] = data_for_df
 
     return working_df
 
@@ -714,6 +714,8 @@ def create_histogram(data: pd.DataFrame, cell_line: str, position: str) -> go.Fi
         bargap=0.2,
         template="seaborn",
     )
+
+    fig.update_xaxes(range=[-0.1, 1.1])
 
     return fig
 
