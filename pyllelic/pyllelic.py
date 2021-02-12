@@ -11,6 +11,7 @@
         prom_start="1293000",
         prom_end="1296000",
         chrom="5",
+        offset=1298163,
     )
 
     pyllelic.main()  # runs every step all at once
@@ -27,6 +28,7 @@
         prom_start="1293000",
         prom_end="1296000",
         chrom="5",
+        offset=1298163,
     )
 
     files_set = pyllelic.make_list_of_bam_files()  # finds bam files
@@ -67,7 +69,12 @@ config = Config()
 
 
 def set_up_env_variables(
-    base_path: str, prom_file: str, prom_start: str, prom_end: str, chrom: str
+    base_path: str,
+    prom_file: str,
+    prom_start: str,
+    prom_end: str,
+    chrom: str,
+    offset: int,
 ) -> None:
     """Helper method to set up all our environmental variables, such as for testing.
 
@@ -78,6 +85,7 @@ def set_up_env_variables(
         prom_start (str): start position to analyze in promoter region
         prom_end (str): final position to analyze in promoter region
         chrom (str): chromosome promoter is located on
+        offset (int): genomic position of promoter to offset reads
     """
 
     config.base_directory = Path(base_path)
@@ -88,6 +96,7 @@ def set_up_env_variables(
     config.promoter_start = prom_start
     config.promoter_end = prom_end
     config.chromosome = chrom
+    config.offset = offset
 
 
 ##################################################################################
@@ -134,10 +143,10 @@ def genome_range(
         str: genomic bases for indicated read / position
     """
 
-    OFFSET: int = 1298163  # TERT offset
+    # OFFSET: int = 1298163  # TERT offset
 
     if not offset:
-        offset = OFFSET
+        offset = config.offset
 
     start: int = offset - (int(position) + 30)
     end: int = offset - (int(position) + 1)

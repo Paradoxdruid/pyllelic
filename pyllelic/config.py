@@ -17,3 +17,4 @@ class Config:
     promoter_start: str = "1293000"
     promoter_end: str = "1296000"
     chromosome: str = "5"
+    offset: int = 1298163
