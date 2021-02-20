@@ -126,3 +126,7 @@ dmypy.json
 test_pyllelic_notebook.ipynb
 .DS_Store
 .vscode/
+
+# Sphinx
+source/
+_build/
