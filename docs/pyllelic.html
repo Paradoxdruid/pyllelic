@@ -1,0 +1,872 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyllelic package &mdash; Pyllelic 0.1.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="pyllelic" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Pyllelic
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">pyllelic</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pyllelic package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.config">pyllelic.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.process">pyllelic.process module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.pyllelic">pyllelic.pyllelic module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyllelic</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">pyllelic</a> &raquo;</li>
+        
+      <li>pyllelic package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/pyllelic.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pyllelic-package">
+<h1>pyllelic package<a class="headerlink" href="#pyllelic-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyllelic.config">
+<span id="pyllelic-config-module"></span><h2>pyllelic.config module<a class="headerlink" href="#module-pyllelic.config" title="Permalink to this headline">¶</a></h2>
+<p>Configuration options for pyllelic.</p>
+<dl class="py class">
+<dt id="pyllelic.config.Config">
+<em class="property">class </em><code class="sig-prename descclassname">pyllelic.config.</code><code class="sig-name descname">Config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_directory</span><span class="p">:</span> <span class="n">pathlib.Path</span> <span class="o">=</span> <span class="default_value">PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic')</span></em>, <em class="sig-param"><span class="n">promoter_file</span><span class="p">:</span> <span class="n">pathlib.Path</span> <span class="o">=</span> <span class="default_value">PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/promoter.txt')</span></em>, <em class="sig-param"><span class="n">results_directory</span><span class="p">:</span> <span class="n">pathlib.Path</span> <span class="o">=</span> <span class="default_value">PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/results')</span></em>, <em class="sig-param"><span class="n">bam_directory</span><span class="p">:</span> <span class="n">pathlib.Path</span> <span class="o">=</span> <span class="default_value">PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/bam_output')</span></em>, <em class="sig-param"><span class="n">analysis_directory</span><span class="p">:</span> <span class="n">pathlib.Path</span> <span class="o">=</span> <span class="default_value">PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/test')</span></em>, <em class="sig-param"><span class="n">promoter_start</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'1293000'</span></em>, <em class="sig-param"><span class="n">promoter_end</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'1296000'</span></em>, <em class="sig-param"><span class="n">chromosome</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'5'</span></em>, <em class="sig-param"><span class="n">offset</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1298163</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyllelic.config.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt id="pyllelic.config.Config.analysis_directory">
+<code class="sig-name descname">analysis_directory</code><em class="property">: pathlib.Path</em><em class="property"> = PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/test')</em><a class="headerlink" href="#pyllelic.config.Config.analysis_directory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyllelic.config.Config.bam_directory">
+<code class="sig-name descname">bam_directory</code><em class="property">: pathlib.Path</em><em class="property"> = PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/bam_output')</em><a class="headerlink" href="#pyllelic.config.Config.bam_directory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyllelic.config.Config.base_directory">
+<code class="sig-name descname">base_directory</code><em class="property">: pathlib.Path</em><em class="property"> = PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic')</em><a class="headerlink" href="#pyllelic.config.Config.base_directory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyllelic.config.Config.chromosome">
+<code class="sig-name descname">chromosome</code><em class="property">: str</em><em class="property"> = '5'</em><a class="headerlink" href="#pyllelic.config.Config.chromosome" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyllelic.config.Config.offset">
+<code class="sig-name descname">offset</code><em class="property">: int</em><em class="property"> = 1298163</em><a class="headerlink" href="#pyllelic.config.Config.offset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyllelic.config.Config.promoter_end">
+<code class="sig-name descname">promoter_end</code><em class="property">: str</em><em class="property"> = '1296000'</em><a class="headerlink" href="#pyllelic.config.Config.promoter_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyllelic.config.Config.promoter_file">
+<code class="sig-name descname">promoter_file</code><em class="property">: pathlib.Path</em><em class="property"> = PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/promoter.txt')</em><a class="headerlink" href="#pyllelic.config.Config.promoter_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyllelic.config.Config.promoter_start">
+<code class="sig-name descname">promoter_start</code><em class="property">: str</em><em class="property"> = '1293000'</em><a class="headerlink" href="#pyllelic.config.Config.promoter_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyllelic.config.Config.results_directory">
+<code class="sig-name descname">results_directory</code><em class="property">: pathlib.Path</em><em class="property"> = PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/results')</em><a class="headerlink" href="#pyllelic.config.Config.results_directory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyllelic.process">
+<span id="pyllelic-process-module"></span><h2>pyllelic.process module<a class="headerlink" href="#module-pyllelic.process" title="Permalink to this headline">¶</a></h2>
+<p>Utilities to pre-process and prepare data for use in pyllelic.</p>
+<dl class="py function">
+<dt id="pyllelic.process.bowtie2_fastq_to_bam">
+<code class="sig-prename descclassname">pyllelic.process.</code><code class="sig-name descname">bowtie2_fastq_to_bam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">fastq</span><span class="p">:</span> <span class="n">pathlib.Path</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pyllelic.process.bowtie2_fastq_to_bam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to run external bowtie2-build tool.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fasta</strong> (<em>Path</em>) – filepath to bowtie index file</p></li>
+<li><p><strong>fastq</strong> (<em>Path</em>) – filepath to fastq file to convert to bam</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>output from bowtie2 and samtools shell command, usually discarded</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.process.build_bowtie2_index">
+<code class="sig-prename descclassname">pyllelic.process.</code><code class="sig-name descname">build_bowtie2_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fasta</span><span class="p">:</span> <span class="n">pathlib.Path</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pyllelic.process.build_bowtie2_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to run external bowtie2-build tool.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fasta</strong> (<em>Path</em>) – filepath to fasta file to build index from</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>output from bowtie2-build shell command, usually discarded</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.process.make_records_to_dictionary">
+<code class="sig-prename descclassname">pyllelic.process.</code><code class="sig-name descname">make_records_to_dictionary</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">record_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>Bio.SeqRecord.SeqRecord<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Dict<span class="p">[</span>str<span class="p">, </span>Bio.SeqRecord.SeqRecord<span class="p">]</span><a class="headerlink" href="#pyllelic.process.make_records_to_dictionary" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Take in list of biopython SeqRecords and output a dictionary</dt><dd><p>with keys of the record name.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>record_list</strong> (<em>List</em><em>[</em><em>SeqRecord</em><em>]</em>) – biopython sequence records from a fastq file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict of biopython SeqRecords from a fastq file</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dict[str, SeqRecord]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.process.process_fastq_to_list">
+<code class="sig-prename descclassname">pyllelic.process.</code><code class="sig-name descname">process_fastq_to_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span><span class="p">:</span> <span class="n">pathlib.Path</span></em><span class="sig-paren">)</span> &#x2192; Optional<span class="p">[</span>List<span class="p">[</span>Bio.SeqRecord.SeqRecord<span class="p">]</span><span class="p">]</span><a class="headerlink" href="#pyllelic.process.process_fastq_to_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a .fastq or fastq.gz file into an in-memory record_list.</p>
+<p>This is a time and memory intensive operation!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filepath</strong> (<em>Path</em>) – file path to a fastq.gz file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of biopython sequence records from the fastq file</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[SeqRecord]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.process.samtools_index">
+<code class="sig-prename descclassname">pyllelic.process.</code><code class="sig-name descname">samtools_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bamfile</span><span class="p">:</span> <span class="n">pathlib.Path</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pyllelic.process.samtools_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to run external samtools index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>bamfile</strong> (<em>Path</em>) – filepath to bam file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>output from samtools shell command, usually discarded</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.process.samtools_sort">
+<code class="sig-prename descclassname">pyllelic.process.</code><code class="sig-name descname">samtools_sort</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bamfile</span><span class="p">:</span> <span class="n">pathlib.Path</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pyllelic.process.samtools_sort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to run external samtools sort.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>bamfile</strong> (<em>Path</em>) – filepath to bam file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>output from samtools shell command, usually discarded</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyllelic.pyllelic">
+<span id="pyllelic-pyllelic-module"></span><h2>pyllelic.pyllelic module<a class="headerlink" href="#module-pyllelic.pyllelic" title="Permalink to this headline">¶</a></h2>
+<p>pyllelic: a tool for detection of allelic-specific varation in DNA sequencing.</p>
+<p>## Example usage in ipython / jupyter notebook:</p>
+<blockquote>
+<div><p>import pyllelic</p>
+<dl class="simple">
+<dt>pyllelic.set_up_env_variables(</dt><dd><p>base_path=”/Users/abonham/documents/test_allelic/”,
+prom_file=”TERT-promoter-genomic-sequence.txt”,
+prom_start=”1293000”,
+prom_end=”1296000”,
+chrom=”5”,
+offset=1298163,</p>
+</dd>
+</dl>
+<p>)</p>
+<p>pyllelic.main()  # runs every step all at once</p>
+</div></blockquote>
+<hr class="docutils" />
+<p>## Example exploratory / step-by-step use in ipython / jupyter notebook:</p>
+<blockquote>
+<div><p>import pyllelic</p>
+<dl class="simple">
+<dt>pyllelic.set_up_env_variables(</dt><dd><p>base_path=”/Users/abonham/documents/test_allelic/”,
+prom_file=”TERT-promoter-genomic-sequence.txt”,
+prom_start=”1293000”,
+prom_end=”1296000”,
+chrom=”5”,
+offset=1298163,</p>
+</dd>
+</dl>
+<p>)</p>
+<p>files_set = pyllelic.make_list_of_bam_files()  # finds bam files</p>
+<p>positions = pyllelic.index_and_fetch(files_set)  # index and creates bam_output folders/files</p>
+<p>pyllelic.genome_parsing()  # writes out genome strings in bam_output folders</p>
+<p>cell_types = extract_cell_types(files_set)  # pulls out the cell types available for analysis</p>
+<p>df_list = run_quma_and_compile_list_of_df(cell_types, filename)  # run quma, get dfs</p>
+<p>means_df = process_means(df_list, positions, files_set)  # process means data from dataframes</p>
+<p>modes_df = process_modes(df_list, positions, cell_types)  # process modes data from dataframes</p>
+<p>diff_df = find_diffs(means_df, modes_df)  # find difference between mean and mode</p>
+<p>write_means_modes_diffs(means_df, modes_df, diffs_df, filename)  # write output to excel files</p>
+</div></blockquote>
+<dl class="py function">
+<dt id="pyllelic.pyllelic.create_histogram">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">create_histogram</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">cell_line</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">position</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; plotly.graph_objs._figure.Figure<a class="headerlink" href="#pyllelic.pyllelic.create_histogram" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Generate a graph figure showing fractional methylation in</dt><dd><p>a given cell line at a given site.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – dataframe of individual data</p></li>
+<li><p><strong>cell_line</strong> (<em>str</em>) – name of cell line</p></li>
+<li><p><strong>position</strong> (<em>str</em>) – genomic position</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>plotly figure object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>go.Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.extract_cell_types">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">extract_cell_types</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_sets</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>str<span class="p">]</span><a class="headerlink" href="#pyllelic.pyllelic.extract_cell_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list[str] of cell line names in the dataset.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.find_diffs">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">find_diffs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">means_df</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">modes_df</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#pyllelic.pyllelic.find_diffs" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Find the differences between means and modes for each cell line at each position</dt><dd><p>in means and modes data.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>means_df</strong> (<em>pd.DataFrame</em>) – dataframe of means values</p></li>
+<li><p><strong>modes_df</strong> (<em>pd.DataFrame</em>) – dataframe of modes values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataframe of difference values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.genome_parsing">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">genome_parsing</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">subfolders</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>List<span class="p">[</span>pathlib.Path<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pyllelic.pyllelic.genome_parsing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes out a list of genomic sequence strings for comparison to read data.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.genome_range">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">genome_range</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">position</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">genome_string</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">offset</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pyllelic.pyllelic.genome_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper to return a genome string (e.g., “ATCGACTAG”)
+given a position and an entire string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>position</strong> – genomic position on chromesome</p></li>
+<li><p><strong>genome_string</strong> – string representation of genomic promoter known sequence</p></li>
+<li><p><strong>offset</strong> – genomic position of promoter to offset reads</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>genomic bases for indicated read / position</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.histogram">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">histogram</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">cell_line</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">position</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pyllelic.pyllelic.histogram" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Display a graph figure showing fractional methylation in</dt><dd><p>a given cell line at a given site.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – dataframe of individual data</p></li>
+<li><p><strong>cell_line</strong> (<em>str</em>) – name of cell line</p></li>
+<li><p><strong>position</strong> (<em>str</em>) – genomic position</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.index_and_fetch">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">index_and_fetch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">files_set</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>str<span class="p">]</span><a class="headerlink" href="#pyllelic.pyllelic.index_and_fetch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper to call processing of each sam file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>files_set</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of bam/sam files</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of genomic positions analyzed</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.main">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pyllelic.pyllelic.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a given set of Pyllelic analysis, using values from
+supplied environmental variables.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.make_list_of_bam_files">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">make_list_of_bam_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>str<span class="p">]</span><a class="headerlink" href="#pyllelic.pyllelic.make_list_of_bam_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check analysis directory for all valid .bam files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of files</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.process_means">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">process_means</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dict_of_dfs</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>pandas.core.frame.DataFrame<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">positions</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">cell_types</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#pyllelic.pyllelic.process_means" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process the mean values at each position for each cell line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dict_of_dfs</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>pd.DataFrame</em><em>]</em>) – dict of dataframes of quma results</p></li>
+<li><p><strong>positions</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of genomic positions to analyze</p></li>
+<li><p><strong>cell_types</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of cell lines in the dataset</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataframes of mean values for each position in each cell line</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.process_modes">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">process_modes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dict_of_dfs</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>pandas.core.frame.DataFrame<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">positions</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">cell_types</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#pyllelic.pyllelic.process_modes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process the mode values at each position for each cell line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dict_of_dfs</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>pd.DataFrame</em><em>]</em>) – dict of dataframes of quma results</p></li>
+<li><p><strong>positions</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of genomic positions to analyze</p></li>
+<li><p><strong>cell_types</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of cell lines in the dataset</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataframes of mode values for each position in each cell line</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.process_raw_quma">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">process_raw_quma</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">quma_result</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>str<span class="p">]</span><a class="headerlink" href="#pyllelic.pyllelic.process_raw_quma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spit and process raw quma results into a pandas dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>quma_result</strong> (<em>str</em>) – console output from quma program.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>intermediate dataframe to append</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.quma_full">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">quma_full</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cell_types</span></em>, <em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyllelic.pyllelic.quma_full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run external QUMA methylation analysis on all specified cell lines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cell_types</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of cell lines in our dataset</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – desired output filename for xlsx output</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.read_df_of_quma_results">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">read_df_of_quma_results</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Dict<span class="p">[</span>str<span class="p">, </span>pandas.core.frame.DataFrame<span class="p">]</span><a class="headerlink" href="#pyllelic.pyllelic.read_df_of_quma_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read excel output of quma results into dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – filename of quma results</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict of dataframes of quma results</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dict[str, pd.DataFrame]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.return_individual_data">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">return_individual_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dict_of_dfs</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>pandas.core.frame.DataFrame<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">positions</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">cell_types</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#pyllelic.pyllelic.return_individual_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dataframe for methylation values at each position for each cell line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dict_of_dfs</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>pd.DataFrame</em><em>]</em>) – dict of dataframes of quma results</p></li>
+<li><p><strong>positions</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of genomic positions to analyze</p></li>
+<li><p><strong>cell_types</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of cell lines in the dataset</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>methylation values for each position in each cell line</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.return_read_values">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">return_read_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">dict_of_dfs</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>pandas.core.frame.DataFrame<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">min_reads</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">4</span></em>, <em class="sig-param"><span class="n">min_sites</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">2</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>float<span class="p">]</span><a class="headerlink" href="#pyllelic.pyllelic.return_read_values" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Given a genomic position, cell line, and data, find fractional methylation</dt><dd><p>values for each read in the dataset.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pos</strong> (<em>str</em>) – genomic position of read</p></li>
+<li><p><strong>key</strong> (<em>str</em>) – cell line name</p></li>
+<li><p><strong>dict_of_dfs</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>pd.DataFrame</em><em>]</em>) – dictionary of methylation data</p></li>
+<li><p><strong>min_reads</strong> (<em>int</em>) – minimum bound for # reads to consider</p></li>
+<li><p><strong>min_sites</strong> (<em>int</em>) – minimum bound for # methylation sites to consider</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of fractional methylation for each read</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.run_quma">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">run_quma</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">genomic_seq_file</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">reads_seq_file</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pyllelic.pyllelic.run_quma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to run external QUMA tool.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> (<em>str</em>) – directory path to analyze</p></li>
+<li><p><strong>genomic_seq_file</strong> (<em>str</em>) – text file with known genomic sequence</p></li>
+<li><p><strong>reads_seq_file</strong> (<em>str</em>) – text file with experimental reads</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>shell output from quma command</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bytes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.run_quma_and_compile_list_of_df">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">run_quma_and_compile_list_of_df</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cell_types</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">filename</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">run_quma</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span> &#x2192; Dict<span class="p">[</span>str<span class="p">, </span>pandas.core.frame.DataFrame<span class="p">]</span><a class="headerlink" href="#pyllelic.pyllelic.run_quma_and_compile_list_of_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper to run QUMA on all cell lines in the dataset and write output file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cell_types</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of cell lines in the dataset</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – desired output filename</p></li>
+<li><p><strong>run_quma</strong> (<em>bool</em>) – whether we should invoke the external quma run, default True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataframe of quma results</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dict[str, pd.DataFrame]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.run_sam_and_extract_df">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">run_sam_and_extract_df</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sams</span><span class="p">:</span> <span class="n">pathlib.Path</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.indexes.base.Index<a class="headerlink" href="#pyllelic.pyllelic.run_sam_and_extract_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process samfiles, pulling out sequence and position data
+and writing to folders/files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sams</strong> (<em>Path</em>) – path to a samfile</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of unique positions in the samfile</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.Index</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.samtools_index">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">samtools_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sams</span><span class="p">:</span> <span class="n">pathlib.Path</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pyllelic.pyllelic.samtools_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to run external samtools index tool.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sams</strong> (<em>Path</em>) – filepath to samfile</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>output from samtools index shell command, usually discarded</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.set_up_env_variables">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">set_up_env_variables</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">prom_file</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">prom_start</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">prom_end</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">chrom</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">offset</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pyllelic.pyllelic.set_up_env_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper method to set up all our environmental variables, such as for testing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_path</strong> (<em>str</em>) – directory where all processing will occur, put .bam files
+in “test” sub-directory in this folder</p></li>
+<li><p><strong>prom_file</strong> (<em>str</em>) – filename of genmic sequence of promoter region of interest</p></li>
+<li><p><strong>prom_start</strong> (<em>str</em>) – start position to analyze in promoter region</p></li>
+<li><p><strong>prom_end</strong> (<em>str</em>) – final position to analyze in promoter region</p></li>
+<li><p><strong>chrom</strong> (<em>str</em>) – chromosome promoter is located on</p></li>
+<li><p><strong>offset</strong> (<em>int</em>) – genomic position of promoter to offset reads</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.truncate_diffs">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">truncate_diffs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">diffs_df</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#pyllelic.pyllelic.truncate_diffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove missing or non-interesting diffs, and sort by magnitude.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>diffs_df</strong> (<em>pd.DataFrame</em>) – dataframe of diffs values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>truncated dataframe</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.write_bam_output_files">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">write_bam_output_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sams</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">positions</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">df</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pyllelic.pyllelic.write_bam_output_files" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Extract alignments from sequencing reads and output text files</dt><dd><p>in bam directory.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sams</strong> (<em>Path</em>) – path to a sam file</p></li>
+<li><p><strong>positions</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of unique positions</p></li>
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – dataframe of sequencing reads</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.write_individual_bam_file">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">write_individual_bam_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sam_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">filename</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">file_contents</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pyllelic.pyllelic.write_individual_bam_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the contents of each bam output file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sam_name</strong> (<em>str</em>) – [description]</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – [description]</p></li>
+<li><p><strong>file_contents</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – [description]</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyllelic.pyllelic.write_means_modes_diffs">
+<code class="sig-prename descclassname">pyllelic.pyllelic.</code><code class="sig-name descname">write_means_modes_diffs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">means_df</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">modes_df</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">diff_df</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">filename</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pyllelic.pyllelic.write_means_modes_diffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wite out files of means, modes, and diffs for future analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>means_df</strong> (<em>pd.DataFrame</em>) – dataframe of means values</p></li>
+<li><p><strong>modes_df</strong> (<em>pd.DataFrame</em>) – dataframe of modes values</p></li>
+<li><p><strong>diff_df</strong> (<em>pd.DataFrame</em>) – dataframe of diff values</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – desired root filename</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyllelic">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyllelic" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="modules.html" class="btn btn-neutral float-left" title="pyllelic" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Andrew J. Bonham.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
