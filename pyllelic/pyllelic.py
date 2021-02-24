@@ -492,6 +492,7 @@ def read_df_of_quma_results(filename: str) -> Dict[str, pd.DataFrame]:
         dtype=str,
         sheet_name=None,
         index_col=0,
+        engine="openpyxl",
     )
 
 
