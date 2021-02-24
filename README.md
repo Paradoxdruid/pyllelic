@@ -69,8 +69,13 @@ Pyllelic documention is available at **https://paradoxdruid.github.io/pyllelic/*
 ```bash
 conda create --name methyl python=3.7
 conda activate methyl
-conda config --add channels conda-forge
-conda config --set channel_priority strict
+conda config --env --add channels conda-forge
+```
+### Install python dependencies (not needed if installed via `pip install pyllelic`)
+```bash
+conda install pandas numpy scipy plotly dash notebook xlsxwriter xlrd openpyxl tqdm biopython ipywidgets
+conda install -c bioconda samtools pysam scikit-bio
+conda install -c conda-forge jupyter_contrib_nbextensions
 ```
 ### System dependencies
 ```bash
@@ -78,18 +83,10 @@ conda install -c bioconda emboss
 conda install -c bioconda perl perl-app-cpanminus
 cpan install Statistics::Lite
 ```
-### jupyter setup
-```bash
-conda install -c conda-forge jupyter_contrib_nbextensions
-```
 ### quma installation
 * Download from http://quma.cdb.riken.jp/files/quma_cui-1.0.0.tar.gz
 * Untar into `base_path`
-### Install python dependencies (not needed if installed via `pip install pyllelic`)
-```bash
-conda install pandas numpy scipy plotly dash notebook xlsxwriter xlrd
-conda install -c bioconda samtools pysam scikit-bio
-```
+
 ### Install pyllelic
 ```bash
 pip install pyllelic
