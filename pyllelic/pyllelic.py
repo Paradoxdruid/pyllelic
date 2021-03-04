@@ -62,7 +62,7 @@ import subprocess
 from pathlib import Path
 from scipy import stats
 from tqdm.notebook import tqdm
-from typing import List, Dict, Set, Optional
+from typing import List, Dict, Set, Optional, Tuple
 from .config import Config
 
 config = Config()
@@ -742,6 +742,84 @@ def histogram(data: pd.DataFrame, cell_line: str, position: str) -> None:
 
     fig: go.Figure = create_histogram(data, cell_line, position)
     fig.show()
+
+
+def anderson_darling_test(
+    raw_list: Optional[pd.Series],
+) -> Tuple[bool, float, np.array]:
+    """Run the Anderson-Darling normality test on methylation data at a point.
+
+    Args:
+        raw_list (pd.Series): list of fractional methylation levels per read.
+
+    Returns:
+        Tuple[bool, float, np.array]: is the data significantly allelic (bool),
+                                 A-D statistic (float), critical values (np.array)
+    """
+    if np.all(pd.notnull(raw_list)):
+        stat: float
+        crits: np.array
+        sigs: np.array
+        stat, crits, sigs = stats.anderson(raw_list)
+        if stat > crits[4]:
+            is_sig = True
+        else:
+            is_sig = False
+        return (is_sig, stat, crits)
+    return np.nan
+
+
+def generate_ad_stats(individual_data_df: pd.DataFrame) -> pd.DataFrame:
+    """Generate Anderson-Darling normality statistics for an individual data df.
+
+    Args:
+        individual_data_df (pd.DataFrame): df of individual fractional methylation
+        values per read
+
+    Returns:
+        pd.DataFrame: df of a-d test statistics
+    """
+    np.seterr(divide="ignore", invalid="ignore")  # ignore divide-by-zero errors
+    df = individual_data_df
+    df2 = df.applymap(anderson_darling_test)
+    return df2
+
+
+def summarize_allelic_data(
+    individual_data_df: pd.DataFrame, diffs_df: pd.DataFrame
+) -> pd.DataFrame:
+    """Create a dataframe only of likely allelic methylation positions
+
+    Args:
+        individual_data_df (pd.DataFrame): methylation values for each position in each cell line
+        diffs_df (pd.DataFrame): dataframe of difference values
+
+    Returns:
+        pd.DataFrame: dataframe of cell lines with likely allelic positions
+    """
+    np.seterr(divide="ignore", invalid="ignore")  # ignore divide-by-zero errors
+    sig_dict = {
+        "cellLine": [],
+        "position": [],
+        "ad_stat": [],
+        "p_crit": [],
+        "diff": [],
+        "raw": [],
+    }
+    for index, row in individual_data_df.iterrows():
+        for column in row.index:
+            value = row[column]
+            if np.all(pd.notnull(value)):
+                good, stat, crits = anderson_darling_test(value)
+                if good:
+                    sig_dict["diff"].append(diffs_df.loc[index, column])
+                    sig_dict["cellLine"].append(index)
+                    sig_dict["position"].append(column)
+                    sig_dict["raw"].append(value)
+                    sig_dict["ad_stat"].append(stat)
+                    sig_dict["p_crit"].append(crits[4])
+    sig_df = pd.DataFrame(sig_dict)
+    return sig_df
 
 
 if __name__ == "__main__":
