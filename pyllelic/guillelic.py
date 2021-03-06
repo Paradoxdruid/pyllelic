@@ -7,6 +7,7 @@ import methyl_level
 import os
 import threading
 import time
+from pathlib import Path
 
 # Gui Interface:
 sg.theme("Dark Blue 13")
@@ -59,18 +60,18 @@ while True:
             "Please select location for your raw data to be saved: "
         )
 
-        from pathlib import Path  # filesystem pathways module
-
         # can change to different folder
         py_path = Path.cwd() / "pyllelic"
 
-        with open(f"{py_path}/config.py", "a") as configure:
+        # Needs refactoring
 
-            # Adds a new entry to the configure file--added code to pyllelic
-            # code to communicate with guillelic
-            configure.write("\n" + f"file_save: str ='{file_save}'")
+        # with open(f"{py_path}/config.py", "a") as configure:
 
-        print(f"Your file is saved in: {file_save}")
+        #     # Adds a new entry to the configure file--added code to pyllelic
+        #     # code to communicate with guillelic
+        #     configure.write("\n" + f"file_save: str ='{file_save}'")
+
+        # print(f"Your file is saved in: {file_save}")
 
         # Takes the file location defined above and appends mutant cell type.
         # Takes the file location defined above and appends mutant cell type.
@@ -84,15 +85,11 @@ while True:
             fig_save = f"{file_save}/{mut}.png"
             excel_file = f"{file_save}/{mut}.xlsx"
 
-            from pathlib import Path  # filesystem pathways module
+            # with open(f"{py_path}/test.py", "a") as configure:
+            #     configure.write("\n" + f"fig_save: str ='{fig_save}'")
 
-            py_path = Path.cwd() / "pyllelic"
-
-            with open(f"{py_path}/test.py", "a") as configure:
-                configure.write("\n" + f"fig_save: str ='{fig_save}'")
-
-                # This is where raw data can be found--new file name for each run.
-                print(f"Image is saved under: {fig_save}")
+            #     # This is where raw data can be found--new file name for each run.
+            #     print(f"Image is saved under: {fig_save}")
 
         # If file name already exists, below codes for the same mutant type,
         # just one sequential number above the last file.
@@ -106,13 +103,9 @@ while True:
                 if not os.path.isfile(image_name):
                     fig_save = image_name
 
-                    from pathlib import Path  # filesystem pathways module
-
-                    py_path = Path.cwd() / "pyllelic"
-
-                    with open(f"{py_path}/test.py", "a") as configure:
-                        configure.write("\n" + f"fig_save: str ='{fig_save}'")
-                        print(f"Image is saved under: {fig_save}")
+                    # with open(f"{py_path}/test.py", "a") as configure:
+                    #     configure.write("\n" + f"fig_save: str ='{fig_save}'")
+                    #     print(f"Image is saved under: {fig_save}")
 
         # Window that contains output data:
 
@@ -122,7 +115,7 @@ while True:
             [sg.Button("Exit")],
         ]
 
-        window = sg.Window("Pyllelic", layout)
+        out_window = sg.Window("Pyllelic", layout)
 
         def methylation():
             print("Analysis Running... This can take a few minutes. \n \n ")
@@ -130,7 +123,7 @@ while True:
             time.sleep(2)
             methyl_level.main(file_set, file_save, fig_save, excel_file, mut)
             time.sleep(2)
-            window.refresh()
+            out_window.refresh()
 
             print(f"Figure saved in the following path: {fig_save}")
 
@@ -149,7 +142,7 @@ while True:
         # The following is for the output window:
         while True:
             # window read outputs data to user-interface
-            event, values = window.read()
+            event, values = out_window.read()
 
             # This is the actual methyl analysis
             if event == "Run Analysis":
@@ -167,16 +160,16 @@ while True:
                 break
 
     if event == "Exit" or sg.WIN_CLOSED:
-        window.close()
+        out_window.close()
 
 
 #    methyl_level.config_reset()
 
-""" This needs some work. It was working fine until recently it started deleting
-    the entire .config file for no apparent reason program still runs without it...
-    but prefer to clean it up.
-    This will delete the configure entries so each time it runs will start from
-    the original .config file."""
+# This needs some work. It was working fine until recently it started deleting
+# the entire .config file for no apparent reason program still runs without it...
+# but prefer to clean it up.
+# This will delete the configure entries so each time it runs will start from
+# the original .config file.
 
 
 #             if event == 'Plot':
@@ -195,7 +188,7 @@ while True:
 #                 if event in (sg.WIN_CLOSED, 'Cancel'):
 #                     break
 
-window.close()
+# window.close()
 
 #           elif event == 'Popup':
 #             sg.popup('Yes, your application is still running')while True:

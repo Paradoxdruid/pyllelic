@@ -4,10 +4,9 @@
 
 import pyllelic
 from typing import List
+import matplotlib
 
-# import matplotlib
-# matplotlib.use("tkAgg")
-# import matplotlib.pyplot as plt
+matplotlib.use("tkAgg")  # for pillow image show
 
 
 def main(
@@ -38,24 +37,17 @@ def main(
 
     # Run core pyllelic processing steps
     positions = pyllelic.index_and_fetch(files)
-    #   pyllelic.genome_parsing()
+    #   pyllelic.genome_parsing()  # skip for time during testing
     cell_types = pyllelic.extract_cell_types(files)
     df_list = pyllelic.run_quma_and_compile_list_of_df(
-        cell_types, "tester5.xlsx"
+        cell_types, "tester5.xlsx"  # modify appropriately?
     )  # to skip quma: , run_quma=False)
     df_list.keys()
     means = pyllelic.process_means(df_list, positions, files)
     modes = pyllelic.process_modes(df_list, positions, files)
     diff = pyllelic.find_diffs(means, modes)
 
-    # Converts mean/mode difference into an excel file and saves to unique filename
-    def excel_file(x_file):
-        #         data_path = os.getcwd() + f'/pyllelic_raw_data {x_file}'
-        diff.to_excel(x_file, index=False)
-        # pd.set_option("display.max_columns", None)
-        # excel_sheet = pd.read_excel(x_file)
-
-    excel_file(x_file)
+    diff.to_exel(x_file, index=False)  # Unneeded with command below
 
     pyllelic.write_means_modes_diffs(means, modes, diff, "Test5")
 
@@ -86,13 +78,13 @@ def main(
 # Currently commented out in code.
 
 
-def config_reset():
-    py_path = "./pyllelic"
-    with open(f"{py_path}/config.py", "r"):
-        lines = f"{py_path}/config.py"
-        with open(lines, "r") as f:
-            ff = f.read()
-            h = "\n".join(ff.split("\n")[:-2])
+# def config_reset():
+#     py_path = "./pyllelic"
+#     with open(f"{py_path}/config.py", "r"):
+#         lines = f"{py_path}/config.py"
+#         with open(lines, "r") as f:
+#             ff = f.read()
+#             h = "\n".join(ff.split("\n")[:-2])
 
-            with open(lines, "w") as trunc:
-                trunc.write(h)
+#             with open(lines, "w") as trunc:
+#                 trunc.write(h)
