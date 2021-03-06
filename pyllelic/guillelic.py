@@ -41,7 +41,7 @@ while True:
         window.close()
         break
 
-    # TODO: Can add multiple cell lines at once. But needs work before running multiples without errors.
+    # Can add multiple cell lines at once. But needs work before running multiples without errors.
 
     if event == "Add":
 
@@ -130,7 +130,7 @@ while True:
             time.sleep(2)
             methyl_level.methyl_levels(file_set, file_save, fig_save, excel_file, mut)
             time.sleep(2)
-            window.refresh
+            window.refresh()
 
             print(f"Figure saved in the following path: {fig_save}")
 
@@ -176,8 +176,7 @@ while True:
 
 """ This needs some work. It was working fine until recently it started deleting the entire .config file for no apparent reason
     program still runs without it... but prefer to clean it up 
-    This will delete the configure entries so each time it runs will start from the original .config file.
-        """
+    This will delete the configure entries so each time it runs will start from the original .config file."""
 
 
 #             if event == 'Plot':
