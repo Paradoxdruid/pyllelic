@@ -18,3 +18,5 @@ class Config:
     promoter_end: str = "1296000"
     chromosome: str = "5"
     offset: int = 1298163
+    location: str = str(base_directory / "saves")
+    image_location: str = str(base_directory / "images")

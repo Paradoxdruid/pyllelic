@@ -1,54 +1,5 @@
 #!/usr/bin/env python3
-"""pyllelic: a tool for detection of allelic-specific varation in DNA sequencing.
-
-## Example usage in ipython / jupyter notebook:
-
-    import pyllelic
-
-    pyllelic.set_up_env_variables(
-        base_path="/Users/abonham/documents/test_allelic/",
-        prom_file="TERT-promoter-genomic-sequence.txt",
-        prom_start="1293000",
-        prom_end="1296000",
-        chrom="5",
-        offset=1298163,
-    )
-
-    pyllelic.main()  # runs every step all at once
-
-----------------------------------
-
-## Example exploratory / step-by-step use in ipython / jupyter notebook:
-
-    import pyllelic
-
-    pyllelic.set_up_env_variables(
-        base_path="/Users/abonham/documents/test_allelic/",
-        prom_file="TERT-promoter-genomic-sequence.txt",
-        prom_start="1293000",
-        prom_end="1296000",
-        chrom="5",
-        offset=1298163,
-    )
-
-    files_set = pyllelic.make_list_of_bam_files()  # finds bam files
-
-    positions = pyllelic.index_and_fetch(files_set)  # index and creates bam_output folders/files
-
-    pyllelic.genome_parsing()  # writes out genome strings in bam_output folders
-
-    cell_types = extract_cell_types(files_set)  # pulls out the cell types available for analysis
-
-    df_list = run_quma_and_compile_list_of_df(cell_types, filename)  # run quma, get dfs
-
-    means_df = process_means(df_list, positions, files_set)  # process means data from dataframes
-
-    modes_df = process_modes(df_list, positions, cell_types)  # process modes data from dataframes
-
-    diff_df = find_diffs(means_df, modes_df)  # find difference between mean and mode
-
-    write_means_modes_diffs(means_df, modes_df, diffs_df, filename)  # write output to excel files
-"""
+"""pyllelic: a tool for detection of allelic-specific varation in DNA sequencing."""
 
 # Imports
 import pandas as pd
@@ -62,7 +13,7 @@ import subprocess
 from pathlib import Path
 from scipy import stats
 from tqdm.notebook import tqdm
-from typing import List, Dict, Set, Optional, Tuple
+from typing import List, Dict, Set, Optional, Tuple, Any
 from .config import Config
 
 config = Config()
@@ -75,6 +26,8 @@ def set_up_env_variables(
     prom_end: str,
     chrom: str,
     offset: int,
+    location: str,
+    image_location: str,
 ) -> None:
     """Helper method to set up all our environmental variables, such as for testing.
 
@@ -97,6 +50,8 @@ def set_up_env_variables(
     config.promoter_end = prom_end
     config.chromosome = chrom
     config.offset = offset
+    config.location = location
+    config.image_location = image_location
 
 
 ##################################################################################
@@ -514,7 +469,7 @@ def process_means(
     working_df: pd.DataFrame = pd.DataFrame()
     for pos in positions:
         working_df[pos] = ""
-        for key, each in dict_of_dfs.items():
+        for key, _ in dict_of_dfs.items():
             values_list: List[float] = return_read_values(pos, key, dict_of_dfs)
 
             if values_list:
@@ -547,7 +502,7 @@ def process_modes(
     working_df: pd.DataFrame = pd.DataFrame()
     for pos in positions:
         working_df[pos] = ""
-        for key, each in dict_of_dfs.items():
+        for key, _ in dict_of_dfs.items():
             values_list: List[float] = return_read_values(pos, key, dict_of_dfs)
 
             if values_list:
@@ -579,7 +534,7 @@ def return_individual_data(
     working_df: pd.DataFrame = pd.DataFrame()
     for pos in tqdm(positions, desc="Position"):
         working_df[pos] = ""  # Create position column in dataframe
-        for key, each in tqdm(dict_of_dfs.items(), desc="Cell Line", leave=False):
+        for key, _ in tqdm(dict_of_dfs.items(), desc="Cell Line", leave=False):
             values_list: List[float] = return_read_values(pos, key, dict_of_dfs)
             if values_list:
                 data_for_df: List[float] = values_list
@@ -621,7 +576,7 @@ def return_read_values(
     if pos in dict_of_dfs.get(key).columns:  # type: ignore[union-attr]
 
         values_to_check: List[str] = (
-            dict_of_dfs.get(key).loc[:, pos].dropna().astype(str)  # type: ignore[union-attr]
+            dict_of_dfs.get(key).loc[:, pos].dropna().astype(str)  # type: ignore
         )
         if not len(values_to_check) == 0:  # Skip empty values
             if (
@@ -759,8 +714,8 @@ def anderson_darling_test(
     if np.all(pd.notnull(raw_list)):
         stat: float
         crits: np.array
-        sigs: np.array
-        stat, crits, sigs = stats.anderson(raw_list)
+        _: np.array
+        stat, crits, _ = stats.anderson(raw_list)
         if stat > crits[4]:
             is_sig = True
         else:
@@ -791,14 +746,15 @@ def summarize_allelic_data(
     """Create a dataframe only of likely allelic methylation positions
 
     Args:
-        individual_data_df (pd.DataFrame): methylation values for each position in each cell line
+        individual_data_df (pd.DataFrame): methylation values for each
+                                           position in each cell line
         diffs_df (pd.DataFrame): dataframe of difference values
 
     Returns:
         pd.DataFrame: dataframe of cell lines with likely allelic positions
     """
     np.seterr(divide="ignore", invalid="ignore")  # ignore divide-by-zero errors
-    sig_dict = {
+    sig_dict: Dict[str, List[Any]] = {
         "cellLine": [],
         "position": [],
         "ad_stat": [],

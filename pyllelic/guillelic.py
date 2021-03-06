@@ -1,13 +1,10 @@
-#!/usr/bin/env python
-# coding: utf-8
+#!/usr/bin/env python3
+
+"""GUIllelic: a graphical front-end interface for pyllelic."""
 
 import PySimpleGUI as sg
-import sys
-import plotly.graph_objects as go
-import numpy as np
 import methyl_level
 import os
-import logging
 import threading
 import time
 
@@ -25,7 +22,7 @@ layout = [
         sg.Button("Add"),
     ],
     [sg.Button("Submit")],
-    [sg.Text("Your selectred .BAM files: "), sg.Text(size=(40, 2), key="-OUTPUT-")],
+    [sg.Text("Your selected .BAM files: "), sg.Text(size=(40, 2), key="-OUTPUT-")],
 ]
 
 window = sg.Window("Pyllelic 1.00", layout)
@@ -41,7 +38,8 @@ while True:
         window.close()
         break
 
-    # Can add multiple cell lines at once. But needs work before running multiples without errors.
+    # Can add multiple cell lines at once.
+    # But needs work before running multiples without errors.
 
     if event == "Add":
 
@@ -54,7 +52,8 @@ while True:
 
     if event == "Submit":
 
-        # File browser to choose base location of both tables (not ready yet) and figures.
+        # File browser to choose base location of both tables
+        # (not ready yet) and figures.
 
         file_save = sg.popup_get_folder(
             "Please select location for your raw data to be saved: "
@@ -67,7 +66,8 @@ while True:
 
         with open(f"{py_path}/config.py", "a") as configure:
 
-            # Adds a new entry to the configure file--added code to pyllelic code to communicate with guillelic
+            # Adds a new entry to the configure file--added code to pyllelic
+            # code to communicate with guillelic
             configure.write("\n" + f"file_save: str ='{file_save}'")
 
         print(f"Your file is saved in: {file_save}")
@@ -77,7 +77,7 @@ while True:
 
         image_name = f"{file_save}/{mut}.png"
 
-        """To avoid overwriting multiple files saved with the same cell type name,  
+        """To avoid overwriting multiple files saved with the same cell type name,
            code autogenerates new file name for each run."""
 
         if not os.path.isfile(image_name):
@@ -94,7 +94,8 @@ while True:
                 # This is where raw data can be found--new file name for each run.
                 print(f"Image is saved under: {fig_save}")
 
-        # If file name already exists, below codes for the same mutant type, just one sequential number above the last file.
+        # If file name already exists, below codes for the same mutant type,
+        # just one sequential number above the last file.
         else:
             n = 1
             while os.path.isfile(image_name):
@@ -123,12 +124,11 @@ while True:
 
         window = sg.Window("Pyllelic", layout)
 
-        # function for methylation--found in other file in same directory (methyl_level.py)
         def methylation():
             print("Analysis Running... This can take a few minutes. \n \n ")
 
             time.sleep(2)
-            methyl_level.methyl_levels(file_set, file_save, fig_save, excel_file, mut)
+            methyl_level.main(file_set, file_save, fig_save, excel_file, mut)
             time.sleep(2)
             window.refresh()
 
@@ -148,8 +148,6 @@ while True:
 
         # The following is for the output window:
         while True:
-            import pyllelic
-
             # window read outputs data to user-interface
             event, values = window.read()
 
@@ -174,9 +172,11 @@ while True:
 
 #    methyl_level.config_reset()
 
-""" This needs some work. It was working fine until recently it started deleting the entire .config file for no apparent reason
-    program still runs without it... but prefer to clean it up 
-    This will delete the configure entries so each time it runs will start from the original .config file."""
+""" This needs some work. It was working fine until recently it started deleting
+    the entire .config file for no apparent reason program still runs without it...
+    but prefer to clean it up.
+    This will delete the configure entries so each time it runs will start from
+    the original .config file."""
 
 
 #             if event == 'Plot':
