@@ -8,6 +8,10 @@ import os
 import threading
 import time
 from pathlib import Path
+from PIL import Image
+import matplotlib
+
+matplotlib.use("tkAgg")  # for pillow image show
 
 # Gui Interface:
 sg.theme("Dark Blue 13")
@@ -28,6 +32,7 @@ layout = [
 
 window = sg.Window("Pyllelic 1.00", layout)
 
+# Initialize data lists
 file_set = []
 mutant_set = []
 
@@ -63,7 +68,7 @@ while True:
         # can change to different folder
         py_path = Path.cwd() / "pyllelic"
 
-        # Needs refactoring
+        # TODO: Needs refactoring to not break config.py
 
         # with open(f"{py_path}/config.py", "a") as configure:
 
@@ -78,8 +83,8 @@ while True:
 
         image_name = f"{file_save}/{mut}.png"
 
-        """To avoid overwriting multiple files saved with the same cell type name,
-           code autogenerates new file name for each run."""
+        # To avoid overwriting multiple files saved with the same cell type name,
+        # code autogenerates new file name for each run.
 
         if not os.path.isfile(image_name):
             fig_save = f"{file_save}/{mut}.png"
@@ -117,7 +122,8 @@ while True:
 
         out_window = sg.Window("Pyllelic", layout)
 
-        def methylation():
+        def methylation() -> None:
+            """Wrapper to run analysis of a dataset."""
             print("Analysis Running... This can take a few minutes. \n \n ")
 
             time.sleep(2)
@@ -127,13 +133,11 @@ while True:
 
             print(f"Figure saved in the following path: {fig_save}")
 
-            return ()
-
         time.sleep(2)
 
         # Uploads graph to desktop and opens it in a new tab.
-        def pic():
-            from PIL import Image
+        def pic() -> Image.Image:
+            """Wrapper to open and return a pillow Image."""
 
             im = Image.open(f"{fig_save}")
 
@@ -146,7 +150,7 @@ while True:
 
             # This is the actual methyl analysis
             if event == "Run Analysis":
-                x = threading.Thread(target=methylation())
+                x = threading.Thread(target=methylation)
 
                 x.start()
                 # Tells CPU to give 2 second rest so GUI can continue to run.

@@ -4,9 +4,6 @@
 
 import pyllelic
 from typing import List
-import matplotlib
-
-matplotlib.use("tkAgg")  # for pillow image show
 
 
 def main(
