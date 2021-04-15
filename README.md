@@ -6,7 +6,9 @@
   ⭐ &nbsp;&nbsp;the project to show your appreciation. :arrow_upper_right:
 </p>
 
-:microscope: **pyllelic**: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.
+<img src="./assets/pyllelic_logo.png" width="100" height="100" style="float: left; margin-right: 10px;">
+
+**pyllelic**: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.
 
 Pyllelic documention is available at **https://paradoxdruid.github.io/pyllelic/** and see [`pyllelic_notebook.ipynb`](https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.ipynb) for an interactive demonstration.
 
