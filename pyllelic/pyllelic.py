@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """pyllelic: a tool for detection of allelic-specific varation in DNA sequencing.
 
-## Example usage in ipython / jupyter notebook:
+## Example exploratory use in jupyter notebook:
 
     import pyllelic
 
+    # Setup directories and promoter of interest
     pyllelic.set_up_env_variables(
         base_path="/Users/abonham/documents/test_allelic/",
         prom_file="TERT-promoter-genomic-sequence.txt",
@@ -14,40 +15,32 @@
         offset=1298163,
     )
 
-    pyllelic.main()  # runs every step all at once
+    # find bam files
+    files_set = pyllelic.make_list_of_bam_files()
 
-----------------------------------
+    # index and create bam_output folders/files
+    positions = pyllelic.index_and_fetch(files_set)
 
-## Example exploratory / step-by-step use in ipython / jupyter notebook:
+    # write out genome strings in bam_output folders
+    pyllelic.genome_parsing()
 
-    import pyllelic
+    # pull out the cell types available for analysis
+    cell_types = extract_cell_types(files_set)
 
-    pyllelic.set_up_env_variables(
-        base_path="/Users/abonham/documents/test_allelic/",
-        prom_file="TERT-promoter-genomic-sequence.txt",
-        prom_start="1293000",
-        prom_end="1296000",
-        chrom="5",
-        offset=1298163,
-    )
+    # run quma, get dfs
+    df_list = run_quma_and_compile_list_of_df(cell_types, filename)
 
-    files_set = pyllelic.make_list_of_bam_files()  # finds bam files
+    # process means data from dataframes
+    means_df = process_means(df_list, positions, files_set)
 
-    positions = pyllelic.index_and_fetch(files_set)  # index and creates bam_output folders/files
+    # process modes data from dataframes
+    modes_df = process_modes(df_list, positions, cell_types)
 
-    pyllelic.genome_parsing()  # writes out genome strings in bam_output folders
+    # find difference between mean and mode
+    diff_df = find_diffs(means_df, modes_df)
 
-    cell_types = extract_cell_types(files_set)  # pulls out the cell types available for analysis
-
-    df_list = run_quma_and_compile_list_of_df(cell_types, filename)  # run quma, get dfs
-
-    means_df = process_means(df_list, positions, files_set)  # process means data from dataframes
-
-    modes_df = process_modes(df_list, positions, cell_types)  # process modes data from dataframes
-
-    diff_df = find_diffs(means_df, modes_df)  # find difference between mean and mode
-
-    write_means_modes_diffs(means_df, modes_df, diffs_df, filename)  # write output to excel files
+    # write output to excel files
+    write_means_modes_diffs(means_df, modes_df, diffs_df, filename)
 """
 
 # Imports
@@ -64,6 +57,7 @@ from scipy import stats
 from tqdm.notebook import tqdm
 from typing import List, Dict, Set, Optional, Tuple
 from .config import Config
+from multiprocessing import Process, Queue
 
 config = Config()
 
@@ -427,6 +421,72 @@ def quma_full(cell_types, filename):
     writer.save()
 
 
+def quma_full_mp(cell_types: List[str], filename: str) -> None:
+    """Run external QUMA methylation analysis on all specified cell lines,
+       using multiprocessing library.
+
+    Args:
+        cell_types (list[str]): list of cell lines in our dataset
+        filename (str): desired output filename for xlsx output
+    """
+    # Grab list of directories
+    subfolders: List[Path] = [p for p in config.bam_directory.iterdir() if p.is_dir()]
+
+    writer: pd.ExcelWriter = pd.ExcelWriter(config.base_directory.joinpath(filename))
+
+    # Wrap everything in processing them one at a time
+    for folder in tqdm(subfolders, desc="Cell Lines"):
+
+        # Get short name of cell_line
+        cell_line_name: str = folder.name.split("_")[1]
+
+        if set([cell_line_name]).intersection(set(cell_types)):
+            # Set up a holding data frame from all the data
+            holding_df: pd.DataFrame = pd.DataFrame()
+
+            # Grab list of read files in that directory:
+            raw_read_files: List[str] = os.listdir(folder)
+            read_files: List[str] = [
+                os.path.splitext(i)[0]
+                for i in raw_read_files
+                if i.endswith(".txt") and not i.lstrip().startswith("g")
+            ]
+
+            queue = Queue()
+            processes = [
+                Process(target=multi_quma_worker, args=(queue, read_name, folder))
+                for read_name in read_files
+            ]
+
+            for p in processes:
+                p.start()
+
+            for p in processes:
+                p.join()
+
+            results = [queue.get() for p in processes]
+
+            for result in results:
+                int_df: pd.DataFrame = pd.DataFrame({result[0]: result[1]})
+                holding_df: pd.DataFrame = pd.concat([holding_df, int_df], axis=1)
+
+            # Now, save it to an excel file
+            holding_df.to_excel(writer, sheet_name=cell_line_name)
+
+            del holding_df
+
+    writer.save()
+
+
+def multi_quma_worker(queue: Queue, read_name: str, folder: Path) -> List[str]:
+    """Process reads for a given pos for multiprocessing."""
+
+    quma_result: str = run_quma(folder, f"g_{read_name}.txt", f"{read_name}.txt")
+    processed_quma: List[str] = process_raw_quma(quma_result)
+
+    queue.put((read_name, processed_quma))
+
+
 def process_raw_quma(quma_result: str) -> List[str]:
     """Spit and process raw quma results into a pandas dataframe.
 
@@ -470,7 +530,7 @@ def run_quma_and_compile_list_of_df(
     """
 
     if run_quma:
-        quma_full(cell_types, filename)
+        quma_full_mp(cell_types, filename)  # Changed for multiprocessing of quma
 
     dict_of_df: Dict[str, pd.DataFrame] = read_df_of_quma_results(filename)
 
@@ -791,7 +851,7 @@ def summarize_allelic_data(
     """Create a dataframe only of likely allelic methylation positions
 
     Args:
-        individual_data_df (pd.DataFrame): methylation values for each position in each cell line
+        individual_data_df (pd.DataFrame): meth values for each pos in each cell line
         diffs_df (pd.DataFrame): dataframe of difference values
 
     Returns:
