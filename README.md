@@ -12,24 +12,7 @@
 
 Pyllelic documention is available at **https://paradoxdruid.github.io/pyllelic/** and see [`pyllelic_notebook.ipynb`](https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.ipynb) for an interactive demonstration.
 
-## Example quick usage in ipython / jupyter notebook:
-```python
-    import pyllelic
-
-    pyllelic.set_up_env_variables(
-        base_path="/Users/abonham/documents/test_allelic/",
-        prom_file="TERT-promoter-genomic-sequence.txt",
-        prom_start="1293000",
-        prom_end="1296000",
-        chrom="5",
-    )
-
-    pyllelic.main("output.xlsx")  # runs every step, outputting results to excel
-```
-
-----------------------------------
-
-## Example exploratory / step-by-step use in ipython / jupyter notebook:
+## Example exploratory use in jupyter notebook:
 
 ```python
     import pyllelic
