@@ -59,6 +59,7 @@ from typing import List, Dict, Set, Optional, Tuple
 from .config import Config
 from multiprocessing import Process, Queue
 
+# Initialize shared configuration object
 config = Config()
 
 
@@ -369,8 +370,9 @@ def run_quma(directory: str, genomic_seq_file: str, reads_seq_file: str) -> str:
     return out
 
 
-def quma_full(cell_types, filename):
-    """Run external QUMA methylation analysis on all specified cell lines.
+def quma_full(cell_types: List[str], filename: str) -> None:
+    """Run external QUMA methylation analysis on all specified cell lines,
+       writing out an excel file of results.
 
     Args:
         cell_types (list[str]): list of cell lines in our dataset
@@ -464,7 +466,7 @@ def quma_full_mp(cell_types: List[str], filename: str) -> None:
             for p in processes:
                 p.join()
 
-            results = [queue.get() for p in processes]
+            results = [queue.get() for _ in processes]
 
             for result in results:
                 int_df: pd.DataFrame = pd.DataFrame({result[0]: result[1]})
