@@ -532,7 +532,7 @@ def run_quma_and_compile_list_of_df(
     """
 
     if run_quma:
-        quma_full_mp(cell_types, filename)  # Changed for multiprocessing of quma
+        quma_full(cell_types, filename)  # Changed for multiprocessing of quma
 
     dict_of_df: Dict[str, pd.DataFrame] = read_df_of_quma_results(filename)
 
