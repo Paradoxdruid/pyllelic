@@ -79,19 +79,22 @@ def build_bowtie2_index(fasta: Path) -> str:
     return out
 
 
-def bowtie2_fastq_to_bam(index: Path, fastq: Path) -> str:
+def bowtie2_fastq_to_bam(index: Path, fastq: Path, cores: int) -> bytes:
     """Helper function to run external bowtie2-build tool.
 
     Args:
-        fasta (Path): filepath to bowtie index file
+        index (Path): filepath to bowtie index file
         fastq (Path): filepath to fastq file to convert to bam
+        cores (int): number of cores to use for processing
 
     Returns:
-        str: output from bowtie2 and samtools shell command, usually discarded
+        bytes: output from bowtie2 and samtools shell command, usually discarded
     """
 
     command: List[str] = [
         "bowtie2",
+        "-p",
+        str(cores),
         "-x",
         os.fspath(index),
         "-U",
@@ -108,7 +111,7 @@ def bowtie2_fastq_to_bam(index: Path, fastq: Path) -> str:
     output: subprocess.CompletedProcess = subprocess.run(
         command, capture_output=True, text=True, check=True
     )
-    out: str = output.stdout
+    out: bytes = output.stdout
 
     return out
 
