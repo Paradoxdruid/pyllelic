@@ -132,24 +132,24 @@ import pyllelic
 # and put the .bam and .bai files in "test"
 
 # OSX setup
-pyllelic.set_up_env_variables(
-    base_path="/Users/abonham/documents/test_allelic/",
-    prom_file="TERT-promoter-genomic-sequence.txt",
-    prom_start="1293000",
-    prom_end="1296000",
-    chrom="5",
-    offset=1298163,
-)
-
-# Windows set-up
 # pyllelic.set_up_env_variables(
-#     base_path="/home/andrew/allellic/",
+#     base_path="/Users/abonham/documents/test_allelic/",
 #     prom_file="TERT-promoter-genomic-sequence.txt",
 #     prom_start="1293000",
 #     prom_end="1296000",
-#     chrom="chr5",
+#     chrom="5",
 #     offset=1298163,
 # )
+
+# Windows set-up
+pyllelic.set_up_env_variables(
+    base_path="/home/andrew/allellic/",
+    prom_file="TERT-promoter-genomic-sequence.txt",
+    prom_start="1293000",
+    prom_end="1296000",
+    chrom="chr5",
+    offset=1298163,
+)
 ```
 
 ## Main Parsing Functions
@@ -203,8 +203,8 @@ cell_types
 ```python
 # Set filename to whatever you want
 df_list = pyllelic.run_quma_and_compile_list_of_df(
-    cell_types, "test7.xlsx",
-    run_quma=False,
+    cell_types, "test11.xlsx",
+    run_quma=True,
 )  # to skip quma: , run_quma=False)
 ```
 
@@ -272,7 +272,7 @@ individual_data
 ```
 
 ```python
-individual_data.loc["NCIH196"]
+individual_data.loc["SORTED"]
 ```
 
 ```python

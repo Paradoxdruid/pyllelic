@@ -57,7 +57,6 @@ from scipy import stats
 from tqdm.notebook import tqdm
 from typing import List, Dict, Set, Optional, Tuple
 from .config import Config
-from multiprocessing import Process, Queue
 
 # Initialize shared configuration object
 config = Config()
@@ -453,23 +452,36 @@ def quma_full_mp(cell_types: List[str], filename: str) -> None:
                 for i in raw_read_files
                 if i.endswith(".txt") and not i.lstrip().startswith("g")
             ]
-
-            queue = Queue()
-            processes = [
-                Process(target=multi_quma_worker, args=(queue, read_name, folder))
-                for read_name in read_files
+            quma_path: str = os.fspath(config.base_directory.joinpath("quma_cui"))
+            command_list: List[List[str]] = [
+                [
+                    "perl",
+                    f"{quma_path}/quma.pl",
+                    "-g",
+                    f"{folder}/g_{read_pos}.txt",
+                    "-q",
+                    f"{folder}/{read_pos}.txt",
+                ]
+                for read_pos in read_files
             ]
 
-            for p in processes:
-                p.start()
+            procs_dict = {
+                pos: subprocess.Popen(
+                    cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                )
+                for pos, cmd in zip(read_files, command_list)
+            }
 
-            for p in processes:
-                p.join()
+            raw_results = {}
+            for name, proc in procs_dict.items():
+                r = proc.communicate()[0].decode("utf-8")
+                raw_results[name] = r
 
-            results = [queue.get() for _ in processes]
+            for key, result in raw_results.items():
+                processed_quma: List[str] = process_raw_quma(result)
 
-            for result in results:
-                int_df: pd.DataFrame = pd.DataFrame({result[0]: result[1]})
+                # Next, add this readname to the holding data frame
+                int_df: pd.DataFrame = pd.DataFrame({key: processed_quma})
                 holding_df: pd.DataFrame = pd.concat([holding_df, int_df], axis=1)
 
             # Now, save it to an excel file
@@ -478,15 +490,6 @@ def quma_full_mp(cell_types: List[str], filename: str) -> None:
             del holding_df
 
     writer.save()
-
-
-def multi_quma_worker(queue: Queue, read_name: str, folder: Path) -> List[str]:
-    """Process reads for a given pos for multiprocessing."""
-
-    quma_result: str = run_quma(folder, f"g_{read_name}.txt", f"{read_name}.txt")
-    processed_quma: List[str] = process_raw_quma(quma_result)
-
-    queue.put((read_name, processed_quma))
 
 
 def process_raw_quma(quma_result: str) -> List[str]:
@@ -532,7 +535,7 @@ def run_quma_and_compile_list_of_df(
     """
 
     if run_quma:
-        quma_full(cell_types, filename)  # Changed for multiprocessing of quma
+        quma_full_mp(cell_types, filename)  # Changed for multiprocessing of quma
 
     dict_of_df: Dict[str, pd.DataFrame] = read_df_of_quma_results(filename)
 
@@ -680,24 +683,34 @@ def return_read_values(
 
     values_list: List[float] = []
     # Check if this cell line has that position
-    if pos in dict_of_dfs.get(key).columns:  # type: ignore[union-attr]
+    df = dict_of_dfs.get(key)
+    if pos in df.columns:  # type: ignore[union-attr]
 
-        values_to_check: List[str] = (
-            dict_of_dfs.get(key).loc[:, pos].dropna().astype(str)  # type: ignore[union-attr]
-        )
+        values_to_check: List[str] = get_str_values(df, pos)
         if not len(values_to_check) == 0:  # Skip empty values
-            if (
-                len(values_to_check) > min_num_of_reads
-                and len(values_to_check) > min_num_meth_sites
-            ):
+            if len(values_to_check) > min_num_of_reads:
                 for value in values_to_check:
                     if not any(substring in value for substring in bad_values):
-                        fraction_val: float = float(value.count("1")) / float(
-                            len(value)
-                        )  # number of methylated sites in each read
-                        values_list.append(fraction_val)
+                        if len(value) > min_num_meth_sites:
+                            fraction_val: float = float(value.count("1")) / float(
+                                len(value)
+                            )  # number of methylated sites in each read
+                            values_list.append(fraction_val)
 
     return values_list
+
+
+def get_str_values(df: pd.DataFrame, pos: str) -> List[str]:
+    """Return list of values a a position in given dataframe of methylation data.
+
+    Args:
+        df (pd.DataFrame): cell line dataframe
+        pos (str): position being analyzed
+
+    Returns:
+        List[str]: list of values
+    """
+    return df.loc[:, pos].dropna().astype(str)  # type: ignore[union-attr]
 
 
 def find_diffs(means_df: pd.DataFrame, modes_df: pd.DataFrame) -> pd.DataFrame:
