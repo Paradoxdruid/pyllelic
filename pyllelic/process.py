@@ -142,7 +142,7 @@ def samtools_sort(bamfile: Path) -> str:
     return out
 
 
-def samtools_index(bamfile: Path) -> str:
+def process_samtools_index(bamfile: Path) -> str:
     """Helper function to run external samtools index.
 
     Args:

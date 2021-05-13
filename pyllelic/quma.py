@@ -8,12 +8,13 @@ import re
 import os
 import subprocess
 import sys
+from typing import List, Tuple, Dict, Any
 
 
 LINE = 60
 
 
-def y_cd(seq, patt):
+def y_cd(seq: str, patt: str) -> str:
     new = ""
     for each in seq:
         if each in patt:
@@ -21,7 +22,7 @@ def y_cd(seq, patt):
     return new
 
 
-def usage():
+def usage() -> None:
     print(
         """
 usage: quma.py [options] - or input_file or -g genome_file -q query_file
@@ -71,18 +72,18 @@ Option
     sys.exit()
 
 
-def makeTime(given_time=None):
-    curr_time = given_time or time.time()
+def makeTime(given_time: float = None) -> str:
+    curr_time: float = given_time or time.time()
 
-    dt = datetime.fromtimestamp(curr_time)
+    dt: datetime = datetime.fromtimestamp(curr_time)
     return dt.strftime("%Y%m%d%H%M%S")
 
 
-def curateSeq(seq):
+def curateSeq(seq: str) -> str:
     return y_cd(seq, "ACGTURYMWSKDHBVNacgturymwskdhbvn")
 
 
-def parseSeq(seq):
+def parseSeq(seq: str) -> str:
     _ = ""  # was com
     seq = re.sub(r"\r\n", "\n", seq)
     seq = re.sub(r"\r", "\n", seq)
@@ -109,7 +110,7 @@ def parseSeq(seq):
     return curateSeq(seq)
 
 
-def parseGenome(file):
+def parseGenome(file: str) -> str:
     with open(file, "r") as f:
         seq = f.read()
 
@@ -120,11 +121,11 @@ def parseGenome(file):
     return parseSeq(seq)
 
 
-def multiFastaParse(multi):
+def multiFastaParse(multi: Any) -> List[Dict[str, str]]:
     multi = re.sub(r"\r\n", "\n", multi)
     multi = re.sub(r"\r", "\n", multi)
-    biseq = []
-    fa = {}
+    biseq: List[Dict[str, str]] = []
+    fa: Dict[str, str] = {}
 
     multi = re.findall(r"(.*)$", multi, re.MULTILINE)
 
@@ -142,7 +143,7 @@ def multiFastaParse(multi):
             if line == "":
                 continue
             if not fa:
-                return
+                return None  # does this ever happen?
             try:
                 fa["seq"] += line.upper()
             except KeyError:
@@ -156,7 +157,7 @@ def multiFastaParse(multi):
     return biseq
 
 
-def parseBiseq(file):
+def parseBiseq(file: str) -> List[Dict[str, str]]:
     with open(file, "r") as f:
         multi = f.read()
 
@@ -169,7 +170,7 @@ def parseBiseq(file):
     return multiFastaParse(multi)
 
 
-def parseMulti(file):
+def parseMulti(file: str) -> Tuple[None, List[Dict[str, str]]]:
     with open(file, "r") as f:
         multi = f.read()
 
@@ -183,7 +184,7 @@ def parseMulti(file):
     return None, biseq
 
 
-def fastaMake(seq, com, line=None):
+def fastaMake(seq: str, com: str, line: int = None) -> str:
     line = line or 60
 
     seq = re.sub(r"[0-9]| |\t|\n|\r|\f", "", seq)
@@ -194,7 +195,9 @@ def fastaMake(seq, com, line=None):
     return f">{com}\n{seq}"
 
 
-def fastaPrint(seq, com, path, line=None, add=None):
+def fastaPrint(
+    seq: str, com: str, path: str, line: int = None, add: bool = None
+) -> None:
     if add:
         with open(path, "a") as f:
             f.write(fastaMake(seq, com, line))
@@ -204,7 +207,7 @@ def fastaPrint(seq, com, path, line=None, add=None):
             f.write(fastaMake(seq, com, line))
 
 
-def revComp(seq):
+def revComp(seq: str) -> str:
     temp = list(seq)
     temp.reverse()
     seq = "".join(temp)
@@ -254,9 +257,11 @@ def revComp(seq):
     return new
 
 
-def execNeedle(gfile, qfile, cpg, needl, NDLOPT):
+def execNeedle(
+    gfile: str, qfile: str, cpg: Dict[str, Any], needl: str, NDLOPT: str
+) -> Dict[str, Any]:
 
-    ref = {
+    ref: Dict[str, Any] = {
         "qAli": "",
         "gAli": "",
         "gap": 0,
@@ -271,10 +276,10 @@ def execNeedle(gfile, qfile, cpg, needl, NDLOPT):
     }
 
     # create the command for the neddle
-    com = needl + f" {gfile} {qfile} " + NDLOPT
+    com: str = needl + f" {gfile} {qfile} " + NDLOPT
 
-    fh = subprocess.run(com, shell=True, capture_output=True, text=True).stdout
-    fh = fh.split("\n")
+    fh_: str = subprocess.run(com, shell=True, capture_output=True, text=True).stdout
+    fh: List[str] = fh_.split("\n")
 
     for i, line in enumerate(fh):
         if ">que" in line:
@@ -369,7 +374,9 @@ def execNeedle(gfile, qfile, cpg, needl, NDLOPT):
     return ref
 
 
-def quma_main(g_file, q_file, needle="needle", tempdir="/tmp/"):
+def quma_main(
+    g_file: str, q_file: str, needle: str = "needle", tempdir: str = "/tmp/"
+) -> str:
     UNCONVL = 5
     PCONVL = 95.0
     MISL = 10
@@ -402,7 +409,7 @@ def quma_main(g_file, q_file, needle="needle", tempdir="/tmp/"):
     )
     t = makeTime()
     uid = "{}{:06d}".format(t, os.getpid())
-    data = []
+    data: List[Dict[str, Any]] = []
     positions = []
 
     file = None
@@ -439,7 +446,7 @@ def quma_main(g_file, q_file, needle="needle", tempdir="/tmp/"):
             break
 
         cpgf[str(pos)] = 1
-        positions.append(pos)
+        positions.append(str(pos))  # was int
         cpgr[str(length - pos - 2)] = 1
         pos += 1
 
@@ -461,7 +468,7 @@ def quma_main(g_file, q_file, needle="needle", tempdir="/tmp/"):
     pos = 0
     for fa in qseq:
         pos += 1
-        fa["pos"] = pos
+        fa["pos"] = str(pos)  # was int
 
         fastaPrint(fa["seq"], qfileF, qfilepF)
         fastaPrint(revComp(fa["seq"]), qfileR, qfilepR)
@@ -518,7 +525,7 @@ def quma_main(g_file, q_file, needle="needle", tempdir="/tmp/"):
             rfres = execNeedle(qfilepF, gfilepR, cpgr, needle, NDLOPT)
             rrres = execNeedle(qfilepR, gfilepR, cpgr, needle, NDLOPT)
 
-            for t in range(0, 1):
+            for _ in range(0, 1):  # was t
                 if rfres["aliMis"] > rrres["aliMis"]:
                     rres = rrres
                     rdir = -1
@@ -632,7 +639,7 @@ def quma_main(g_file, q_file, needle="needle", tempdir="/tmp/"):
             temp.reverse()
             res["val"] = "".join(temp)
 
-        ref = {"fa": fa, "res": res, "dir": dir, "gdir": gdir, "exc": 0}
+        ref: Dict[str, Any] = {"fa": fa, "res": res, "dir": dir, "gdir": gdir, "exc": 0}
         if res["unconv"] > unc:
             ref["exc"] = 1
         if res["pconv"] > pcon:

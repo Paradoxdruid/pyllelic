@@ -55,7 +55,7 @@ import subprocess
 from pathlib import Path
 from scipy import stats
 from tqdm.notebook import tqdm
-from typing import List, Dict, Set, Optional, Tuple
+from typing import List, Dict, Set, Optional, Tuple, Any
 from .config import Config
 from . import quma
 
@@ -428,7 +428,7 @@ def quma_full(cell_types: List[str], filename: str) -> None:
 
                 # Next, add this readname to the holding data frame
                 int_df: pd.DataFrame = pd.DataFrame({read_name: processed_quma})
-                holding_df: pd.DataFrame = pd.concat([holding_df, int_df], axis=1)
+                holding_df = pd.concat([holding_df, int_df], axis=1)
 
             # Now, save it to an excel file
             holding_df.to_excel(writer, sheet_name=cell_line_name)
@@ -498,7 +498,7 @@ def quma_full_mp(cell_types: List[str], filename: str) -> None:
 
                 # Next, add this readname to the holding data frame
                 int_df: pd.DataFrame = pd.DataFrame({key: processed_quma})
-                holding_df: pd.DataFrame = pd.concat([holding_df, int_df], axis=1)
+                holding_df = pd.concat([holding_df, int_df], axis=1)
 
             # Now, save it to an excel file
             holding_df.to_excel(writer, sheet_name=cell_line_name)
@@ -889,7 +889,7 @@ def summarize_allelic_data(
         pd.DataFrame: dataframe of cell lines with likely allelic positions
     """
     np.seterr(divide="ignore", invalid="ignore")  # ignore divide-by-zero errors
-    sig_dict = {
+    sig_dict: Dict[str, List[Any]] = {
         "cellLine": [],
         "position": [],
         "ad_stat": [],
