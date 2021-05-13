@@ -203,7 +203,7 @@ cell_types
 ```python
 # Set filename to whatever you want
 df_list = pyllelic.run_quma_and_compile_list_of_df(
-    cell_types, "test11.xlsx",
+    cell_types, "test14.xlsx",
     run_quma=True,
 )  # to skip quma: , run_quma=False)
 ```
@@ -244,14 +244,14 @@ diff
 
 ```python
 # Set the filename to whatever you want
-pyllelic.write_means_modes_diffs(means, modes, diff, "Test9")
+pyllelic.write_means_modes_diffs(means, modes, diff, "Test13")
 ```
 
 ## Visualizing Data
 
 ```python
 final_data = pyllelic.pd.read_excel(
-    pyllelic.config.base_directory.joinpath("Test9_diff.xlsx"),
+    pyllelic.config.base_directory.joinpath("Test13_diff.xlsx"),
     dtype=str,
     index_col=0,
     engine="openpyxl",
@@ -272,7 +272,15 @@ individual_data
 ```
 
 ```python
-individual_data.loc["SORTED"]
+individual_data.loc["SORTED"]["1295680"]
+```
+
+```python
+pyllelic.histogram(individual_data, "SORTED", "1295680")
+```
+
+```python
+pyllelic.histogram(individual_data, "SORTED", "1295903")
 ```
 
 ```python

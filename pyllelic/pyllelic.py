@@ -57,6 +57,7 @@ from scipy import stats
 from tqdm.notebook import tqdm
 from typing import List, Dict, Set, Optional, Tuple
 from .config import Config
+from . import quma
 
 # Initialize shared configuration object
 config = Config()
@@ -369,6 +370,22 @@ def run_quma(directory: str, genomic_seq_file: str, reads_seq_file: str) -> str:
     return out
 
 
+def access_quma(directory: str, genomic_seq_file: str, reads_seq_file: str) -> str:
+    """Helper function to run internal QUMA tool.
+
+    Args:
+        directory (str): directory path to analyze
+        genomic_seq_file (str): text file with known genomic sequence
+        reads_seq_file (str): text file with experimental reads
+
+    Returns:
+        str: output from quma command
+    """
+    return quma.quma_main(
+        f"{directory}/{genomic_seq_file}", f"{directory}/{reads_seq_file}"
+    )
+
+
 def quma_full(cell_types: List[str], filename: str) -> None:
     """Run external QUMA methylation analysis on all specified cell lines,
        writing out an excel file of results.
@@ -403,9 +420,8 @@ def quma_full(cell_types: List[str], filename: str) -> None:
 
             # Now, process each file:
             for read_name in tqdm(read_files, desc="Positions", leave=False):
-                # file_lines = []
 
-                quma_result: str = run_quma(
+                quma_result: str = access_quma(  # changed for internal quma
                     folder, f"g_{read_name}.txt", f"{read_name}.txt"
                 )
                 processed_quma: List[str] = process_raw_quma(quma_result)
@@ -455,8 +471,8 @@ def quma_full_mp(cell_types: List[str], filename: str) -> None:
             quma_path: str = os.fspath(config.base_directory.joinpath("quma_cui"))
             command_list: List[List[str]] = [
                 [
-                    "perl",
-                    f"{quma_path}/quma.pl",
+                    "python",
+                    f"{quma_path}/quma.py",
                     "-g",
                     f"{folder}/g_{read_pos}.txt",
                     "-q",
@@ -535,7 +551,7 @@ def run_quma_and_compile_list_of_df(
     """
 
     if run_quma:
-        quma_full_mp(cell_types, filename)  # Changed for multiprocessing of quma
+        quma_full(cell_types, filename)  # Changed for multiprocessing of quma
 
     dict_of_df: Dict[str, pd.DataFrame] = read_df_of_quma_results(filename)
 

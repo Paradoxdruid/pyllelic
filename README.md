@@ -68,9 +68,6 @@ conda install -c bioconda emboss
 conda install -c bioconda perl perl-app-cpanminus
 cpan install Statistics::Lite
 ```
-### quma installation
-* Download from http://quma.cdb.riken.jp/files/quma_cui-1.0.0.tar.gz
-* Untar into `base_path`
 
 ### Install pyllelic
 ```bash
@@ -83,3 +80,5 @@ git clone https://github.com/Paradoxdruid/pyllelic.git
 
 ## Authors
 This software is developed as academic software by [Dr. Andrew J. Bonham](https://github.com/Paradoxdruid) at the [Metropolitan State University of Denver](https://www.msudenver.edu). It is licensed under the GPL v3.0.
+
+This software incorporates implementation from [QUMA](http://quma.cdb.riken.jp), licensed under the GPL v3.0.
