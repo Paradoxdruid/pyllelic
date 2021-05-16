@@ -1,28 +1,42 @@
 # Adapted from QUMA CLI: http://quma.cdb.riken.jp/
 # Licensed under GPLv3
-# Converted from perl and developed by: https://freelancer.com/u/Zubayerskd
+# perl conversion by: https://freelancer.com/u/Zubayerskd
 
 import time
 from datetime import datetime
 import re
 import os
-import subprocess
 import sys
 from typing import List, Tuple, Dict, Any
+from Bio import pairwise2
+from Bio.Align import substitution_matrices
+
+MAX_LINE_LENGTH = 60
+MATRIX_PATH = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "matrix.txt")
+)
+MATRIX = substitution_matrices.read(MATRIX_PATH)
 
 
-LINE = 60
+def check_char_in_allowed(seq: str, pattern: str) -> str:
+    """Return only charcters in string present in pattern.
 
+    Args:
+        seq (str): sequence string
+        patt (str): string of allowed characters
 
-def y_cd(seq: str, patt: str) -> str:
+    Returns:
+        str: string with unallowed characters removed.
+    """
     new = ""
     for each in seq:
-        if each in patt:
+        if each in pattern:
             new += each
     return new
 
 
 def usage() -> None:
+    """Return usage instructions for quma."""
     print(
         """
 usage: quma.py [options] - or input_file or -g genome_file -q query_file
@@ -69,21 +83,45 @@ Option
      -p: lower limit of percent identity (float, default 90.0)
      -u, -c, -m -p options are only affected output format 3 or 4"""
     )
-    sys.exit()
+    # sys.exit()
 
 
-def makeTime(given_time: float = None) -> str:
+def make_time(given_time: float = None) -> str:
+    """Convert floating time into string formatted timestamp.
+
+    Args:
+        given_time (float, optional): floating point time. Defaults to None.
+
+    Returns:
+        str: String-formatted timestamp.
+    """
     curr_time: float = given_time or time.time()
 
     dt: datetime = datetime.fromtimestamp(curr_time)
     return dt.strftime("%Y%m%d%H%M%S")
 
 
-def curateSeq(seq: str) -> str:
-    return y_cd(seq, "ACGTURYMWSKDHBVNacgturymwskdhbvn")
+def curate_seq(seq: str) -> str:
+    """Curate a sequence to only have allowed characters.
+
+    Args:
+        seq (str): sequence to check.
+
+    Returns:
+        str: sequence without dis-allowed characters.
+    """
+    return check_char_in_allowed(seq, "ACGTURYMWSKDHBVNacgturymwskdhbvn")
 
 
-def parseSeq(seq: str) -> str:
+def parse_seq(seq: str) -> str:
+    """Extract sequence strings from the string of a text file.
+
+    Args:
+        seq (str): stringified text file.
+
+    Returns:
+        str: sequence string
+    """
     _ = ""  # was com
     seq = re.sub(r"\r\n", "\n", seq)
     seq = re.sub(r"\r", "\n", seq)
@@ -107,10 +145,18 @@ def parseSeq(seq: str) -> str:
         seq = re.findall(r"^\s*>(.+?)\s(?=.+)", seq, re.MULTILINE)[0]
         _ = seq  # was com
 
-    return curateSeq(seq)
+    return curate_seq(seq)
 
 
-def parseGenome(file: str) -> str:
+def parse_genome(file: str) -> str:
+    """Parse genome file, removing white spaces and extra returns.
+
+    Args:
+        file (str): text file path for fasta file.
+
+    Returns:
+        str: parsed and curated string of genome sequence.
+    """
     with open(file, "r") as f:
         seq = f.read()
 
@@ -118,10 +164,19 @@ def parseGenome(file: str) -> str:
     seq = re.sub(r"[\r\s]+$", "", seq)
     seq = re.sub(r"(\r|\n|\r\n){2}", "\r|\n|\r\n", seq)
 
-    return parseSeq(seq)
+    return parse_seq(seq)
 
 
-def multiFastaParse(multi: Any) -> List[Dict[str, str]]:
+def multi_fasta_parse(multi: Any) -> List[Dict[str, str]]:
+    """Find all bisufite sequencing reads in a fasta file,
+       and return as a dictionary.
+
+    Args:
+        multi (Any): multi-line sequence string
+
+    Returns:
+        List[Dict[str, str]]: list of dictionaries of sequence reads
+    """
     multi = re.sub(r"\r\n", "\n", multi)
     multi = re.sub(r"\r", "\n", multi)
     biseq: List[Dict[str, str]] = []
@@ -139,7 +194,7 @@ def multiFastaParse(multi: Any) -> List[Dict[str, str]]:
             fa["com"] = re.sub(r"\s*$", "", fa["com"])
             biseq.append(fa)
         else:
-            line = curateSeq(line)
+            line = curate_seq(line)
             if line == "":
                 continue
             if not fa:
@@ -157,7 +212,15 @@ def multiFastaParse(multi: Any) -> List[Dict[str, str]]:
     return biseq
 
 
-def parseBiseq(file: str) -> List[Dict[str, str]]:
+def parse_biseq(file: str) -> List[Dict[str, str]]:
+    """Parse bisulfite sequencing fasta file.
+
+    Args:
+        file (str): file path.
+
+    Returns:
+        List[Dict[str, str]]: list of dictionaries of sequence reads
+    """
     with open(file, "r") as f:
         multi = f.read()
 
@@ -167,10 +230,18 @@ def parseBiseq(file: str) -> List[Dict[str, str]]:
     multi = re.sub(r"(\n){2}", "\n", multi)
     multi = re.sub(r"(\r){2}", "\r", multi)
 
-    return multiFastaParse(multi)
+    return multi_fasta_parse(multi)
 
 
-def parseMulti(file: str) -> Tuple[None, List[Dict[str, str]]]:
+def parse_multi(file: str) -> Tuple[None, List[Dict[str, str]]]:
+    """Parse fast sequencing file with multiple reads.
+
+    Args:
+        file (str): file path
+
+    Returns:
+        Tuple[None, List[Dict[str, str]]]: None and list of dicts of sequence reads
+    """
     with open(file, "r") as f:
         multi = f.read()
 
@@ -180,34 +251,61 @@ def parseMulti(file: str) -> Tuple[None, List[Dict[str, str]]]:
     multi = re.sub(r"(\n){2}", "\n", multi)
     multi = re.sub(r"(\r){2}", "\r", multi)
 
-    biseq = multiFastaParse(multi)
+    biseq = multi_fasta_parse(multi)
     return None, biseq
 
 
-def fastaMake(seq: str, com: str, line: int = None) -> str:
-    line = line or 60
+def fasta_make(seq: str, seq_name: str, line: int = None) -> str:
+    """Write a sequence string to a fasta-formatted text file contents.
+
+    Args:
+        seq (str): sequence string
+        seq_name (str): sequence name
+        line (int, optional): Max line length to process. Defaults to None.
+
+    Returns:
+        str: fasta-formatted text file contents.
+    """
+    line = line or MAX_LINE_LENGTH
 
     seq = re.sub(r"[0-9]| |\t|\n|\r|\f", "", seq)
 
     reg = r"(.{1," + str(line) + "})"
     seq = re.sub(reg, r"\1\n", seq)
 
-    return f">{com}\n{seq}"
+    return f">{seq_name}\n{seq}"
 
 
-def fastaPrint(
-    seq: str, com: str, path: str, line: int = None, add: bool = None
+def fasta_print(
+    seq: str, seq_name: str, path: str, line: int = None, add: bool = None
 ) -> None:
+    """Write a fast-formatted sequence file.
+
+    Args:
+        seq (str): sequence
+        seq_name (str): sequence name
+        path (str): path to write to
+        line (int, optional): max length to process. Defaults to None.
+        add (bool, optional): append to file flag. Defaults to None.
+    """
     if add:
         with open(path, "a") as f:
-            f.write(fastaMake(seq, com, line))
+            f.write(fasta_make(seq, seq_name, line))
 
     else:
         with open(path, "w") as f:
-            f.write(fastaMake(seq, com, line))
+            f.write(fasta_make(seq, seq_name, line))
 
 
-def revComp(seq: str) -> str:
+def rev_comp(seq: str) -> str:
+    """Return reverse complement of sequence.
+
+    Args:
+        seq (str): sequence
+
+    Returns:
+        str: reverse complement of sequence
+    """
     temp = list(seq)
     temp.reverse()
     seq = "".join(temp)
@@ -257,9 +355,21 @@ def revComp(seq: str) -> str:
     return new
 
 
-def execNeedle(
+def align_seq_and_generate_stats(
     gfile: str, qfile: str, cpg: Dict[str, Any], needl: str, NDLOPT: str
 ) -> Dict[str, Any]:
+    """Run pairwise sequence alignment.
+
+    Args:
+        gfile (str): genomic sequence file path
+        qfile (str): sequencing read(s) file path
+        cpg (Dict[str, Any]): [description]
+        needl (str): alignment program command
+        NDLOPT (str): alignment program options
+
+    Returns:
+        Dict[str, Any]: results dictionary
+    """
 
     ref: Dict[str, Any] = {
         "qAli": "",
@@ -275,10 +385,16 @@ def execNeedle(
         "aliMis": 0,
     }
 
-    # create the command for the neddle
-    com: str = needl + f" {gfile} {qfile} " + NDLOPT
+    # create the command for the needle
+    # com: str = needl + f" {gfile} {qfile} " + NDLOPT
 
-    fh_: str = subprocess.run(com, shell=True, capture_output=True, text=True).stdout
+    # fh_: str = subprocess.run(com, shell=True, capture_output=True, text=True).stdout
+    # fh: List[str] = fh_.split("\n")
+
+    bio_gseq = open(gfile).read().splitlines()[1]
+    bio_qseq = open(qfile).read().splitlines()[1]
+    bio_alignments = pairwise2.align.globalds(bio_gseq, bio_qseq, MATRIX, -10, -0.5)
+    fh_ = f">genome\n{bio_alignments[0][0]}\n>que\n{bio_alignments[0][1]}\n"
     fh: List[str] = fh_.split("\n")
 
     for i, line in enumerate(fh):
@@ -377,12 +493,12 @@ def execNeedle(
 def quma_main(
     g_file: str, q_file: str, needle: str = "needle", tempdir: str = "/tmp/"
 ) -> str:
+    """Run quma for quantification of methylation of bisulfite sequencing reads."""
     UNCONVL = 5
     PCONVL = 95.0
     MISL = 10
     PERCL = 90.0
     TEMPDIR = tempdir
-    # NEEDLE = needle
     MAT = """    A   T   G   C   S   W   R   Y   K   M   B   V   H   D   N   U
     A   5  -4  -4  -4  -4   1   1  -4  -4   1  -4  -1  -1  -1  -2  -4
     T  -4   5  -4   5  -4   1  -4   1   1  -4  -1  -4  -1  -1  -2   5
@@ -407,7 +523,7 @@ def quma_main(
         + "-aformat markx3 -datafile "
         + CPGMAT
     )
-    t = makeTime()
+    t = make_time()
     uid = "{}{:06d}".format(t, os.getpid())
     data: List[Dict[str, Any]] = []
     positions = []
@@ -428,11 +544,11 @@ def quma_main(
     perc = perc or PERCL
 
     if file:
-        gseq, qseq = parseMulti(file)
+        gseq, qseq = parse_multi(file)
 
     else:
-        gseq = parseGenome(gfile)
-        qseq = parseBiseq(qfile)
+        gseq = parse_genome(gfile)
+        qseq = parse_biseq(qfile)
 
     cpgf = {}
     cpgr = {}
@@ -462,20 +578,20 @@ def quma_main(
     gfilepF = TEMPDIR + gfileF
     gfilepR = TEMPDIR + gfileR
 
-    fastaPrint(gseq, gfileF, gfilepF)
-    fastaPrint(revComp(gseq), gfileR, gfilepR)
+    fasta_print(gseq, gfileF, gfilepF)
+    fasta_print(rev_comp(gseq), gfileR, gfilepR)
 
     pos = 0
     for fa in qseq:
         pos += 1
         fa["pos"] = str(pos)  # was int
 
-        fastaPrint(fa["seq"], qfileF, qfilepF)
-        fastaPrint(revComp(fa["seq"]), qfileR, qfilepR)
+        fasta_print(fa["seq"], qfileF, qfilepF)
+        fasta_print(rev_comp(fa["seq"]), qfileR, qfilepR)
 
         if conv != 1:
-            ffres = execNeedle(qfilepF, gfilepF, cpgf, needle, NDLOPT)
-            frres = execNeedle(qfilepR, gfilepF, cpgf, needle, NDLOPT)
+            ffres = align_seq_and_generate_stats(qfilepF, gfilepF, cpgf, needle, NDLOPT)
+            frres = align_seq_and_generate_stats(qfilepR, gfilepF, cpgf, needle, NDLOPT)
 
             for _ in range(0, 1):
                 if ffres["aliMis"] > frres["aliMis"]:
@@ -522,8 +638,8 @@ def quma_main(
                 fdir = 1
 
         if conv != 0:
-            rfres = execNeedle(qfilepF, gfilepR, cpgr, needle, NDLOPT)
-            rrres = execNeedle(qfilepR, gfilepR, cpgr, needle, NDLOPT)
+            rfres = align_seq_and_generate_stats(qfilepF, gfilepR, cpgr, needle, NDLOPT)
+            rrres = align_seq_and_generate_stats(qfilepR, gfilepR, cpgr, needle, NDLOPT)
 
             for _ in range(0, 1):  # was t
                 if rfres["aliMis"] > rrres["aliMis"]:
@@ -633,9 +749,9 @@ def quma_main(
             gdir = 1
 
         if gdir != 1:
-            res["qAli"] = revComp(res["qAli"])
-            res["gAli"] = revComp(res["gAli"])
-            temp = list(revComp(res["val"]))
+            res["qAli"] = rev_comp(res["qAli"])
+            res["gAli"] = rev_comp(res["gAli"])
+            temp = list(rev_comp(res["val"]))
             temp.reverse()
             res["val"] = "".join(temp)
 
