@@ -6,7 +6,6 @@ import time
 from datetime import datetime
 import re
 import os
-import sys
 from io import StringIO
 from typing import List, Tuple, Dict, Any
 from Bio import pairwise2
@@ -362,8 +361,6 @@ def align_seq_and_generate_stats(
         "aliMis": 0,
     }
 
-    # bio_gseq = open(gfile).read().splitlines()[1]
-    # bio_qseq = open(qfile).read().splitlines()[1]
     bio_gseq = gfile.splitlines()[1]
     bio_qseq = qfile.splitlines()[1]
     bio_alignments = pairwise2.align.globalds(bio_gseq, bio_qseq, MATRIX, -10, -0.5)
@@ -378,13 +375,29 @@ def align_seq_and_generate_stats(
 
     ref["qAli"] = ref["qAli"].replace(" ", "-")
     ref["gAli"] = ref["gAli"].replace(" ", "-")
-    temp1 = ref["qAli"]
-    temp2 = ref["gAli"]
 
-    if len(temp1) != len(temp2):
+    if len(ref["qAli"]) != len(ref["gAli"]):
         print("qAli len != gAli len")
-        sys.exit()
+        # sys.exit()
 
+    results = process_alignment_matches(ref, cpg)
+    return results
+
+
+def process_alignment_matches(
+    ref: Dict[str, Any], cpg: Dict[str, Any]
+) -> Dict[str, Any]:
+    """Process alignment data to populate results dictionary.
+
+    Args:
+        ref (Dict[str, Any]): initial results dictionary
+        cpg (Dict[str, Any]): dictionary of CpG locations
+
+    Returns:
+        Dict[str, Any]: results dictionary
+    """
+    ref = ref
+    cpg = cpg
     gAli = qAli = ""
     fl = 0
 
@@ -463,79 +476,34 @@ def align_seq_and_generate_stats(
     return ref
 
 
-def quma_main(g_file: str, q_file: str, needle: str = "needle") -> str:
-    """Run quma for quantification of methylation of bisulfite sequencing reads."""
+def process_fasta_output(
+    qseq: str,
+    qfileF: str,
+    qfileR: str,
+    gfilepF: str,
+    gfilepR: str,
+    cpgf: Dict[str, int],
+    cpgr: Dict[str, int],
+) -> Dict[str, Any]:
+    """Process fasta alignment."""
+
     UNCONVL = 5
     PCONVL = 95.0
     MISL = 10
     PERCL = 90.0
-    # TEMPDIR = tempdir
-    # CPGMAT = TEMPDIR + "EDNA_CPG"
 
-    t = make_time()
-    uid = "{}{:06d}".format(t, os.getpid())
+    conv = 0
+    unc = UNCONVL
+    pcon = PCONVL
+    mis = MISL
+    perc = PERCL
+
     data: List[Dict[str, Any]] = []
-    positions = []
-
-    file = None
-    conv = None
-    unc = None
-    pcon = None
-    mis = None
-    perc = None
-    gfile = g_file
-    qfile = q_file
-
-    conv = conv or 0
-    unc = unc or UNCONVL
-    pcon = pcon or PCONVL
-    mis = mis or MISL
-    perc = perc or PERCL
-
-    if file:
-        gseq, qseq = parse_multi(file)
-
-    else:
-        gseq = parse_genome(gfile)
-        qseq = parse_biseq(qfile)
-
-    cpgf = {}
-    cpgr = {}
-    length = len(gseq)
-
-    pos = 0
-    while True:
-        try:
-            pos = gseq.index("CG", pos)
-        except ValueError:
-            break
-
-        cpgf[str(pos)] = 1
-        positions.append(str(pos))  # was int
-        cpgr[str(length - pos - 2)] = 1
-        pos += 1
-
-    qfileF = f"que{uid}F"
-    qfileR = f"que{uid}R"
-    gfileF = f"genome{uid}F"
-    gfileR = f"genome{uid}R"
-    # qfilepF = TEMPDIR + qfileF
-    # qfilepR = TEMPDIR + qfileR
-    # gfilepF = TEMPDIR + gfileF
-    # gfilepR = TEMPDIR + gfileR
-
-    # fasta_print(gseq, gfileF, gfilepF)
-    # fasta_print(rev_comp(gseq), gfileR, gfilepR)
-    gfilepF = fasta_output(gseq, gfileF)
-    gfilepR = fasta_output(gseq, gfileR)
-
     pos = 0
     for fa in qseq:
         pos += 1
         fa["pos"] = str(pos)  # was int
 
-        # fasta_print(fa["seq"], qfileF, qfilepF)
-        # fasta_print(rev_comp(fa["seq"]), qfileR, qfilepR)
         qfilepF = fasta_output(fa["seq"], qfileF)
         qfilepR = fasta_output(rev_comp(fa["seq"]), qfileR)
 
@@ -587,123 +555,123 @@ def quma_main(g_file: str, q_file: str, needle: str = "needle") -> str:
                 fres = ffres
                 fdir = 1
 
-        if conv != 0:
-            rfres = align_seq_and_generate_stats(qfilepF, gfilepR, cpgr)
-            rrres = align_seq_and_generate_stats(qfilepR, gfilepR, cpgr)
+        # if conv != 0:
+        #     rfres = align_seq_and_generate_stats(qfilepF, gfilepR, cpgr)
+        #     rrres = align_seq_and_generate_stats(qfilepR, gfilepR, cpgr)
 
-            for _ in range(0, 1):  # was t
-                if rfres["aliMis"] > rrres["aliMis"]:
-                    rres = rrres
-                    rdir = -1
-                    break
+        #     for _ in range(0, 1):  # was t
+        #         if rfres["aliMis"] > rrres["aliMis"]:
+        #             rres = rrres
+        #             rdir = -1
+        #             break
 
-                if rfres["aliMis"] < rrres["aliMis"]:
-                    rres = rfres
-                    rdir = 1
-                    break
+        #         if rfres["aliMis"] < rrres["aliMis"]:
+        #             rres = rfres
+        #             rdir = 1
+        #             break
 
-                if rfres["perc"] > rrres["perc"]:
-                    rres = rfres
-                    rdir = 1
-                    break
+        #         if rfres["perc"] > rrres["perc"]:
+        #             rres = rfres
+        #             rdir = 1
+        #             break
 
-                if rfres["perc"] < rrres["perc"]:
-                    rres = rrres
-                    rdir = -1
-                    break
+        #         if rfres["perc"] < rrres["perc"]:
+        #             rres = rrres
+        #             rdir = -1
+        #             break
 
-                if rfres["unconv"] > rrres["unconv"]:
-                    rres = rrres
-                    rdir = -1
-                    break
+        #         if rfres["unconv"] > rrres["unconv"]:
+        #             rres = rrres
+        #             rdir = -1
+        #             break
 
-                if rfres["unconv"] < rrres["unconv"]:
-                    rres = rfres
-                    rdir = 1
-                    break
+        #         if rfres["unconv"] < rrres["unconv"]:
+        #             rres = rfres
+        #             rdir = 1
+        #             break
 
-                if rfres["pconv"] < rrres["pconv"]:
-                    rres = rrres
-                    rdir = -1
-                    break
+        #         if rfres["pconv"] < rrres["pconv"]:
+        #             rres = rrres
+        #             rdir = -1
+        #             break
 
-                if rfres["pconv"] > rrres["pconv"]:
-                    rres = rfres
-                    rdir = 1
-                    break
+        #         if rfres["pconv"] > rrres["pconv"]:
+        #             rres = rfres
+        #             rdir = 1
+        #             break
 
-            rres = rfres
-            rdir = 1
+        #     rres = rfres
+        #     rdir = 1
 
         if conv == 0:
             res = fres
             dir = fdir
             gdir = 1
 
-        elif conv == 1:
-            res = rres
-            dir = rdir
-            gdir = -1
+        # elif conv == 1:
+        #     res = rres
+        #     dir = rdir
+        #     gdir = -1
 
-        else:
-            if fres["aliMis"] > rres["aliMis"]:
-                res = rres
-                dir = rdir
-                gdir = -1
-                break
+        # else:
+        #     if fres["aliMis"] > rres["aliMis"]:
+        #         res = rres
+        #         dir = rdir
+        #         gdir = -1
+        #         break
 
-            if fres["aliMis"] < rres["aliMis"]:
-                res = fres
-                dir = fdir
-                gdir = 1
-                break
+        #     if fres["aliMis"] < rres["aliMis"]:
+        #         res = fres
+        #         dir = fdir
+        #         gdir = 1
+        #         break
 
-            if fres["perc"] > rres["perc"]:
-                res = fres
-                dir = fdir
-                gdir = 1
-                break
+        #     if fres["perc"] > rres["perc"]:
+        #         res = fres
+        #         dir = fdir
+        #         gdir = 1
+        #         break
 
-            if fres["perc"] < rres["perc"]:
-                res = rres
-                dir = rdir
-                gdir = -1
-                break
+        #     if fres["perc"] < rres["perc"]:
+        #         res = rres
+        #         dir = rdir
+        #         gdir = -1
+        #         break
 
-            if fres["unconv"] > rres["unconv"]:
-                res = rres
-                dir = rdir
-                gdir = -1
-                break
+        #     if fres["unconv"] > rres["unconv"]:
+        #         res = rres
+        #         dir = rdir
+        #         gdir = -1
+        #         break
 
-            if fres["unconv"] < rres["unconv"]:
-                res = fres
-                dir = fdir
-                gdir = 1
-                break
+        #     if fres["unconv"] < rres["unconv"]:
+        #         res = fres
+        #         dir = fdir
+        #         gdir = 1
+        #         break
 
-            if fres["pconv"] < rres["pconv"]:
-                res = rres
-                dir = rdir
-                gdir = -1
-                break
+        #     if fres["pconv"] < rres["pconv"]:
+        #         res = rres
+        #         dir = rdir
+        #         gdir = -1
+        #         break
 
-            if fres["pconv"] > rres["pconv"]:
-                res = fres
-                dir = fdir
-                gdir = 1
-                break
+        #     if fres["pconv"] > rres["pconv"]:
+        #         res = fres
+        #         dir = fdir
+        #         gdir = 1
+        #         break
 
-            res = fres
-            dir = fdir
-            gdir = 1
+        #     res = fres
+        #     dir = fdir
+        #     gdir = 1
 
-        if gdir != 1:
-            res["qAli"] = rev_comp(res["qAli"])
-            res["gAli"] = rev_comp(res["gAli"])
-            temp = list(rev_comp(res["val"]))
-            temp.reverse()
-            res["val"] = "".join(temp)
+        # if gdir != 1:
+        #     res["qAli"] = rev_comp(res["qAli"])
+        #     res["gAli"] = rev_comp(res["gAli"])
+        #     temp = list(rev_comp(res["val"]))
+        #     temp.reverse()
+        #     res["val"] = "".join(temp)
 
         ref: Dict[str, Any] = {"fa": fa, "res": res, "dir": dir, "gdir": gdir, "exc": 0}
         if res["unconv"] > unc:
@@ -716,19 +684,18 @@ def quma_main(g_file: str, q_file: str, needle: str = "needle") -> str:
             ref["exc"] = 1
 
         data.append(ref)
+    return data
 
-    # os.unlink(gfilepF)
-    # os.unlink(gfilepR)
-    # os.unlink(qfilepF)
-    # os.unlink(qfilepR)
-    # os.unlink(CPGMAT)
 
-    positions = list(map(str, positions))
-
+def format_output(gseq, positions, data) -> str:
+    """Process program output into quma-formatted string."""
+    CONV_OUTPUT = 0
     output = ""
 
     output += (
-        "\t".join(["genome", str(conv), gseq, str(len(positions)), ",".join(positions)])
+        "\t".join(
+            ["genome", str(CONV_OUTPUT), gseq, str(len(positions)), ",".join(positions)]
+        )
         + "\n"
     )
 
@@ -757,5 +724,55 @@ def quma_main(g_file: str, q_file: str, needle: str = "needle") -> str:
             )
             + "\n"
         )
+    return output
+
+
+def find_cpg(gseq: str) -> Tuple[List[str], Dict[str, Any], Dict[str, Any]]:
+    """Find CpG sites in genomic string."""
+    positions = []
+    cpgf = {}
+    cpgr = {}
+    length = len(gseq)
+    pos = 0
+    while True:
+        try:
+            pos = gseq.index("CG", pos)
+        except ValueError:
+            break
+
+        cpgf[str(pos)] = 1
+        positions.append(str(pos))
+        cpgr[str(length - pos - 2)] = 1
+        pos += 1
+
+    return (positions, cpgf, cpgr)
+
+
+def quma_main(gfile: str, qfile: str) -> str:
+    """Run quma for quantification of methylation of bisulfite sequencing reads."""
+
+    t = make_time()
+    uid = "{}{:06d}".format(t, os.getpid())
+
+    gseq = parse_genome(gfile)
+    qseq = parse_biseq(qfile)
+
+    positions, cpgf, cpgr = find_cpg(gseq)
+
+    qfileF = f"que{uid}F"
+    qfileR = f"que{uid}R"
+    gfileF = f"genome{uid}F"
+    gfileR = f"genome{uid}R"
+
+    gfilepF = fasta_output(gseq, gfileF)
+    gfilepR = fasta_output(gseq, gfileR)
+
+    data: List[Dict[str, Any]] = process_fasta_output(
+        qseq, qfileF, qfileR, gfilepF, gfilepR, cpgf, cpgr
+    )
+
+    positions = list(map(str, positions))
+
+    output = format_output(gseq, positions, data)
 
     return output
