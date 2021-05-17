@@ -7,15 +7,31 @@ from datetime import datetime
 import re
 import os
 import sys
+from io import StringIO
 from typing import List, Tuple, Dict, Any
 from Bio import pairwise2
 from Bio.Align import substitution_matrices
 
 MAX_LINE_LENGTH = 60
-MATRIX_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "matrix.txt")
-)
-MATRIX = substitution_matrices.read(MATRIX_PATH)
+MAT = """    A   T   G   C   S   W   R   Y   K   M   B   V   H   D   N   U
+    A   5  -4  -4  -4  -4   1   1  -4  -4   1  -4  -1  -1  -1  -2  -4
+    T  -4   5  -4   5  -4   1  -4   1   1  -4  -1  -4  -1  -1  -2   5
+    G  -4  -4   5  -4   1  -4   1  -4   1  -4  -1  -1  -4  -1  -2  -4
+    C  -4  -4  -4   5   1  -4  -4   1  -4   1  -1  -1  -1  -4  -2  -4
+    S  -4  -4   1   1  -1  -4  -2  -2  -2  -2  -1  -1  -3  -3  -1  -4
+    W   1   1  -4  -4  -4  -1  -2  -2  -2  -2  -3  -3  -1  -1  -1   1
+    R   1  -4   1  -4  -2  -2  -1  -4  -2  -2  -3  -1  -3  -1  -1  -4
+    Y  -4   1  -4   1  -2  -2  -4  -1  -2  -2  -1  -3  -1  -3  -1   1
+    K  -4   1   1  -4  -2  -2  -2  -2  -1  -4  -1  -3  -3  -1  -1   1
+    M   1  -4  -4   1  -2  -2  -2  -2  -4  -1  -3  -1  -1  -3  -1  -4
+    B  -4  -1  -1  -1  -1  -3  -3  -1  -1  -3  -1  -2  -2  -2  -1  -1
+    V  -1  -4  -1  -1  -1  -3  -1  -3  -3  -1  -2  -1  -2  -2  -1  -4
+    H  -1  -1  -4  -1  -3  -1  -3  -1  -3  -1  -2  -2  -1  -2  -1  -1
+    D  -1  -1  -1  -4  -3  -1  -1  -3  -1  -3  -2  -2  -2  -1  -1  -1
+    N  -2  -2  -2  -2  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -2
+    U  -4   5  -4  -4  -4   1  -4   1   1  -4  -1  -4  -1  -1  -2   5
+    """
+MATRIX = substitution_matrices.read(StringIO(MAT))
 
 
 def check_char_in_allowed(seq: str, pattern: str) -> str:
@@ -33,57 +49,6 @@ def check_char_in_allowed(seq: str, pattern: str) -> str:
         if each in pattern:
             new += each
     return new
-
-
-def usage() -> None:
-    """Return usage instructions for quma."""
-    print(
-        """
-usage: quma.py [options] - or input_file or -g genome_file -q query_file
-
-Input data
-    1) - (STDIN)
-        Multi-FASTA format of genomic DNA sequence and bisulfite sequences
-        First sequence must be genomic DNA seuqnce
-    2) input_file
-        Multi-FASTA format of genomic DNA sequence and bisulfite sequences
-        First sequence must be genomic DNA seuqnce
-    3) -g genome_file -q query_file
-        genome_file : FASTA format genomic DNA sequence
-        query_file: Multi-FASTA format bisulfite sequences
-
-Option
-    -f: output format (0|1|2|3) default 0
-        0: tab separated data
-           first line : 'genome', condition of convert direction (see below),
-                        genomic sequence, number of CpG, CpG position (first base = 0)
-           other lines: No., sequence name, sequence, alignment data of this sequnece,
-                        alignment data of genome sequence, alignment length,
-                        number of alignmnet mismatch, percent identity of alignment,
-                        number of alignment gap, number of methylated CpG,
-                        number of bisulfite unconverted CpH (CpH: CpA, CpC, CpT),
-                        number of bisulfite converted CpH,
-                        percent of bisulfite convertion,
-                        CpG methylation pattern (0: unmethylated, 1: methylated),
-                        convert direction (1: forward, -1: reverse)
-        1: human readable alignment data
-        2: tab separated multiple alignment data
-        3: tab separated summarized data
-     -d: condition of convert direction of genomic sequence (0|1|2) default 0
-        0: C -> T conversion
-           PCR primer pair was designded for forward strand of the genomic sequence
-        1: G -> A conversion
-           PCR primer pair was designded for reverse strand of the genomic sequence
-        2: both
-           Search both direction of conversion and adopt more appropriate strand
-     -u: upper limit of unconverted CpHs (integer, default 5)
-         (CpH: CpA, CpC, CpT)
-     -c: lower limit of percent converted CpHs (float, default 95.0)
-     -m: upper limit of alignment mismatches (integer, default 10)
-     -p: lower limit of percent identity (float, default 90.0)
-     -u, -c, -m -p options are only affected output format 3 or 4"""
-    )
-    # sys.exit()
 
 
 def make_time(given_time: float = None) -> str:
@@ -297,6 +262,20 @@ def fasta_print(
             f.write(fasta_make(seq, seq_name, line))
 
 
+def fasta_output(seq: str, seq_name: str, line: int = None) -> str:
+    """Return a fasta-formatted sequence file as a string
+
+    Args:
+        seq (str): sequence
+        seq_name (str): sequence name
+        line (int, optional): max length to process. Defaults to None.
+
+    Returns:
+        str: string of fasta-formatted file.
+    """
+    return fasta_make(seq, seq_name, line)
+
+
 def rev_comp(seq: str) -> str:
     """Return reverse complement of sequence.
 
@@ -356,16 +335,14 @@ def rev_comp(seq: str) -> str:
 
 
 def align_seq_and_generate_stats(
-    gfile: str, qfile: str, cpg: Dict[str, Any], needl: str, NDLOPT: str
+    gfile: str, qfile: str, cpg: Dict[str, Any]
 ) -> Dict[str, Any]:
     """Run pairwise sequence alignment.
 
     Args:
-        gfile (str): genomic sequence file path
-        qfile (str): sequencing read(s) file path
-        cpg (Dict[str, Any]): [description]
-        needl (str): alignment program command
-        NDLOPT (str): alignment program options
+        gfile (str): genomic sequence file contents
+        qfile (str): sequencing read(s) file contents
+        cpg (Dict[str, Any]): dictionary of CpG locations
 
     Returns:
         Dict[str, Any]: results dictionary
@@ -385,14 +362,10 @@ def align_seq_and_generate_stats(
         "aliMis": 0,
     }
 
-    # create the command for the needle
-    # com: str = needl + f" {gfile} {qfile} " + NDLOPT
-
-    # fh_: str = subprocess.run(com, shell=True, capture_output=True, text=True).stdout
-    # fh: List[str] = fh_.split("\n")
-
-    bio_gseq = open(gfile).read().splitlines()[1]
-    bio_qseq = open(qfile).read().splitlines()[1]
+    # bio_gseq = open(gfile).read().splitlines()[1]
+    # bio_qseq = open(qfile).read().splitlines()[1]
+    bio_gseq = gfile.splitlines()[1]
+    bio_qseq = qfile.splitlines()[1]
     bio_alignments = pairwise2.align.globalds(bio_gseq, bio_qseq, MATRIX, -10, -0.5)
     fh_ = f">genome\n{bio_alignments[0][0]}\n>que\n{bio_alignments[0][1]}\n"
     fh: List[str] = fh_.split("\n")
@@ -490,39 +463,15 @@ def align_seq_and_generate_stats(
     return ref
 
 
-def quma_main(
-    g_file: str, q_file: str, needle: str = "needle", tempdir: str = "/tmp/"
-) -> str:
+def quma_main(g_file: str, q_file: str, needle: str = "needle") -> str:
     """Run quma for quantification of methylation of bisulfite sequencing reads."""
     UNCONVL = 5
     PCONVL = 95.0
     MISL = 10
     PERCL = 90.0
-    TEMPDIR = tempdir
-    MAT = """    A   T   G   C   S   W   R   Y   K   M   B   V   H   D   N   U
-    A   5  -4  -4  -4  -4   1   1  -4  -4   1  -4  -1  -1  -1  -2  -4
-    T  -4   5  -4   5  -4   1  -4   1   1  -4  -1  -4  -1  -1  -2   5
-    G  -4  -4   5  -4   1  -4   1  -4   1  -4  -1  -1  -4  -1  -2  -4
-    C  -4  -4  -4   5   1  -4  -4   1  -4   1  -1  -1  -1  -4  -2  -4
-    S  -4  -4   1   1  -1  -4  -2  -2  -2  -2  -1  -1  -3  -3  -1  -4
-    W   1   1  -4  -4  -4  -1  -2  -2  -2  -2  -3  -3  -1  -1  -1   1
-    R   1  -4   1  -4  -2  -2  -1  -4  -2  -2  -3  -1  -3  -1  -1  -4
-    Y  -4   1  -4   1  -2  -2  -4  -1  -2  -2  -1  -3  -1  -3  -1   1
-    K  -4   1   1  -4  -2  -2  -2  -2  -1  -4  -1  -3  -3  -1  -1   1
-    M   1  -4  -4   1  -2  -2  -2  -2  -4  -1  -3  -1  -1  -3  -1  -4
-    B  -4  -1  -1  -1  -1  -3  -3  -1  -1  -3  -1  -2  -2  -2  -1  -1
-    V  -1  -4  -1  -1  -1  -3  -1  -3  -3  -1  -2  -1  -2  -2  -1  -4
-    H  -1  -1  -4  -1  -3  -1  -3  -1  -3  -1  -2  -2  -1  -2  -1  -1
-    D  -1  -1  -1  -4  -3  -1  -1  -3  -1  -3  -2  -2  -2  -1  -1  -1
-    N  -2  -2  -2  -2  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -2
-    U  -4   5  -4  -4  -4   1  -4   1   1  -4  -1  -4  -1  -1  -2   5
-    """
-    CPGMAT = TEMPDIR + "EDNA_CPG"
-    NDLOPT = (
-        " -stdout -auto -gapopen 10.0 -gapextend 0.5 "
-        + "-aformat markx3 -datafile "
-        + CPGMAT
-    )
+    # TEMPDIR = tempdir
+    # CPGMAT = TEMPDIR + "EDNA_CPG"
+
     t = make_time()
     uid = "{}{:06d}".format(t, os.getpid())
     data: List[Dict[str, Any]] = []
@@ -566,32 +515,33 @@ def quma_main(
         cpgr[str(length - pos - 2)] = 1
         pos += 1
 
-    with open(CPGMAT, "w") as f:
-        f.write(MAT)
-
     qfileF = f"que{uid}F"
     qfileR = f"que{uid}R"
     gfileF = f"genome{uid}F"
     gfileR = f"genome{uid}R"
-    qfilepF = TEMPDIR + qfileF
-    qfilepR = TEMPDIR + qfileR
-    gfilepF = TEMPDIR + gfileF
-    gfilepR = TEMPDIR + gfileR
+    # qfilepF = TEMPDIR + qfileF
+    # qfilepR = TEMPDIR + qfileR
+    # gfilepF = TEMPDIR + gfileF
+    # gfilepR = TEMPDIR + gfileR
 
-    fasta_print(gseq, gfileF, gfilepF)
-    fasta_print(rev_comp(gseq), gfileR, gfilepR)
+    # fasta_print(gseq, gfileF, gfilepF)
+    # fasta_print(rev_comp(gseq), gfileR, gfilepR)
+    gfilepF = fasta_output(gseq, gfileF)
+    gfilepR = fasta_output(gseq, gfileR)
 
     pos = 0
     for fa in qseq:
         pos += 1
         fa["pos"] = str(pos)  # was int
 
-        fasta_print(fa["seq"], qfileF, qfilepF)
-        fasta_print(rev_comp(fa["seq"]), qfileR, qfilepR)
+        # fasta_print(fa["seq"], qfileF, qfilepF)
+        # fasta_print(rev_comp(fa["seq"]), qfileR, qfilepR)
+        qfilepF = fasta_output(fa["seq"], qfileF)
+        qfilepR = fasta_output(rev_comp(fa["seq"]), qfileR)
 
         if conv != 1:
-            ffres = align_seq_and_generate_stats(qfilepF, gfilepF, cpgf, needle, NDLOPT)
-            frres = align_seq_and_generate_stats(qfilepR, gfilepF, cpgf, needle, NDLOPT)
+            ffres = align_seq_and_generate_stats(qfilepF, gfilepF, cpgf)
+            frres = align_seq_and_generate_stats(qfilepR, gfilepF, cpgf)
 
             for _ in range(0, 1):
                 if ffres["aliMis"] > frres["aliMis"]:
@@ -638,8 +588,8 @@ def quma_main(
                 fdir = 1
 
         if conv != 0:
-            rfres = align_seq_and_generate_stats(qfilepF, gfilepR, cpgr, needle, NDLOPT)
-            rrres = align_seq_and_generate_stats(qfilepR, gfilepR, cpgr, needle, NDLOPT)
+            rfres = align_seq_and_generate_stats(qfilepF, gfilepR, cpgr)
+            rrres = align_seq_and_generate_stats(qfilepR, gfilepR, cpgr)
 
             for _ in range(0, 1):  # was t
                 if rfres["aliMis"] > rrres["aliMis"]:
@@ -767,11 +717,11 @@ def quma_main(
 
         data.append(ref)
 
-    os.unlink(gfilepF)
-    os.unlink(gfilepR)
-    os.unlink(qfilepF)
-    os.unlink(qfilepR)
-    os.unlink(CPGMAT)
+    # os.unlink(gfilepF)
+    # os.unlink(gfilepR)
+    # os.unlink(qfilepF)
+    # os.unlink(qfilepR)
+    # os.unlink(CPGMAT)
 
     positions = list(map(str, positions))
 
