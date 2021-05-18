@@ -363,7 +363,8 @@ def align_seq_and_generate_stats(
 
     bio_gseq = gfile.splitlines()[1]
     bio_qseq = qfile.splitlines()[1]
-    bio_alignments = pairwise2.align.globalds(bio_gseq, bio_qseq, MATRIX, -10, -0.5)
+    # flipping to correct output comparison
+    bio_alignments = pairwise2.align.globalds(bio_qseq, bio_gseq, MATRIX, -10, -0.5)
     fh_ = f">genome\n{bio_alignments[0][0]}\n>que\n{bio_alignments[0][1]}\n"
     fh: List[str] = fh_.split("\n")
 
@@ -399,16 +400,17 @@ def process_alignment_matches(
     ref = ref
     cpg = cpg
     gAli = qAli = ""
-    fl = 0
+    # fl = 0
 
     for i, val in enumerate(ref["gAli"]):
-        if val == "-" and fl == 0:
-            continue
-        fl = 1
+        # removed gap stripping, not needed for alignment function
+        # if val == "-" and fl == 0:
+        #     continue
+        # fl = 1
         gAli += val
         qAli += ref["qAli"][i]
 
-    gAli = gAli.rstrip("-")
+    # gAli = gAli.rstrip("-")
     qAli = qAli[: len(gAli)]
 
     ref["aliLen"] = len(qAli)
@@ -419,10 +421,10 @@ def process_alignment_matches(
         g = gAli[i]
         q = qAli[i]
 
-        if g != "-":
-            j += 1
-
-        if q == g or g == "C" and q == "T":
+        # if g != "-":
+        #     j += 1
+        j += 1
+        if q == g or (g == "C" and q == "T"):
             ref["match"] += 1
 
         if g == "-":
@@ -432,7 +434,7 @@ def process_alignment_matches(
         if q == "-":
             ref["gap"] += 1
             try:
-                _ = cpg[str(j - 1)]  # was temp
+                _ = cpg[str(j - 1)]
                 ref["val"] += "-"
             except KeyError:
                 pass
@@ -445,12 +447,12 @@ def process_alignment_matches(
             continue
 
         try:
-            _ = cpg[str(j - 1)]  # was temp
-        except KeyError:
+            _ = cpg[str(j - 1)]
             if q == "C":
-                ref["unconv"] += 1
-            elif q == "T":
                 ref["conv"] += 1
+            elif q == "T":
+                ref["unconv"] += 1
+        except KeyError:
             continue
 
         if q == "C":

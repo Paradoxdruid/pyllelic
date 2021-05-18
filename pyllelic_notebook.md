@@ -132,24 +132,24 @@ import pyllelic
 # and put the .bam and .bai files in "test"
 
 # OSX setup
-# pyllelic.set_up_env_variables(
-#     base_path="/Users/abonham/documents/test_allelic/",
-#     prom_file="TERT-promoter-genomic-sequence.txt",
-#     prom_start="1293000",
-#     prom_end="1296000",
-#     chrom="5",
-#     offset=1298163,
-# )
-
-# Windows set-up
 pyllelic.set_up_env_variables(
-    base_path="/home/andrew/allellic/",
+    base_path="/Users/abonham/documents/test_allelic/",
     prom_file="TERT-promoter-genomic-sequence.txt",
     prom_start="1293000",
     prom_end="1296000",
-    chrom="chr5",
+    chrom="5",
     offset=1298163,
 )
+
+# Windows set-up
+# pyllelic.set_up_env_variables(
+#     base_path="/home/andrew/allellic/",
+#     prom_file="TERT-promoter-genomic-sequence.txt",
+#     prom_start="1293000",
+#     prom_end="1296000",
+#     chrom="chr5",
+#     offset=1298163,
+# )
 ```
 
 ## Main Parsing Functions
@@ -165,7 +165,8 @@ files_set
 
 ```python
 # index bam and creates bam_output folders/files
-positions = pyllelic.index_and_fetch(files_set)
+# set process False to skip writing output files if they already exist
+positions = pyllelic.index_and_fetch(files_set, process=False)
 ```
 
 ```python
@@ -203,7 +204,7 @@ cell_types
 ```python
 # Set filename to whatever you want
 df_list = pyllelic.run_quma_and_compile_list_of_df(
-    cell_types, "test14.xlsx",
+    cell_types, "test18.xlsx",
     run_quma=True,
 )  # to skip quma: , run_quma=False)
 ```
@@ -211,6 +212,10 @@ df_list = pyllelic.run_quma_and_compile_list_of_df(
 ```python
 # Uncomment for debugging
 df_list.keys()
+```
+
+```python
+df_list["SW1710"]
 ```
 
 ```python
@@ -244,14 +249,14 @@ diff
 
 ```python
 # Set the filename to whatever you want
-pyllelic.write_means_modes_diffs(means, modes, diff, "Test13")
+pyllelic.write_means_modes_diffs(means, modes, diff, "Test17")
 ```
 
 ## Visualizing Data
 
 ```python
 final_data = pyllelic.pd.read_excel(
-    pyllelic.config.base_directory.joinpath("Test13_diff.xlsx"),
+    pyllelic.config.base_directory.joinpath("Test17_diff.xlsx"),
     dtype=str,
     index_col=0,
     engine="openpyxl",
@@ -284,7 +289,7 @@ pyllelic.histogram(individual_data, "SORTED", "1295903")
 ```
 
 ```python
-pyllelic.histogram(individual_data, "SW1710", "1293690")
+pyllelic.histogram(individual_data, "SW1710", "1295089")
 ```
 
 ```python
@@ -292,7 +297,7 @@ pyllelic.histogram(individual_data, "NCIH196", "1294004")
 ```
 
 ```python
-pyllelic.histogram(individual_data, "NCIH196", "1293561")
+pyllelic.histogram(individual_data, "NCIH196", "1295430")
 ```
 
 ```python
@@ -300,7 +305,7 @@ pyllelic.histogram(individual_data, "SW1710", "1294031")
 ```
 
 ```python
-final_data.loc["SW1710"]
+final_data.loc["NCIH196"]
 ```
 
 ## Statistical Tests for Normality

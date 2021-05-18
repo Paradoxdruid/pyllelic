@@ -155,21 +155,15 @@ def make_list_of_bam_files() -> List[str]:
     Returns:
         list[str]: list of files
     """
-    # indv_bam: List[Path] = [b for b in config.analysis_directory.iterdir()]
-    # init_files_set: List[str] = [bam.name for bam in indv_bam if bam.suffix == ".bam"]
-    # bai_set: List[str] = [bai.name for bai in indv_bam if bai.suffix == ".bai"]
-    # f_set: List[str] = [str(bam).split(".")[0] for bam in init_files_set]
-    # baii: List[str] = [str(bai).split(".")[0] for bai in bai_set]
-    # files_set: List[str] = [name + (".TERT.bam") for name in f_set if name in baii]
-    # return files_set
     return [f.name for f in config.analysis_directory.iterdir() if f.suffix == ".bam"]
 
 
-def index_and_fetch(files_set: List[str]) -> List[str]:
+def index_and_fetch(files_set: List[str], process: bool = True) -> List[str]:
     """Wrapper to call processing of each sam file.
 
     Args:
         files_set (list[str]): list of bam/sam files
+        process (bool): process and write files flag. Default True.
 
     Returns:
         list[str]: list of genomic positions analyzed
@@ -179,18 +173,19 @@ def index_and_fetch(files_set: List[str]) -> List[str]:
 
     all_pos: Set = set()
     for sams in tqdm(sam_path):
-        pos: pd.Index = run_sam_and_extract_df(sams)
+        pos: pd.Index = run_sam_and_extract_df(sams, process)
         all_pos.update(pos)
 
     return sorted(list(all_pos))
 
 
-def run_sam_and_extract_df(sams: Path) -> pd.Index:
+def run_sam_and_extract_df(sams: Path, process: bool = True) -> pd.Index:
     """Process samfiles, pulling out sequence and position data
     and writing to folders/files.
 
     Args:
         sams (Path): path to a samfile
+        process (bool): process and write files flag. Default True.
 
     Returns:
         pd.Index: list of unique positions in the samfile
@@ -223,7 +218,8 @@ def run_sam_and_extract_df(sams: Path) -> pd.Index:
     df3: pd.DataFrame = df2.stack()
     # if confused, see: https://www.w3resource.com/pandas/dataframe/dataframe-stack.php
 
-    write_bam_output_files(sams, df2.index.unique(), df3)
+    if process:
+        write_bam_output_files(sams, df2.index.unique(), df3)
 
     return df2.index.unique()
 
@@ -425,7 +421,6 @@ def quma_full(cell_types: List[str], filename: str) -> None:
                     folder, f"g_{read_name}.txt", f"{read_name}.txt"
                 )
                 processed_quma: List[str] = process_raw_quma(quma_result)
-
                 # Next, add this readname to the holding data frame
                 int_df: pd.DataFrame = pd.DataFrame({read_name: processed_quma})
                 holding_df = pd.concat([holding_df, int_df], axis=1)
@@ -522,10 +517,10 @@ def process_raw_quma(quma_result: str) -> List[str]:
     for line in quma_result.splitlines():
         if not line.lstrip().startswith("g"):
             fields: List[str] = line.split("\t")
-            if float(fields[7]) < 80:
-                dots.append("FAIL")
-            else:
-                dots.append(fields[13])
+            # if float(fields[7]) < 70:  # CONSIDER: checks for high mercent match
+            #     dots.append("FAIL")
+            # else:
+            dots.append(fields[13])
     # Sort dots output by number of "1"
     return sorted(dots, key=lambda t: t.count("1"))
 
