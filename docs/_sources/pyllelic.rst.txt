@@ -28,6 +28,14 @@ pyllelic.pyllelic module
    :undoc-members:
    :show-inheritance:
 
+pyllelic.quma module
+------------------------
+
+.. automodule:: pyllelic.quma
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
