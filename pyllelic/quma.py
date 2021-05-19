@@ -397,8 +397,8 @@ def process_alignment_matches(
     Returns:
         Dict[str, Any]: results dictionary
     """
-    ref = ref
-    cpg = cpg
+    # ref = ref
+    # cpg = cpg
     gAli = qAli = ""
     # fl = 0
 
@@ -494,7 +494,7 @@ def process_fasta_output(
     MISL = 10
     PERCL = 90.0
 
-    conv = 0
+    # conv = 0
     unc = UNCONVL
     pcon = PCONVL
     mis = MISL
@@ -509,53 +509,38 @@ def process_fasta_output(
         qfilepF = fasta_output(fa["seq"], qfileF)
         qfilepR = fasta_output(rev_comp(fa["seq"]), qfileR)
 
-        if conv != 1:
-            ffres = align_seq_and_generate_stats(qfilepF, gfilepF, cpgf)
-            frres = align_seq_and_generate_stats(qfilepR, gfilepF, cpgf)
+        # if conv != 1:  # it always is
+        ffres = align_seq_and_generate_stats(qfilepF, gfilepF, cpgf)
+        frres = align_seq_and_generate_stats(qfilepR, gfilepF, cpgf)
 
-            for _ in range(0, 1):
-                if ffres["aliMis"] > frres["aliMis"]:
-                    fres = frres
-                    fdir = -1
-                    break
-
-                if ffres["aliMis"] < frres["aliMis"]:
-                    fres = ffres
-                    fdir = 1
-                    break
-
-                if ffres["perc"] > frres["perc"]:
-                    fres = ffres
-                    fdir = 1
-                    break
-
-                if ffres["perc"] < frres["perc"]:
-                    fres = frres
-                    fdir = -1
-                    break
-
-                if ffres["unconv"] > frres["unconv"]:
-                    fres = frres
-                    fdir = -1
-                    break
-
-                if ffres["unconv"] < frres["unconv"]:
-                    fres = ffres
-                    fdir = 1
-                    break
-
-                if ffres["pconv"] < frres["pconv"]:
-                    fres = frres
-                    fdir = -1
-                    break
-
-                if ffres["pconv"] > frres["pconv"]:
-                    fres = ffres
-                    fdir = 1
-                    break
-
-                fres = ffres
-                fdir = 1
+        # for _ in range(0, 1):
+        if ffres["aliMis"] > frres["aliMis"]:
+            fres = frres
+            fdir = -1
+        elif ffres["aliMis"] < frres["aliMis"]:
+            fres = ffres
+            fdir = 1
+        elif ffres["perc"] > frres["perc"]:
+            fres = ffres
+            fdir = 1
+        elif ffres["perc"] < frres["perc"]:
+            fres = frres
+            fdir = -1
+        elif ffres["unconv"] > frres["unconv"]:
+            fres = frres
+            fdir = -1
+        elif ffres["unconv"] < frres["unconv"]:
+            fres = ffres
+            fdir = 1
+        elif ffres["pconv"] < frres["pconv"]:
+            fres = frres
+            fdir = -1
+        elif ffres["pconv"] > frres["pconv"]:
+            fres = ffres
+            fdir = 1
+        else:
+            fres = ffres
+            fdir = 1
 
         # if conv != 0:
         #     rfres = align_seq_and_generate_stats(qfilepF, gfilepR, cpgr)
@@ -605,10 +590,10 @@ def process_fasta_output(
         #     rres = rfres
         #     rdir = 1
 
-        if conv == 0:
-            res = fres
-            dir = fdir
-            gdir = 1
+        # if conv == 0:  # it always is
+        res = fres
+        dir = fdir
+        gdir = 1
 
         # elif conv == 1:
         #     res = rres
