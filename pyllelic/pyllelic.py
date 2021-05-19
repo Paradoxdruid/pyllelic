@@ -55,7 +55,7 @@ import subprocess
 from pathlib import Path
 from scipy import stats
 from tqdm.notebook import tqdm
-from typing import List, Dict, Set, Optional, Tuple, Any
+from typing import List, Dict, Set, Optional, Tuple, Any, Union
 from .config import Config
 from . import quma
 
@@ -594,7 +594,7 @@ def process_means(
             values_list: List[float] = return_read_values(pos, key, dict_of_dfs)
 
             if values_list:
-                pos_means: float = np.mean(values_list)
+                pos_means: float = float(np.mean(values_list))
             else:  # No data or data doesn't meet minimums for analysis
                 pos_means = np.nan
 
@@ -658,7 +658,7 @@ def return_individual_data(
         for key, each in tqdm(dict_of_dfs.items(), desc="Cell Line", leave=False):
             values_list: List[float] = return_read_values(pos, key, dict_of_dfs)
             if values_list:
-                data_for_df: List[float] = values_list
+                data_for_df: Union[List[float], float] = values_list
             else:  # No data or data doesn't meet minimums for analysis
                 data_for_df = np.nan
 
@@ -832,27 +832,27 @@ def histogram(data: pd.DataFrame, cell_line: str, position: str) -> None:
 
 def anderson_darling_test(
     raw_list: Optional[pd.Series],
-) -> Tuple[bool, float, np.array]:
+) -> Tuple[bool, float, List[Any]]:
     """Run the Anderson-Darling normality test on methylation data at a point.
 
     Args:
         raw_list (pd.Series): list of fractional methylation levels per read.
 
     Returns:
-        Tuple[bool, float, np.array]: is the data significantly allelic (bool),
-                                 A-D statistic (float), critical values (np.array)
+        Tuple[bool, float, List[Any]]: is the data significantly allelic (bool),
+                                 A-D statistic (float), critical values (list)
     """
     if np.all(pd.notnull(raw_list)):
         stat: float
-        crits: np.array
-        sigs: np.array
+        crits: List[Any]
+        sigs: List[Any]
         stat, crits, sigs = stats.anderson(raw_list)
         if stat > crits[4]:
             is_sig = True
         else:
             is_sig = False
         return (is_sig, stat, crits)
-    return np.nan
+    return (False, np.nan, [np.nan])
 
 
 def generate_ad_stats(individual_data_df: pd.DataFrame) -> pd.DataFrame:

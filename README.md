@@ -13,6 +13,8 @@
 Pyllelic documention is available at **https://paradoxdruid.github.io/pyllelic/** and see [`pyllelic_notebook.ipynb`](https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.ipynb) for an interactive demonstration.
 
 ## Example exploratory use in jupyter notebook:
+<details>
+<summary>Click to expand...</summary>
 
 ```python
     import pyllelic
@@ -44,7 +46,16 @@ Pyllelic documention is available at **https://paradoxdruid.github.io/pyllelic/*
     diff_df = pyllelic.find_diffs(means_df, modes_df)  # find difference between mean and mode
 
     pyllelic.write_means_modes_diffs(means_df, modes_df, diffs_df, filename)  # write output data to excel files
+
+    final_data = pyllelic.pd.read_excel(pyllelic.config.base_directory.joinpath(filename), dtype=str, index_col=0, engine="openpyxl")  # load saved data
+
+    individual_data = pyllelic.return_individual_data(df_list, positions, files_set)  # load individual data sets
+
+    pyllelic.histogram(individual_data, "CELL_LINE", "POSITION")  # visualize data for a point
+
+    final_data.loc["CELL_LINE"]  # see summary data for a cell line
 ```
+</details>
 
 ----------------------------------
 
@@ -56,18 +67,6 @@ conda create --name methyl python=3.7
 conda activate methyl
 conda config --env --add channels conda-forge
 ```
-### Install python dependencies (not needed if installed via `pip install pyllelic`)
-```bash
-conda install pandas numpy scipy plotly dash notebook xlsxwriter xlrd openpyxl tqdm biopython ipywidgets
-conda install -c bioconda samtools pysam scikit-bio
-conda install -c conda-forge jupyter_contrib_nbextensions
-```
-### System dependencies
-```bash
-conda install -c bioconda emboss
-conda install -c bioconda perl perl-app-cpanminus
-cpan install Statistics::Lite
-```
 
 ### Install pyllelic
 ```bash
@@ -76,6 +75,13 @@ pip install pyllelic
 or
 ```bash
 git clone https://github.com/Paradoxdruid/pyllelic.git
+```
+
+### Install python dependencies (not needed if installed via `pip install pyllelic`)
+```bash
+conda install pandas numpy scipy plotly dash notebook xlsxwriter xlrd openpyxl tqdm biopython ipywidgets
+conda install -c bioconda samtools pysam scikit-bio
+conda install -c conda-forge jupyter_contrib_nbextensions
 ```
 
 ## Authors

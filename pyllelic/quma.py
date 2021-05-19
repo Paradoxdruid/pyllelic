@@ -479,14 +479,14 @@ def process_alignment_matches(
 
 
 def process_fasta_output(
-    qseq: str,
+    qseq: List[Dict[str, str]],
     qfileF: str,
     qfileR: str,
     gfilepF: str,
     gfilepR: str,
     cpgf: Dict[str, int],
     cpgr: Dict[str, int],
-) -> Dict[str, Any]:
+) -> List[Dict[str, Any]]:
     """Process fasta alignment."""
 
     UNCONVL = 5
@@ -513,7 +513,7 @@ def process_fasta_output(
         ffres = align_seq_and_generate_stats(qfilepF, gfilepF, cpgf)
         frres = align_seq_and_generate_stats(qfilepR, gfilepF, cpgf)
 
-        # for _ in range(0, 1):
+        # Find best dataset:
         if ffres["aliMis"] > frres["aliMis"]:
             fres = frres
             fdir = -1
@@ -542,123 +542,9 @@ def process_fasta_output(
             fres = ffres
             fdir = 1
 
-        # if conv != 0:
-        #     rfres = align_seq_and_generate_stats(qfilepF, gfilepR, cpgr)
-        #     rrres = align_seq_and_generate_stats(qfilepR, gfilepR, cpgr)
-
-        #     for _ in range(0, 1):  # was t
-        #         if rfres["aliMis"] > rrres["aliMis"]:
-        #             rres = rrres
-        #             rdir = -1
-        #             break
-
-        #         if rfres["aliMis"] < rrres["aliMis"]:
-        #             rres = rfres
-        #             rdir = 1
-        #             break
-
-        #         if rfres["perc"] > rrres["perc"]:
-        #             rres = rfres
-        #             rdir = 1
-        #             break
-
-        #         if rfres["perc"] < rrres["perc"]:
-        #             rres = rrres
-        #             rdir = -1
-        #             break
-
-        #         if rfres["unconv"] > rrres["unconv"]:
-        #             rres = rrres
-        #             rdir = -1
-        #             break
-
-        #         if rfres["unconv"] < rrres["unconv"]:
-        #             rres = rfres
-        #             rdir = 1
-        #             break
-
-        #         if rfres["pconv"] < rrres["pconv"]:
-        #             rres = rrres
-        #             rdir = -1
-        #             break
-
-        #         if rfres["pconv"] > rrres["pconv"]:
-        #             rres = rfres
-        #             rdir = 1
-        #             break
-
-        #     rres = rfres
-        #     rdir = 1
-
-        # if conv == 0:  # it always is
         res = fres
         dir = fdir
         gdir = 1
-
-        # elif conv == 1:
-        #     res = rres
-        #     dir = rdir
-        #     gdir = -1
-
-        # else:
-        #     if fres["aliMis"] > rres["aliMis"]:
-        #         res = rres
-        #         dir = rdir
-        #         gdir = -1
-        #         break
-
-        #     if fres["aliMis"] < rres["aliMis"]:
-        #         res = fres
-        #         dir = fdir
-        #         gdir = 1
-        #         break
-
-        #     if fres["perc"] > rres["perc"]:
-        #         res = fres
-        #         dir = fdir
-        #         gdir = 1
-        #         break
-
-        #     if fres["perc"] < rres["perc"]:
-        #         res = rres
-        #         dir = rdir
-        #         gdir = -1
-        #         break
-
-        #     if fres["unconv"] > rres["unconv"]:
-        #         res = rres
-        #         dir = rdir
-        #         gdir = -1
-        #         break
-
-        #     if fres["unconv"] < rres["unconv"]:
-        #         res = fres
-        #         dir = fdir
-        #         gdir = 1
-        #         break
-
-        #     if fres["pconv"] < rres["pconv"]:
-        #         res = rres
-        #         dir = rdir
-        #         gdir = -1
-        #         break
-
-        #     if fres["pconv"] > rres["pconv"]:
-        #         res = fres
-        #         dir = fdir
-        #         gdir = 1
-        #         break
-
-        #     res = fres
-        #     dir = fdir
-        #     gdir = 1
-
-        # if gdir != 1:
-        #     res["qAli"] = rev_comp(res["qAli"])
-        #     res["gAli"] = rev_comp(res["gAli"])
-        #     temp = list(rev_comp(res["val"]))
-        #     temp.reverse()
-        #     res["val"] = "".join(temp)
 
         ref: Dict[str, Any] = {"fa": fa, "res": res, "dir": dir, "gdir": gdir, "exc": 0}
         if res["unconv"] > unc:
