@@ -5,86 +5,28 @@ conda to install dependencies.
 """
 
 # Always prefer setuptools over distutils
-from setuptools import setup, find_packages  # , Command
+from setuptools import setup, find_packages
 
 # import subprocess
 import pathlib
 import pyllelic.__version__ as version
-
-# from distutils.command.build import build as _build
 
 here = pathlib.Path(__file__).parent.resolve()
 
 # Get the long description from the README file
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
-# Get version info from __version__.py
-# version = {}
-# with open(here / "pyllelic" / "__version__.py") as f:
-#     exec(f.read(), version)
-
-# Install non-python dependencies
-# CUSTOM_COMMANDS = [
-#     ["conda", "install", "-c", "bioconda", "emboss"],
-#     ["conda", "install", "-c", "bioconda", "perl", "perl-cpanminus"],
-#     ["cpan", "install", "Statistics::Lite"],
-# ]
-
-
-# class CustomCommands(Command):
-#     """A setuptools Command class able to run arbitrary commands."""
-
-#     def initialize_options(self):
-#         pass
-
-#     def finalize_options(self):
-#         pass
-
-#     def RunCustomCommand(self, command_list):
-#         print("Running command: %s" % command_list)
-#         p = subprocess.Popen(
-#             command_list,
-#             stdin=subprocess.PIPE,
-#             stdout=subprocess.PIPE,
-#             stderr=subprocess.STDOUT,
-#         )
-#         # Can use communicate(input='y\n'.encode()) if the command run requires
-#         # some confirmation.
-#         stdout_data, _ = p.communicate()
-#         print("Command output: %s" % stdout_data)
-#         if p.returncode != 0:
-#             raise RuntimeError(
-#                 "Command %s failed: exit code: %s" % (command_list, p.returncode)
-#             )
-
-#     def run(self):
-#         for command in CUSTOM_COMMANDS:
-#             self.RunCustomCommand(command)
-
-
-# # This class handles the pip install mechanism.
-# class build(_build):
-#     """A build command class that will be invoked during package install.
-#     The package built using the current setup.py will be staged and later
-#     installed in the worker using `pip install package'. This class will be
-#     instantiated during install for this specific scenario and will trigger
-#     running the custom commands specified.
-#     """
-
-#     sub_commands = _build.sub_commands + [("CustomCommands", None)]
-
-
 # Setup via pip
 setup(
     name="pyllelic",
-    version=version.__version__,  # ["__version__"],
-    author=version.__author__,  # ["__author__"],
-    author_email=version.__author_email__,  # ["__author_email__"],
-    description=version.__description__,  # ["__description__"],
-    license=version.__license__,  # ["__license__"],
+    version=version.__version__,
+    author=version.__author__,
+    author_email=version.__author_email__,
+    description=version.__description__,
+    license=version.__license__,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url=version.__url__,  # ["__url__"],
+    url=version.__url__,
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -103,15 +45,16 @@ setup(
         "numpy",
         "scipy",
         "plotly",
+        "notebook",
         "xlsxwriter",
         "xlrd",
+        "openpyxl",
+        "tqdm",
         "samtools",
         "pysam",
         "scikit-bio",
+        "biopython",
+        "ipywidgets",
+        "jupyter_contrib_nbextensions",
     ],
-    # cmdclass={
-    #     # Command class instantiated and run during pip install scenarios.
-    #     "build": build,
-    #     "CustomCommands": CustomCommands,
-    # },
 )
