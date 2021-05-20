@@ -399,32 +399,18 @@ def process_alignment_matches(
     Returns:
         Dict[str, Any]: results dictionary
     """
-    # ref = ref
-    # cpg = cpg
-    gAli = qAli = ""
-    # fl = 0
-
-    for i, val in enumerate(ref["gAli"]):
-        # removed gap stripping, not needed for alignment function
-        # if val == "-" and fl == 0:
-        #     continue
-        # fl = 1
-        gAli += val
-        qAli += ref["qAli"][i]
-
-    # gAli = gAli.rstrip("-")
-    qAli = qAli[: len(gAli)]
+    gAli = ref["gAli"]
+    qAli = ref["qAli"][: len(gAli)]
 
     ref["aliLen"] = len(qAli)
 
+    # Loop through sequence looking for CpG conversion
     j = 0
     for i in range(ref["aliLen"]):
 
         g = gAli[i]
         q = qAli[i]
 
-        # if g != "-":
-        #     j += 1
         j += 1
         if q == g or (g == "C" and q == "T"):
             ref["match"] += 1
@@ -465,19 +451,26 @@ def process_alignment_matches(
         else:
             ref["val"] += q
 
+    # Summary stats
     if ref["conv"] + ref["unconv"] != 0:
-        ref["pconv"] = "{:3.1f}".format(
-            100 * ref["conv"] / (ref["conv"] + ref["unconv"])
-        )
+        ref["pconv"] = _percentage(ref["conv"], ref["unconv"], type="sum")
     else:
         ref["pconv"] = 0
 
-    ref["perc"] = "{:3.1f}".format(100 * ref["match"] / ref["aliLen"])
+    ref["perc"] = _percentage(ref["match"], ref["aliLen"], type="total")
     ref["perc"] = float(ref["perc"])
     ref["pconv"] = float(ref["pconv"])
-
     ref["aliMis"] = ref["aliLen"] - ref["match"]
+
     return ref
+
+
+def _percentage(a: int, b: int, type: str) -> str:
+    """Helper to return percentages."""
+    if type == "sum":
+        return f"{(100 * a / (a + b)):3.1f}"
+    if type == "total":
+        return f"{(100 * a / b):3.1f}"
 
 
 def process_fasta_output(
