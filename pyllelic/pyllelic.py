@@ -3,23 +3,23 @@
    in reduced representation bisulfate DNA sequencing.
 """
 
-# Imports
-import pandas as pd
-import numpy as np
-import pysam
 import os
-import sys
-from skbio.alignment import StripedSmithWaterman
-import plotly.graph_objects as go
-import subprocess
-from pathlib import Path
-from scipy import stats
-from tqdm.notebook import tqdm
-from typing import List, Dict, Set, Optional, Tuple, Any, Union
-from .config import Config
-from . import quma
-from multiprocessing import Pool, cpu_count
 import signal
+import sys
+from multiprocessing import Pool, cpu_count
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
+
+import numpy as np
+import pandas as pd
+import plotly.graph_objects as go
+import pysam
+from scipy import stats
+from skbio.alignment import StripedSmithWaterman
+from tqdm.notebook import tqdm
+
+from . import quma
+from .config import Config
 
 # Initialize shared configuration object
 config = Config()
@@ -158,7 +158,7 @@ def run_sam_and_extract_df(sams: Path, process: bool = True) -> pd.Index:
 
     # Index samfile if index file doesn't exist
     if not sams.with_suffix(".bai").exists():
-        _: str = samtools_index(sams)  # we don't care what the output is
+        _: bool = pysam_index(sams)  # we don't care what the output is
 
     # Grab the promoter region of interest
     samm: pysam.AlignmentFile = pysam.AlignmentFile(sams, "rb")
@@ -243,24 +243,19 @@ def write_individual_bam_file(
             file_handler.write("{}\n".format(item))
 
 
-def samtools_index(sams: Path) -> str:
-    """Helper function to run external samtools index tool.
+def pysam_index(bamfile: Path) -> bool:
+    """Helper function to run external samtools index.
 
     Args:
-        sams (Path): filepath to samfile
+        bamfile (Path): filepath to bam file
 
     Returns:
-        str: output from samtools index shell command, usually discarded
+        bool: verification of samtools command, usually discarded
     """
 
-    command: List[str] = ["samtools", "index", os.fspath(sams)]
+    pysam.index(os.fspath(bamfile))
 
-    output: subprocess.CompletedProcess = subprocess.run(
-        command, capture_output=True, text=True, check=True
-    )
-    out: str = output.stdout
-
-    return out
+    return True
 
 
 def genome_parsing(subfolders: List[Path] = None) -> None:
@@ -300,35 +295,6 @@ def genome_parsing(subfolders: List[Path] = None) -> None:
             with open(folder.joinpath(f"g_{read_name}.txt"), "w") as file_handler:
                 for item in file_lines:
                     file_handler.write(f"{item}\n")
-
-
-def run_quma(directory: str, genomic_seq_file: str, reads_seq_file: str) -> str:
-    """Helper function to run external QUMA tool.
-
-    Args:
-        directory (str): directory path to analyze
-        genomic_seq_file (str): text file with known genomic sequence
-        reads_seq_file (str): text file with experimental reads
-
-    Returns:
-        bytes: shell output from quma command
-    """
-
-    quma_path: str = os.fspath(config.base_directory.joinpath("quma_cui"))
-    command: List[str] = [
-        "perl",
-        f"{quma_path}/quma.pl",
-        "-g",
-        f"{directory}/{genomic_seq_file}",
-        "-q",
-        f"{directory}/{reads_seq_file}",
-    ]
-
-    output: subprocess.CompletedProcess = subprocess.run(
-        command, text=True, capture_output=True, check=True
-    )
-    out: str = output.stdout
-    return out
 
 
 def access_quma(directory: str, genomic_seq_file: str, reads_seq_file: str) -> str:

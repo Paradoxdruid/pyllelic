@@ -1,13 +1,15 @@
+#!/usr/bin/env python3
+"""Tools to quantify methylation in reduced representation
+   bisulfite sequencing reads."""
+
 # Adapted from QUMA CLI: http://quma.cdb.riken.jp/
 # Licensed under GPLv3
 # perl conversion by: https://freelancer.com/u/Zubayerskd
 
-import time
-from datetime import datetime
 import re
-import os
 from io import StringIO
-from typing import List, Tuple, Dict, Any
+from typing import Any, Dict, List, Tuple
+
 from Bio import pairwise2
 from Bio.Align import substitution_matrices
 
@@ -50,19 +52,19 @@ def check_char_in_allowed(seq: str, pattern: str) -> str:
     return new
 
 
-def make_time(given_time: float = None) -> str:
-    """Convert floating time into string formatted timestamp.
+# def make_time(given_time: float = None) -> str:
+#     """Convert floating time into string formatted timestamp.
 
-    Args:
-        given_time (float, optional): floating point time. Defaults to None.
+#     Args:
+#         given_time (float, optional): floating point time. Defaults to None.
 
-    Returns:
-        str: String-formatted timestamp.
-    """
-    curr_time: float = given_time or time.time()
+#     Returns:
+#         str: String-formatted timestamp.
+#     """
+#     curr_time: float = given_time or time.time()
 
-    dt: datetime = datetime.fromtimestamp(curr_time)
-    return dt.strftime("%Y%m%d%H%M%S")
+#     dt: datetime = datetime.fromtimestamp(curr_time)
+#     return dt.strftime("%Y%m%d%H%M%S")
 
 
 def curate_seq(seq: str) -> str:
@@ -624,18 +626,18 @@ def find_cpg(gseq: str) -> Tuple[List[str], Dict[str, Any], Dict[str, Any]]:
 def quma_main(gfile: str, qfile: str) -> str:
     """Run quma for quantification of methylation of bisulfite sequencing reads."""
 
-    t = make_time()
-    uid = "{}{:06d}".format(t, os.getpid())
+    # t = make_time()
+    # uid = "{}{:06d}".format(t, os.getpid())
 
     gseq = parse_genome(gfile)
     qseq = parse_biseq(qfile)
 
     positions, cpgf, cpgr = find_cpg(gseq)
 
-    qfileF = f"que{uid}F"
-    qfileR = f"que{uid}R"
-    gfileF = f"genome{uid}F"
-    gfileR = f"genome{uid}R"
+    qfileF = "queryF"  # f"que{uid}F"
+    qfileR = "queryR"  # f"que{uid}R"
+    gfileF = "genomeF"  # f"genome{uid}F"
+    gfileR = "genomeR"  # f"genome{uid}R"
 
     gfilepF = fasta_output(gseq, gfileF)
     gfilepR = fasta_output(gseq, gfileR)

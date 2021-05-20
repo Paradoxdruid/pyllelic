@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Utilities to pre-process and prepare data for use in pyllelic.
-"""
+"""Utilities to pre-process and prepare data for use in pyllelic."""
 
 import gzip
-from Bio import SeqIO
-from pathlib import Path
-from typing import List, Dict, Optional
-import subprocess
 import os
+import subprocess
+from pathlib import Path
+from typing import Dict, List, Optional
+
+import pysam
+from Bio import SeqIO
 
 
 def process_fastq_to_list(filepath: Path) -> Optional[List[SeqIO.SeqRecord]]:
@@ -116,51 +117,31 @@ def bowtie2_fastq_to_bam(index: Path, fastq: Path, cores: int) -> bytes:
     return out
 
 
-def samtools_sort(bamfile: Path) -> str:
-    """Helper function to run external samtools sort.
+def process_pysam_sort(bamfile: Path) -> bool:
+    """Helper function to run pysam samtools sort.
 
     Args:
         bamfile (Path): filepath to bam file
 
     Returns:
-        str: output from samtools shell command, usually discarded
+        bool: verification of samtools command, usually discarded
     """
 
-    command: List[str] = [
-        "samtools",
-        "sort",
-        os.fspath(bamfile),
-        ">",
-        bamfile.stem + "_sorted.bam",
-    ]
+    pysam.sort("-o", f">{bamfile.stem}_sorted.bam", os.fspath(bamfile))
 
-    output: subprocess.CompletedProcess = subprocess.run(
-        command, capture_output=True, text=True, check=True
-    )
-    out: str = output.stdout
-
-    return out
+    return True
 
 
-def process_samtools_index(bamfile: Path) -> str:
+def process_pysam_index(bamfile: Path) -> bool:
     """Helper function to run external samtools index.
 
     Args:
         bamfile (Path): filepath to bam file
 
     Returns:
-        str: output from samtools shell command, usually discarded
+        bool: verification of samtools command, usually discarded
     """
 
-    command: List[str] = [
-        "samtools",
-        "index",
-        os.fspath(bamfile),
-    ]
+    pysam.index(os.fspath(bamfile))
 
-    output: subprocess.CompletedProcess = subprocess.run(
-        command, capture_output=True, text=True, check=True
-    )
-    out: str = output.stdout
-
-    return out
+    return True

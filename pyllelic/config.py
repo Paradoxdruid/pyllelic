@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-
 """Configuration options for pyllelic."""
 
-from pathlib import Path
 from dataclasses import dataclass
+from pathlib import Path
 
 
 # Create dataclass to hold config values
