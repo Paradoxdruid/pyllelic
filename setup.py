@@ -50,7 +50,6 @@ setup(
         "xlrd",
         "openpyxl",
         "tqdm",
-        "samtools",
         "pysam",
         "scikit-bio",
         "biopython",
