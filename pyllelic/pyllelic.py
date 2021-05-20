@@ -1,46 +1,6 @@
 #!/usr/bin/env python3
-"""pyllelic: a tool for detection of allelic-specific varation in DNA sequencing.
-
-## Example exploratory use in jupyter notebook:
-
-    import pyllelic
-
-    # Setup directories and promoter of interest
-    pyllelic.set_up_env_variables(
-        base_path="/Users/abonham/documents/test_allelic/",
-        prom_file="TERT-promoter-genomic-sequence.txt",
-        prom_start="1293000",
-        prom_end="1296000",
-        chrom="5",
-        offset=1298163,
-    )
-
-    # find bam files
-    files_set = pyllelic.make_list_of_bam_files()
-
-    # index and create bam_output folders/files
-    positions = pyllelic.index_and_fetch(files_set)
-
-    # write out genome strings in bam_output folders
-    pyllelic.genome_parsing()
-
-    # pull out the cell types available for analysis
-    cell_types = extract_cell_types(files_set)
-
-    # run quma, get dfs
-    df_list = run_quma_and_compile_list_of_df(cell_types, filename)
-
-    # process means data from dataframes
-    means_df = process_means(df_list, positions, files_set)
-
-    # process modes data from dataframes
-    modes_df = process_modes(df_list, positions, cell_types)
-
-    # find difference between mean and mode
-    diff_df = find_diffs(means_df, modes_df)
-
-    # write output to excel files
-    write_means_modes_diffs(means_df, modes_df, diffs_df, filename)
+"""pyllelic: a tool for detection of allelic-specific variation
+   in reduced representation bisulfate DNA sequencing.
 """
 
 # Imports
@@ -58,9 +18,14 @@ from tqdm.notebook import tqdm
 from typing import List, Dict, Set, Optional, Tuple, Any, Union
 from .config import Config
 from . import quma
+from multiprocessing import Pool, cpu_count
+import signal
 
 # Initialize shared configuration object
 config = Config()
+
+# Initialized multiprocessing limits
+NUM_THREADS = cpu_count() - 1
 
 
 def set_up_env_variables(
@@ -433,7 +398,32 @@ def quma_full(cell_types: List[str], filename: str) -> None:
     writer.save()
 
 
-def quma_full_mp(cell_types: List[str], filename: str) -> None:
+def _init_worker():
+    """
+    Pool worker initializer for keyboard interrupt on Windows
+    """
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+
+def _thread_worker(folder: Path, read_name: str) -> pd.DataFrame:
+    """Queue worker for quma functions.
+
+    Args:
+        folder (Path): folder containing bam output
+        read_name (List[str]): list of cell lines
+
+    Returns:
+        pd.DataFrame: dataframe of quma results
+    """
+    quma_result: str = access_quma(folder, f"g_{read_name}.txt", f"{read_name}.txt")
+    processed_quma: List[str] = process_raw_quma(quma_result)
+    # Next, add this readname to the holding data frame
+    int_df: pd.DataFrame = pd.DataFrame({read_name: processed_quma})
+
+    return int_df
+
+
+def quma_full_threaded(cell_types: List[str], filename: str) -> None:
     """Run external QUMA methylation analysis on all specified cell lines,
        using multiprocessing library.
 
@@ -446,59 +436,52 @@ def quma_full_mp(cell_types: List[str], filename: str) -> None:
 
     writer: pd.ExcelWriter = pd.ExcelWriter(config.base_directory.joinpath(filename))
 
-    # Wrap everything in processing them one at a time
-    for folder in tqdm(subfolders, desc="Cell Lines"):
+    folders_to_use = [
+        folder
+        for folder in subfolders
+        if set([folder.name.split("_")[1]]).intersection(set(cell_types))
+    ]
 
-        # Get short name of cell_line
+    for folder in tqdm(folders_to_use, desc="Cell Lines"):
         cell_line_name: str = folder.name.split("_")[1]
 
-        if set([cell_line_name]).intersection(set(cell_types)):
-            # Set up a holding data frame from all the data
-            holding_df: pd.DataFrame = pd.DataFrame()
+        # Set up a holding data frame from all the data
+        holding_df: pd.DataFrame = pd.DataFrame()
 
-            # Grab list of read files in that directory:
-            raw_read_files: List[str] = os.listdir(folder)
-            read_files: List[str] = [
-                os.path.splitext(i)[0]
-                for i in raw_read_files
-                if i.endswith(".txt") and not i.lstrip().startswith("g")
-            ]
-            quma_path: str = os.fspath(config.base_directory.joinpath("quma_cui"))
-            command_list: List[List[str]] = [
-                [
-                    "python",
-                    f"{quma_path}/quma.py",
-                    "-g",
-                    f"{folder}/g_{read_pos}.txt",
-                    "-q",
-                    f"{folder}/{read_pos}.txt",
-                ]
-                for read_pos in read_files
-            ]
+        # Grab list of read files in that directory:
+        raw_read_files: List[str] = os.listdir(folder)
+        read_files: List[str] = [
+            os.path.splitext(i)[0]
+            for i in raw_read_files
+            if i.endswith(".txt") and not i.lstrip().startswith("g")
+        ]
 
-            procs_dict = {
-                pos: subprocess.Popen(
-                    cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        # Set up multiprocessing
+        pool = Pool(NUM_THREADS, _init_worker)
+        returns: List[Any] = []
+
+        with Pool(NUM_THREADS, _init_worker) as pool:
+            for read_name in read_files:
+
+                result = pool.apply_async(
+                    _thread_worker,
+                    (folder, read_name),
                 )
-                for pos, cmd in zip(read_files, command_list)
-            }
+                returns.append(result)
 
-            raw_results = {}
-            for name, proc in procs_dict.items():
-                r = proc.communicate()[0].decode("utf-8")
-                raw_results[name] = r
+            results = [result.get() for result in returns]
 
-            for key, result in raw_results.items():
-                processed_quma: List[str] = process_raw_quma(result)
+        # Add to excel file
+        for each in results:
+            try:
+                holding_df = pd.concat([holding_df, each], axis=1)
+            except (AttributeError, KeyError):
+                pass
 
-                # Next, add this readname to the holding data frame
-                int_df: pd.DataFrame = pd.DataFrame({key: processed_quma})
-                holding_df = pd.concat([holding_df, int_df], axis=1)
+        # Now, save it to an excel file
+        holding_df.to_excel(writer, sheet_name=cell_line_name)
 
-            # Now, save it to an excel file
-            holding_df.to_excel(writer, sheet_name=cell_line_name)
-
-            del holding_df
+        del holding_df
 
     writer.save()
 
@@ -546,7 +529,7 @@ def run_quma_and_compile_list_of_df(
     """
 
     if run_quma:
-        quma_full(cell_types, filename)  # Changed for multiprocessing of quma
+        quma_full_threaded(cell_types, filename)  # Changed for multiprocessing of quma
 
     dict_of_df: Dict[str, pd.DataFrame] = read_df_of_quma_results(filename)
 
