@@ -10,7 +10,7 @@
 
 **pyllelic**: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.
 
-Pyllelic documention is available at **https://paradoxdruid.github.io/pyllelic/** and see [`pyllelic_notebook.ipynb`](https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.ipynb) for an interactive demonstration.
+Pyllelic documention is available at **https://paradoxdruid.github.io/pyllelic/** and see [`pyllelic_notebook.md`](https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.md) for an interactive demonstration.
 
 ## Example exploratory use in jupyter notebook:
 <details>
@@ -63,8 +63,8 @@ Pyllelic documention is available at **https://paradoxdruid.github.io/pyllelic/*
 ### Conda environment
 * Create a new conda environment using python 3.7:
 ```bash
-conda create --name methyl python=3.7
-conda activate methyl
+conda create --name PYLLELIC python=3.7
+conda activate PYLLELIC
 conda config --env --add channels conda-forge
 ```
 
