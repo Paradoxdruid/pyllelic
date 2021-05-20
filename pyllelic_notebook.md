@@ -15,82 +15,51 @@ jupyter:
 
 # Example Pyllelic Use-Case Notebook
 
-
-## Background
-
-
-This notebook illustrates the import and use of `pyllelic` in a jupyter environment.
-
-See https://github.com/Paradoxdruid/pyllelic for further details.
-
-
-## Pre-setup
-
-
-### Obtaining fastq data
-
-
-We can download rrbs (reduced representation bisulfite sequencing) data from the Encode project:
-http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeHaibMethylRrbs/
-
-
-Those files are in unaligned fastq format.  We will need to align these to a reference human genome.
-
 <!-- #region heading_collapsed=true -->
-### Aligning reads (using command line tools)
+## Background
 <!-- #endregion -->
 
 <!-- #region hidden=true -->
-To align reads, we'll use bowtie2 and samtools.
+This notebook illustrates the import and use of `pyllelic` in a jupyter environment.
+
+See https://github.com/Paradoxdruid/pyllelic for further details.
+<!-- #endregion -->
+
+<!-- #region heading_collapsed=true -->
+## Pre-setup
+<!-- #endregion -->
+
+<!-- #region heading_collapsed=true hidden=true -->
+### Obtaining fastq data
+<!-- #endregion -->
+
+<!-- #region hidden=true -->
+We can download rrbs (reduced representation bisulfite sequencing) data from the Encode project:
+http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeHaibMethylRrbs/
+<!-- #endregion -->
+
+<!-- #region hidden=true -->
+Those files are in unaligned fastq format.  We will need to align these to a reference human genome.
+<!-- #endregion -->
+
+<!-- #region heading_collapsed=true hidden=true -->
+### Aligning reads (using process.py)
+<!-- #endregion -->
+
+<!-- #region hidden=true -->
+To align reads, we'll use bowtie2 and samtools (through its pysam wrapper).
 <!-- #endregion -->
 
 <!-- #region hidden=true -->
 First, we need to download a genomic index sequence: http://hgdownload.soe.ucsc.edu/goldenPath/hg19
 <!-- #endregion -->
 
-<!-- #region hidden=true -->
-Typical command:
-```python
-pyllelic.process.bowtie2_fastq_to_bam(index={bowtie_index_filename_without_suffix},
-                                      fastq={fastq_file_name},
-                                      cores=6)
-```
-
-Notes:
-* cores is number of processor cores, adjust for your system
-* instead of `out.bam` use a filename that encodes cell-line and tissue.  Our convention is: `fh_CELLLINE_TISSUE.TERT.bam`
-<!-- #endregion -->
-
-<!-- #region hidden=true -->
-Then, we need to sort the resultant bam file.
-
-Typical command:
-```python
-pyllelic.processing.samtools_sort({sorted.bam})
-```
-<!-- #endregion -->
-
-<!-- #region hidden=true -->
-Finally, we need to build an index file (**pyllelic** can also do this, if missing).
-
-Typical command:
-```shell
-samtools index sorted.bam
-```
-<!-- #endregion -->
-
-<!-- #region hidden=true -->
-Now, that sorted file (again, rename to capture cell-line and tissue info) is ready to be put in the `test` folder for analysis by pyllelic!
-<!-- #endregion -->
-
-### Aligning reads (using process.py)
-
-```python
+```python hidden=true
 # Processing imports
 # from pathlib import Path
 ```
 
-```python
+```python hidden=true
 # Set up file paths
 # index = Path(
 #     "/home/andrew/allellic/hg19.p13.plusMT.no_alt_analysis_set//hg19.p13.plusMT.no_alt_analysis_set"
@@ -98,26 +67,42 @@ Now, that sorted file (again, rename to capture cell-line and tissue info) is re
 # fastq = Path("/home/andrew/allellic/wgEncodeHaibMethylRrbsU87HaibRawDataRep1.fastq.gz")
 ```
 
+<!-- #region hidden=true -->
 **WARNING:** The next command is processor, RAM, and time intensive, and only needs to be run once!
+<!-- #endregion -->
 
-```python
+```python hidden=true
 # Convert fastq to bam
-# pyllelic.bowtie2_fastq_to_bam(index=index, fastq=fastq)
+# pyllelic.process.bowtie2_fastq_to_bam(index={bowtie_index_filename_without_suffix},
+#                                       fastq={fastq_file_name},
+#                                       cores=6)
 ```
 
-Next, we need to sort and index the bam file using samtools functions.
+<!-- #region hidden=true -->
+Notes:
+* cores is number of processor cores, adjust for your system
+* instead of `out.bam` use a filename that encodes cell-line and tissue.  Our convention is: `fh_CELLLINE_TISSUE.TERT.bam`
+<!-- #endregion -->
 
-```python
+<!-- #region hidden=true -->
+Next, we need to sort and index the bam file using samtools functions.
+<!-- #endregion -->
+
+```python hidden=true
 # Sort the bamfile
 # bamfile = Path("/home/andrew/allellic/wgEncodeHaibMethylRrbsU87HaibRawDataRep1.bam")
-# pyllelic.samtools_sort(bamfile)
+# pyllelic.process_pysam_sort(bamfile)
 ```
 
-```python
+```python hidden=true
 # Create an index of the sorted bamfile
 # sorted_bam = Path("")
-# pyllelic.samtools_index(b)
+# pyllelic.process_pysam_index(b)
 ```
+
+<!-- #region hidden=true -->
+Now, that sorted file (again, rename to capture cell-line and tissue info) is ready to be put in the `test` folder for analysis by pyllelic!
+<!-- #endregion -->
 
 ## Set-up
 
