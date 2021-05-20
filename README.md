@@ -65,7 +65,6 @@ Pyllelic documention is available at **https://paradoxdruid.github.io/pyllelic/*
 ```bash
 conda create --name PYLLELIC python=3.7
 conda activate PYLLELIC
-conda config --env --add channels conda-forge
 ```
 
 ### Install pyllelic
@@ -75,13 +74,6 @@ pip install pyllelic
 or
 ```bash
 git clone https://github.com/Paradoxdruid/pyllelic.git
-```
-
-### Install python dependencies (not needed if installed via `pip install pyllelic`)
-```bash
-conda install pandas numpy scipy plotly dash notebook xlsxwriter xlrd openpyxl tqdm biopython ipywidgets
-conda install -c bioconda samtools pysam scikit-bio
-conda install -c conda-forge jupyter_contrib_nbextensions
 ```
 
 ## Authors
