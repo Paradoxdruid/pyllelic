@@ -387,6 +387,30 @@ def align_seq_and_generate_stats(
     return results
 
 
+def _generate_summary_stats(ref: Dict[str, Any]) -> Dict[str, Any]:
+    """Helper to generate summary statistics in results dictionary."""
+
+    if ref["conv"] + ref["unconv"] != 0:
+        ref["pconv"] = _percentage(ref["conv"], ref["unconv"], type="sum")
+    else:
+        ref["pconv"] = 0
+
+    ref["perc"] = _percentage(ref["match"], ref["aliLen"], type="total")
+    ref["perc"] = float(ref["perc"])
+    ref["pconv"] = float(ref["pconv"])
+    ref["aliMis"] = ref["aliLen"] - ref["match"]
+
+    return ref
+
+
+def _percentage(a: int, b: int, type: str) -> str:
+    """Helper to return percentages."""
+    if type == "sum":
+        return f"{(100 * a / (a + b)):3.1f}"
+    if type == "total":
+        return f"{(100 * a / b):3.1f}"
+
+
 def process_alignment_matches(
     ref: Dict[str, Any], cpg: Dict[str, Any]
 ) -> Dict[str, Any]:
@@ -421,11 +445,8 @@ def process_alignment_matches(
 
         if q == "-":
             ref["gap"] += 1
-            try:
-                _ = cpg[str(j - 1)]
+            if cpg.get(str(j - 1)):
                 ref["val"] += "-"
-            except KeyError:
-                pass
             continue
 
         if i == ref["aliLen"] - 1:
@@ -434,14 +455,11 @@ def process_alignment_matches(
         if g != "C":
             continue
 
-        try:
-            _ = cpg[str(j - 1)]
+        if cpg.get(str(j - 1)):
             if q == "C":
                 ref["conv"] += 1
             elif q == "T":
                 ref["unconv"] += 1
-        except KeyError:
-            continue
 
         if q == "C":
             ref["menum"] += 1
@@ -451,26 +469,9 @@ def process_alignment_matches(
         else:
             ref["val"] += q
 
-    # Summary stats
-    if ref["conv"] + ref["unconv"] != 0:
-        ref["pconv"] = _percentage(ref["conv"], ref["unconv"], type="sum")
-    else:
-        ref["pconv"] = 0
+    results = _generate_summary_stats(ref)
 
-    ref["perc"] = _percentage(ref["match"], ref["aliLen"], type="total")
-    ref["perc"] = float(ref["perc"])
-    ref["pconv"] = float(ref["pconv"])
-    ref["aliMis"] = ref["aliLen"] - ref["match"]
-
-    return ref
-
-
-def _percentage(a: int, b: int, type: str) -> str:
-    """Helper to return percentages."""
-    if type == "sum":
-        return f"{(100 * a / (a + b)):3.1f}"
-    if type == "total":
-        return f"{(100 * a / b):3.1f}"
+    return results
 
 
 def process_fasta_output(
