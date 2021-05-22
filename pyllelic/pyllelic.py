@@ -297,11 +297,11 @@ def genome_parsing(subfolders: List[Path] = None) -> None:
                     file_handler.write(f"{item}\n")
 
 
-def access_quma(directory: str, genomic_seq_file: str, reads_seq_file: str) -> str:
+def access_quma(directory: Path, genomic_seq_file: str, reads_seq_file: str) -> str:
     """Helper function to run internal QUMA tool.
 
     Args:
-        directory (str): directory path to analyze
+        directory (Path): directory path to analyze
         genomic_seq_file (str): text file with known genomic sequence
         reads_seq_file (str): text file with experimental reads
 

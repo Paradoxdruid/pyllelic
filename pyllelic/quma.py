@@ -8,7 +8,7 @@
 
 import re
 from io import StringIO
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Optional
 
 from Bio import pairwise2
 from Bio.Align import substitution_matrices
@@ -88,7 +88,7 @@ def parse_seq(seq: str) -> str:
     Returns:
         str: sequence string
     """
-    _ = ""  # was com
+    _ = ""
     seq = re.sub(r"\r\n", "\n", seq)
     seq = re.sub(r"\r", "\n", seq)
     seq = seq.upper()
@@ -109,7 +109,7 @@ def parse_seq(seq: str) -> str:
         seq = re.findall(r"\.\.\s*\n((\s+(\d+(\s+\w+)+))+)\s*", seq, re.MULTILINE)[0]
     elif re.findall(r"^\s*>.+\s.+", seq, re.MULTILINE):
         seq = re.findall(r"^\s*>(.+?)\s(?=.+)", seq, re.MULTILINE)[0]
-        _ = seq  # was com
+        _ = seq
 
     return curate_seq(seq)
 
@@ -172,7 +172,7 @@ def multi_fasta_parse(multi: Any) -> List[Dict[str, str]]:
 
     if fa:
         try:
-            _ = fa["seq"]  # was temp
+            _ = fa["seq"]
         except KeyError:
             biseq.pop()
     return biseq
@@ -403,12 +403,13 @@ def _generate_summary_stats(ref: Dict[str, Any]) -> Dict[str, Any]:
     return ref
 
 
-def _percentage(a: int, b: int, type: str) -> str:
+def _percentage(a: int, b: int, type: str) -> Optional[str]:
     """Helper to return percentages."""
     if type == "sum":
         return f"{(100 * a / (a + b)):3.1f}"
     if type == "total":
         return f"{(100 * a / b):3.1f}"
+    return None
 
 
 def process_alignment_matches(
@@ -500,7 +501,7 @@ def process_fasta_output(
     pos = 0
     for fa in qseq:
         pos += 1
-        fa["pos"] = str(pos)  # was int
+        fa["pos"] = str(pos)
 
         qfilepF = fasta_output(fa["seq"], qfileF)
         qfilepR = fasta_output(rev_comp(fa["seq"]), qfileR)
