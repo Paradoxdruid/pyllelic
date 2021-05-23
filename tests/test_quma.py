@@ -125,36 +125,254 @@ def test_fasta_output():
 
 
 def test_rev_comp():
-    pass
+    TEST_SEQ = "ATCGTAGTCGA"
+    EXPECTED = "TCGACTACGAT"
+    actual = quma.rev_comp(TEST_SEQ)
+    assert EXPECTED == actual
 
 
 def test_align_seq_and_generate_stats():
-    pass
+    TEST_GFILE = ">genome\nATCGATCCGGCATACG\n"
+    TEST_QFILE = ">read1\nATCGATCCGGCATACG\n"
+    TEST_CPG = {"2": 1, "7": 1, "14": 1}
+    EXPECTED = {
+        "qAli": "ATCGATCCGGCATACG",
+        "gAli": "ATCGATCCGGCATACG",
+        "gap": 0,
+        "menum": 5,
+        "unconv": 0,
+        "conv": 3,
+        "pconv": 100.0,
+        "match": 16,
+        "val": "11111",
+        "perc": 100.0,
+        "aliMis": 0,
+        "aliLen": 16,
+    }
+    actual = quma.align_seq_and_generate_stats(TEST_GFILE, TEST_QFILE, TEST_CPG)
+    assert EXPECTED == actual
 
 
 def test__generate_summary_stats():
-    pass
+    TEST_REF = {
+        "qAli": "ATCGATCCGGCATACG",
+        "gAli": "ATCGATCCGGCATACG",
+        "gap": 0,
+        "menum": 5,
+        "unconv": 0,
+        "conv": 3,
+        "pconv": 0,
+        "match": 16,
+        "val": "11111",
+        "perc": 0,
+        "aliMis": 0,
+        "aliLen": 16,
+    }
+    EXPECTED = {
+        "qAli": "ATCGATCCGGCATACG",
+        "gAli": "ATCGATCCGGCATACG",
+        "gap": 0,
+        "menum": 5,
+        "unconv": 0,
+        "conv": 3,
+        "pconv": 100.0,
+        "match": 16,
+        "val": "11111",
+        "perc": 100.0,
+        "aliMis": 0,
+        "aliLen": 16,
+    }
+    actual = quma._generate_summary_stats(TEST_REF)
+    assert EXPECTED == actual
 
 
 def test__percentage():
-    pass
+    TEST_SUM_A = 3
+    TEST_SUM_B = 7
+    EXPECTED_SUM = "30.0"
+    actual_sum = quma._percentage(TEST_SUM_A, TEST_SUM_B, type="sum")
+    assert EXPECTED_SUM == actual_sum
+
+    TEST_TOTAL_A = 3
+    TEST_TOTAL_B = 6
+    EXPECTED_TOTAL = "50.0"
+    actual_total = quma._percentage(TEST_TOTAL_A, TEST_TOTAL_B, type="total")
+    assert EXPECTED_TOTAL == actual_total
 
 
 def test_process_alignment_matches():
-    pass
+    TEST_REF = {
+        "qAli": "ATCGATCCGGCATACG",
+        "gAli": "ATCGATCCGGCATACG",
+        "gap": 0,
+        "menum": 0,
+        "unconv": 0,
+        "conv": 0,
+        "pconv": "",
+        "match": 0,
+        "val": "",
+        "perc": "",
+        "aliMis": 0,
+    }
+    TEST_CPG = {"2": 1, "7": 1, "14": 1}
+    EXPECTED = {
+        "qAli": "ATCGATCCGGCATACG",
+        "gAli": "ATCGATCCGGCATACG",
+        "gap": 0,
+        "menum": 5,
+        "unconv": 0,
+        "conv": 3,
+        "pconv": 100.0,
+        "match": 16,
+        "val": "11111",
+        "perc": 100.0,
+        "aliMis": 0,
+        "aliLen": 16,
+    }
+    actual = quma.process_alignment_matches(TEST_REF, TEST_CPG)
+    assert EXPECTED == actual
 
 
 def test_process_fasta_output():
-    pass
+    TEST_QSEQ = [
+        {"com": "read0", "seq": "ATCGATCCGGCATACG"},
+        {"com": "read1", "seq": "ATCGATCCGGCATACG"},
+    ]
+    TEST_QFILEF = "queryF"
+    TEST_QFILER = "queryR"
+    TEST_GFILEPF = ">genomeF\nATCGATCCGGCATACG"
+    TEST_GFILEPR = ">genomeR\nCGTATGCCGGATCGAT"
+    TEST_CPGF = {"2": 1, "7": 1, "14": 1}
+    TEST_CPGR = {"12": 1, "7": 1, "0": 1}
+    EXPECTED = [
+        {
+            "fa": {"com": "read0", "seq": "ATCGATCCGGCATACG", "pos": "1"},
+            "res": {
+                "qAli": "ATCGATCCGGCATACG",
+                "gAli": "ATCGATCCGGCATACG",
+                "gap": 0,
+                "menum": 5,
+                "unconv": 0,
+                "conv": 3,
+                "pconv": 100.0,
+                "match": 16,
+                "val": "11111",
+                "perc": 100.0,
+                "aliMis": 0,
+                "aliLen": 16,
+            },
+            "dir": 1,
+            "gdir": 1,
+            "exc": 1,
+        },
+        {
+            "fa": {"com": "read1", "seq": "ATCGATCCGGCATACG", "pos": "2"},
+            "res": {
+                "qAli": "ATCGATCCGGCATACG",
+                "gAli": "ATCGATCCGGCATACG",
+                "gap": 0,
+                "menum": 5,
+                "unconv": 0,
+                "conv": 3,
+                "pconv": 100.0,
+                "match": 16,
+                "val": "11111",
+                "perc": 100.0,
+                "aliMis": 0,
+                "aliLen": 16,
+            },
+            "dir": 1,
+            "gdir": 1,
+            "exc": 1,
+        },
+    ]
+
+    actual = quma.process_fasta_output(
+        TEST_QSEQ,
+        TEST_QFILEF,
+        TEST_QFILER,
+        TEST_GFILEPF,
+        TEST_GFILEPR,
+        TEST_CPGF,
+        TEST_CPGR,
+    )
+    assert EXPECTED == actual
 
 
 def test_format_output():
-    pass
+    TEST_SEQ = "ATCGATCCGGCATACG"
+    TEST_POSITIONS = ["2", "7", "14"]
+    TEST_DATA = [
+        {
+            "fa": {"pos": "0", "com": "read0", "seq": "ATCGATCCGGCATACG"},
+            "res": {
+                "qAli": "ATCGATCCGGCATACG",
+                "gAli": "ATCGATCCGGCATACG",
+                "aliLen": 16,
+                "aliMis": 0,
+                "perc": 100.0,
+                "gap": 0,
+                "menum": 0,
+                "unconv": 0,
+                "conv": 3,
+                "pconv": 100.0,
+                "val": 100.0,
+            },
+            "dir": "0",
+            "gdir": "0",
+        },
+        {
+            "fa": {"pos": "0", "com": "read1", "seq": "ATCGATCCGGCATACG"},
+            "res": {
+                "qAli": "ATCGATCCGGCATACG",
+                "gAli": "ATCGATCCGGCATACG",
+                "aliLen": 16,
+                "aliMis": 0,
+                "perc": 100.0,
+                "gap": 0,
+                "menum": 0,
+                "unconv": 0,
+                "conv": 3,
+                "pconv": 100.0,
+                "val": 100.0,
+            },
+            "dir": "0",
+            "gdir": "0",
+        },
+    ]
+    EXPECTED = (
+        "genome\t0\tATCGATCCGGCATACG\t3\t2,7,14\n"
+        + "0\tread0\tATCGATCCGGCATACG\tATCGATCCGGCATACG\tATCGATCCGGCATACG\t"
+        + "16\t0\t100.0\t0\t0\t0\t3\t100.0\t100.0\t0\t0\n"
+        + "0\tread1\tATCGATCCGGCATACG\tATCGATCCGGCATACG\tATCGATCCGGCATACG\t"
+        + "16\t0\t100.0\t0\t0\t0\t3\t100.0\t100.0\t0\t0\n"
+    )
+    actual = quma.format_output(TEST_SEQ, TEST_POSITIONS, TEST_DATA)
+    assert EXPECTED == actual
 
 
 def test_find_cpg():
-    pass
+    TEST_SEQ = "ATCGATCCGGCATACG"
+    EXPECTED = (
+        ["2", "7", "14"],
+        {"2": 1, "7": 1, "14": 1},
+        {"12": 1, "7": 1, "0": 1},
+    )
+    actual = quma.find_cpg(TEST_SEQ)
+    assert EXPECTED == actual
 
 
 def test_quma_main():
-    pass
+    TEST_GSEQ = b">query\nATCGTAGTCGA"
+    TEST_QSEQ = b">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
+    with tempinput(TEST_GSEQ) as temp_gseq:
+        with tempinput(TEST_QSEQ) as temp_qseq:
+            actual = quma.quma_main(temp_gseq, temp_qseq)
+    EXPECTED = (
+        "genome\t0\tATCGTAGTCGA\t2\t2,8\n"
+        + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"
+        + "11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n"
+        + "2\tquery2\tATCGATAGCATT\tATCGATAGCATT\tATCG-TAGTCGA\t"
+        + "12\t5\t58.3\t1\t1\t0\t1\t100.0\t1A\t1\t1\n"
+    )
+    assert EXPECTED == actual
