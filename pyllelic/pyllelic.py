@@ -376,7 +376,7 @@ def _thread_worker(folder: Path, read_name: str) -> pd.DataFrame:
 
     Args:
         folder (Path): folder containing bam output
-        read_name (List[str]): list of cell lines
+        read_name (str): read position name
 
     Returns:
         pd.DataFrame: dataframe of quma results

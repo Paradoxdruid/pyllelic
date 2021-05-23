@@ -17,7 +17,7 @@ import numpy as np
 # from pathlib import Path
 
 # Module to test
-import pyllelic
+import pyllelic.pyllelic as pyllelic
 
 
 # Test data
@@ -228,7 +228,7 @@ def test_write_individual_bamfile(mocker):
     handle.write.assert_called_with("ATGCATGCATGCATGC\n")
 
 
-def test_samtools_index():
+def test_pysam_index():
     pass
 
 
@@ -240,8 +240,82 @@ def test_run_quma():
     pass
 
 
+def test_access_quma():
+    TEST_DIRECTORY = "Test"
+    TEST_GSEQ_NAME = "genome.txt"
+    TEST_GSEQ = ">genome\nATCGTAGTCGA"
+    TEST_QSEQ_NAME = "query.txt"
+    TEST_QSEQ = ">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
+
+    # From https://stackoverflow.com/questions/26783678/
+    #      python-mock-builtin-open-in-a-class-using-two-different-files
+    def my_open(filename, _):
+        if filename == f"{TEST_DIRECTORY}/{TEST_GSEQ_NAME}":
+            content = TEST_GSEQ
+        elif filename == f"{TEST_DIRECTORY}/{TEST_QSEQ_NAME}":
+            content = TEST_QSEQ
+        else:
+            raise FileNotFoundError(filename)
+        file_object = mock.mock_open(read_data=content).return_value
+        file_object.__iter__.return_value = content.splitlines(True)
+        return file_object
+
+    EXPECTED = (
+        "genome\t0\tATCGTAGTCGA\t2\t2,8\n"
+        + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"
+        + "11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n"
+        + "2\tquery2\tATCGATAGCATT\tATCGATAGCATT\tATCG-TAGTCGA\t"
+        + "12\t5\t58.3\t1\t1\t0\t1\t100.0\t1A\t1\t1\n"
+    )
+    with mock.patch("builtins.open", new=my_open):
+        actual = pyllelic.access_quma(TEST_DIRECTORY, TEST_GSEQ_NAME, TEST_QSEQ_NAME)
+    assert EXPECTED == actual
+
+
+def test__thread_worker():
+    TEST_FOLDER = "Test"
+    TEST_READ_NAME = "1295094"
+    TEST_GSEQ_NAME = f"g_{TEST_READ_NAME}.txt"
+    TEST_GSEQ = ">genome\nATCGTAGTCGA"
+    TEST_QSEQ_NAME = f"{TEST_READ_NAME}.txt"
+    TEST_QSEQ = ">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
+
+    EXPECTED: pd.DataFrame = pd.DataFrame({"1295094": ["1A", "11"]})
+
+    # From https://stackoverflow.com/questions/26783678/
+    #      python-mock-builtin-open-in-a-class-using-two-different-files
+    def my_open(filename, _):
+        if filename == f"{TEST_FOLDER}/{TEST_GSEQ_NAME}":
+            content = TEST_GSEQ
+        elif filename == f"{TEST_FOLDER}/{TEST_QSEQ_NAME}":
+            content = TEST_QSEQ
+        else:
+            raise FileNotFoundError(filename)
+        file_object = mock.mock_open(read_data=content).return_value
+        file_object.__iter__.return_value = content.splitlines(True)
+        return file_object
+
+    with mock.patch("builtins.open", new=my_open):
+        actual = pyllelic._thread_worker(TEST_FOLDER, TEST_READ_NAME)
+
+    pd.testing.assert_frame_equal(actual, EXPECTED)
+
+
 def test_quma_full():
     pass
+
+
+def test_process_raw_quma():
+    TEST_QUMA_RESULT = (
+        "genome\t0\tATCGTAGTCGA\t2\t2,8\n"
+        + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"
+        + "11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n"
+        + "2\tquery2\tATCGATAGCATT\tATCGATAGCATT\tATCG-TAGTCGA\t"
+        + "12\t5\t58.3\t1\t1\t0\t1\t100.0\t1A\t1\t1\n"
+    )
+    EXPECTED = ["1A", "11"]
+    actual = pyllelic.process_raw_quma(TEST_QUMA_RESULT)
+    assert EXPECTED == actual
 
 
 def test_extract_cell_types():
