@@ -382,11 +382,11 @@ def _generate_summary_stats(ref: Dict[str, Any]) -> Dict[str, Any]:
     """Helper to generate summary statistics in results dictionary."""
 
     if ref["conv"] + ref["unconv"] != 0:
-        ref["pconv"] = _find_percentage(ref["conv"], ref["unconv"], type="sum")
+        ref["pconv"] = _percentage(ref["conv"], ref["unconv"], calc_type="sum")
     else:
         ref["pconv"] = 0
 
-    ref["perc"] = _find_percentage(ref["match"], ref["aliLen"], type="total")
+    ref["perc"] = _percentage(ref["match"], ref["aliLen"], calc_type="total")
     ref["perc"] = float(ref["perc"])
     ref["pconv"] = float(ref["pconv"])
     ref["aliMis"] = ref["aliLen"] - ref["match"]
@@ -394,11 +394,11 @@ def _generate_summary_stats(ref: Dict[str, Any]) -> Dict[str, Any]:
     return ref
 
 
-def _find_percentage(a: int, b: int, type: str) -> Optional[str]:
+def _percentage(a: int, b: int, calc_type: str) -> Optional[str]:
     """Helper to return percentages."""
-    if type == "sum":
+    if calc_type == "sum":
         return f"{(100 * a / (a + b)):3.1f}"
-    if type == "total":
+    if calc_type == "total":
         return f"{(100 * a / b):3.1f}"
     return None  # pragma: no cover
 
