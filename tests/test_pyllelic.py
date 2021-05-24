@@ -13,8 +13,7 @@ from contextlib import contextmanager
 # Required libraries for test data
 import pandas as pd
 import numpy as np
-
-# from pathlib import Path
+from pathlib import Path
 
 # Module to test
 import pyllelic.pyllelic as pyllelic
@@ -228,8 +227,11 @@ def test_write_individual_bamfile(mocker):
     handle.write.assert_called_with("ATGCATGCATGCATGC\n")
 
 
-def test_pysam_index():
-    pass
+@mock.patch("pyllelic.pyllelic.pysam")
+def test_pysam_index(mock_pysam):
+    TEST_PATH = Path().cwd()
+    pyllelic.pysam_index(TEST_PATH)
+    mock_pysam.index.assert_called_once_with(os.fspath(TEST_PATH))
 
 
 def test_genome_parsing():
@@ -488,13 +490,95 @@ def test_write_means_modes_diffs():
     pass
 
 
-def test_create_histogram(mocker):
-    # TEST_DATA = ""
-    # TEST_CELL_LINE = ""
-    # TEST_POSITION = ""
-    # mocker.patch.object(pyllelic, "go", autospec=True)
-    pass
+@mock.patch("pyllelic.pyllelic.go")
+def test_create_histogram(mock_go):
+    TEST_CELL_LINE = "TEST1"
+    TEST_POSITION = "1"
+    intermediate = pd.DataFrame.from_dict(
+        {
+            "TEST1": [
+                [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
+                [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+            ],
+            "TEST2": [
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+            ],
+            "TEST3": [np.nan, np.nan, [1.0, 1.0, 1.0, (2 / 3), (2 / 3)]],
+        },
+        orient="index",
+        columns=["1", "2", "3"],
+    )
+    TEST_DATA = intermediate.astype("object")
+
+    _ = pyllelic.create_histogram(TEST_DATA, TEST_CELL_LINE, TEST_POSITION)
+
+    mock_go.Figure.assert_called_once()
+    mock_go.Histogram.assert_called_once_with(
+        x=TEST_DATA.loc[TEST_CELL_LINE, TEST_POSITION],
+        xbins=dict(
+            start=-0.1,
+            end=1.1,
+            size=0.2,
+        ),
+    )
 
 
-def test_histogram():
-    pass
+@mock.patch("pyllelic.pyllelic.go")
+def test_histogram(mock_go):
+    TEST_CELL_LINE = "TEST1"
+    TEST_POSITION = "1"
+    intermediate = pd.DataFrame.from_dict(
+        {
+            "TEST1": [
+                [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
+                [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+            ],
+            "TEST2": [
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+            ],
+            "TEST3": [np.nan, np.nan, [1.0, 1.0, 1.0, (2 / 3), (2 / 3)]],
+        },
+        orient="index",
+        columns=["1", "2", "3"],
+    )
+    TEST_DATA = intermediate.astype("object")
+
+    pyllelic.histogram(TEST_DATA, TEST_CELL_LINE, TEST_POSITION)
+
+    mock_go.Figure.assert_called_once()
+    mock_go.Histogram.assert_called_once_with(
+        x=TEST_DATA.loc[TEST_CELL_LINE, TEST_POSITION],
+        xbins=dict(
+            start=-0.1,
+            end=1.1,
+            size=0.2,
+        ),
+    )
+
+
+def test_anderson_darling_test_with_values():
+    TEST_LIST = pd.Series([1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)])
+    actual = pyllelic.anderson_darling_test(TEST_LIST)
+    EXPECTED = (
+        False,
+        0.9267475729317516,
+        np.array([0.592, 0.675, 0.809, 0.944, 1.123]),
+    )
+    assert EXPECTED[0] == actual[0]
+    np.testing.assert_equal(EXPECTED[1], actual[1])
+    assert (EXPECTED[2] == actual[2]).all()
+
+
+def test_anderson_darling_test_with_bad():
+    TEST_LIST = [np.nan]
+    actual = pyllelic.anderson_darling_test(TEST_LIST)
+    EXPECTED = (False, np.nan, [np.nan])
+    assert EXPECTED[0] == actual[0]
+    np.testing.assert_equal(EXPECTED[1], actual[1])
+    assert EXPECTED[2] == actual[2]
