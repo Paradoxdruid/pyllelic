@@ -274,6 +274,12 @@ def test_access_quma():
     assert EXPECTED == actual
 
 
+@mock.patch("pyllelic.pyllelic.signal.signal")
+def test__init_worker(mock_signal):
+    pyllelic._init_worker()
+    mock_signal.assert_called_once()
+
+
 def test__thread_worker():
     TEST_FOLDER = "Test"
     TEST_READ_NAME = "1295094"
@@ -340,8 +346,11 @@ def test_run_quma_and_compile_list_of_df():
     pass
 
 
-def test_read_df_of_quma_results():
-    pass
+@mock.patch("pyllelic.pyllelic.pd")
+def test_read_df_of_quma_results(mock_pandas):
+    TEST_FILENAME = "output.xls"
+    pyllelic.read_df_of_quma_results(TEST_FILENAME)
+    mock_pandas.read_excel.assert_called_once()
 
 
 def test_process_means():
@@ -449,6 +458,15 @@ def test_return_read_values():
     assert result == expected
 
 
+def test_get_str_values():
+    TEST_DATAFRAME = SAMPLE_DICT_OF_DFS.get("TEST1")
+    TEST_POSITION = "1"
+    EXPECTED = pd.Series(["111", "111", "111", "011", "011", "011"], name="1")
+    actual = pyllelic.get_str_values(TEST_DATAFRAME, TEST_POSITION)
+
+    pd.testing.assert_series_equal(EXPECTED, actual)
+
+
 def test_find_diffs():
     """Check whether the expected and result DataFrames are identical."""
     means = pd.DataFrame.from_dict(
@@ -486,7 +504,25 @@ def test_find_diffs():
     pd.testing.assert_frame_equal(result, expected)
 
 
-def test_write_means_modes_diffs():
+# https://coderbook.com/@marcus/how-to-mock-and-unit-test-with-pandas/
+def test_write_means_modes_diffs(mocker):
+    # open_mock = mocker.mock_open()
+    # TEST_DF = pd.DataFrame.from_dict(
+    #     {
+    #         "TEST1": [np.float64(5 / 6), np.float64(5 / 6), np.float64(1.0)],
+    #         "TEST2": [np.float64(1.0), np.float64(1.0), np.float64(1.0)],
+    #         "TEST3": [np.nan, np.nan, np.float64(13 / 15)],
+    #     },
+    #     orient="index",
+    #     columns=["1", "2", "3"],
+    # )
+    # TEST_FILENAME = "output"
+    # with mock.patch("builtins.open", open_mock, create=True) as m:
+    #     pyllelic.write_means_modes_diffs(TEST_DF, TEST_DF, TEST_DF, TEST_FILENAME)
+
+    # open_mock.assert_called_with(expected_directory, "w")
+    # handle = m()
+    # handle.write.assert_called_with("ATGCATGCATGCATGC\n")
     pass
 
 
@@ -582,3 +618,11 @@ def test_anderson_darling_test_with_bad():
     assert EXPECTED[0] == actual[0]
     np.testing.assert_equal(EXPECTED[1], actual[1])
     assert EXPECTED[2] == actual[2]
+
+
+def test_generate_ad_stats():
+    pass
+
+
+def test_summarize_allelelic_data():
+    pass

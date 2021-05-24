@@ -117,7 +117,7 @@ def bowtie2_fastq_to_bam(index: Path, fastq: Path, cores: int) -> bytes:
     return out
 
 
-def process_pysam_sort(bamfile: Path) -> bool:  # pragma: no cover
+def process_pysam_sort(bamfile: Path) -> bool:
     """Helper function to run pysam samtools sort.
 
     Args:
@@ -132,7 +132,7 @@ def process_pysam_sort(bamfile: Path) -> bool:  # pragma: no cover
     return True
 
 
-def process_pysam_index(bamfile: Path) -> bool:  # pragma: no cover
+def process_pysam_index(bamfile: Path) -> bool:
     """Helper function to run external samtools index.
 
     Args:
