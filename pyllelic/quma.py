@@ -52,21 +52,6 @@ def check_char_in_allowed(seq: str, pattern: str) -> str:
     return new
 
 
-# def make_time(given_time: float = None) -> str:
-#     """Convert floating time into string formatted timestamp.
-
-#     Args:
-#         given_time (float, optional): floating point time. Defaults to None.
-
-#     Returns:
-#         str: String-formatted timestamp.
-#     """
-#     curr_time: float = given_time or time.time()
-
-#     dt: datetime = datetime.fromtimestamp(curr_time)
-#     return dt.strftime("%Y%m%d%H%M%S")
-
-
 def curate_seq(seq: str) -> str:
     """Curate a sequence to only have allowed characters.
 
@@ -97,17 +82,23 @@ def parse_seq(seq: str) -> str:
     if re.findall(reg, seq):
         seq = re.sub(r"^\s*>(.*)?\n", "", seq)
 
-    elif re.findall(r"^ORIGIN\s*\n((\s+(\d+(\s+\w+)+))+)\s*\n//", seq, re.MULTILINE):
+    elif re.findall(
+        r"^ORIGIN\s*\n((\s+(\d+(\s+\w+)+))+)\s*\n//", seq, re.MULTILINE
+    ):  # pragma: no cover
         seq = re.findall(reg, seq, re.MULTILINE)[0]
 
-    elif re.findall(r"^SQ\s+SEQUENCE.*\n((\s+(\w+\s+)+\d+)+)\n\/\/", seq, re.MULTILINE):
+    elif re.findall(
+        r"^SQ\s+SEQUENCE.*\n((\s+(\w+\s+)+\d+)+)\n\/\/", seq, re.MULTILINE
+    ):  # pragma: no cover
         seq = re.findall(
             r"^SQ\s+SEQUENCE.*\n((\s+(\w+\s+)+\d+)+)\n\/\/", seq, re.MULTILINE
         )[0]
 
-    elif re.findall(r"\.\.\s*\n((\s+(\d+(\s+\w+)+))+)\s*", seq, re.MULTILINE):
+    elif re.findall(
+        r"\.\.\s*\n((\s+(\d+(\s+\w+)+))+)\s*", seq, re.MULTILINE
+    ):  # pragma: no cover
         seq = re.findall(r"\.\.\s*\n((\s+(\d+(\s+\w+)+))+)\s*", seq, re.MULTILINE)[0]
-    elif re.findall(r"^\s*>.+\s.+", seq, re.MULTILINE):
+    elif re.findall(r"^\s*>.+\s.+", seq, re.MULTILINE):  # pragma: no cover
         seq = re.findall(r"^\s*>(.+?)\s(?=.+)", seq, re.MULTILINE)[0]
         _ = seq
 
@@ -153,7 +144,7 @@ def multi_fasta_parse(multi: Any) -> List[Dict[str, str]]:
     for line in multi:
 
         if ">" in line:
-            if fa and not fa["seq"]:
+            if fa and not fa["seq"]:  # pragma: no cover
                 biseq.pop()
             fa = {"com": line}
             fa["com"] = re.sub(r"^>", "", fa["com"])
@@ -173,7 +164,7 @@ def multi_fasta_parse(multi: Any) -> List[Dict[str, str]]:
     if fa:
         try:
             _ = fa["seq"]
-        except KeyError:
+        except KeyError:  # pragma: no cover
             biseq.pop()
     return biseq
 
@@ -254,7 +245,7 @@ def fasta_print(
         line (int, optional): max length to process. Defaults to None.
         add (bool, optional): append to file flag. Defaults to None.
     """
-    if add:
+    if add:  # pragma: no cover
         with open(path, "a") as f:
             f.write(fasta_make(seq, seq_name, line))
 
@@ -379,7 +370,7 @@ def align_seq_and_generate_stats(
     ref["qAli"] = ref["qAli"].replace(" ", "-")
     ref["gAli"] = ref["gAli"].replace(" ", "-")
 
-    if len(ref["qAli"]) != len(ref["gAli"]):
+    if len(ref["qAli"]) != len(ref["gAli"]):  # pragma: no cover
         print("qAli len != gAli len")
         # sys.exit()
 
@@ -409,7 +400,7 @@ def _percentage(a: int, b: int, type: str) -> Optional[str]:
         return f"{(100 * a / (a + b)):3.1f}"
     if type == "total":
         return f"{(100 * a / b):3.1f}"
-    return None
+    return None  # pragma: no cover
 
 
 def process_alignment_matches(

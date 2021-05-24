@@ -390,37 +390,34 @@ def test_process_modes():
 
 def test_return_individual_data():
     """Check whether the expected and result DataFrames are identical."""
-    #     in_pos = ["1", "2", "3"]
-    #     in_cell = ["TEST1", "TEST2", "TEST3"]
-    #     result = pyllelic.return_individual_data(
-    #         dict_of_dfs=SAMPLE_DICT_OF_DFS, positions=in_pos, cell_types=in_cell
-    #     )
+    in_pos = ["1", "2", "3"]
+    in_cell = ["TEST1", "TEST2", "TEST3"]
+    result = pyllelic.return_individual_data(
+        dict_of_dfs=SAMPLE_DICT_OF_DFS, positions=in_pos, cell_types=in_cell
+    )
+    print(result.to_markdown())
 
-    #     intermediate = pd.DataFrame.from_dict(
-    #         {
-    #             "TEST1": [
-    #                 [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
-    #                 [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
-    #                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-    #             ],
-    #             "TEST2": [
-    #                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-    #                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-    #                 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-    #             ],
-    #             "TEST3": [
-    #                 [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
-    #                 [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
-    #                 [1.0, 1.0, 1.0, (2 / 3), (2 / 3), np.nan],
-    #             ],
-    #         },
-    #         orient="index",
-    #         columns=["1", "2", "3"],
-    #     )
+    intermediate = pd.DataFrame.from_dict(
+        {
+            "TEST1": [
+                [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
+                [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+            ],
+            "TEST2": [
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+            ],
+            "TEST3": [np.nan, np.nan, [1.0, 1.0, 1.0, (2 / 3), (2 / 3)]],
+        },
+        orient="index",
+        columns=["1", "2", "3"],
+    )
 
-    #     expected = intermediate.astype("object")
+    expected = intermediate.astype("object")
 
-    #     pd.testing.assert_frame_equal(result, expected)
+    pd.testing.assert_frame_equal(result, expected)
 
 
 def test_return_read_values():
@@ -491,7 +488,11 @@ def test_write_means_modes_diffs():
     pass
 
 
-def test_create_histogram():
+def test_create_histogram(mocker):
+    # TEST_DATA = ""
+    # TEST_CELL_LINE = ""
+    # TEST_POSITION = ""
+    # mocker.patch.object(pyllelic, "go", autospec=True)
     pass
 
 

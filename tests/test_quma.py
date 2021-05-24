@@ -124,9 +124,11 @@ def test_fasta_output():
     assert EXPECTED == actual
 
 
-def test_rev_comp():
-    TEST_SEQ = "ATCGTAGTCGA"
-    EXPECTED = "TCGACTACGAT"
+@pytest.mark.parametrize(
+    "TEST_SEQ, EXPECTED",
+    [("ATCGTAGTCGA", "TCGACTACGAT"), ("ATCGTAGTCGO", "OCGACTACGAT")],
+)
+def test_rev_comp(TEST_SEQ, EXPECTED):
     actual = quma.rev_comp(TEST_SEQ)
     assert EXPECTED == actual
 
