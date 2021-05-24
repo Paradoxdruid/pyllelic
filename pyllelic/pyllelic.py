@@ -539,7 +539,7 @@ def process_means(
     working_df: pd.DataFrame = pd.DataFrame()
     for pos in positions:
         working_df[pos] = ""
-        for key, each in dict_of_dfs.items():
+        for key in dict_of_dfs.keys():
             values_list: List[float] = return_read_values(pos, key, dict_of_dfs)
 
             if values_list:
@@ -604,7 +604,7 @@ def return_individual_data(
     working_df: pd.DataFrame = pd.DataFrame()
     for pos in tqdm(positions, desc="Position"):
         working_df[pos] = ""  # Create position column in dataframe
-        for key, each in tqdm(dict_of_dfs.items(), desc="Cell Line", leave=False):
+        for key in tqdm(dict_of_dfs.keys(), desc="Cell Line", leave=False):
             values_list: List[float] = return_read_values(pos, key, dict_of_dfs)
             if values_list:
                 data_for_df: Union[List[float], float] = values_list
@@ -794,8 +794,7 @@ def anderson_darling_test(
     if np.all(pd.notnull(raw_list)):
         stat: float
         crits: List[Any]
-        sigs: List[Any]
-        stat, crits, sigs = stats.anderson(raw_list)
+        stat, crits, _ = stats.anderson(raw_list)
         if stat > crits[4]:
             is_sig = True
         else:

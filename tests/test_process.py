@@ -2,7 +2,7 @@
 """pytest unit tests for process."""
 
 # Testing
-import pytest  # noqa
+import pytest  # noqa  # pylint: disable=unused-import
 
 # import unittest.mock as mock
 import os
@@ -12,11 +12,11 @@ from contextlib import contextmanager
 # Required libraries for test data
 
 # Module to test
-import pyllelic.process as process  # noqa
+import pyllelic.process as process  # noqa  # pylint: disable=unused-import
 
 
 @contextmanager
-def tempinput(data, suffix):
+def tempinput(data, suffix):  # pragma: no cover
     """Helper for virtual files."""
     temp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
     temp.write(data)

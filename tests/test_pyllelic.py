@@ -47,7 +47,7 @@ SAMPLE_DICT_OF_DFS = {
 
 
 @contextmanager
-def tempinput(data):
+def tempinput(data):  # pragma: no cover
     """Helper for virtual files."""
     temp = tempfile.NamedTemporaryFile(delete=False)
     temp.write(data)
@@ -254,7 +254,7 @@ def test_access_quma():
             content = TEST_GSEQ
         elif filename == f"{TEST_DIRECTORY}/{TEST_QSEQ_NAME}":
             content = TEST_QSEQ
-        else:
+        else:  # pragma: no cover
             raise FileNotFoundError(filename)
         file_object = mock.mock_open(read_data=content).return_value
         file_object.__iter__.return_value = content.splitlines(True)
@@ -289,7 +289,7 @@ def test__thread_worker():
             content = TEST_GSEQ
         elif filename == f"{TEST_FOLDER}/{TEST_QSEQ_NAME}":
             content = TEST_QSEQ
-        else:
+        else:  # pragma: no cover
             raise FileNotFoundError(filename)
         file_object = mock.mock_open(read_data=content).return_value
         file_object.__iter__.return_value = content.splitlines(True)

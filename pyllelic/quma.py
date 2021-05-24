@@ -154,7 +154,7 @@ def multi_fasta_parse(multi: Any) -> List[Dict[str, str]]:
             line = curate_seq(line)
             if line == "":
                 continue
-            if not fa:
+            if not fa:  # pragma: no cover
                 return None  # does this ever happen?
             try:
                 fa["seq"] += line.upper()
@@ -531,10 +531,16 @@ def process_fasta_output(
             fdir = 1
 
         res = fres
-        dir = fdir
+        final_dir = fdir
         gdir = 1
 
-        ref: Dict[str, Any] = {"fa": fa, "res": res, "dir": dir, "gdir": gdir, "exc": 0}
+        ref: Dict[str, Any] = {
+            "fa": fa,
+            "res": res,
+            "dir": final_dir,
+            "gdir": gdir,
+            "exc": 0,
+        }
         if res["unconv"] > unc:
             ref["exc"] = 1
         if res["pconv"] > pcon:
