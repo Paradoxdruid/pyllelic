@@ -10,9 +10,10 @@
 
 **pyllelic**: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.
 
-Pyllelic documention is available at **https://paradoxdruid.github.io/pyllelic/** and see [`pyllelic_notebook.md`](https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.md) for an interactive demonstration.
+Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/>** and see [`pyllelic_notebook.md`](https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.md) for an interactive demonstration.
 
 ## Example exploratory use in jupyter notebook
+
 <details>
 <summary>Click to expand...</summary>
 
@@ -55,28 +56,36 @@ Pyllelic documention is available at **https://paradoxdruid.github.io/pyllelic/*
 
     final_data.loc["CELL_LINE"]  # see summary data for a cell line
 ```
+
 </details>
 
 ----------------------------------
 
 ## Dependencies and Installation
+
 ### Conda environment
+
 * Create a new conda environment using python 3.7:
+
 ```bash
 conda create --name PYLLELIC python=3.7
 conda activate PYLLELIC
 ```
 
 ### Install pyllelic
+
 ```bash
 pip install pyllelic
 ```
+
 or
+
 ```bash
 git clone https://github.com/Paradoxdruid/pyllelic.git
 ```
 
 ## Authors
+
 This software is developed as academic software by [Dr. Andrew J. Bonham](https://github.com/Paradoxdruid) at the [Metropolitan State University of Denver](https://www.msudenver.edu). It is licensed under the GPL v3.0.
 
 This software incorporates implementation from [QUMA](http://quma.cdb.riken.jp), licensed under the GPL v3.0.

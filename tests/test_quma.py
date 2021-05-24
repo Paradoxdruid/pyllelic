@@ -188,17 +188,17 @@ def test__generate_summary_stats():
     assert EXPECTED == actual
 
 
-def test__percentage():
+def test__find_percentage():
     TEST_SUM_A = 3
     TEST_SUM_B = 7
     EXPECTED_SUM = "30.0"
-    actual_sum = quma._percentage(TEST_SUM_A, TEST_SUM_B, type="sum")
+    actual_sum = quma._find_percentage(TEST_SUM_A, TEST_SUM_B, type="sum")
     assert EXPECTED_SUM == actual_sum
 
     TEST_TOTAL_A = 3
     TEST_TOTAL_B = 6
     EXPECTED_TOTAL = "50.0"
-    actual_total = quma._percentage(TEST_TOTAL_A, TEST_TOTAL_B, type="total")
+    actual_total = quma._find_percentage(TEST_TOTAL_A, TEST_TOTAL_B, type="total")
     assert EXPECTED_TOTAL == actual_total
 
 

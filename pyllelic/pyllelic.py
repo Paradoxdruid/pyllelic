@@ -572,7 +572,7 @@ def process_modes(
     working_df: pd.DataFrame = pd.DataFrame()
     for pos in positions:
         working_df[pos] = ""
-        for key, each in dict_of_dfs.items():
+        for key in dict_of_dfs.keys():
             values_list: List[float] = return_read_values(pos, key, dict_of_dfs)
 
             if values_list:
