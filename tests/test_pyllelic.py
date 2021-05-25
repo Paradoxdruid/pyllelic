@@ -64,6 +64,16 @@ EXPECTED_INTERMEDIATE_MODES = pd.DataFrame.from_dict(
     columns=["1", "2", "3"],
 )
 
+EXPECTED_INTERMEDIATE_DIFFS = pd.DataFrame.from_dict(
+    {
+        "TEST1": [np.float64(1 / 6), np.float64(1 / 6), np.float64(0.0)],
+        "TEST2": [np.float64(0.0), np.float64(0.0), np.float64(0.0)],
+        "TEST3": [np.nan, np.nan, np.float64(-2 / 15)],
+    },
+    orient="index",
+    columns=["1", "2", "3"],
+)
+
 EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA = pd.DataFrame.from_dict(
     {
         "TEST1": [
@@ -122,88 +132,55 @@ def test_set_up_env_variables():
     assert EXPECTED_RESULTS == pyllelic.config.results_directory
 
 
-def test_main():
+# Mock out main to ensure it just tests functionality of the main function
+@mock.patch("pyllelic.pyllelic.make_list_of_bam_files")
+@mock.patch("pyllelic.pyllelic.index_and_fetch")
+@mock.patch("pyllelic.pyllelic.genome_parsing")
+@mock.patch("pyllelic.pyllelic.extract_cell_types")
+@mock.patch("pyllelic.pyllelic.run_quma_and_compile_list_of_df")
+@mock.patch("pyllelic.pyllelic.process_means")
+@mock.patch("pyllelic.pyllelic.process_modes")
+@mock.patch("pyllelic.pyllelic.find_diffs")
+@mock.patch("pyllelic.pyllelic.write_means_modes_diffs")
+@mock.patch("pyllelic.pyllelic.sys.argv")
+def test_main(
+    mock_argv,
+    mock_writer,
+    mock_diffs,
+    mock_modes,
+    mock_means,
+    mock_run_quma,
+    mock_extract,
+    mock_genome_parse,
+    mock_index,
+    mock_bamlist,
+):
     """Test main module with a bunch of mocks."""
     # Set up, patching all called functions
-    # mocker.patch("pyllelic.sys.argv", return_value=["program", "output.xlsx"])
+    mock_bamlist.return_value = ["good1.bam", "good2.bam"]
+    mock_index.return_value = ["1", "2", "3"]
+    mock_genome_parse.return_value = None
+    mock_extract.return_value = ["TEST1", "TEST2", "TEST3"]
+    mock_run_quma.return_value = SAMPLE_DICT_OF_DFS
+    intermediate_means = EXPECTED_INTERMEDIATE_MEANS
+    mock_means.return_value = intermediate_means.astype("object")
+    intermediate_modes = EXPECTED_INTERMEDIATE_MODES
+    mock_modes.return_value = intermediate_modes.astype("object")
+    intermediate_diffs = EXPECTED_INTERMEDIATE_DIFFS
+    mock_diffs.return_value = intermediate_diffs.astype("object")
+    mock_writer.return_value = None
+    mock_argv.return_value = ["program", "output.xlsx"]
 
-    # expected_bam_files_return = [
-    #     "fh_TEST1_TISSUE.TERT.bam",
-    #     "fh_TEST2_TISSUE.TERT.bam",
-    #     "fh_TEST3_TISSUE.TERT.BAM",
-    # ]
-    # mocker.patch(
-    #     "pyllelic.make_list_of_bam_files",
-    #     return_value=expected_bam_files_return,
-    # )
-    # expected_positions = ["1", "2", "3"]
-    # mocker.patch("pyllelic.index_and_fetch", return_value=expected_positions)
-    # mocker.patch("pyllelic.genome_parsing", return_value=None)
-    # expected_cell_types = ["TEST1", "TEST2"]
-    # mocker.patch("pyllelic.extract_cell_types", return_value=expected_cell_types)
-    # mocker.patch(
-    #     "pyllelic.run_quma_and_compile_list_of_df", return_value=SAMPLE_DICT_OF_DFS
-    # )
+    pyllelic.main()
 
-    # means_intermediate = pd.DataFrame.from_dict(
-    #     {
-    #         "TEST1": [np.float64(5 / 6), np.float64(5 / 6), np.float64(1.0)],
-    #         "TEST2": [np.float64(1.0), np.float64(1.0), np.float64(1.0)],
-    #         "TEST3": [np.nan, np.nan, np.float64(13 / 15)],
-    #     },
-    #     orient="index",
-    #     columns=["1", "2", "3"],
-    # )
-
-    # means_expected = means_intermediate.astype("object")
-    # mocker.patch("pyllelic.process_means", return_value=means_expected)
-
-    # modes_intermediate = pd.DataFrame.from_dict(
-    #     {
-    #         "TEST1": [np.float64(2 / 3), np.float64(2 / 3), np.float64(1.0)],
-    #         "TEST2": [np.float64(1.0), np.float64(1.0), np.float64(1.0)],
-    #         "TEST3": [np.nan, np.nan, np.float64(1.0)],
-    #     },
-    #     orient="index",
-    #     columns=["1", "2", "3"],
-    # )
-
-    # modes_expected = modes_intermediate.astype("object")
-    # mocker.patch("pyllelic.process_modes", return_value=modes_expected)
-
-    # diffs_expected = pd.DataFrame.from_dict(
-    #     {
-    #         "TEST1": [np.float64(1 / 6), np.float64(1 / 6), np.float64(0.0)],
-    #         "TEST2": [np.float64(0.0), np.float64(0.0), np.float64(0.0)],
-    #         "TEST3": [np.nan, np.nan, np.float64(-2 / 15)],
-    #     },
-    #     orient="index",
-    #     columns=["1", "2", "3"],
-    # )
-    # mocker.patch("pyllelic.find_diffs", return_value=diffs_expected)
-    # mocker.patch("pyllelic.write_means_modes_diffs")
-
-    # # Run it
-    # pyllelic.main()
-
-    # # Assertions at each step
-    # pyllelic.make_list_of_bam_files.assert_called_once_with()
-    # pyllelic.index_and_fetch.assert_called_once_with(expected_bam_files_return)
-    # pyllelic.genome_parsing.assert_called_once_with()
-    # pyllelic.extract_cell_types.assert_called_once_with(expected_bam_files_return)
-    # pyllelic.run_quma_and_compile_list_of_df.assert_called_once_with(
-    #     expected_cell_types, "output.xlsx"
-    # )
-    # pyllelic.process_means.assert_called_once_with(
-    #     SAMPLE_DICT_OF_DFS, expected_positions, expected_cell_types
-    # )
-    # pyllelic.process_modes.assert_called_once_with(
-    #     SAMPLE_DICT_OF_DFS, expected_positions, expected_cell_types
-    # )
-    # pyllelic.find_diffs.assert_called_once_with(means_expected, modes_expected)
-    # pyllelic.write_means_modes_diffs.assert_called_once_with(
-    #     means_expected, modes_expected, diffs_expected, "output.xlsx"
-    # )
+    # Asserts
+    mock_bamlist.assert_called_once()
+    mock_index.assert_called_once_with(["good1.bam", "good2.bam"])
+    mock_extract.assert_called_once_with(["good1.bam", "good2.bam"])
+    mock_run_quma.assert_called_once()
+    mock_means.assert_called_once()
+    mock_modes.assert_called_once()
+    mock_writer.assert_called_once()
 
 
 def test_genome_range():
@@ -230,7 +207,11 @@ def test_make_list_of_bam_files():
     assert EXPECTED == actual
 
 
+# @mock.patch("pyllelic.pyllelic.config.base_directory")
+# @mock.patch("pyllelic.pyllelic.run_sam_and_extract_df")
 def test_index_and_fetch():
+    # TEST_FILES = ["TEST1", "TEST2", "TEST3"]
+    # TEST_PROCESS = False
     pass
 
 
@@ -287,11 +268,8 @@ def test_pysam_index(mock_pysam):
     mock_pysam.index.assert_called_once_with(os.fspath(TEST_PATH))
 
 
+# Needs extensive temporary files / directories
 def test_genome_parsing():
-    pass
-
-
-def test_run_quma():
     pass
 
 
@@ -362,7 +340,7 @@ def test__thread_worker():
     pd.testing.assert_frame_equal(actual, EXPECTED)
 
 
-def test_quma_full():
+def test_quma_full_threaded():
     pass
 
 
@@ -395,8 +373,14 @@ def test_extract_cell_types():
         pyllelic.extract_cell_types(bad_input)
 
 
-def test_run_quma_and_compile_list_of_df():
-    pass
+@mock.patch("pyllelic.pyllelic.read_df_of_quma_results")
+@mock.patch("pyllelic.pyllelic.quma_full_threaded")
+def test_run_quma_and_compile_list_of_df(mock_quma, mock_read):
+    TEST_CELL_TYPES = ["TEST1", "TEST2", "TEST3"]
+    TEST_FILENAME = "output.txt"
+    pyllelic.run_quma_and_compile_list_of_df(TEST_CELL_TYPES, TEST_FILENAME, True)
+    mock_quma.assert_called_once()
+    mock_read.assert_called_once()
 
 
 @mock.patch("pyllelic.pyllelic.pd")
@@ -493,19 +477,17 @@ def test_find_diffs():
     means = EXPECTED_INTERMEDIATE_MEANS
     modes = EXPECTED_INTERMEDIATE_MODES
 
-    expected = pd.DataFrame.from_dict(
-        {
-            "TEST1": [np.float64(1 / 6), np.float64(1 / 6), np.float64(0.0)],
-            "TEST2": [np.float64(0.0), np.float64(0.0), np.float64(0.0)],
-            "TEST3": [np.nan, np.nan, np.float64(-2 / 15)],
-        },
-        orient="index",
-        columns=["1", "2", "3"],
-    )
+    expected = EXPECTED_INTERMEDIATE_DIFFS
 
     result = pyllelic.find_diffs(means, modes)
 
     pd.testing.assert_frame_equal(result, expected)
+
+
+def test_truncate_diffs():
+    EXPECTED = EXPECTED_INTERMEDIATE_DIFFS.dropna(how="all")
+    actual = pyllelic.truncate_diffs(EXPECTED_INTERMEDIATE_DIFFS)
+    pd.testing.assert_frame_equal(EXPECTED, actual)
 
 
 # https://coderbook.com/@marcus/how-to-mock-and-unit-test-with-pandas/
@@ -582,7 +564,43 @@ def test_anderson_darling_test_with_bad():
 
 
 def test_generate_ad_stats():
-    pass
+    TEST_DF = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
+    EXPECTED = pd.DataFrame.from_dict(
+        {
+            "TEST1": [
+                (
+                    False,
+                    0.9267475729317516,
+                    np.array([0.592, 0.675, 0.809, 0.944, 1.123]),
+                ),
+                (
+                    False,
+                    0.9267475729317516,
+                    np.array([0.592, 0.675, 0.809, 0.944, 1.123]),
+                ),
+                (False, np.nan, np.array([0.592, 0.675, 0.809, 0.944, 1.123])),
+            ],
+            "TEST2": [
+                (False, np.nan, np.array([0.592, 0.675, 0.809, 0.944, 1.123])),
+                (False, np.nan, np.array([0.592, 0.675, 0.809, 0.944, 1.123])),
+                (False, np.nan, np.array([0.592, 0.675, 0.809, 0.944, 1.123])),
+            ],
+            "TEST3": [
+                (False, np.nan, [np.nan]),
+                (False, np.nan, [np.nan]),
+                (
+                    False,
+                    0.7995458667216608,
+                    np.array([0.72, 0.82, 0.984, 1.148, 1.365]),
+                ),
+            ],
+        },
+        orient="index",
+        columns=["1", "2", "3"],
+    )
+    actual = pyllelic.generate_ad_stats(TEST_DF)
+    EXPECTED_TEST2_1 = EXPECTED.loc["TEST2", "1"]
+    np.testing.assert_equal(EXPECTED_TEST2_1, actual.loc["TEST2", "1"])
 
 
 def test_summarize_allelelic_data():
