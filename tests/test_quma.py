@@ -14,6 +14,53 @@ from contextlib import contextmanager
 import pyllelic.quma as quma
 
 
+# Common test data
+EXPECTED_ALIGN_MATCH = {
+    "qAli": "ATCGATCCGGCATACG",
+    "gAli": "ATCGATCCGGCATACG",
+    "gap": 0,
+    "menum": 5,
+    "unconv": 0,
+    "conv": 3,
+    "pconv": 100.0,
+    "match": 16,
+    "val": "11111",
+    "perc": 100.0,
+    "aliMis": 0,
+    "aliLen": 16,
+}
+
+EXPECTED_RESULT_DICT = {
+    "qAli": "ATCGATCCGGCATACG",
+    "gAli": "ATCGATCCGGCATACG",
+    "gap": 0,
+    "menum": 5,
+    "unconv": 0,
+    "conv": 3,
+    "pconv": 100.0,
+    "match": 16,
+    "val": "11111",
+    "perc": 100.0,
+    "aliMis": 0,
+    "aliLen": 16,
+}
+
+TEST_FORMAT_DICT = {
+    "qAli": "ATCGATCCGGCATACG",
+    "gAli": "ATCGATCCGGCATACG",
+    "aliLen": 16,
+    "aliMis": 0,
+    "perc": 100.0,
+    "gap": 0,
+    "menum": 0,
+    "unconv": 0,
+    "conv": 3,
+    "pconv": 100.0,
+    "val": 100.0,
+}
+
+
+# Test functions
 @contextmanager
 def tempinput(data):
     """Helper for virtual files."""
@@ -137,20 +184,7 @@ def test_align_seq_and_generate_stats():
     TEST_GFILE = ">genome\nATCGATCCGGCATACG\n"
     TEST_QFILE = ">read1\nATCGATCCGGCATACG\n"
     TEST_CPG = {"2": 1, "7": 1, "14": 1}
-    EXPECTED = {
-        "qAli": "ATCGATCCGGCATACG",
-        "gAli": "ATCGATCCGGCATACG",
-        "gap": 0,
-        "menum": 5,
-        "unconv": 0,
-        "conv": 3,
-        "pconv": 100.0,
-        "match": 16,
-        "val": "11111",
-        "perc": 100.0,
-        "aliMis": 0,
-        "aliLen": 16,
-    }
+    EXPECTED = EXPECTED_ALIGN_MATCH
     actual = quma.align_seq_and_generate_stats(TEST_GFILE, TEST_QFILE, TEST_CPG)
     assert EXPECTED == actual
 
@@ -170,20 +204,7 @@ def test__generate_summary_stats():
         "aliMis": 0,
         "aliLen": 16,
     }
-    EXPECTED = {
-        "qAli": "ATCGATCCGGCATACG",
-        "gAli": "ATCGATCCGGCATACG",
-        "gap": 0,
-        "menum": 5,
-        "unconv": 0,
-        "conv": 3,
-        "pconv": 100.0,
-        "match": 16,
-        "val": "11111",
-        "perc": 100.0,
-        "aliMis": 0,
-        "aliLen": 16,
-    }
+    EXPECTED = EXPECTED_ALIGN_MATCH
     actual = quma._generate_summary_stats(TEST_REF)
     assert EXPECTED == actual
 
@@ -217,20 +238,7 @@ def test_process_alignment_matches():
         "aliMis": 0,
     }
     TEST_CPG = {"2": 1, "7": 1, "14": 1}
-    EXPECTED = {
-        "qAli": "ATCGATCCGGCATACG",
-        "gAli": "ATCGATCCGGCATACG",
-        "gap": 0,
-        "menum": 5,
-        "unconv": 0,
-        "conv": 3,
-        "pconv": 100.0,
-        "match": 16,
-        "val": "11111",
-        "perc": 100.0,
-        "aliMis": 0,
-        "aliLen": 16,
-    }
+    EXPECTED = EXPECTED_ALIGN_MATCH
     actual = quma.process_alignment_matches(TEST_REF, TEST_CPG)
     assert EXPECTED == actual
 
@@ -249,40 +257,14 @@ def test_process_fasta_output():
     EXPECTED = [
         {
             "fa": {"com": "read0", "seq": "ATCGATCCGGCATACG", "pos": "1"},
-            "res": {
-                "qAli": "ATCGATCCGGCATACG",
-                "gAli": "ATCGATCCGGCATACG",
-                "gap": 0,
-                "menum": 5,
-                "unconv": 0,
-                "conv": 3,
-                "pconv": 100.0,
-                "match": 16,
-                "val": "11111",
-                "perc": 100.0,
-                "aliMis": 0,
-                "aliLen": 16,
-            },
+            "res": EXPECTED_RESULT_DICT,
             "dir": 1,
             "gdir": 1,
             "exc": 1,
         },
         {
             "fa": {"com": "read1", "seq": "ATCGATCCGGCATACG", "pos": "2"},
-            "res": {
-                "qAli": "ATCGATCCGGCATACG",
-                "gAli": "ATCGATCCGGCATACG",
-                "gap": 0,
-                "menum": 5,
-                "unconv": 0,
-                "conv": 3,
-                "pconv": 100.0,
-                "match": 16,
-                "val": "11111",
-                "perc": 100.0,
-                "aliMis": 0,
-                "aliLen": 16,
-            },
+            "res": EXPECTED_RESULT_DICT,
             "dir": 1,
             "gdir": 1,
             "exc": 1,
@@ -307,37 +289,13 @@ def test_format_output():
     TEST_DATA = [
         {
             "fa": {"pos": "0", "com": "read0", "seq": "ATCGATCCGGCATACG"},
-            "res": {
-                "qAli": "ATCGATCCGGCATACG",
-                "gAli": "ATCGATCCGGCATACG",
-                "aliLen": 16,
-                "aliMis": 0,
-                "perc": 100.0,
-                "gap": 0,
-                "menum": 0,
-                "unconv": 0,
-                "conv": 3,
-                "pconv": 100.0,
-                "val": 100.0,
-            },
+            "res": TEST_FORMAT_DICT,
             "dir": "0",
             "gdir": "0",
         },
         {
             "fa": {"pos": "0", "com": "read1", "seq": "ATCGATCCGGCATACG"},
-            "res": {
-                "qAli": "ATCGATCCGGCATACG",
-                "gAli": "ATCGATCCGGCATACG",
-                "aliLen": 16,
-                "aliMis": 0,
-                "perc": 100.0,
-                "gap": 0,
-                "menum": 0,
-                "unconv": 0,
-                "conv": 3,
-                "pconv": 100.0,
-                "val": 100.0,
-            },
+            "res": TEST_FORMAT_DICT,
             "dir": "0",
             "gdir": "0",
         },

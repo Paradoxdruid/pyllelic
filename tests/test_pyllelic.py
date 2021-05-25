@@ -44,7 +44,46 @@ SAMPLE_DICT_OF_DFS = {
     ),
 }
 
+EXPECTED_INTERMEDIATE_MEANS = pd.DataFrame.from_dict(
+    {
+        "TEST1": [np.float64(5 / 6), np.float64(5 / 6), np.float64(1.0)],
+        "TEST2": [np.float64(1.0), np.float64(1.0), np.float64(1.0)],
+        "TEST3": [np.nan, np.nan, np.float64(13 / 15)],
+    },
+    orient="index",
+    columns=["1", "2", "3"],
+)
 
+EXPECTED_INTERMEDIATE_MODES = pd.DataFrame.from_dict(
+    {
+        "TEST1": [np.float64(2 / 3), np.float64(2 / 3), np.float64(1.0)],
+        "TEST2": [np.float64(1.0), np.float64(1.0), np.float64(1.0)],
+        "TEST3": [np.nan, np.nan, np.float64(1.0)],
+    },
+    orient="index",
+    columns=["1", "2", "3"],
+)
+
+EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA = pd.DataFrame.from_dict(
+    {
+        "TEST1": [
+            [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
+            [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
+            [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        ],
+        "TEST2": [
+            [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+            [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+            [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+        ],
+        "TEST3": [np.nan, np.nan, [1.0, 1.0, 1.0, (2 / 3), (2 / 3)]],
+    },
+    orient="index",
+    columns=["1", "2", "3"],
+)
+
+
+# Helper method
 @contextmanager
 def tempinput(data):  # pragma: no cover
     """Helper for virtual files."""
@@ -58,36 +97,32 @@ def tempinput(data):  # pragma: no cover
 
 
 # Tests
-def test_set_up_env_variables(mocker):
+def test_set_up_env_variables():
     """Test setting environment variables with mock object."""
-    # """Check if config variables would be properly set."""
-    # sys.modules["pyllelic.config"] = mocker.MagicMock()
-    # pyllelic.config.base_directory = mock.MagicMock()
-    mocker.patch.object(pyllelic, "config", autospec=True)
-    # mocker.patch.object(pyllelic.config, "base_directory")
-    # mocker.patch.object(pyllelic.config, "promoter_file")
-    # mocker.patch.object(pyllelic.config, "results_directory")
-    # mocker.patch.object(pyllelic.config, "bam_directory")
-    # mocker.patch.object(pyllelic.config, "analysis_directory")
-    # mocker.patch.object(pyllelic.config, "promoter_start")
-    # mocker.patch.object(pyllelic.config, "promoter_end")
-    # mocker.patch.object(pyllelic.config, "chromosome")
+    TEST_BASE_PATH = Path().cwd()
+    TEST_PROM_FILE = TEST_BASE_PATH / "test.txt"
+    TEST_START = "1"
+    TEST_END = "2"
+    TEST_CHR = "5"
+    TEST_OFFSET = 0
+    EXPECTED_RESULTS = TEST_BASE_PATH / "results"
+    pyllelic.set_up_env_variables(
+        base_path=TEST_BASE_PATH,
+        prom_file=TEST_PROM_FILE,
+        prom_start=TEST_START,
+        prom_end=TEST_END,
+        chrom=TEST_CHR,
+        offset=TEST_OFFSET,
+    )
 
-    # pyllelic.set_up_env_variables(
-    #     base_path=".",
-    #     prom_file="test.txt",
-    #     prom_start="1",
-    #     prom_end="2",
-    #     chrom="5",
-    #     offset="0",
-    # )
-
-    # pyllelic.config.base_directory.assert_called()  # _with(Path("."))
-    # assert pyllelic.config.base_directory == Path(".")
-    # assert pyllelic.config.base_directory == Path(".")
+    assert TEST_BASE_PATH == pyllelic.config.base_directory
+    assert TEST_PROM_FILE == pyllelic.config.promoter_file
+    assert TEST_START == pyllelic.config.promoter_start
+    assert TEST_END == pyllelic.config.promoter_end
+    assert EXPECTED_RESULTS == pyllelic.config.results_directory
 
 
-def test_main(mocker):
+def test_main():
     """Test main module with a bunch of mocks."""
     # Set up, patching all called functions
     # mocker.patch("pyllelic.sys.argv", return_value=["program", "output.xlsx"])
@@ -181,24 +216,42 @@ def test_genome_range():
 
 def test_make_list_of_bam_files():
     """Test making list of bam files, mocking config."""
-    # with mock.patch("pyllelic.config.analysis_directory") as mock_dir:
-    #     mock_dir.__get__ = mock.Mock(return_value=Path())
+    TEST_LIST = [
+        Path("bad1.txt"),
+        Path("bad2.bai"),
+        Path("good1.bam"),
+        Path("good2.bam"),
+    ]
+    EXPECTED = ["good1.bam", "good2.bam"]
+    with mock.patch.object(pyllelic.Path, "iterdir") as mock_iterdir:
+        mock_iterdir.return_value = TEST_LIST
+        actual = pyllelic.make_list_of_bam_files()
+
+    assert EXPECTED == actual
 
 
 def test_index_and_fetch():
     pass
 
 
-def test_run_sam_and_extract_df(mocker):
+@mock.patch("pyllelic.pyllelic.pysam")
+def test_run_sam_and_extract_df_no_process(mock_pysam):
     """Check if a samfile will be properly aligned and read."""
-    # TEST_SAM_FILE = Path("TEST1")
-    # mocker.patch.object(pyllelic.pysam, "AlignmentFile", autospec=True)
-    # mocker.patch.object(pyllelic.config, "base_directory", autospec=True)
-    # expected = pd.Index([], name="positions")
+    # TEST_SAM_FILE = Path("TEST1.bam")
+    # TEST_SAM_ALIGNMENT = ""
+    # EXPECTED = pd.Index([])
+    # with mock.patch.object(pyllelic.Path, "exists") as mock_exists:
+    #     mock_exists.return_value = True
+    #     mock_pysam.AlignmentFile.return_value = TEST_SAM_ALIGNMENT
+    #     result = pyllelic.run_sam_and_extract_df(TEST_SAM_FILE, process=False)
 
-    # result = pyllelic.run_sam_and_extract_df(TEST_SAM_FILE)
+    # mock_pysam.AlignmentFile.assert_called_once()
 
     # pd.testing.assert_index_equal(result, expected)
+
+
+def test_run_sam_and_extract_df_with_process():
+    """Check if a samfile will be properly aligned and read."""
 
 
 def test_write_bam_output_files(mocker):
@@ -361,15 +414,7 @@ def test_process_means():
         dict_of_dfs=SAMPLE_DICT_OF_DFS, positions=in_pos, cell_types=in_cell
     )
 
-    intermediate = pd.DataFrame.from_dict(
-        {
-            "TEST1": [np.float64(5 / 6), np.float64(5 / 6), np.float64(1.0)],
-            "TEST2": [np.float64(1.0), np.float64(1.0), np.float64(1.0)],
-            "TEST3": [np.nan, np.nan, np.float64(13 / 15)],
-        },
-        orient="index",
-        columns=["1", "2", "3"],
-    )
+    intermediate = EXPECTED_INTERMEDIATE_MEANS
 
     expected = intermediate.astype("object")
 
@@ -384,15 +429,7 @@ def test_process_modes():
         dict_of_dfs=SAMPLE_DICT_OF_DFS, positions=in_pos, cell_types=in_cell
     )
 
-    intermediate = pd.DataFrame.from_dict(
-        {
-            "TEST1": [np.float64(2 / 3), np.float64(2 / 3), np.float64(1.0)],
-            "TEST2": [np.float64(1.0), np.float64(1.0), np.float64(1.0)],
-            "TEST3": [np.nan, np.nan, np.float64(1.0)],
-        },
-        orient="index",
-        columns=["1", "2", "3"],
-    )
+    intermediate = EXPECTED_INTERMEDIATE_MODES
 
     expected = intermediate.astype("object")
 
@@ -408,23 +445,7 @@ def test_return_individual_data():
     )
     print(result.to_markdown())
 
-    intermediate = pd.DataFrame.from_dict(
-        {
-            "TEST1": [
-                [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
-                [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-            ],
-            "TEST2": [
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-            ],
-            "TEST3": [np.nan, np.nan, [1.0, 1.0, 1.0, (2 / 3), (2 / 3)]],
-        },
-        orient="index",
-        columns=["1", "2", "3"],
-    )
+    intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
 
     expected = intermediate.astype("object")
 
@@ -469,25 +490,8 @@ def test_get_str_values():
 
 def test_find_diffs():
     """Check whether the expected and result DataFrames are identical."""
-    means = pd.DataFrame.from_dict(
-        {
-            "TEST1": [np.float64(5 / 6), np.float64(5 / 6), np.float64(1.0)],
-            "TEST2": [np.float64(1.0), np.float64(1.0), np.float64(1.0)],
-            "TEST3": [np.nan, np.nan, np.float64(13 / 15)],
-        },
-        orient="index",
-        columns=["1", "2", "3"],
-    )
-
-    modes = pd.DataFrame.from_dict(
-        {
-            "TEST1": [np.float64(2 / 3), np.float64(2 / 3), np.float64(1.0)],
-            "TEST2": [np.float64(1.0), np.float64(1.0), np.float64(1.0)],
-            "TEST3": [np.nan, np.nan, np.float64(1.0)],
-        },
-        orient="index",
-        columns=["1", "2", "3"],
-    )
+    means = EXPECTED_INTERMEDIATE_MEANS
+    modes = EXPECTED_INTERMEDIATE_MODES
 
     expected = pd.DataFrame.from_dict(
         {
@@ -505,48 +509,21 @@ def test_find_diffs():
 
 
 # https://coderbook.com/@marcus/how-to-mock-and-unit-test-with-pandas/
-def test_write_means_modes_diffs(mocker):
-    # open_mock = mocker.mock_open()
-    # TEST_DF = pd.DataFrame.from_dict(
-    #     {
-    #         "TEST1": [np.float64(5 / 6), np.float64(5 / 6), np.float64(1.0)],
-    #         "TEST2": [np.float64(1.0), np.float64(1.0), np.float64(1.0)],
-    #         "TEST3": [np.nan, np.nan, np.float64(13 / 15)],
-    #     },
-    #     orient="index",
-    #     columns=["1", "2", "3"],
-    # )
-    # TEST_FILENAME = "output"
-    # with mock.patch("builtins.open", open_mock, create=True) as m:
-    #     pyllelic.write_means_modes_diffs(TEST_DF, TEST_DF, TEST_DF, TEST_FILENAME)
+# https://stackoverflow.com/questions/65579240/unittest-mock-pandas-to-csv
+def test_write_means_modes_diffs():
+    TEST_DF = EXPECTED_INTERMEDIATE_MEANS
+    TEST_FILENAME = "output"
+    with mock.patch.object(TEST_DF, "to_excel") as to_excel_mock:
+        pyllelic.write_means_modes_diffs(TEST_DF, TEST_DF, TEST_DF, TEST_FILENAME)
 
-    # open_mock.assert_called_with(expected_directory, "w")
-    # handle = m()
-    # handle.write.assert_called_with("ATGCATGCATGCATGC\n")
-    pass
+        to_excel_mock.assert_called()
 
 
 @mock.patch("pyllelic.pyllelic.go")
 def test_create_histogram(mock_go):
     TEST_CELL_LINE = "TEST1"
     TEST_POSITION = "1"
-    intermediate = pd.DataFrame.from_dict(
-        {
-            "TEST1": [
-                [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
-                [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-            ],
-            "TEST2": [
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-            ],
-            "TEST3": [np.nan, np.nan, [1.0, 1.0, 1.0, (2 / 3), (2 / 3)]],
-        },
-        orient="index",
-        columns=["1", "2", "3"],
-    )
+    intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
     TEST_DATA = intermediate.astype("object")
 
     _ = pyllelic.create_histogram(TEST_DATA, TEST_CELL_LINE, TEST_POSITION)
@@ -566,23 +543,7 @@ def test_create_histogram(mock_go):
 def test_histogram(mock_go):
     TEST_CELL_LINE = "TEST1"
     TEST_POSITION = "1"
-    intermediate = pd.DataFrame.from_dict(
-        {
-            "TEST1": [
-                [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
-                [1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)],
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-            ],
-            "TEST2": [
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-            ],
-            "TEST3": [np.nan, np.nan, [1.0, 1.0, 1.0, (2 / 3), (2 / 3)]],
-        },
-        orient="index",
-        columns=["1", "2", "3"],
-    )
+    intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
     TEST_DATA = intermediate.astype("object")
 
     pyllelic.histogram(TEST_DATA, TEST_CELL_LINE, TEST_POSITION)
