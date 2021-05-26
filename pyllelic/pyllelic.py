@@ -313,57 +313,6 @@ def access_quma(directory: Path, genomic_seq_file: str, reads_seq_file: str) -> 
     )
 
 
-def quma_full(cell_types: List[str], filename: str) -> None:
-    """Run external QUMA methylation analysis on all specified cell lines,
-       writing out an excel file of results.
-
-    Args:
-        cell_types (list[str]): list of cell lines in our dataset
-        filename (str): desired output filename for xlsx output
-    """
-
-    # Grab list of directories
-    subfolders: List[Path] = [p for p in config.bam_directory.iterdir() if p.is_dir()]
-
-    writer: pd.ExcelWriter = pd.ExcelWriter(config.base_directory.joinpath(filename))
-
-    # Wrap everything in processing them one at a time
-    for folder in tqdm(subfolders, desc="Cell Lines"):
-
-        # Get short name of cell_line
-        cell_line_name: str = folder.name.split("_")[1]
-
-        if set([cell_line_name]).intersection(set(cell_types)):
-            # Set up a holding data frame from all the data
-            holding_df: pd.DataFrame = pd.DataFrame()
-
-            # Grab list of read files in that directory:
-            raw_read_files: List[str] = os.listdir(folder)
-            read_files: List[str] = [
-                os.path.splitext(i)[0]
-                for i in raw_read_files
-                if i.endswith(".txt") and not i.lstrip().startswith("g")
-            ]
-
-            # Now, process each file:
-            for read_name in tqdm(read_files, desc="Positions", leave=False):
-
-                quma_result: str = access_quma(  # changed for internal quma
-                    folder, f"g_{read_name}.txt", f"{read_name}.txt"
-                )
-                processed_quma: List[str] = process_raw_quma(quma_result)
-                # Next, add this readname to the holding data frame
-                int_df: pd.DataFrame = pd.DataFrame({read_name: processed_quma})
-                holding_df = pd.concat([holding_df, int_df], axis=1)
-
-            # Now, save it to an excel file
-            holding_df.to_excel(writer, sheet_name=cell_line_name)
-
-            del holding_df
-
-    writer.save()
-
-
 def _init_worker():
     """
     Pool worker initializer for keyboard interrupt on Windows
@@ -411,9 +360,6 @@ def quma_full_threaded(cell_types: List[str], filename: str) -> None:
     for folder in tqdm(folders_to_use, desc="Cell Lines"):
         cell_line_name: str = folder.name.split("_")[1]
 
-        # Set up a holding data frame from all the data
-        holding_df: pd.DataFrame = pd.DataFrame()
-
         # Grab list of read files in that directory:
         raw_read_files: List[str] = os.listdir(folder)
         read_files: List[str] = [
@@ -422,34 +368,52 @@ def quma_full_threaded(cell_types: List[str], filename: str) -> None:
             if i.endswith(".txt") and not i.lstrip().startswith("g")
         ]
 
-        # Set up multiprocessing
-        pool = Pool(NUM_THREADS, _init_worker)
-        returns: List[Any] = []
-
-        with Pool(NUM_THREADS, _init_worker) as pool:
-            for read_name in read_files:
-
-                result = pool.apply_async(
-                    _thread_worker,
-                    (folder, read_name),
-                )
-                returns.append(result)
-
-            results = [result.get() for result in returns]
-
-        # Add to excel file
-        for each in results:
-            try:
-                holding_df = pd.concat([holding_df, each], axis=1)
-            except (AttributeError, KeyError):
-                pass
-
+        # Send for multiprocessing
+        holding_df = _pool_processing(read_files, folder)
         # Now, save it to an excel file
         holding_df.to_excel(writer, sheet_name=cell_line_name)
 
         del holding_df
 
     writer.save()
+
+
+def _pool_processing(read_files: List[str], folder: Path) -> pd.DataFrame:
+    """Helper to run quma in a multiprocessing pool.
+
+    Args:
+        read_files (List[str]): list of files to process
+        folder (Path): path to bam_output folder
+
+    Returns:
+        pd.DataFrame: dataframe of quma results
+    """
+
+    # Set up a holding data frame from all the data
+    holding_df: pd.DataFrame = pd.DataFrame()
+    # Set up multiprocessing
+    pool = Pool(NUM_THREADS, _init_worker)
+    returns: List[Any] = []
+
+    with Pool(NUM_THREADS, _init_worker) as pool:
+        for read_name in read_files:
+
+            result = pool.apply_async(
+                _thread_worker,
+                (folder, read_name),
+            )
+            returns.append(result)
+
+        results = [result.get() for result in returns]
+
+    # Add to excel file
+    for each in results:
+        try:
+            holding_df = pd.concat([holding_df, each], axis=1)
+        except (AttributeError, KeyError):
+            pass
+
+    return holding_df
 
 
 def process_raw_quma(quma_result: str) -> List[str]:

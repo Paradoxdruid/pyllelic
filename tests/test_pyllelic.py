@@ -269,7 +269,9 @@ def test_pysam_index(mock_pysam):
 
 
 # Needs extensive temporary files / directories
-def test_genome_parsing():
+@mock.patch.object(pyllelic.Path, "iterdir")
+def test_genome_parsing(mock_iterdir):
+    # mock_iterdir.return_value = [Path("")]
     pass
 
 
@@ -340,7 +342,29 @@ def test__thread_worker():
     pd.testing.assert_frame_equal(actual, EXPECTED)
 
 
-def test_quma_full_threaded():
+@mock.patch("pyllelic.pyllelic._pool_processing")
+@mock.patch.object(pyllelic.os, "listdir")
+@mock.patch.object(pyllelic.Path, "iterdir")
+def test_quma_full_threaded(mock_iterdir, mock_listdir, mock_pool):
+    TEST_TYPES = ["TEST1", "TEST2", "TEST3"]
+    TEST_FILENAME = "output.xls"
+    TEST_ITERDIR = [
+        Path("bad1.txt"),
+        Path("bad2.bai"),
+        Path("fh_TEST1/"),
+        Path("fh_TEST2/"),
+    ]
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        pyllelic.config.base_directory = Path(tmpdirname)
+        mock_iterdir.return_value = TEST_ITERDIR
+        mock_listdir.return_value = ["g_1.txt", "g_2.txt", "1.txt", "2.txt"]
+        mock_pool.return_value = pd.DataFrame({"1295094": ["1A", "11"]})
+        pyllelic.quma_full_threaded(TEST_TYPES, TEST_FILENAME)
+
+        assert Path(tmpdirname).joinpath("output.xls").exists()
+
+
+def test__pool_processing():
     pass
 
 
@@ -604,4 +628,20 @@ def test_generate_ad_stats():
 
 
 def test_summarize_allelelic_data():
-    pass
+    TEST_INDIV = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
+    TEST_DIFFS = EXPECTED_INTERMEDIATE_DIFFS
+    EXPECTED = pd.DataFrame(
+        {
+            "cellLine": [],
+            "position": [],
+            "ad_stat": [],
+            "p_crit": [],
+            "diff": [],
+            "raw": [],
+        }
+    )
+
+    actual = pyllelic.summarize_allelic_data(TEST_INDIV, TEST_DIFFS)
+    print(actual.to_markdown())
+
+    pd.testing.assert_frame_equal(EXPECTED, actual)
