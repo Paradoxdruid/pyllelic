@@ -68,7 +68,7 @@ def main() -> None:
 
     if sys.argv[1]:
         filename: str = sys.argv[1]
-    else:
+    else:  # pragma: no cover
         filename = "output.xlsx"
 
     files_set: List[str] = make_list_of_bam_files()
@@ -273,28 +273,32 @@ def genome_parsing(subfolders: List[Path] = None) -> None:
 
     # Wrap everything in processing them one at a time
     for folder in tqdm(subfolders, desc="Cell Lines: "):
+        _process_genome_parsing(folder, genome_string)
 
-        # Grab list of read files in that directory:
-        raw_read_files: List[str] = os.listdir(folder)
-        read_files: List[str] = [
-            os.path.splitext(i)[0]
-            for i in raw_read_files
-            if not i.lstrip().startswith("g")
-            and not i.lstrip().startswith(".ip")
-            and not i.lstrip().startswith(".DS")  # mac .DS_store files
-        ]  # replace with regex?
 
-        # Now, process each file:
-        for read_name in read_files:
-            file_lines: List = []
-            # Grab the genomic sequence
-            file_lines.append(str(">genome" + str(read_name)))
-            file_lines.append(str(genome_range(read_name, genome_string)))
+def _process_genome_parsing(folder: Path, genome_string: str) -> None:
+    """Helper for processing genome file writing."""
+    # Grab list of read files in that directory:
+    raw_read_files: List[str] = os.listdir(folder)
+    read_files: List[str] = [
+        os.path.splitext(i)[0]
+        for i in raw_read_files
+        if not i.lstrip().startswith("g")
+        and not i.lstrip().startswith(".ip")
+        and not i.lstrip().startswith(".DS")  # mac .DS_store files
+    ]  # replace with regex?
 
-            # Save the reads as a text file for each position
-            with open(folder.joinpath(f"g_{read_name}.txt"), "w") as file_handler:
-                for item in file_lines:
-                    file_handler.write(f"{item}\n")
+    # Now, process each file:
+    for read_name in read_files:
+        file_lines: List = []
+        # Grab the genomic sequence
+        file_lines.append(str(">genome" + str(read_name)))
+        file_lines.append(str(genome_range(read_name, genome_string)))
+
+        # Save the reads as a text file for each position
+        with open(folder.joinpath(f"g_{read_name}.txt"), "w") as file_handler:
+            for item in file_lines:
+                file_handler.write(f"{item}\n")
 
 
 def access_quma(directory: Path, genomic_seq_file: str, reads_seq_file: str) -> str:
@@ -391,10 +395,8 @@ def _pool_processing(read_files: List[str], folder: Path) -> pd.DataFrame:
 
     # Set up a holding data frame from all the data
     holding_df: pd.DataFrame = pd.DataFrame()
-    # Set up multiprocessing
-    pool = Pool(NUM_THREADS, _init_worker)
-    returns: List[Any] = []
 
+    returns: List[Any] = []
     with Pool(NUM_THREADS, _init_worker) as pool:
         for read_name in read_files:
 

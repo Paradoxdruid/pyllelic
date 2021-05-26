@@ -191,6 +191,15 @@ def test_genome_range():
     assert isinstance(result, str)
 
 
+def test_genome_range_no_offset():
+    """Check if correct genome string is returned with no offset given."""
+    gen_str = "ATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGC"
+    pyllelic.config.offset = 40
+    result = pyllelic.genome_range(position=2, genome_string=gen_str)
+    assert result == gen_str[8:37]
+    assert isinstance(result, str)
+
+
 def test_make_list_of_bam_files():
     """Test making list of bam files, mocking config."""
     TEST_LIST = [
@@ -207,12 +216,16 @@ def test_make_list_of_bam_files():
     assert EXPECTED == actual
 
 
-# @mock.patch("pyllelic.pyllelic.config.base_directory")
-# @mock.patch("pyllelic.pyllelic.run_sam_and_extract_df")
-def test_index_and_fetch():
-    # TEST_FILES = ["TEST1", "TEST2", "TEST3"]
-    # TEST_PROCESS = False
-    pass
+@mock.patch("pyllelic.pyllelic.run_sam_and_extract_df")
+def test_index_and_fetch(mock_run_sam):
+    TEST_FILES = ["TEST1", "TEST2", "TEST3"]
+    TEST_PROCESS = False
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        pyllelic.config.base_directory = Path(tmpdirname)
+        mock_run_sam.return_value = pd.Index(["1", "2", "3"])
+        pyllelic.index_and_fetch(TEST_FILES, TEST_PROCESS)
+
+        mock_run_sam.assert_called()
 
 
 @mock.patch("pyllelic.pyllelic.pysam")
@@ -235,10 +248,16 @@ def test_run_sam_and_extract_df_with_process():
     """Check if a samfile will be properly aligned and read."""
 
 
-def test_write_bam_output_files(mocker):
+def test_write_bam_output_files():
     """Test writing bam files with a mock open."""
+    # TEST_SAMS = Path("fh_TEST1/")
+    # TEST_POSITIONS = ["1", "2", "3"]
+    # TEST_DF = pd.DataFrame()
     # with tempfile.TemporaryDirectory() as tmpdirname:
-    #     mocker.patch.object(pyllelic.config, "base_directory", Path(tmpdirname))
+    #     pyllelic.config.base_directory = Path(tmpdirname)
+    #     pyllelic.write_bam_output_files(TEST_SAMS, TEST_POSITIONS, TEST_DF)
+
+    # assert ?
 
 
 def test_write_individual_bamfile(mocker):
@@ -268,11 +287,31 @@ def test_pysam_index(mock_pysam):
     mock_pysam.index.assert_called_once_with(os.fspath(TEST_PATH))
 
 
-# Needs extensive temporary files / directories
+@mock.patch("pyllelic.pyllelic._process_genome_parsing")
+@mock.patch.object(pyllelic.Path, "is_dir")
 @mock.patch.object(pyllelic.Path, "iterdir")
-def test_genome_parsing(mock_iterdir):
-    # mock_iterdir.return_value = [Path("")]
-    pass
+def test_genome_parsing(mock_iterdir, mock_is_dir, mock_process):
+    with tempfile.NamedTemporaryFile() as my_file:
+        my_file.write(b"ATGCTCTAGCTCGCTAGATCGCTCGATCGTAGCTAGCTA")
+        my_file.seek(0)
+        pyllelic.config.promoter_file = my_file.name
+        mock_iterdir.return_value = [Path("TEST1/"), Path("TEST2/")]
+        mock_is_dir.return_value = True
+        pyllelic.genome_parsing()
+
+        mock_process.assert_called()
+
+
+@mock.patch("pyllelic.pyllelic.genome_range")
+@mock.patch.object(pyllelic.os, "listdir")
+def test__process_genome_parsing(mock_listdir, mock_range):
+    with tempfile.TemporaryDirectory() as tempdir:
+        TEST_GENOME_STRING = "ATGCTCTAGCTCGCTAGATCGCTCGATCGTAGCTAGCTA"
+        mock_listdir.return_value = ["1.txt", "2.txt", "g_1.txt"]
+        mock_range.return_value = "ACGACATGA"
+        pyllelic._process_genome_parsing(Path(tempdir), TEST_GENOME_STRING)
+
+        mock_range.assert_called()
 
 
 def test_access_quma():

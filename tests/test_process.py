@@ -10,6 +10,8 @@ from contextlib import contextmanager
 
 # Required libraries for test data
 from pathlib import Path
+from Bio import SeqIO
+from Bio.Seq import Seq
 
 # Module to test
 import pyllelic.process as process  # noqa  # pylint: disable=unused-import
@@ -28,11 +30,44 @@ def tempinput(data, suffix):  # pragma: no cover
 
 
 def test_process_fastq_to_list():
-    pass
+    EXPECTED = SeqIO.SeqRecord(
+        seq=Seq("GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT"),
+        id="SEQ_ID",
+        name="SEQ_ID",
+        description="SEQ_ID",
+        dbxrefs=[],
+    )
+    with tempfile.NamedTemporaryFile(suffix=".fastq", prefix="test1") as my_file:
+        FASTQ_CONTENTS = b"""@SEQ_ID
+GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
++
+!''*((((***+))%%%++)(%%%%).1***-+*''))**55CCF>>>>>>CCCCCCC65"""
+        my_file.write(FASTQ_CONTENTS)
+        my_file.seek(0)
+        TEST_FILEPATH = Path(my_file.name)
+        actual = process.process_fastq_to_list(TEST_FILEPATH)
+
+    assert EXPECTED.seq == actual[0].seq
 
 
 def test_make_records_to_dictionary():
-    pass
+    TEST_RECORD_LIST = [
+        SeqIO.SeqRecord(
+            Seq("ATGCTCGTAGCTGATCGA"),
+            id="test1",
+            name="test1",
+            description="test record #1",
+        ),
+        SeqIO.SeqRecord(
+            Seq("GTGCTCGTAGCTGATCGA"),
+            id="test2",
+            name="test2",
+            description="test record #2",
+        ),
+    ]
+    EXPECTED = {"test1": TEST_RECORD_LIST[0], "test2": TEST_RECORD_LIST[1]}
+    actual = process.make_records_to_dictionary(TEST_RECORD_LIST)
+    assert EXPECTED == actual
 
 
 @mock.patch("pyllelic.process.subprocess")
