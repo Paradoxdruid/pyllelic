@@ -13,6 +13,10 @@ from typing import Any, Dict, List, Tuple, Optional
 from Bio import pairwise2
 from Bio.Align import substitution_matrices
 
+import logging
+
+logging.basicConfig(filename="quma_test.log", level=logging.DEBUG)
+
 MAX_LINE_LENGTH = 60
 MAT = """    A   T   G   C   S   W   R   Y   K   M   B   V   H   D   N   U
     A   5  -4  -4  -4  -4   1   1  -4  -4   1  -4  -1  -1  -1  -2  -4
@@ -357,8 +361,11 @@ def align_seq_and_generate_stats(
     bio_gseq = gfile.splitlines()[1]
     bio_qseq = qfile.splitlines()[1]
     # flipping to correct output comparison
-    bio_alignments = pairwise2.align.globalds(bio_qseq, bio_gseq, MATRIX, -10, -0.5)
-    fh_ = f">genome\n{bio_alignments[0][0]}\n>que\n{bio_alignments[0][1]}\n"
+    bio_alignments = pairwise2.align.localds(bio_qseq, bio_gseq, MATRIX, -10, -0.5)
+    genome_ali = bio_alignments[0].seqB[bio_alignments[0].start : bio_alignments[0].end]
+    query_ali = bio_alignments[0].seqA[bio_alignments[0].start : bio_alignments[0].end]
+    fh_ = f">genome\n{genome_ali}\n>que\n{query_ali}\n"
+    # logging.debug(f"gseq={bio_gseq},aligned={genome_ali}")
     fh: List[str] = fh_.split("\n")
 
     for i, line in enumerate(fh):
@@ -418,6 +425,7 @@ def process_alignment_matches(
     gAli = ref["gAli"]
     qAli = ref["qAli"][: len(gAli)]
 
+    _, cpg, _ = find_cpg(gAli)
     ref["aliLen"] = len(qAli)
 
     # Loop through sequence looking for CpG conversion
@@ -427,8 +435,10 @@ def process_alignment_matches(
         g = gAli[i]
         q = qAli[i]
 
-        j += 1
-        if q == g or (g == "C" and q == "T"):
+        if g != "-":
+            j += 1
+
+        if q == g or g == "C" and q == "T":
             ref["match"] += 1
 
         if g == "-":
@@ -444,25 +454,37 @@ def process_alignment_matches(
         if i == ref["aliLen"] - 1:
             break
 
+        # End if genome sequence isn't a C
         if g != "C":
             continue
 
+        # If this is a CpG C on the genome, inspect query
         if cpg.get(str(j - 1)):
             if q == "C":
                 ref["conv"] += 1
+                ref["menum"] += 1
+                ref["val"] += "1"
             elif q == "T":
                 ref["unconv"] += 1
+                ref["val"] += "0"
+            else:
+                ref["val"] += q
+            continue
 
-        if q == "C":
-            ref["menum"] += 1
-            ref["val"] += "1"
-        elif q == "T":
-            ref["val"] += "0"
-        else:
-            ref["val"] += q
+        # if q == "C":
+        #     ref["menum"] += 1
+        #     ref["val"] += "1"
+        # elif q == "T":
+        #     ref["val"] += "0"
+        # else:
+        #     ref["val"] += q
 
     results = _generate_summary_stats(ref)
 
+    # kludge:
+    if ref["val"] == "":
+        ref["val"] = "-"
+    # logging.debug(f"results={results}")
     return results
 
 

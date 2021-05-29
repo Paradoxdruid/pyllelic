@@ -25,11 +25,9 @@ This notebook illustrates the import and use of `pyllelic` in a jupyter environm
 See https://github.com/Paradoxdruid/pyllelic for further details.
 <!-- #endregion -->
 
-<!-- #region heading_collapsed=true -->
 ## Pre-setup
-<!-- #endregion -->
 
-<!-- #region heading_collapsed=true hidden=true -->
+<!-- #region heading_collapsed=true -->
 ### Obtaining fastq data
 <!-- #endregion -->
 
@@ -42,24 +40,20 @@ http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeHaibMethylRrbs/
 Those files are in unaligned fastq format.  We will need to align these to a reference human genome.
 <!-- #endregion -->
 
-<!-- #region heading_collapsed=true hidden=true -->
 ### Aligning reads (using process.py)
-<!-- #endregion -->
 
-<!-- #region hidden=true -->
+
 To align reads, we'll use bowtie2 and samtools (through its pysam wrapper).
-<!-- #endregion -->
 
-<!-- #region hidden=true -->
+
 First, we need to download a genomic index sequence: http://hgdownload.soe.ucsc.edu/goldenPath/hg19
-<!-- #endregion -->
 
-```python hidden=true
+```python
 # Processing imports
 # from pathlib import Path
 ```
 
-```python hidden=true
+```python
 # Set up file paths
 # index = Path(
 #     "/home/andrew/allellic/hg19.p13.plusMT.no_alt_analysis_set//hg19.p13.plusMT.no_alt_analysis_set"
@@ -67,42 +61,36 @@ First, we need to download a genomic index sequence: http://hgdownload.soe.ucsc.
 # fastq = Path("/home/andrew/allellic/wgEncodeHaibMethylRrbsU87HaibRawDataRep1.fastq.gz")
 ```
 
-<!-- #region hidden=true -->
 **WARNING:** The next command is processor, RAM, and time intensive, and only needs to be run once!
-<!-- #endregion -->
 
-```python hidden=true
+```python
 # Convert fastq to bam
 # pyllelic.process.bowtie2_fastq_to_bam(index={bowtie_index_filename_without_suffix},
 #                                       fastq={fastq_file_name},
 #                                       cores=6)
 ```
 
-<!-- #region hidden=true -->
 Notes:
 * cores is number of processor cores, adjust for your system
 * instead of `out.bam` use a filename that encodes cell-line and tissue.  Our convention is: `fh_CELLLINE_TISSUE.TERT.bam`
-<!-- #endregion -->
 
-<!-- #region hidden=true -->
+
 Next, we need to sort and index the bam file using samtools functions.
-<!-- #endregion -->
 
-```python hidden=true
+```python
 # Sort the bamfile
 # bamfile = Path("/home/andrew/allellic/wgEncodeHaibMethylRrbsU87HaibRawDataRep1.bam")
 # pyllelic.process_pysam_sort(bamfile)
 ```
 
-```python hidden=true
+```python
 # Create an index of the sorted bamfile
 # sorted_bam = Path("")
 # pyllelic.process_pysam_index(b)
 ```
 
-<!-- #region hidden=true -->
 Now, that sorted file (again, rename to capture cell-line and tissue info) is ready to be put in the `test` folder for analysis by pyllelic!
-<!-- #endregion -->
+
 
 ## Set-up
 
@@ -189,7 +177,7 @@ cell_types
 ```python
 # Set filename to whatever you want
 df_list = pyllelic.run_quma_and_compile_list_of_df(
-    cell_types, "test18.xlsx",
+    cell_types, "test1.xlsx",
     run_quma=True,
 )  # to skip quma: , run_quma=False)
 ```
@@ -200,7 +188,7 @@ df_list.keys()
 ```
 
 ```python
-df_list["SW1710"]
+df_list["NCIH196"]["1295937"]
 ```
 
 ```python
@@ -234,14 +222,14 @@ diff
 
 ```python
 # Set the filename to whatever you want
-pyllelic.write_means_modes_diffs(means, modes, diff, "Test17")
+pyllelic.write_means_modes_diffs(means, modes, diff, "Test1")
 ```
 
 ## Visualizing Data
 
 ```python
 final_data = pyllelic.pd.read_excel(
-    pyllelic.config.base_directory.joinpath("Test17_diff.xlsx"),
+    pyllelic.config.base_directory.joinpath("Test1_diff.xlsx"),
     dtype=str,
     index_col=0,
     engine="openpyxl",
@@ -262,7 +250,15 @@ individual_data
 ```
 
 ```python
+individual_data.loc["NCIH196", "1295937"]
+```
+
+```python
 individual_data.loc["SORTED"]["1295680"]
+```
+
+```python
+individual_data.loc["CALU1"]
 ```
 
 ```python
@@ -278,19 +274,19 @@ pyllelic.histogram(individual_data, "SW1710", "1295089")
 ```
 
 ```python
-pyllelic.histogram(individual_data, "NCIH196", "1294004")
+pyllelic.histogram(individual_data, "CALU1", "1295937")
 ```
 
 ```python
-pyllelic.histogram(individual_data, "NCIH196", "1295430")
+pyllelic.histogram(individual_data, "NCIH196", "1295937")
 ```
 
 ```python
-pyllelic.histogram(individual_data, "SW1710", "1294031")
+pyllelic.histogram(individual_data, "NCIH196", "1294945")
 ```
 
 ```python
-final_data.loc["NCIH196"]
+final_data.loc["SW1710"]
 ```
 
 ## Statistical Tests for Normality

@@ -14,12 +14,18 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import pysam
+
+# from Bio import pairwise2
 from scipy import stats
 from skbio.alignment import StripedSmithWaterman
 from tqdm.notebook import tqdm
 
 from . import quma
 from .config import Config
+
+import logging
+
+logging.basicConfig(filename="pyllelic_test.log", level=logging.DEBUG)
 
 # Initialize shared configuration object
 config = Config()
@@ -224,6 +230,23 @@ def write_bam_output_files(sams: Path, positions: List[str], df: pd.DataFrame) -
             read_file.append(each.aligned_target_sequence)
             # returns aligned target sequence
 
+        # # Set up query using alignment algorithm
+        # query_sequence: List[str] = df.loc[each1].head(1).tolist()[0]
+
+        # # Set up sequences to check for alignment
+        # target_sequences: List[str] = df.loc[each1].tolist()
+        # for target_sequence in target_sequences:
+        #     alignment = pairwise2.align.localms(
+        #         query_sequence, target_sequence, 2, -3, -5, -2
+        #     )
+        #     alignments.append(alignment)
+
+        # read_file: List[str] = []
+        # for index, each in enumerate(alignments):
+        #     read_file.append(str(">read" + str(index)))
+        #     read_file.append(each[0].seqB)
+        #     # returns aligned target sequence
+
         write_individual_bam_file(sam_name, each1, read_file)
 
 
@@ -312,9 +335,10 @@ def access_quma(directory: Path, genomic_seq_file: str, reads_seq_file: str) -> 
     Returns:
         str: output from quma command
     """
-    return quma.quma_main(
+    result = quma.quma_main(
         f"{directory}/{genomic_seq_file}", f"{directory}/{reads_seq_file}"
     )
+    return result
 
 
 def _init_worker():
@@ -432,10 +456,10 @@ def process_raw_quma(quma_result: str) -> List[str]:
     for line in quma_result.splitlines():
         if not line.lstrip().startswith("g"):
             fields: List[str] = line.split("\t")
-            # if float(fields[7]) < 70:  # CONSIDER: checks for high mercent match
-            #     dots.append("FAIL")
-            # else:
-            dots.append(fields[13])
+            if float(fields[7]) < 70:  # checks for high mercent match
+                dots.append("FAIL")
+            else:
+                dots.append(fields[13])
     # Sort dots output by number of "1"
     return sorted(dots, key=lambda t: t.count("1"))
 
@@ -586,8 +610,8 @@ def return_read_values(
     pos: str,
     key: str,
     dict_of_dfs: Dict[str, pd.DataFrame],
-    min_reads: int = 4,
-    min_sites: int = 2,
+    min_reads: int = 1,
+    min_sites: int = 1,
 ) -> List[float]:
     """Given a genomic position, cell line, and data, find fractional methylation
        values for each read in the dataset.
