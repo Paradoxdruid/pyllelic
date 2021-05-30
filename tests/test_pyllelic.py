@@ -338,8 +338,8 @@ def test_access_quma():
         "genome\t0\tATCGTAGTCGA\t2\t2,8\n"
         + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"
         + "11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n"
-        + "2\tquery2\tATCGATAGCATT\tATCGATAGCATT\tATCG-TAGTCGA\t"
-        + "12\t5\t58.3\t1\t1\t0\t1\t100.0\t1A\t1\t1\n"
+        + "2\tquery2\tATCGATAGCATT\tATCG-TAGT\tATCGATAGC\t"
+        + "9\t1\t88.9\t1\t1\t0\t1\t100.0\t1\t1\t1\n"
     )
     with mock.patch("builtins.open", new=my_open):
         actual = pyllelic.access_quma(TEST_DIRECTORY, TEST_GSEQ_NAME, TEST_QSEQ_NAME)
@@ -360,7 +360,7 @@ def test__thread_worker():
     TEST_QSEQ_NAME = f"{TEST_READ_NAME}.txt"
     TEST_QSEQ = ">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
 
-    EXPECTED: pd.DataFrame = pd.DataFrame({"1295094": ["1A", "11"]})
+    EXPECTED: pd.DataFrame = pd.DataFrame({"1295094": ["1", "11"]})
 
     # From https://stackoverflow.com/questions/26783678/
     #      python-mock-builtin-open-in-a-class-using-two-different-files
@@ -415,7 +415,7 @@ def test_process_raw_quma():
         + "2\tquery2\tATCGATAGCATT\tATCGATAGCATT\tATCG-TAGTCGA\t"
         + "12\t5\t58.3\t1\t1\t0\t1\t100.0\t1A\t1\t1\n"
     )
-    EXPECTED = ["1A", "11"]
+    EXPECTED = ["FAIL", "11"]
     actual = pyllelic.process_raw_quma(TEST_QUMA_RESULT)
     assert EXPECTED == actual
 

@@ -14,10 +14,10 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import pysam
-
-# from Bio import pairwise2
+from Bio import pairwise2
 from scipy import stats
-from skbio.alignment import StripedSmithWaterman
+
+# from skbio.alignment import StripedSmithWaterman
 from tqdm.notebook import tqdm
 
 from . import quma
@@ -214,38 +214,39 @@ def write_bam_output_files(sams: Path, positions: List[str], df: pd.DataFrame) -
     for each1 in positions:
         alignments: List = []
 
-        # Set up query using alignment algorithm
-        query_sequence: List[str] = df.loc[each1].head(1).tolist()[0]
-        query: StripedSmithWaterman = StripedSmithWaterman(query_sequence)
-
-        # Set up sequences to check for alignment
-        target_sequences: List[str] = df.loc[each1].tolist()
-        for target_sequence in target_sequences:
-            alignment = query(target_sequence)
-            alignments.append(alignment)
-
-        read_file: List[str] = []
-        for index, each in enumerate(alignments):
-            read_file.append(str(">read" + str(index)))
-            read_file.append(each.aligned_target_sequence)
-            # returns aligned target sequence
-
         # # Set up query using alignment algorithm
         # query_sequence: List[str] = df.loc[each1].head(1).tolist()[0]
+        # query: StripedSmithWaterman = StripedSmithWaterman(query_sequence)
 
         # # Set up sequences to check for alignment
         # target_sequences: List[str] = df.loc[each1].tolist()
         # for target_sequence in target_sequences:
-        #     alignment = pairwise2.align.localms(
-        #         query_sequence, target_sequence, 2, -3, -5, -2
-        #     )
+        #     alignment = query(target_sequence)
         #     alignments.append(alignment)
 
         # read_file: List[str] = []
         # for index, each in enumerate(alignments):
         #     read_file.append(str(">read" + str(index)))
-        #     read_file.append(each[0].seqB)
+        #     read_file.append(each.aligned_target_sequence)
         #     # returns aligned target sequence
+
+        # Set up query using alignment algorithm
+        query_sequence: List[str] = df.loc[each1].head(1).tolist()[0]
+
+        # Set up sequences to check for alignment
+        target_sequences: List[str] = df.loc[each1].tolist()
+        for target_sequence in target_sequences:
+            alignment = pairwise2.align.localms(
+                query_sequence, target_sequence, 2, -3, -5, -2
+            )
+            aligned_segment = alignment[0].seqA[alignment[0].start : alignment[0].end]
+            alignments.append(aligned_segment)
+
+        read_file: List[str] = []
+        for index, each in enumerate(alignments):
+            read_file.append(str(">read" + str(index)))
+            read_file.append(each[0].seqB)
+            # returns aligned target sequence
 
         write_individual_bam_file(sam_name, each1, read_file)
 

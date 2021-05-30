@@ -19,12 +19,12 @@ EXPECTED_ALIGN_MATCH = {
     "qAli": "ATCGATCCGGCATACG",
     "gAli": "ATCGATCCGGCATACG",
     "gap": 0,
-    "menum": 5,
+    "menum": 3,
     "unconv": 0,
     "conv": 3,
     "pconv": 100.0,
     "match": 16,
-    "val": "11111",
+    "val": "111",
     "perc": 100.0,
     "aliMis": 0,
     "aliLen": 16,
@@ -34,12 +34,12 @@ EXPECTED_RESULT_DICT = {
     "qAli": "ATCGATCCGGCATACG",
     "gAli": "ATCGATCCGGCATACG",
     "gap": 0,
-    "menum": 5,
+    "menum": 3,
     "unconv": 0,
     "conv": 3,
     "pconv": 100.0,
     "match": 16,
-    "val": "11111",
+    "val": "111",
     "perc": 100.0,
     "aliMis": 0,
     "aliLen": 16,
@@ -194,12 +194,12 @@ def test__generate_summary_stats():
         "qAli": "ATCGATCCGGCATACG",
         "gAli": "ATCGATCCGGCATACG",
         "gap": 0,
-        "menum": 5,
+        "menum": 3,
         "unconv": 0,
         "conv": 3,
         "pconv": 0,
         "match": 16,
-        "val": "11111",
+        "val": "111",
         "perc": 0,
         "aliMis": 0,
         "aliLen": 16,
@@ -332,7 +332,8 @@ def test_quma_main():
         "genome\t0\tATCGTAGTCGA\t2\t2,8\n"
         + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"
         + "11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n"
-        + "2\tquery2\tATCGATAGCATT\tATCGATAGCATT\tATCG-TAGTCGA\t"
-        + "12\t5\t58.3\t1\t1\t0\t1\t100.0\t1A\t1\t1\n"
+        + "2\tquery2\tATCGATAGCATT\tATCG-TAGT\tATCGATAGC\t"
+        + "9\t1\t88.9\t1\t1\t0\t1\t100.0\t1\t1\t1\n"
     )
+    print(actual)
     assert EXPECTED == actual
