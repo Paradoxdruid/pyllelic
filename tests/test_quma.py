@@ -59,6 +59,21 @@ TEST_FORMAT_DICT = {
     "val": 100.0,
 }
 
+TEST_SUMMARY_REF = {
+    "qAli": "ATCGATCCGGCATACG",
+    "gAli": "ATCGATCCGGCATACG",
+    "gap": 0,
+    "menum": 3,
+    "unconv": 0,
+    "conv": 3,
+    "pconv": 0,
+    "match": 16,
+    "val": "111",
+    "perc": 0,
+    "aliMis": 0,
+    "aliLen": 16,
+}
+
 
 # Test functions
 @contextmanager
@@ -190,21 +205,18 @@ def test_align_seq_and_generate_stats():
 
 
 def test__generate_summary_stats():
-    TEST_REF = {
-        "qAli": "ATCGATCCGGCATACG",
-        "gAli": "ATCGATCCGGCATACG",
-        "gap": 0,
-        "menum": 3,
-        "unconv": 0,
-        "conv": 3,
-        "pconv": 0,
-        "match": 16,
-        "val": "111",
-        "perc": 0,
-        "aliMis": 0,
-        "aliLen": 16,
-    }
+    TEST_REF = TEST_SUMMARY_REF
     EXPECTED = EXPECTED_ALIGN_MATCH
+    actual = quma._generate_summary_stats(TEST_REF)
+    assert EXPECTED == actual
+
+
+def test__generate_summary_stats_bad():
+    TEST_REF = TEST_SUMMARY_REF.copy()
+    TEST_REF["conv"] = 0
+    EXPECTED = EXPECTED_ALIGN_MATCH.copy()
+    EXPECTED["pconv"] = 0
+    EXPECTED["conv"] = 0
     actual = quma._generate_summary_stats(TEST_REF)
     assert EXPECTED == actual
 
@@ -241,6 +253,17 @@ def test_process_alignment_matches():
     EXPECTED = EXPECTED_ALIGN_MATCH
     actual = quma.process_alignment_matches(TEST_REF, TEST_CPG)
     assert EXPECTED == actual
+
+
+def test__find_best_dataset():
+    TEST_FFRES = EXPECTED_ALIGN_MATCH
+    TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
+    TEST_FRRES["aliMis"] = 2
+    EXPECTED_RES = EXPECTED_ALIGN_MATCH
+    EXPECTED_DIRECTION = 1
+    actual_res, actual_dir = quma._find_best_dataset(TEST_FFRES, TEST_FRRES)
+    assert EXPECTED_RES == actual_res
+    assert EXPECTED_DIRECTION == actual_dir
 
 
 def test_process_fasta_output():

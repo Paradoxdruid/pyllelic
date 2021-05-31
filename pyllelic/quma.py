@@ -471,14 +471,6 @@ def process_alignment_matches(
                 ref["val"] += q
             continue
 
-        # if q == "C":
-        #     ref["menum"] += 1
-        #     ref["val"] += "1"
-        # elif q == "T":
-        #     ref["val"] += "0"
-        # else:
-        #     ref["val"] += q
-
     results = _generate_summary_stats(ref)
 
     # kludge:
@@ -486,6 +478,41 @@ def process_alignment_matches(
         ref["val"] = "-"
     # logging.debug(f"results={results}")
     return results
+
+
+def _find_best_dataset(
+    ffres: Dict[str, Any], frres: Dict[str, Any]
+) -> Tuple[Dict[str, Any], int]:
+    """Helper to find best data returned."""
+    # Find best dataset:
+    if ffres["aliMis"] > frres["aliMis"]:
+        fres = frres
+        fdir = -1
+    elif ffres["aliMis"] < frres["aliMis"]:
+        fres = ffres
+        fdir = 1
+    elif ffres["perc"] > frres["perc"]:
+        fres = ffres
+        fdir = 1
+    elif ffres["perc"] < frres["perc"]:
+        fres = frres
+        fdir = -1
+    elif ffres["unconv"] > frres["unconv"]:
+        fres = frres
+        fdir = -1
+    elif ffres["unconv"] < frres["unconv"]:
+        fres = ffres
+        fdir = 1
+    elif ffres["pconv"] < frres["pconv"]:
+        fres = frres
+        fdir = -1
+    elif ffres["pconv"] > frres["pconv"]:
+        fres = ffres
+        fdir = 1
+    else:
+        fres = ffres
+        fdir = 1
+    return fres, fdir
 
 
 def process_fasta_output(
@@ -499,16 +526,10 @@ def process_fasta_output(
 ) -> List[Dict[str, Any]]:
     """Process fasta alignment."""
 
-    UNCONVL = 5
-    PCONVL = 95.0
-    MISL = 10
-    PERCL = 90.0
-
-    # conv = 0
-    unc = UNCONVL
-    pcon = PCONVL
-    mis = MISL
-    perc = PERCL
+    UNCONV = 5
+    PCONV = 95.0
+    MIS = 10
+    PERC = 90.0
 
     data: List[Dict[str, Any]] = []
     pos = 0
@@ -519,57 +540,26 @@ def process_fasta_output(
         qfilepF = fasta_output(fa["seq"], qfileF)
         qfilepR = fasta_output(rev_comp(fa["seq"]), qfileR)
 
-        # if conv != 1:  # it always is
-        ffres = align_seq_and_generate_stats(qfilepF, gfilepF, cpgf)
-        frres = align_seq_and_generate_stats(qfilepR, gfilepF, cpgf)
+        fwd_result = align_seq_and_generate_stats(qfilepF, gfilepF, cpgf)
+        rev_result = align_seq_and_generate_stats(qfilepR, gfilepF, cpgf)
 
-        # Find best dataset:
-        if ffres["aliMis"] > frres["aliMis"]:
-            fres = frres
-            fdir = -1
-        elif ffres["aliMis"] < frres["aliMis"]:
-            fres = ffres
-            fdir = 1
-        elif ffres["perc"] > frres["perc"]:
-            fres = ffres
-            fdir = 1
-        elif ffres["perc"] < frres["perc"]:
-            fres = frres
-            fdir = -1
-        elif ffres["unconv"] > frres["unconv"]:
-            fres = frres
-            fdir = -1
-        elif ffres["unconv"] < frres["unconv"]:
-            fres = ffres
-            fdir = 1
-        elif ffres["pconv"] < frres["pconv"]:
-            fres = frres
-            fdir = -1
-        elif ffres["pconv"] > frres["pconv"]:
-            fres = ffres
-            fdir = 1
-        else:
-            fres = ffres
-            fdir = 1
-
-        res = fres
-        final_dir = fdir
-        gdir = 1
+        result, final_direction = _find_best_dataset(fwd_result, rev_result)
+        genome_direction = 1
 
         ref: Dict[str, Any] = {
             "fa": fa,
-            "res": res,
-            "dir": final_dir,
-            "gdir": gdir,
+            "res": result,
+            "dir": final_direction,
+            "gdir": genome_direction,
             "exc": 0,
         }
-        if res["unconv"] > unc:
-            ref["exc"] = 1
-        if res["pconv"] > pcon:
-            ref["exc"] = 1
-        if res["aliMis"] > mis:
-            ref["exc"] = 1
-        if res["perc"] > perc:
+        # Flag for exclusion
+        if (
+            result["unconv"] > UNCONV
+            or result["pconv"] > PCONV
+            or result["aliMis"] > MIS
+            or result["perc"] > PERC
+        ):
             ref["exc"] = 1
 
         data.append(ref)
