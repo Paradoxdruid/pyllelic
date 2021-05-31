@@ -12,9 +12,25 @@ from contextlib import contextmanager
 from pathlib import Path
 from Bio import SeqIO
 from Bio.Seq import Seq
+import gzip
 
 # Module to test
 import pyllelic.process as process  # noqa  # pylint: disable=unused-import
+
+
+# Constants
+EXPECTED_SEQ_RECORD = SeqIO.SeqRecord(
+    seq=Seq("GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT"),
+    id="SEQ_ID",
+    name="SEQ_ID",
+    description="SEQ_ID",
+    dbxrefs=[],
+)
+
+TEST_FASTQ_CONTENTS = b"""@SEQ_ID
+GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
++
+!''*((((***+))%%%++)(%%%%).1***-+*''))**55CCF>>>>>>CCCCCCC65"""
 
 
 @contextmanager
@@ -30,18 +46,9 @@ def tempinput(data, suffix):  # pragma: no cover
 
 
 def test_process_fastq_to_list():
-    EXPECTED = SeqIO.SeqRecord(
-        seq=Seq("GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT"),
-        id="SEQ_ID",
-        name="SEQ_ID",
-        description="SEQ_ID",
-        dbxrefs=[],
-    )
+    EXPECTED = EXPECTED_SEQ_RECORD
     with tempfile.NamedTemporaryFile(suffix=".fastq", prefix="test1") as my_file:
-        FASTQ_CONTENTS = b"""@SEQ_ID
-GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
-+
-!''*((((***+))%%%++)(%%%%).1***-+*''))**55CCF>>>>>>CCCCCCC65"""
+        FASTQ_CONTENTS = TEST_FASTQ_CONTENTS
         my_file.write(FASTQ_CONTENTS)
         my_file.seek(0)
         TEST_FILEPATH = Path(my_file.name)
@@ -56,6 +63,28 @@ def test_process_fastq_to_list_wrong_filetype():
         actual = process.process_fastq_to_list(TEST_FILEPATH)
 
     assert actual is None
+
+
+def test_process_fastq_to_list_wrong_filetype_multi_extension():
+    with tempfile.NamedTemporaryFile(suffix=".fastq.txt", prefix="test1") as my_file:
+        TEST_FILEPATH = Path(my_file.name)
+        actual = process.process_fastq_to_list(TEST_FILEPATH)
+
+    assert actual is None
+
+
+def test_process_fastq_to_list_gz():
+    EXPECTED = EXPECTED_SEQ_RECORD
+    with tempfile.NamedTemporaryFile(suffix=".fastq.gz", prefix="test1") as my_file:
+        FASTQ_CONTENTS = TEST_FASTQ_CONTENTS
+        gzip_file = gzip.GzipFile(mode="wb", fileobj=my_file)
+        gzip_file.write(FASTQ_CONTENTS)
+        gzip_file.close()
+        my_file.seek(0)
+        TEST_FILEPATH = Path(my_file.name)
+        actual = process.process_fastq_to_list(TEST_FILEPATH)
+
+    assert EXPECTED.seq == actual[0].seq
 
 
 def test_make_records_to_dictionary():
