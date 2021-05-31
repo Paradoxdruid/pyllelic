@@ -59,6 +59,20 @@ TEST_SUMMARY_REF = {
     "aliLen": 16,
 }
 
+TEST_ALIGN_REF = {
+    "qAli": "ATCGATCCGGCATACG",
+    "gAli": "ATCGATCCGGCATACG",
+    "gap": 0,
+    "menum": 0,
+    "unconv": 0,
+    "conv": 0,
+    "pconv": "",
+    "match": 0,
+    "val": "",
+    "perc": "",
+    "aliMis": 0,
+}
+
 
 # Test functions
 @contextmanager
@@ -221,31 +235,185 @@ def test__percentage():
 
 
 def test_process_alignment_matches():
-    TEST_REF = {
-        "qAli": "ATCGATCCGGCATACG",
-        "gAli": "ATCGATCCGGCATACG",
-        "gap": 0,
-        "menum": 0,
-        "unconv": 0,
-        "conv": 0,
-        "pconv": "",
-        "match": 0,
-        "val": "",
-        "perc": "",
-        "aliMis": 0,
-    }
+    TEST_REF = TEST_ALIGN_REF.copy()
     TEST_CPG = {"2": 1, "7": 1, "14": 1}
     EXPECTED = EXPECTED_ALIGN_MATCH
     actual = quma.process_alignment_matches(TEST_REF, TEST_CPG)
     assert EXPECTED == actual
 
 
+def test_process_alignment_matches_g_gap():
+    TEST_REF = TEST_ALIGN_REF.copy()
+    TEST_REF["gAli"] = "-TCGATCCGGCATACG"
+    TEST_CPG = {"2": 1, "7": 1, "14": 1}
+    EXPECTED = {
+        "qAli": "ATCGATCCGGCATACG",
+        "gAli": "-TCGATCCGGCATACG",
+        "gap": 1,
+        "menum": 0,
+        "unconv": 0,
+        "conv": 0,
+        "pconv": 0.0,
+        "match": 15,
+        "val": "-",
+        "perc": 93.8,
+        "aliMis": 1,
+        "aliLen": 16,
+    }
+    actual = quma.process_alignment_matches(TEST_REF, TEST_CPG)
+    assert EXPECTED == actual
+
+
+def test_process_alignment_matches_q_gap():
+    TEST_REF = TEST_ALIGN_REF.copy()
+    TEST_REF["qAli"] = "AT-GATCCGGCATACG"
+    TEST_CPG = {"2": 1, "7": 1, "14": 1}
+    EXPECTED = {
+        "qAli": "AT-GATCCGGCATACG",
+        "gAli": "ATCGATCCGGCATACG",
+        "gap": 1,
+        "menum": 2,
+        "unconv": 0,
+        "conv": 2,
+        "pconv": 100.0,
+        "match": 15,
+        "val": "-11",
+        "perc": 93.8,
+        "aliMis": 1,
+        "aliLen": 16,
+    }
+    actual = quma.process_alignment_matches(TEST_REF, TEST_CPG)
+    assert EXPECTED == actual
+
+
+def test_process_alignment_matches_q_is_T():
+    TEST_REF = TEST_ALIGN_REF.copy()
+    TEST_REF["qAli"] = "ATTGATCCGGCATACG"
+    TEST_CPG = {"2": 1, "7": 1, "14": 1}
+    EXPECTED = {
+        "qAli": "ATTGATCCGGCATACG",
+        "gAli": "ATCGATCCGGCATACG",
+        "gap": 0,
+        "menum": 2,
+        "unconv": 1,
+        "conv": 2,
+        "pconv": 66.7,
+        "match": 16,
+        "val": "011",
+        "perc": 100.0,
+        "aliMis": 0,
+        "aliLen": 16,
+    }
+    actual = quma.process_alignment_matches(TEST_REF, TEST_CPG)
+    assert EXPECTED == actual
+
+
+def test_process_alignment_matches_q_is_A():
+    TEST_REF = TEST_ALIGN_REF.copy()
+    TEST_REF["qAli"] = "ATAGATCCGGCATACG"
+    TEST_CPG = {"2": 1, "7": 1, "14": 1}
+    EXPECTED = {
+        "qAli": "ATAGATCCGGCATACG",
+        "gAli": "ATCGATCCGGCATACG",
+        "gap": 0,
+        "menum": 2,
+        "unconv": 0,
+        "conv": 2,
+        "pconv": 100.0,
+        "match": 15,
+        "val": "A11",
+        "perc": 93.8,
+        "aliMis": 1,
+        "aliLen": 16,
+    }
+    actual = quma.process_alignment_matches(TEST_REF, TEST_CPG)
+    assert EXPECTED == actual
+
+
 def test__find_best_dataset():
-    TEST_FFRES = EXPECTED_ALIGN_MATCH
+    TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
     TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
     TEST_FRRES["aliMis"] = 2
-    EXPECTED_RES = EXPECTED_ALIGN_MATCH
+    EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
     EXPECTED_DIRECTION = 1
+    actual_res, actual_dir = quma._find_best_dataset(TEST_FFRES, TEST_FRRES)
+    assert EXPECTED_RES == actual_res
+    assert EXPECTED_DIRECTION == actual_dir
+
+
+def test__find_best_dataset_rev():
+    TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
+    TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
+    TEST_FFRES["aliMis"] = 2
+    EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
+    EXPECTED_RES["aliMis"] = 0
+    EXPECTED_DIRECTION = -1
+    actual_res, actual_dir = quma._find_best_dataset(TEST_FFRES, TEST_FRRES)
+    assert EXPECTED_RES == actual_res
+    assert EXPECTED_DIRECTION == actual_dir
+
+
+def test__find_best_dataset_fwd_perc():
+    TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
+    TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
+    TEST_FRRES["perc"] = 70.0
+    EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
+    EXPECTED_DIRECTION = 1
+    actual_res, actual_dir = quma._find_best_dataset(TEST_FFRES, TEST_FRRES)
+    assert EXPECTED_RES == actual_res
+    assert EXPECTED_DIRECTION == actual_dir
+
+
+def test__find_best_dataset_rev_perc():
+    TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
+    TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
+    TEST_FFRES["perc"] = 70.0
+    EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
+    EXPECTED_DIRECTION = -1
+    actual_res, actual_dir = quma._find_best_dataset(TEST_FFRES, TEST_FRRES)
+    assert EXPECTED_RES == actual_res
+    assert EXPECTED_DIRECTION == actual_dir
+
+
+def test__find_best_dataset_fwd_unconv():
+    TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
+    TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
+    TEST_FRRES["unconv"] = 1
+    EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
+    EXPECTED_DIRECTION = 1
+    actual_res, actual_dir = quma._find_best_dataset(TEST_FFRES, TEST_FRRES)
+    assert EXPECTED_RES == actual_res
+    assert EXPECTED_DIRECTION == actual_dir
+
+
+def test__find_best_dataset_rev_unconv():
+    TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
+    TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
+    TEST_FFRES["unconv"] = 1
+    EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
+    EXPECTED_DIRECTION = -1
+    actual_res, actual_dir = quma._find_best_dataset(TEST_FFRES, TEST_FRRES)
+    assert EXPECTED_RES == actual_res
+    assert EXPECTED_DIRECTION == actual_dir
+
+
+def test__find_best_dataset_fwd_pconv():
+    TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
+    TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
+    TEST_FRRES["pconv"] = 70.0
+    EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
+    EXPECTED_DIRECTION = 1
+    actual_res, actual_dir = quma._find_best_dataset(TEST_FFRES, TEST_FRRES)
+    assert EXPECTED_RES == actual_res
+    assert EXPECTED_DIRECTION == actual_dir
+
+
+def test__find_best_dataset_rev_pconv():
+    TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
+    TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
+    TEST_FFRES["pconv"] = 70.0
+    EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
+    EXPECTED_DIRECTION = -1
     actual_res, actual_dir = quma._find_best_dataset(TEST_FFRES, TEST_FRRES)
     assert EXPECTED_RES == actual_res
     assert EXPECTED_DIRECTION == actual_dir
