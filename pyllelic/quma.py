@@ -181,14 +181,7 @@ def parse_biseq(file: str) -> List[Dict[str, str]]:
     Returns:
         List[Dict[str, str]]: list of dictionaries of sequence reads
     """
-    with open(file, "r") as f:
-        multi = f.read()
-
-    multi = re.sub(r"^[\r\s]+", "", multi)
-    multi = re.sub(r"[\r\s]+$", "", multi)
-    multi = re.sub(r"(\r\n){2}", "\r\n", multi)
-    multi = re.sub(r"(\n){2}", "\n", multi)
-    multi = re.sub(r"(\r){2}", "\r", multi)
+    multi = _multi_parser(file)
 
     return multi_fasta_parse(multi)
 
@@ -202,6 +195,14 @@ def parse_multi(file: str) -> Tuple[None, List[Dict[str, str]]]:
     Returns:
         Tuple[None, List[Dict[str, str]]]: None and list of dicts of sequence reads
     """
+    multi = _multi_parser(file)
+
+    biseq = multi_fasta_parse(multi)
+    return None, biseq
+
+
+def _multi_parser(file: str) -> Any:
+    """Helper to do substitution in fasta file contents."""
     with open(file, "r") as f:
         multi = f.read()
 
@@ -211,8 +212,7 @@ def parse_multi(file: str) -> Tuple[None, List[Dict[str, str]]]:
     multi = re.sub(r"(\n){2}", "\n", multi)
     multi = re.sub(r"(\r){2}", "\r", multi)
 
-    biseq = multi_fasta_parse(multi)
-    return None, biseq
+    return multi
 
 
 def fasta_make(seq: str, seq_name: str, line: int = None) -> str:

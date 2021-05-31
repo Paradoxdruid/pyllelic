@@ -50,6 +50,14 @@ GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
     assert EXPECTED.seq == actual[0].seq
 
 
+def test_process_fastq_to_list_wrong_filetype():
+    with tempfile.NamedTemporaryFile(suffix=".txt", prefix="test1") as my_file:
+        TEST_FILEPATH = Path(my_file.name)
+        actual = process.process_fastq_to_list(TEST_FILEPATH)
+
+    assert actual is None
+
+
 def test_make_records_to_dictionary():
     TEST_RECORD_LIST = [
         SeqIO.SeqRecord(

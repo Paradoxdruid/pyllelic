@@ -30,21 +30,6 @@ EXPECTED_ALIGN_MATCH = {
     "aliLen": 16,
 }
 
-EXPECTED_RESULT_DICT = {
-    "qAli": "ATCGATCCGGCATACG",
-    "gAli": "ATCGATCCGGCATACG",
-    "gap": 0,
-    "menum": 3,
-    "unconv": 0,
-    "conv": 3,
-    "pconv": 100.0,
-    "match": 16,
-    "val": "111",
-    "perc": 100.0,
-    "aliMis": 0,
-    "aliLen": 16,
-}
-
 TEST_FORMAT_DICT = {
     "qAli": "ATCGATCCGGCATACG",
     "gAli": "ATCGATCCGGCATACG",
@@ -280,14 +265,14 @@ def test_process_fasta_output():
     EXPECTED = [
         {
             "fa": {"com": "read0", "seq": "ATCGATCCGGCATACG", "pos": "1"},
-            "res": EXPECTED_RESULT_DICT,
+            "res": EXPECTED_ALIGN_MATCH,
             "dir": 1,
             "gdir": 1,
             "exc": 1,
         },
         {
             "fa": {"com": "read1", "seq": "ATCGATCCGGCATACG", "pos": "2"},
-            "res": EXPECTED_RESULT_DICT,
+            "res": EXPECTED_ALIGN_MATCH,
             "dir": 1,
             "gdir": 1,
             "exc": 1,
