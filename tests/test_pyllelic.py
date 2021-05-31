@@ -44,6 +44,15 @@ SAMPLE_DICT_OF_DFS = {
     ),
 }
 
+TEST_DF_SEQ_READS = pd.DataFrame.from_dict(
+    {
+        "1": "ATGCGTACGTA",
+        "2": "ATGCTAGGCCC",
+    },
+    orient="index",
+    columns=["sequence"],
+).stack()
+
 EXPECTED_INTERMEDIATE_MEANS = pd.DataFrame.from_dict(
     {
         "TEST1": [np.float64(5 / 6), np.float64(5 / 6), np.float64(1.0)],
@@ -228,39 +237,40 @@ def test_index_and_fetch(mock_run_sam):
         mock_run_sam.assert_called()
 
 
-@mock.patch("pyllelic.pyllelic.pysam")
-def test_run_sam_and_extract_df_no_process(mock_pysam):
-    """Check if a samfile will be properly aligned and read."""
-    # TEST_SAM_FILE = Path("TEST1.bam")
-    # TEST_SAM_ALIGNMENT = ""
-    # EXPECTED = pd.Index([])
-    # with mock.patch.object(pyllelic.Path, "exists") as mock_exists:
-    #     mock_exists.return_value = True
-    #     mock_pysam.AlignmentFile.return_value = TEST_SAM_ALIGNMENT
-    #     result = pyllelic.run_sam_and_extract_df(TEST_SAM_FILE, process=False)
+# @mock.patch("pyllelic.pyllelic.pysam")
+# def test_run_sam_and_extract_df_no_process(mock_pysam):
+#     """Check if a samfile will be properly aligned and read."""
+#     TEST_SAM_FILE = Path("TEST1.bam")
+#     TEST_SAM_ALIGNMENT =
+#     EXPECTED = pd.Index([])
+#     with mock.patch.object(pyllelic.Path, "exists") as mock_exists:
+#         mock_exists.return_value = True
+#         mock_pysam.AlignmentFile.return_value = TEST_SAM_ALIGNMENT
+#         result = pyllelic.run_sam_and_extract_df(TEST_SAM_FILE, process=False)
 
-    # mock_pysam.AlignmentFile.assert_called_once()
+#     mock_pysam.AlignmentFile.assert_called_once()
 
-    # pd.testing.assert_index_equal(result, expected)
+#     pd.testing.assert_index_equal(result, expected)
 
 
 def test_run_sam_and_extract_df_with_process():
     """Check if a samfile will be properly aligned and read."""
 
 
-def test_write_bam_output_files():
+@mock.patch("pyllelic.pyllelic.write_individual_bam_file")
+def test_write_bam_output_files(mock_writer):
     """Test writing bam files with a mock open."""
-    # TEST_SAMS = Path("fh_TEST1/")
-    # TEST_POSITIONS = ["1", "2", "3"]
-    # TEST_DF = pd.DataFrame()
-    # with tempfile.TemporaryDirectory() as tmpdirname:
-    #     pyllelic.config.base_directory = Path(tmpdirname)
-    #     pyllelic.write_bam_output_files(TEST_SAMS, TEST_POSITIONS, TEST_DF)
+    TEST_SAMS = Path("fh_TEST1/")
+    TEST_POSITIONS = ["1", "2"]
+    TEST_DF = TEST_DF_SEQ_READS
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        pyllelic.config.base_directory = Path(tmpdirname)
+        pyllelic.write_bam_output_files(TEST_SAMS, TEST_POSITIONS, TEST_DF)
 
-    # assert ?
+    mock_writer.assert_called()
 
 
-def test_write_individual_bamfile(mocker):
+def test_write_individual_bam_file(mocker):
     """Check if bam outputs would be correctly written."""
     open_mock = mocker.mock_open()
     test_position = "1"
@@ -403,8 +413,35 @@ def test_quma_full_threaded(mock_iterdir, mock_listdir, mock_pool):
         assert Path(tmpdirname).joinpath("output.xls").exists()
 
 
-def test__pool_processing():
-    pass
+class MockPoolApplyResult:
+    def __init__(self, func, args):
+        self._func = func
+        self._args = args
+
+    def get(self, timeout=0):
+        return self._func(*self._args)
+
+
+def _mock_apply_async(self, func, args=(), kwds={}, callback=None, error_callback=None):
+    return MockPoolApplyResult(func, args)
+
+
+@pytest.fixture(autouse=True)
+def mock_pool_apply_async(monkeypatch):
+    monkeypatch.setattr("multiprocessing.pool.Pool.apply_async", _mock_apply_async)
+
+
+@mock.patch("pyllelic.pyllelic._thread_worker")
+def test__pool_processing(mock_thread, mock_pool_apply_async):
+    TEST_READ_FILES = ["1.txt", "2.txt"]
+    EXPECTED_THREAD = pd.DataFrame({"1295094": ["1", "11"]})
+    EXPECTED_RESULTS = pd.concat([EXPECTED_THREAD, EXPECTED_THREAD], axis=1)
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        TEST_FOLDER = Path(tmpdirname)
+        mock_thread.return_value = EXPECTED_THREAD
+        actual = pyllelic._pool_processing(TEST_READ_FILES, TEST_FOLDER)
+
+    pd.testing.assert_frame_equal(actual, EXPECTED_RESULTS)
 
 
 def test_process_raw_quma():
