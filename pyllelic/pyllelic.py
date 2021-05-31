@@ -245,7 +245,7 @@ def write_bam_output_files(sams: Path, positions: List[str], df: pd.DataFrame) -
         read_file: List[str] = []
         for index, each in enumerate(alignments):
             read_file.append(str(">read" + str(index)))
-            read_file.append(each[0].seqB)
+            read_file.append(each)
             # returns aligned target sequence
 
         write_individual_bam_file(sam_name, each1, read_file)

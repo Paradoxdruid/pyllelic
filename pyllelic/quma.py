@@ -166,10 +166,9 @@ def multi_fasta_parse(multi: Any) -> List[Dict[str, str]]:
                 fa["seq"] = line.upper()
 
     if fa:
-        try:
-            _ = fa["seq"]
-        except KeyError:  # pragma: no cover
+        if not fa.get("seq"):  # pragma: no cover
             biseq.pop()
+
     return biseq
 
 
@@ -474,8 +473,8 @@ def process_alignment_matches(
     results = _generate_summary_stats(ref)
 
     # kludge:
-    if ref["val"] == "":
-        ref["val"] = "-"
+    if results["val"] == "":
+        results["val"] = "-"
     # logging.debug(f"results={results}")
     return results
 

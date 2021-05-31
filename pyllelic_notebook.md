@@ -42,9 +42,7 @@ Those files are in unaligned fastq format.  We will need to align these to a ref
 
 ### Aligning reads (using process.py)
 
-
 To align reads, we'll use bowtie2 and samtools (through its pysam wrapper).
-
 
 First, we need to download a genomic index sequence: http://hgdownload.soe.ucsc.edu/goldenPath/hg19
 
@@ -71,9 +69,9 @@ First, we need to download a genomic index sequence: http://hgdownload.soe.ucsc.
 ```
 
 Notes:
+
 * cores is number of processor cores, adjust for your system
 * instead of `out.bam` use a filename that encodes cell-line and tissue.  Our convention is: `fh_CELLLINE_TISSUE.TERT.bam`
-
 
 Next, we need to sort and index the bam file using samtools functions.
 
@@ -91,7 +89,6 @@ Next, we need to sort and index the bam file using samtools functions.
 
 Now, that sorted file (again, rename to capture cell-line and tissue info) is ready to be put in the `test` folder for analysis by pyllelic!
 
-
 ## Set-up
 
 ```python
@@ -105,24 +102,24 @@ import pyllelic
 # and put the .bam and .bai files in "test"
 
 # OSX setup
-pyllelic.set_up_env_variables(
-    base_path="/Users/abonham/documents/test_allelic/",
-    prom_file="TERT-promoter-genomic-sequence.txt",
-    prom_start="1293000",
-    prom_end="1296000",
-    chrom="5",
-    offset=1298163,
-)
-
-# Windows set-up
 # pyllelic.set_up_env_variables(
-#     base_path="/home/andrew/allellic/",
+#     base_path="/Users/abonham/documents/test_allelic/",
 #     prom_file="TERT-promoter-genomic-sequence.txt",
 #     prom_start="1293000",
 #     prom_end="1296000",
-#     chrom="chr5",
+#     chrom="5",
 #     offset=1298163,
 # )
+
+# Windows set-up
+pyllelic.set_up_env_variables(
+    base_path="/home/andrew/allellic/",
+    prom_file="TERT-promoter-genomic-sequence.txt",
+    prom_start="1293000",
+    prom_end="1296000",
+    chrom="chr5",
+    offset=1298163,
+)
 ```
 
 ## Main Parsing Functions
@@ -139,7 +136,7 @@ files_set
 ```python
 # index bam and creates bam_output folders/files
 # set process False to skip writing output files if they already exist
-positions = pyllelic.index_and_fetch(files_set, process=False)
+positions = pyllelic.index_and_fetch(files_set, process=True)
 ```
 
 ```python
@@ -177,7 +174,7 @@ cell_types
 ```python
 # Set filename to whatever you want
 df_list = pyllelic.run_quma_and_compile_list_of_df(
-    cell_types, "test1.xlsx",
+    cell_types, "test2.xlsx",
     run_quma=True,
 )  # to skip quma: , run_quma=False)
 ```
@@ -188,7 +185,7 @@ df_list.keys()
 ```
 
 ```python
-df_list["NCIH196"]["1295937"]
+df_list["SORTED"]
 ```
 
 ```python
