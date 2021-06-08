@@ -8,7 +8,7 @@ import signal
 import sys
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Set, Union, NamedTuple
 
 import numpy as np
 import pandas as pd
@@ -16,8 +16,6 @@ import plotly.graph_objects as go
 import pysam
 from Bio import pairwise2
 from scipy import stats
-
-# from skbio.alignment import StripedSmithWaterman
 from tqdm.notebook import tqdm
 
 from . import quma
@@ -342,7 +340,7 @@ def access_quma(directory: Path, genomic_seq_file: str, reads_seq_file: str) -> 
     return result
 
 
-def _init_worker():
+def _init_worker() -> None:
     """
     Pool worker initializer for keyboard interrupt on Windows
     """
@@ -772,16 +770,19 @@ def histogram(data: pd.DataFrame, cell_line: str, position: str) -> None:
 
 def anderson_darling_test(
     raw_list: Optional[pd.Series],
-) -> Tuple[bool, float, List[Any]]:
+) -> NamedTuple[bool, float, List[Any]]:
     """Run the Anderson-Darling normality test on methylation data at a point.
 
     Args:
         raw_list (pd.Series): list of fractional methylation levels per read.
 
     Returns:
-        Tuple[bool, float, List[Any]]: is the data significantly allelic (bool),
+        NamedTuple[bool, float, List[Any]]: is the data significantly allelic (bool),
                                  A-D statistic (float), critical values (list)
     """
+    AD_stats = NamedTuple(
+        "AD_stats", [("sig", bool), ("stat", float), ("crits", List[Any])]
+    )
     if np.all(pd.notnull(raw_list)):
         stat: float
         crits: List[Any]
@@ -790,8 +791,8 @@ def anderson_darling_test(
             is_sig = True
         else:
             is_sig = False
-        return (is_sig, stat, crits)
-    return (False, np.nan, [np.nan])
+        return AD_stats(is_sig, stat, crits)
+    return AD_stats(False, np.nan, [np.nan])
 
 
 def generate_ad_stats(individual_data_df: pd.DataFrame) -> pd.DataFrame:
