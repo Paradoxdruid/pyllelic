@@ -768,21 +768,25 @@ def histogram(data: pd.DataFrame, cell_line: str, position: str) -> None:
     fig.show()
 
 
-def anderson_darling_test(
-    raw_list: Optional[pd.Series],
-) -> NamedTuple[bool, float, List[Any]]:
+class AD_stats(NamedTuple):
+    """Helper class for NamedTuple results from anderson_darling_test"""
+
+    sig: bool
+    stat: float
+    crits: List[Any]
+
+
+def anderson_darling_test(raw_list: Optional[pd.Series]) -> AD_stats:
     """Run the Anderson-Darling normality test on methylation data at a point.
 
     Args:
         raw_list (pd.Series): list of fractional methylation levels per read.
 
     Returns:
-        NamedTuple[bool, float, List[Any]]: is the data significantly allelic (bool),
+        AD_stats[bool, float, List[Any]]: is the data significantly allelic (bool),
                                  A-D statistic (float), critical values (list)
     """
-    AD_stats = NamedTuple(
-        "AD_stats", [("sig", bool), ("stat", float), ("crits", List[Any])]
-    )
+
     if np.all(pd.notnull(raw_list)):
         stat: float
         crits: List[Any]

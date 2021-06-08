@@ -422,7 +422,9 @@ class MockPoolApplyResult:
         return self._func(*self._args)
 
 
-def _mock_apply_async(self, func, args=(), kwds={}, callback=None, error_callback=None):
+def _mock_apply_async(
+    self, func, args=(), kwds=None, callback=None, error_callback=None
+):
     return MockPoolApplyResult(func, args)
 
 
