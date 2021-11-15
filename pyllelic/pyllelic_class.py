@@ -8,7 +8,7 @@ import signal
 import sys
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union, NamedTuple
+from typing import Any, Dict, List, Optional, Union, NamedTuple, KeysView
 
 import numpy as np
 import pandas as pd
@@ -32,37 +32,6 @@ config = Config()
 NUM_THREADS = cpu_count() - 1
 
 
-def set_up_env_variables(
-    base_path: str,
-    prom_file: str,
-    prom_start: str,
-    prom_end: str,
-    chrom: str,
-    offset: int,
-) -> None:
-    """Helper method to set up all our environmental variables, such as for testing.
-
-    Args:
-        base_path (str): directory where all processing will occur, put .bam files
-                         in "test" sub-directory in this folder
-        prom_file (str): filename of genmic sequence of promoter region of interest
-        prom_start (str): start position to analyze in promoter region
-        prom_end (str): final position to analyze in promoter region
-        chrom (str): chromosome promoter is located on
-        offset (int): genomic position of promoter to offset reads
-    """
-
-    config.base_directory = Path(base_path)
-    config.promoter_file = Path(base_path) / prom_file
-    config.results_directory = Path(base_path) / "results"
-    config.bam_directory = Path(base_path) / "bam_output"
-    config.analysis_directory = Path(base_path) / "test"
-    config.promoter_start = prom_start
-    config.promoter_end = prom_end
-    config.chromosome = chrom
-    config.offset = offset
-
-
 class AD_stats(NamedTuple):
     """Helper class for NamedTuple results from anderson_darling_test"""
 
@@ -72,7 +41,9 @@ class AD_stats(NamedTuple):
 
 
 class BamOutput:
-    def __init__(self, sam_directory: Path, genome_string: str, config: Config):
+    """Storage container to process BAM sequencing files and store processed results."""
+
+    def __init__(self, sam_directory: Path, genome_string: str, config: Config) -> None:
         self._config: Config = config
         self.name: str = str(sam_directory)
         self.values: Dict[str, str] = {}
@@ -202,7 +173,7 @@ class BamOutput:
         """Writes out a list of genomic sequence strings for comparison to read data."""
 
         # Grab list of read files in that directory:
-        read_files: List[str] = self.values.keys()
+        read_files: KeysView[str] = self.values.keys()
 
         # Now, process each file:
         for read_name in read_files:
@@ -216,9 +187,11 @@ class BamOutput:
 
 
 class QumaResult:
+    """Storage container to process and store quma-style methylation results."""
+
     def __init__(
         self, read_files: List[str], genomic_files: List[str], positions: List[str]
-    ):
+    ) -> None:
         self._read_files: List[str] = read_files
         self._genomic_files: List[str] = genomic_files
         self._positions: List[str] = positions
@@ -326,7 +299,18 @@ class QumaResult:
 
 
 class GenomicPositionData:
-    def __init__(self, config: Config, files_set: List[str]):
+    """Class to process reduced representation bisulfite methylation sequencing data.
+
+    When initialized, GenomicPositionData reads sequencing file (.bam) locations from
+    a config object, and then automatically performs alignment into BamOutput objects,
+    and then performs methylation analysis, storing the results as QumaResults.
+
+    Finally, the aggregate data is analyzed to create some aggregate metrics such as
+    means, modes, and differences (diffs), as well as expose methods for plotting
+    and statistical analysis.
+    """
+
+    def __init__(self, config: Config, files_set: List[str]) -> None:
         self.config: Config = config
         self.files_set: List[str] = files_set
 
@@ -345,6 +329,7 @@ class GenomicPositionData:
         self.means: pd.DataFrame = self.process_means()
         self.modes: pd.DataFrame = self.process_modes()
         self.diffs: pd.DataFrame = self.find_diffs(self.means, self.modes)
+        self.individual_data: pd.DataFrame = self.return_individual_data()
 
     def index_and_fetch(self) -> None:
         """Wrapper to call processing of each sam file.
@@ -364,6 +349,11 @@ class GenomicPositionData:
             self._bam_output[sams] = BamOutput(sams, self.genome_string, self.config)
 
     def _calculate_positions(self) -> List[str]:
+        """Return sorted list of all positions analyzed.
+
+        Returns:
+            List[str]: sorted list of all positions analyzed.
+        """
 
         positions = []
         for sublist in self._bam_output.values():
@@ -371,8 +361,6 @@ class GenomicPositionData:
                 positions.append(each)
 
         return sorted(set(positions))
-        #     set([item for each in self._bam_output.values() for item in each])
-        # )
 
     @staticmethod
     def extract_cell_types(file_sets: List[str]) -> List[str]:
@@ -515,7 +503,7 @@ class GenomicPositionData:
 
         values_list: List[float] = []
         # Check if this cell line has that position
-        df = self.quma_results.get(key).values
+        df: pd.DataFrame = self.quma_results[key].values
         if pos in df.columns:  # type: ignore[union-attr]
 
             values_to_check: List[str] = self.get_str_values(df, pos)
@@ -544,7 +532,7 @@ class GenomicPositionData:
 
     @staticmethod
     def find_diffs(means_df: pd.DataFrame, modes_df: pd.DataFrame) -> pd.DataFrame:
-        """Find the differences between means and modes for each cell line at each position
+        """Find the differences between means and modes for each cell line at each pos
         in means and modes data.
 
         Args:
@@ -633,42 +621,32 @@ class GenomicPositionData:
 
         return fig
 
-    def histogram(self, data: pd.DataFrame, cell_line: str, position: str) -> None:
+    def histogram(self, cell_line: str, position: str) -> None:
         """Display a graph figure showing fractional methylation in
         a given cell line at a given site.
 
         Args:
-            data (pd.DataFrame): dataframe of individual data
             cell_line (str): name of cell line
             position (str): genomic position
         """
+        data = self.individual_data
 
         fig: go.Figure = self.create_histogram(data, cell_line, position)
         fig.show()
 
-    def generate_ad_stats(self, individual_data_df: pd.DataFrame) -> pd.DataFrame:
+    def generate_ad_stats(self) -> pd.DataFrame:
         """Generate Anderson-Darling normality statistics for an individual data df.
-
-        Args:
-            individual_data_df (pd.DataFrame): df of individual fractional methylation
-            values per read
 
         Returns:
             pd.DataFrame: df of a-d test statistics
         """
         np.seterr(divide="ignore", invalid="ignore")  # ignore divide-by-zero errors
-        df = individual_data_df
+        df = self.individual_data
         df2 = df.applymap(self.anderson_darling_test)
         return df2
 
-    def summarize_allelic_data(
-        self, individual_data_df: pd.DataFrame, diffs_df: pd.DataFrame
-    ) -> pd.DataFrame:
+    def summarize_allelic_data(self) -> pd.DataFrame:
         """Create a dataframe only of likely allelic methylation positions
-
-        Args:
-            individual_data_df (pd.DataFrame): meth values for ea pos in ea cell line
-            diffs_df (pd.DataFrame): dataframe of difference values
 
         Returns:
             pd.DataFrame: dataframe of cell lines with likely allelic positions
@@ -682,13 +660,13 @@ class GenomicPositionData:
             "diff": [],
             "raw": [],
         }
-        for index, row in individual_data_df.iterrows():
+        for index, row in self.individual_data.iterrows():
             for column in row.index:
                 value = row[column]
                 if np.all(pd.notnull(value)):
                     good, stat, crits = self.anderson_darling_test(value)
                     if good:
-                        sig_dict["diff"].append(diffs_df.loc[index, column])
+                        sig_dict["diff"].append(self.diffs.loc[index, column])
                         sig_dict["cellLine"].append(index)
                         sig_dict["position"].append(column)
                         sig_dict["raw"].append(value)
@@ -724,6 +702,39 @@ class GenomicPositionData:
 ##################################################################################
 ##################################################################################
 
+# Module level helper functions
+
+
+def set_up_env_variables(
+    base_path: str,
+    prom_file: str,
+    prom_start: str,
+    prom_end: str,
+    chrom: str,
+    offset: int,
+) -> None:
+    """Helper method to set up all our environmental variables, such as for testing.
+
+    Args:
+        base_path (str): directory where all processing will occur, put .bam files
+                         in "test" sub-directory in this folder
+        prom_file (str): filename of genmic sequence of promoter region of interest
+        prom_start (str): start position to analyze in promoter region
+        prom_end (str): final position to analyze in promoter region
+        chrom (str): chromosome promoter is located on
+        offset (int): genomic position of promoter to offset reads
+    """
+
+    config.base_directory = Path(base_path)
+    config.promoter_file = Path(base_path) / prom_file
+    config.results_directory = Path(base_path) / "results"
+    config.bam_directory = Path(base_path) / "bam_output"
+    config.analysis_directory = Path(base_path) / "test"
+    config.promoter_start = prom_start
+    config.promoter_end = prom_end
+    config.chromosome = chrom
+    config.offset = offset
+
 
 def make_list_of_bam_files() -> List[str]:
     """Check analysis directory for all valid .bam files.
@@ -734,6 +745,7 @@ def make_list_of_bam_files() -> List[str]:
     return [f.name for f in config.analysis_directory.iterdir() if f.suffix == ".bam"]
 
 
+# Main magic
 if __name__ == "__main__":
     if sys.argv[1]:
         filename: str = sys.argv[1]

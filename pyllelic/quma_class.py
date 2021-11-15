@@ -160,8 +160,8 @@ def multi_fasta_parse(multi: Any) -> List[Dict[str, str]]:
             line = curate_seq(line)
             if line == "":
                 continue
-            if not fa:  # pragma: no cover
-                return None  # does this ever happen?
+            # if not fa:  # pragma: no cover
+            #     return None  # does this ever happen?
             try:
                 fa["seq"] += line.upper()
             except KeyError:

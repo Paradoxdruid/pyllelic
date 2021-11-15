@@ -6,7 +6,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.11.3
+      jupytext_version: 1.11.2
   kernelspec:
     display_name: Python 3 (ipykernel)
     language: python
@@ -112,24 +112,24 @@ from pyllelic import pyllelic_class as pyllelic
 # and put the .bam and .bai files in "test"
 
 # OSX setup
-# pyllelic.set_up_env_variables(
-#     base_path="/Users/abonham/documents/test_allelic/",
-#     prom_file="TERT-promoter-genomic-sequence.txt",
-#     prom_start="1293000",
-#     prom_end="1296000",
-#     chrom="5",
-#     offset=1298163,
-# )
-
-# Windows set-up
 pyllelic.set_up_env_variables(
-    base_path="/home/andrew/allellic/",
+    base_path="/Users/abonham/documents/test_allelic/",
     prom_file="TERT-promoter-genomic-sequence.txt",
     prom_start="1293000",
     prom_end="1296000",
     chrom="5",
     offset=1298163,
 )
+
+# Windows set-up
+# pyllelic.set_up_env_variables(
+#     base_path="/home/andrew/allellic/",
+#     prom_file="TERT-promoter-genomic-sequence.txt",
+#     prom_start="1293000",
+#     prom_end="1296000",
+#     chrom="5",
+#     offset=1298163,
+# )
 ```
 
 ## Main Parsing Functions
@@ -160,12 +160,12 @@ data.diffs
 ```
 
 ```python
-data.quma_results["SW1710"].values
+data.quma_results["NCIH196"].values
 ```
 
 ```python
 # Uncomment for debugging:
-data.positions
+", ".join(data.positions)
 ```
 
 ## Write Output to excel files
@@ -182,30 +182,21 @@ data.write_means_modes_diffs("Test1")
 ## Visualizing Data
 
 ```python
-# final_data = pyllelic.pd.read_excel(
-#     pyllelic.config.base_directory.joinpath("Test1_diff.xlsx"),
-#     dtype=str,
-#     index_col=0,
-#     engine="openpyxl",
-# )
+data.quma_results["SW1710"].values
 ```
 
 ```python
-# final_data
+data.individual_data
 ```
 
 ```python
-data.quma_results["SW1710"].values["1293588"]
-```
-
-```python
-data.histogram(data.quma_results["SW1710"].values, "0", "1293588")
+data.histogram("SW1710", "1293588")
 ```
 
 ## Statistical Tests for Normality
 
 ```python
-data.summarize_allelic_data(data.quma_results["SW1710"].values, data.diffs)
+data.summarize_allelic_data()
 ```
 
 ```python
