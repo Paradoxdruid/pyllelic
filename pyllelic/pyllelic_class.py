@@ -74,8 +74,8 @@ class BamOutput:
             int(self._config.promoter_end),
         )
 
-        position: List = []
-        sequence: List = []
+        position: List[str] = []
+        sequence: List[str] = []
 
         for x in itern:
             cols = str(x).split()
@@ -104,7 +104,7 @@ class BamOutput:
         """
 
         for each1 in positions:
-            alignments: List = []
+            alignments: List[str] = []
 
             # Set up query using alignment algorithm
             query_sequence: List[str] = df.loc[each1].head(1).tolist()[0]
@@ -177,7 +177,7 @@ class BamOutput:
 
         # Now, process each file:
         for read_name in read_files:
-            file_lines: List = []
+            file_lines: List[str] = []
             # Grab the genomic sequence
             file_lines.append(str(">genome" + str(read_name)))
             file_lines.append(str(self._genome_range(read_name, genome_string)))
@@ -232,14 +232,13 @@ class QumaResult:
         returns: List[Any] = []
         with Pool(NUM_THREADS, self._init_worker) as pool:
 
-            # FIXME
             for position, read, genomic in zip(
                 self._positions, self._read_files, self._genomic_files
             ):
 
                 result = pool.apply_async(
                     self._thread_worker,
-                    (read, genomic, position),
+                    (genomic, read, position),
                 )
                 returns.append(result)
 
@@ -277,7 +276,6 @@ class QumaResult:
         processed_quma: List[str] = self.process_raw_quma(quma_result)
         # Next, add this readname to the holding data frame
         int_df: pd.DataFrame = pd.DataFrame({position: processed_quma})
-
         return int_df
 
     @staticmethod
@@ -691,10 +689,7 @@ class GenomicPositionData:
             stat: float
             crits: List[Any]
             stat, crits, _ = stats.anderson(raw_list)
-            if stat > crits[4]:
-                is_sig = True
-            else:
-                is_sig = False
+            is_sig: bool = bool(stat > crits[4])
             return AD_stats(is_sig, stat, crits)
         return AD_stats(False, np.nan, [np.nan])
 

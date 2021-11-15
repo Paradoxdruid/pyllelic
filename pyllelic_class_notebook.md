@@ -6,7 +6,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.11.2
+      jupytext_version: 1.11.3
   kernelspec:
     display_name: Python 3 (ipykernel)
     language: python
@@ -112,24 +112,24 @@ from pyllelic import pyllelic_class as pyllelic
 # and put the .bam and .bai files in "test"
 
 # OSX setup
-pyllelic.set_up_env_variables(
-    base_path="/Users/abonham/documents/test_allelic/",
-    prom_file="TERT-promoter-genomic-sequence.txt",
-    prom_start="1293000",
-    prom_end="1296000",
-    chrom="5",
-    offset=1298163,
-)
-
-# Windows set-up
 # pyllelic.set_up_env_variables(
-#     base_path="/home/andrew/allellic/",
+#     base_path="/Users/abonham/documents/test_allelic/",
 #     prom_file="TERT-promoter-genomic-sequence.txt",
 #     prom_start="1293000",
 #     prom_end="1296000",
 #     chrom="5",
 #     offset=1298163,
 # )
+
+# Windows set-up
+pyllelic.set_up_env_variables(
+    base_path="/home/andrew/allellic/",
+    prom_file="TERT-promoter-genomic-sequence.txt",
+    prom_start="1293000",
+    prom_end="1296000",
+    chrom="5",
+    offset=1298163,
+)
 ```
 
 ## Main Parsing Functions
@@ -148,6 +148,15 @@ data = pyllelic.GenomicPositionData(config=pyllelic.config, files_set=files_set)
 ```
 
 ```python
+# from pathlib import PosixPath
+# bam = data._bam_output[PosixPath('/home/andrew/allellic/test/fh_SW1710_URINARY_TRACT.TERT.bam')]
+```
+
+```python
+# bam.values
+```
+
+```python
 data.means
 ```
 
@@ -160,7 +169,7 @@ data.diffs
 ```
 
 ```python
-data.quma_results["NCIH196"].values
+data.quma_results["SW1710"].values.head()
 ```
 
 ```python
