@@ -201,8 +201,6 @@ class BamOutput:
     def genome_parsing(self, genome_string: str) -> None:
         """Writes out a list of genomic sequence strings for comparison to read data."""
 
-        """Helper for processing genome file writing."""
-
         # Grab list of read files in that directory:
         read_files: List[str] = self.values.keys()
 
@@ -309,7 +307,8 @@ class QumaResult:
 
         return int_df
 
-    def access_quma(self, genomic_contents: str, read_contents: str) -> str:
+    @staticmethod
+    def access_quma(genomic_contents: str, read_contents: str) -> str:
         """Helper function to run internal QUMA tool.
 
         Args:
@@ -375,7 +374,8 @@ class GenomicPositionData:
         #     set([item for each in self._bam_output.values() for item in each])
         # )
 
-    def extract_cell_types(self, file_sets: List[str]) -> List[str]:
+    @staticmethod
+    def extract_cell_types(file_sets: List[str]) -> List[str]:
         """Returns a list[str] of cell line names in the dataset."""
 
         return [file.split("_")[1] for file in file_sets]
