@@ -130,3 +130,6 @@ dmypy.json
 # Sphinx
 source/
 _build/
+big_data.pickle
+big_diffs.xlsx
+sig.xlsx
