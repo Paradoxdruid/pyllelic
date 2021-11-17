@@ -185,7 +185,67 @@ data.save()
 
 ```python
 # Set the filename to whatever you want
-data.write_means_modes_diffs("Test1")
+data.write_means_modes_diffs("Full1")
+```
+
+```python
+import cloudpickle
+```
+
+```python
+with open(r"big_data.pickle", "wb") as output_file:
+    cloudpickle.dump(data, output_file)
+```
+
+```python
+with open(r"big_data.pickle", "rb") as input_file:
+    data2 = cloudpickle.load(input_file)
+```
+
+```python
+data2.__dict__.keys()
+```
+
+```python
+data2.individual_data.loc["OVK18"].dropna()["1293111"]
+```
+
+```python
+large_diffs = data.diffs[(data.diffs >= 0.01).any(1)].dropna(how="all", axis=1)
+```
+
+```python
+large_diffs
+```
+
+```python
+temp = large_diffs.loc["HUH6"]
+temp.loc[(temp != 0)].dropna()
+```
+
+```python
+interesting = {}
+for index, row in large_diffs.iterrows():
+    if row.loc[(row != 0)].dropna().any():
+        print(row.loc[(row != 0)].dropna())
+        interesting[index] = row.loc[(row != 0)].dropna()
+```
+
+```python
+interesting
+```
+
+```python
+import pandas as pd
+big_diffs = pd.DataFrame.from_dict(interesting)
+```
+
+```python
+big_diffs
+```
+
+```python
+big_diffs.to_excel("big_diffs.xlsx")
 ```
 
 ## Visualizing Data
@@ -199,13 +259,13 @@ data.individual_data
 ```
 
 ```python
-data.histogram("SW1710", "1293588")
+data2.histogram("OVK18", "1293111")
 ```
 
 ## Statistical Tests for Normality
 
 ```python
-data.summarize_allelic_data()
+data2.summarize_allelic_data()
 ```
 
 ```python

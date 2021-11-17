@@ -28,33 +28,30 @@ Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/
         chrom="5",
     )
 
-    pyllelic.setup_directories()  # Read env variables to set up directories to use
-
     files_set = pyllelic.make_list_of_bam_files()  # finds bam files
 
-    positions = pyllelic.index_and_fetch(files_set)  # index bam and creates bam_output folders/files
+    # Run pyllelic; make take some time depending on number of bam files
+    data = pyllelic.GenomicPositionData(config=pyllelic.config, files_set=files_set)
 
-    pyllelic.genome_parsing()  # writes out genome strings in bam_output folders
+    positions = data.positions
 
-    cell_types = pyllelic.extract_cell_types(files_set)  # pulls out the cell types available for analysis
+    cell_types = data.cell_types
 
-    df_list = pyllelic.run_quma_and_compile_list_of_df(cell_types, filename)  # run quma, get dfs
+    means_df = data.means
 
-    means_df = pyllelic.process_means(df_list, positions, files_set)  # process means data from dataframes
-
-    modes_df = pyllelic.process_modes(df_list, positions, cell_types)  # process modes data from dataframes
+    modes_df = data.modes
     
-    diff_df = pyllelic.find_diffs(means_df, modes_df)  # find difference between mean and mode
+    diff_df = data.diffs
 
-    pyllelic.write_means_modes_diffs(means_df, modes_df, diffs_df, filename)  # write output data to excel files
+    individual_data = data.individual_data
 
-    final_data = pyllelic.pd.read_excel(pyllelic.config.base_directory.joinpath(filename), dtype=str, index_col=0, engine="openpyxl")  # load saved data
+    data.save() # save methylation results
+    
+    data.write_means_modes_diffs(filename="output.xlsx")  # write output data to excel files
 
-    individual_data = pyllelic.return_individual_data(df_list, positions, files_set)  # load individual data sets
+    data.histogram("CELL_LINE", "POSITION")  # visualize data for a point
 
-    pyllelic.histogram(individual_data, "CELL_LINE", "POSITION")  # visualize data for a point
-
-    final_data.loc["CELL_LINE"]  # see summary data for a cell line
+    data.quma_results["CELL_LINE"]  # see summary data for a cell line
 ```
 
 </details>

@@ -118,8 +118,10 @@ def parse_genome(file: str) -> str:
     Returns:
         str: parsed and curated string of genome sequence.
     """
-    with open(file, "r") as f:
-        seq = f.read()
+    # with open(file, "r") as f:
+    #     seq = f.read()
+
+    seq = file
 
     seq = re.sub(r"^[\r\s]+", "", seq)
     seq = re.sub(r"[\r\s]+$", "", seq)
@@ -158,8 +160,8 @@ def multi_fasta_parse(multi: Any) -> List[Dict[str, str]]:
             line = curate_seq(line)
             if line == "":
                 continue
-            if not fa:  # pragma: no cover
-                return None  # does this ever happen?
+            # if not fa:  # pragma: no cover
+            #     return None  # does this ever happen?
             try:
                 fa["seq"] += line.upper()
             except KeyError:
@@ -203,8 +205,10 @@ def parse_multi(file: str) -> Tuple[None, List[Dict[str, str]]]:
 
 def _multi_parser(file: str) -> Any:
     """Helper to do substitution in fasta file contents."""
-    with open(file, "r") as f:
-        multi = f.read()
+    # with open(file, "r") as f:
+    #     multi = f.read()
+
+    multi = file
 
     multi = re.sub(r"^[\r\s]+", "", multi)
     multi = re.sub(r"[\r\s]+$", "", multi)
@@ -626,14 +630,14 @@ def find_cpg(gseq: str) -> Tuple[List[str], Dict[str, Any], Dict[str, Any]]:
     return (positions, cpgf, cpgr)
 
 
-def quma_main(gfile: str, qfile: str) -> str:
+def quma_main(gfile_contents: str, qfile_contents: str) -> str:
     """Run quma for quantification of methylation of bisulfite sequencing reads."""
 
     # t = make_time()
     # uid = "{}{:06d}".format(t, os.getpid())
 
-    gseq = parse_genome(gfile)
-    qseq = parse_biseq(qfile)
+    gseq = parse_genome(gfile_contents)
+    qseq = parse_biseq(qfile_contents)
 
     positions, cpgf, cpgr = find_cpg(gseq)
 
