@@ -358,7 +358,7 @@ class GenomicPositionData:
             for each in sublist.values.keys():
                 positions.append(each)
 
-        return sorted(set(positions))
+        return sorted(list(set(positions)))
 
     @staticmethod
     def extract_cell_types(file_sets: List[str]) -> List[str]:

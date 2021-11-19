@@ -25,6 +25,7 @@ from bam_input import (
     EXPECTED_BAM_OUTPUT_GENOME_VALUES,
     EXPECTED_STACKED_BAM,
     EXPECTED_WRITE_DF_OUTPUT,
+    INPUT_READ_FILE,
 )
 
 # Required libraries for test data
@@ -37,7 +38,7 @@ from pathlib import Path
 import pyllelic.pyllelic as pyllelic
 
 
-# Helper method
+# Helper methods
 @contextmanager
 def tempinput(data):  # pragma: no cover
     """Helper for virtual files."""
@@ -48,6 +49,56 @@ def tempinput(data):  # pragma: no cover
         yield temp.name
     finally:
         os.unlink(temp.name)
+
+
+@pytest.fixture(autouse=True)
+def mock_pool_apply_async(monkeypatch):
+    monkeypatch.setattr("multiprocessing.pool.Pool.apply_async", _mock_apply_async)
+
+
+def _mock_apply_async(
+    self, func, args=(), kwds=None, callback=None, error_callback=None
+):
+    return MockPoolApplyResult(func, args)
+
+
+class MockPoolApplyResult:
+    def __init__(self, func, args):
+        self._func = func
+        self._args = args
+
+    def get(self, timeout=0):
+        return self._func(*self._args)
+
+
+def setup_bam_files(tmp_path):
+    d = tmp_path / "test"
+    d.mkdir()
+    fn_bam = "fh_test.bam"
+    filepath_bam = d / fn_bam
+    filepath_bam.write_bytes(base64.decodebytes(SAMPLE_BAM))
+    fn_bai = "fh_test.bam.bai"
+    filepath_bai = d / fn_bai
+    filepath_bai.write_bytes(base64.decodebytes(SAMPLE_BAI))
+    return tmp_path, filepath_bam
+
+
+def setup_config(my_path):
+    d = my_path
+    prom_file = d / "test.txt"
+    prom_file.write_text(TEST_PROM_FILE)
+    TEST_START = "1293000"
+    TEST_END = "1296000"
+    TEST_CHR = "5"
+    TEST_OFFSET = 0
+    pyllelic.set_up_env_variables(
+        base_path=my_path,
+        prom_file=prom_file,
+        prom_start=TEST_START,
+        prom_end=TEST_END,
+        chrom=TEST_CHR,
+        offset=TEST_OFFSET,
+    )
 
 
 # Tests
@@ -76,55 +127,44 @@ def test_set_up_env_variables():
     assert EXPECTED_RESULTS == pyllelic.config.results_directory
 
 
+def test_make_list_of_bam_files():
+    """Test making list of bam files, mocking config."""
+    TEST_LIST = [
+        Path("bad1.txt"),
+        Path("bad2.bai"),
+        Path("good1.bam"),
+        Path("good2.bam"),
+    ]
+    EXPECTED = ["good1.bam", "good2.bam"]
+    with mock.patch.object(pyllelic.Path, "iterdir") as mock_iterdir:
+        mock_iterdir.return_value = TEST_LIST
+        actual = pyllelic.make_list_of_bam_files()
+
+    assert EXPECTED == actual
+
+
 # Tests of main classes
 
 
 class Test_BamOutput:
     """Class to test BamOutput object initialization and read."""
 
+    # pylint: disable=no-self-use
+
     @pytest.fixture()
     def set_up_bam_output(self, tmp_path):
-        p, fp_bam = self.setup_bam_files(tmp_path)
-        # print(f"Path: {p}")
-        self.setup_config(p)
+        p, fp_bam = setup_bam_files(tmp_path)
+        setup_config(p)
         return pyllelic.BamOutput(
             sam_directory=fp_bam,
             genome_string=TEST_PROM_FILE,
             config=pyllelic.config,
         )
 
-    def setup_bam_files(self, tmp_path):
-        d = tmp_path / "test"
-        d.mkdir()
-        fn_bam = "test.bam"
-        filepath_bam = d / fn_bam
-        filepath_bam.write_bytes(base64.decodebytes(SAMPLE_BAM))
-        fn_bai = "test.bam.bai"
-        filepath_bai = d / fn_bai
-        filepath_bai.write_bytes(base64.decodebytes(SAMPLE_BAI))
-        return tmp_path, filepath_bam
-
-    def setup_config(self, my_path):
-        d = my_path
-        prom_file = d / "test.txt"
-        prom_file.write_text(TEST_PROM_FILE)
-        TEST_START = "1293000"
-        TEST_END = "1296000"
-        TEST_CHR = "5"
-        TEST_OFFSET = 0
-        pyllelic.set_up_env_variables(
-            base_path=my_path,
-            prom_file=prom_file,
-            prom_start=TEST_START,
-            prom_end=TEST_END,
-            chrom=TEST_CHR,
-            offset=TEST_OFFSET,
-        )
-
     def test_init(self, tmp_path, set_up_bam_output):
         bam_output = set_up_bam_output
 
-        assert bam_output.name == str(tmp_path / "test" / "test.bam")
+        assert bam_output.name == str(tmp_path / "test" / "fh_test.bam")
         assert bam_output.values == EXPECTED_BAM_OUTPUT_VALUES
         pd.testing.assert_index_equal(
             bam_output.positions, EXPECTED_BAM_OUTPUT_POSITIONS
@@ -174,54 +214,125 @@ class Test_BamOutput:
 class Test_QumaOutput:
     """Class to test QumaOutput object initialization and read."""
 
-    # @pytest.fixture()
-    # def set_up_quma_output(self, tmp_path):
-    #     p, fp_bam = self.setup_bam_files(tmp_path)
-    #     # print(f"Path: {p}")
-    #     self.setup_config(p)
-    #     return pyllelic.BamOutput(
-    #         sam_directory=fp_bam,
-    #         genome_string=TEST_PROM_FILE,
-    #         config=pyllelic.config,
-    #     )
+    # pylint: disable=no-self-use
 
-    # def setup_bam_files(self, tmp_path):
-    #     d = tmp_path / "test"
-    #     d.mkdir()
-    #     fn_bam = "test.bam"
-    #     filepath_bam = d / fn_bam
-    #     filepath_bam.write_bytes(base64.decodebytes(SAMPLE_BAM))
-    #     fn_bai = "test.bam.bai"
-    #     filepath_bai = d / fn_bai
-    #     filepath_bai.write_bytes(base64.decodebytes(SAMPLE_BAI))
-    #     return tmp_path, filepath_bam
+    @pytest.fixture()
+    def set_up_quma_output(self):
 
-    # def setup_config(self, my_path):
-    #     d = my_path
-    #     prom_file = d / "test.txt"
-    #     prom_file.write_text(TEST_PROM_FILE)
-    #     TEST_START = "1293000"
-    #     TEST_END = "1296000"
-    #     TEST_CHR = "5"
-    #     TEST_OFFSET = 0
-    #     pyllelic.set_up_env_variables(
-    #         base_path=my_path,
-    #         prom_file=prom_file,
-    #         prom_start=TEST_START,
-    #         prom_end=TEST_END,
-    #         chrom=TEST_CHR,
-    #         offset=TEST_OFFSET,
-    #     )
+        INPUT_GENOMIC_FILE = ["CGGCGTAGGTAGGTTCGTACGAAGTCGTA"]
 
-    # def test_init(self, tmp_path, set_up_bam_output):
-    #     bam_output = set_up_bam_output
+        return pyllelic.QumaResult(INPUT_READ_FILE, INPUT_GENOMIC_FILE, ["1293588"])
 
-    #     assert bam_output.name == str(tmp_path / "test" / "test.bam")
-    #     assert bam_output.values == EXPECTED_BAM_OUTPUT_VALUES
-    #     pd.testing.assert_index_equal(
-    #         bam_output.positions, EXPECTED_BAM_OUTPUT_POSITIONS
-    #     )
-    #     assert bam_output.genome_values == EXPECTED_BAM_OUTPUT_GENOME_VALUES
+    def test_init(self, set_up_quma_output):
+        quma_output = set_up_quma_output
+
+        EXPECTED_QUMA_VALUES = pd.DataFrame.from_dict(
+            {
+                "1293588": {
+                    0: "1111",
+                    1: "11111",
+                    2: "11111",
+                    3: "11111",
+                    4: "11111",
+                    5: "11111",
+                }
+            }
+        )
+
+        pd.testing.assert_frame_equal(quma_output.values, EXPECTED_QUMA_VALUES)
+
+    def test_process_raw_quma(self, set_up_quma_output):
+        quma_output = set_up_quma_output
+        TEST_QUMA_RESULT = (
+            "genome\t0\tATCGTAGTCGA\t2\t2,8\n"
+            + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"
+            + "11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n"
+            + "2\tquery2\tATCGATAGCATT\tATCGATAGCATT\tATCG-TAGTCGA\t"
+            + "12\t5\t58.3\t1\t1\t0\t1\t100.0\t1A\t1\t1\n"
+        )
+        EXPECTED = ["FAIL", "11"]
+        actual = quma_output.process_raw_quma(TEST_QUMA_RESULT)
+        assert EXPECTED == actual
+
+    def test__pool_processing(self, set_up_quma_output):
+        quma_output = set_up_quma_output
+
+        EXPECTED_RESULTS = pd.DataFrame.from_dict(
+            {
+                "1293588": {
+                    0: "1111",
+                    1: "11111",
+                    2: "11111",
+                    3: "11111",
+                    4: "11111",
+                    5: "11111",
+                }
+            }
+        )
+
+        actual = quma_output._pool_processing()
+
+        pd.testing.assert_frame_equal(actual, EXPECTED_RESULTS)
+
+    @mock.patch("pyllelic.pyllelic.signal.signal")
+    def test__init_worker(self, mock_signal, set_up_quma_output):
+        quma_output = set_up_quma_output
+        quma_output._init_worker()
+        mock_signal.assert_called_once()
+
+    def test__thread_worker(self, set_up_quma_output):
+        quma_output = set_up_quma_output
+        TEST_READ_NAME = "1295094"
+        TEST_GSEQ = ">genome\nATCGTAGTCGA"
+        TEST_QSEQ = ">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
+
+        EXPECTED: pd.DataFrame = pd.DataFrame({"1295094": ["1", "11"]})
+
+        actual = quma_output._thread_worker(TEST_GSEQ, TEST_QSEQ, TEST_READ_NAME)
+
+        pd.testing.assert_frame_equal(actual, EXPECTED)
+
+    def test_access_quma(self, set_up_quma_output):
+        quma_output = set_up_quma_output
+        TEST_GSEQ = ">genome\nATCGTAGTCGA"
+        TEST_QSEQ = ">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
+
+        EXPECTED = (
+            "genome\t0\tATCGTAGTCGA\t2\t2,8\n"
+            + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"
+            + "11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n"
+            + "2\tquery2\tATCGATAGCATT\tATCG-TAGT\tATCGATAGC\t"
+            + "9\t1\t88.9\t1\t1\t0\t1\t100.0\t1\t1\t1\n"
+        )
+        # with mock.patch("builtins.open", new=my_open):
+        actual = quma_output.access_quma(TEST_GSEQ, TEST_QSEQ)
+        assert EXPECTED == actual
+
+
+class Test_GenomicPositionData:
+    """Class to test QumaOutput object initialization and read."""
+
+    # pylint: disable=no-self-use
+
+    @pytest.fixture()
+    def set_up_genomic_position_data(self, tmp_path):
+        p, fp_bam = setup_bam_files(tmp_path)
+        setup_config(p)
+        INPUT_BAM_LIST = ["fh_test.bam"]
+        return pyllelic.GenomicPositionData(
+            config=pyllelic.config, files_set=INPUT_BAM_LIST
+        )
+
+    def test_init(self, set_up_genomic_position_data):
+        genomic_position_data = set_up_genomic_position_data
+
+        positions = []
+        for each in EXPECTED_BAM_OUTPUT_POSITIONS:
+            positions.append(each)
+
+        EXPECTED_POSITIONS = sorted(set(positions))
+
+        assert genomic_position_data.positions == EXPECTED_POSITIONS
 
 
 # # Mock out main to ensure it just tests functionality of the main function
@@ -273,249 +384,6 @@ class Test_QumaOutput:
 #     mock_means.assert_called_once()
 #     mock_modes.assert_called_once()
 #     mock_writer.assert_called_once()
-
-
-def test_make_list_of_bam_files():
-    """Test making list of bam files, mocking config."""
-    TEST_LIST = [
-        Path("bad1.txt"),
-        Path("bad2.bai"),
-        Path("good1.bam"),
-        Path("good2.bam"),
-    ]
-    EXPECTED = ["good1.bam", "good2.bam"]
-    with mock.patch.object(pyllelic.Path, "iterdir") as mock_iterdir:
-        mock_iterdir.return_value = TEST_LIST
-        actual = pyllelic.make_list_of_bam_files()
-
-    assert EXPECTED == actual
-
-
-# @mock.patch("pyllelic.pyllelic.run_sam_and_extract_df")
-# def test_index_and_fetch(mock_run_sam):
-#     TEST_FILES = ["TEST1", "TEST2", "TEST3"]
-#     TEST_PROCESS = False
-#     with tempfile.TemporaryDirectory() as tmpdirname:
-#         pyllelic.config.base_directory = Path(tmpdirname)
-#         mock_run_sam.return_value = pd.Index(["1", "2", "3"])
-#         pyllelic.index_and_fetch(TEST_FILES, TEST_PROCESS)
-
-#         mock_run_sam.assert_called()
-
-
-# # @mock.patch("pyllelic.pyllelic.pysam")
-# # def test_run_sam_and_extract_df_no_process(mock_pysam):
-# #     """Check if a samfile will be properly aligned and read."""
-# #     TEST_SAM_FILE = Path("TEST1.bam")
-# #     TEST_SAM_ALIGNMENT =
-# #     EXPECTED = pd.Index([])
-# #     with mock.patch.object(pyllelic.Path, "exists") as mock_exists:
-# #         mock_exists.return_value = True
-# #         mock_pysam.AlignmentFile.return_value = TEST_SAM_ALIGNMENT
-# #         result = pyllelic.run_sam_and_extract_df(TEST_SAM_FILE, process=False)
-
-# #     mock_pysam.AlignmentFile.assert_called_once()
-
-# #     pd.testing.assert_index_equal(result, expected)
-
-
-# def test_run_sam_and_extract_df_with_process():
-#     """Check if a samfile will be properly aligned and read."""
-
-
-# @mock.patch("pyllelic.pyllelic.write_individual_bam_file")
-# def test_write_bam_output_files(mock_writer):
-#     """Test writing bam files with a mock open."""
-#     TEST_SAMS = Path("fh_TEST1/")
-#     TEST_POSITIONS = ["1", "2"]
-#     TEST_DF = TEST_DF_SEQ_READS
-#     with tempfile.TemporaryDirectory() as tmpdirname:
-#         pyllelic.config.base_directory = Path(tmpdirname)
-#         pyllelic.write_bam_output_files(TEST_SAMS, TEST_POSITIONS, TEST_DF)
-
-#     mock_writer.assert_called()
-
-
-# def test_write_individual_bam_file(mocker):
-#     """Check if bam outputs would be correctly written."""
-#     open_mock = mocker.mock_open()
-#     test_position = "1"
-#     test_contents = [">read0", "ATGCATGCATGCATGC"]
-#     test_sam = "fh_TEST1_CELL.TERT.bam"
-#     expected_directory = pyllelic.config.base_directory.joinpath(
-#         "bam_output", test_sam, "1.txt"
-#     )
-
-#     with mock.patch("builtins.open", open_mock, create=True) as m:
-#         pyllelic.write_individual_bam_file(
-#             sam_name=test_sam, filename=test_position, file_contents=test_contents
-#         )
-
-#     open_mock.assert_called_with(expected_directory, "w")
-#     handle = m()
-#     handle.write.assert_called_with("ATGCATGCATGCATGC\n")
-
-
-# @mock.patch("pyllelic.pyllelic._process_genome_parsing")
-# @mock.patch.object(pyllelic.Path, "is_dir")
-# @mock.patch.object(pyllelic.Path, "iterdir")
-# def test_genome_parsing(mock_iterdir, mock_is_dir, mock_process):
-#     with tempfile.NamedTemporaryFile() as my_file:
-#         my_file.write(b"ATGCTCTAGCTCGCTAGATCGCTCGATCGTAGCTAGCTA")
-#         my_file.seek(0)
-#         pyllelic.config.promoter_file = my_file.name
-#         mock_iterdir.return_value = [Path("TEST1/"), Path("TEST2/")]
-#         mock_is_dir.return_value = True
-#         pyllelic.genome_parsing()
-
-#         mock_process.assert_called()
-
-
-# @mock.patch("pyllelic.pyllelic.genome_range")
-# @mock.patch.object(pyllelic.os, "listdir")
-# def test__process_genome_parsing(mock_listdir, mock_range):
-#     with tempfile.TemporaryDirectory() as tempdir:
-#         TEST_GENOME_STRING = "ATGCTCTAGCTCGCTAGATCGCTCGATCGTAGCTAGCTA"
-#         mock_listdir.return_value = ["1.txt", "2.txt", "g_1.txt"]
-#         mock_range.return_value = "ACGACATGA"
-#         pyllelic._process_genome_parsing(Path(tempdir), TEST_GENOME_STRING)
-
-#         mock_range.assert_called()
-
-
-# def test_access_quma():
-#     TEST_DIRECTORY = "Test"
-#     TEST_GSEQ_NAME = "genome.txt"
-#     TEST_GSEQ = ">genome\nATCGTAGTCGA"
-#     TEST_QSEQ_NAME = "query.txt"
-#     TEST_QSEQ = ">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
-
-#     # From https://stackoverflow.com/questions/26783678/
-#     #      python-mock-builtin-open-in-a-class-using-two-different-files
-#     def my_open(filename, _):
-#         if filename == f"{TEST_DIRECTORY}/{TEST_GSEQ_NAME}":
-#             content = TEST_GSEQ
-#         elif filename == f"{TEST_DIRECTORY}/{TEST_QSEQ_NAME}":
-#             content = TEST_QSEQ
-#         else:  # pragma: no cover
-#             raise FileNotFoundError(filename)
-#         file_object = mock.mock_open(read_data=content).return_value
-#         file_object.__iter__.return_value = content.splitlines(True)
-#         return file_object
-
-#     EXPECTED = (
-#         "genome\t0\tATCGTAGTCGA\t2\t2,8\n"
-#         + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"
-#         + "11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n"
-#         + "2\tquery2\tATCGATAGCATT\tATCG-TAGT\tATCGATAGC\t"
-#         + "9\t1\t88.9\t1\t1\t0\t1\t100.0\t1\t1\t1\n"
-#     )
-#     with mock.patch("builtins.open", new=my_open):
-#         actual = pyllelic.access_quma(TEST_DIRECTORY, TEST_GSEQ_NAME, TEST_QSEQ_NAME)
-#     assert EXPECTED == actual
-
-
-# @mock.patch("pyllelic.pyllelic.signal.signal")
-# def test__init_worker(mock_signal):
-#     pyllelic._init_worker()
-#     mock_signal.assert_called_once()
-
-
-# def test__thread_worker():
-#     TEST_FOLDER = "Test"
-#     TEST_READ_NAME = "1295094"
-#     TEST_GSEQ_NAME = f"g_{TEST_READ_NAME}.txt"
-#     TEST_GSEQ = ">genome\nATCGTAGTCGA"
-#     TEST_QSEQ_NAME = f"{TEST_READ_NAME}.txt"
-#     TEST_QSEQ = ">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
-
-#     EXPECTED: pd.DataFrame = pd.DataFrame({"1295094": ["1", "11"]})
-
-#     # From https://stackoverflow.com/questions/26783678/
-#     #      python-mock-builtin-open-in-a-class-using-two-different-files
-#     def my_open(filename, _):
-#         if filename == f"{TEST_FOLDER}/{TEST_GSEQ_NAME}":
-#             content = TEST_GSEQ
-#         elif filename == f"{TEST_FOLDER}/{TEST_QSEQ_NAME}":
-#             content = TEST_QSEQ
-#         else:  # pragma: no cover
-#             raise FileNotFoundError(filename)
-#         file_object = mock.mock_open(read_data=content).return_value
-#         file_object.__iter__.return_value = content.splitlines(True)
-#         return file_object
-
-#     with mock.patch("builtins.open", new=my_open):
-#         actual = pyllelic._thread_worker(TEST_FOLDER, TEST_READ_NAME)
-
-#     pd.testing.assert_frame_equal(actual, EXPECTED)
-
-
-# @mock.patch("pyllelic.pyllelic._pool_processing")
-# @mock.patch.object(pyllelic.os, "listdir")
-# @mock.patch.object(pyllelic.Path, "iterdir")
-# def test_quma_full_threaded(mock_iterdir, mock_listdir, mock_pool):
-#     TEST_TYPES = ["TEST1", "TEST2", "TEST3"]
-#     TEST_FILENAME = "output.xls"
-#     TEST_ITERDIR = [
-#         Path("bad1.txt"),
-#         Path("bad2.bai"),
-#         Path("fh_TEST1/"),
-#         Path("fh_TEST2/"),
-#     ]
-#     with tempfile.TemporaryDirectory() as tmpdirname:
-#         pyllelic.config.base_directory = Path(tmpdirname)
-#         mock_iterdir.return_value = TEST_ITERDIR
-#         mock_listdir.return_value = ["g_1.txt", "g_2.txt", "1.txt", "2.txt"]
-#         mock_pool.return_value = pd.DataFrame({"1295094": ["1A", "11"]})
-#         pyllelic.quma_full_threaded(TEST_TYPES, TEST_FILENAME)
-
-#         assert Path(tmpdirname).joinpath("output.xls").exists()
-
-
-# class MockPoolApplyResult:
-#     def __init__(self, func, args):
-#         self._func = func
-#         self._args = args
-
-#     def get(self, timeout=0):
-#         return self._func(*self._args)
-
-
-# def _mock_apply_async(
-#     self, func, args=(), kwds=None, callback=None, error_callback=None
-# ):
-#     return MockPoolApplyResult(func, args)
-
-
-# @pytest.fixture(autouse=True)
-# def mock_pool_apply_async(monkeypatch):
-#     monkeypatch.setattr("multiprocessing.pool.Pool.apply_async", _mock_apply_async)
-
-
-# @mock.patch("pyllelic.pyllelic._thread_worker")
-# def test__pool_processing(mock_thread, mock_pool_apply_async):
-#     TEST_READ_FILES = ["1.txt", "2.txt"]
-#     EXPECTED_THREAD = pd.DataFrame({"1295094": ["1", "11"]})
-#     EXPECTED_RESULTS = pd.concat([EXPECTED_THREAD, EXPECTED_THREAD], axis=1)
-#     with tempfile.TemporaryDirectory() as tmpdirname:
-#         TEST_FOLDER = Path(tmpdirname)
-#         mock_thread.return_value = EXPECTED_THREAD
-#         actual = pyllelic._pool_processing(TEST_READ_FILES, TEST_FOLDER)
-
-#     pd.testing.assert_frame_equal(actual, EXPECTED_RESULTS)
-
-
-# def test_process_raw_quma():
-#     TEST_QUMA_RESULT = (
-#         "genome\t0\tATCGTAGTCGA\t2\t2,8\n"
-#         + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"
-#         + "11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n"
-#         + "2\tquery2\tATCGATAGCATT\tATCGATAGCATT\tATCG-TAGTCGA\t"
-#         + "12\t5\t58.3\t1\t1\t0\t1\t100.0\t1A\t1\t1\n"
-#     )
-#     EXPECTED = ["FAIL", "11"]
-#     actual = pyllelic.process_raw_quma(TEST_QUMA_RESULT)
-#     assert EXPECTED == actual
 
 
 # def test_extract_cell_types():

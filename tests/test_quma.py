@@ -4,9 +4,10 @@
 # Testing
 import pytest  # noqa
 import unittest.mock as mock
-import os
-import tempfile
-from contextlib import contextmanager
+
+# import os
+# import tempfile
+# from contextlib import contextmanager
 
 # Required libraries for test data
 
@@ -75,16 +76,16 @@ TEST_ALIGN_REF = {
 
 
 # Test functions
-@contextmanager
-def tempinput(data):
-    """Helper for virtual files."""
-    temp = tempfile.NamedTemporaryFile(delete=False)
-    temp.write(data)
-    temp.close()
-    try:
-        yield temp.name
-    finally:
-        os.unlink(temp.name)
+# @contextmanager
+# def tempinput(data):
+#     """Helper for virtual files."""
+#     temp = tempfile.NamedTemporaryFile(delete=False)
+#     temp.write(data)
+#     temp.close()
+#     try:
+#         yield temp.name
+#     finally:
+#         os.unlink(temp.name)
 
 
 def test_check_char_in_allowed():
