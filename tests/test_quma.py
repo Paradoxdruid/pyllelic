@@ -114,10 +114,10 @@ def test_parse_seq():
 
 
 def test_parse_genome():
-    TEST_SEQ = b">query\nATCGTAGTCGA"
+    TEST_SEQ = ">query\nATCGTAGTCGA"
     EXPECTED = "ATCGTAGTCGA"
-    with tempinput(TEST_SEQ) as tempfilename:
-        actual = quma.parse_genome(tempfilename)
+    # with tempinput(TEST_SEQ) as tempfilename:
+    actual = quma.parse_genome(TEST_SEQ)
     assert EXPECTED == actual
 
 
@@ -132,18 +132,18 @@ def test_multi_fasta_parse():
 
 
 def test_parse_biseq():
-    TEST_SEQ = b">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
+    TEST_SEQ = ">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
     EXPECTED = [
         {"com": "query1", "seq": "ATCGTAGTCGA"},
         {"com": "query2", "seq": "ATCGATAGCATT"},
     ]
-    with tempinput(TEST_SEQ) as tempfilename:
-        actual = quma.parse_biseq(tempfilename)
+    # with tempinput(TEST_SEQ) as tempfilename:
+    actual = quma.parse_biseq(TEST_SEQ)
     assert EXPECTED == actual
 
 
 def test_parse_multi():
-    TEST_SEQ = b">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
+    TEST_SEQ = ">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
     EXPECTED = (
         None,
         [
@@ -151,8 +151,8 @@ def test_parse_multi():
             {"com": "query2", "seq": "ATCGATAGCATT"},
         ],
     )
-    with tempinput(TEST_SEQ) as tempfilename:
-        actual = quma.parse_multi(tempfilename)
+    # with tempinput(TEST_SEQ) as tempfilename:
+    actual = quma.parse_multi(TEST_SEQ)
     assert EXPECTED == actual
 
 
@@ -499,11 +499,11 @@ def test_find_cpg():
 
 
 def test_quma_main():
-    TEST_GSEQ = b">query\nATCGTAGTCGA"
-    TEST_QSEQ = b">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
-    with tempinput(TEST_GSEQ) as temp_gseq:
-        with tempinput(TEST_QSEQ) as temp_qseq:
-            actual = quma.quma_main(temp_gseq, temp_qseq)
+    TEST_GSEQ = ">query\nATCGTAGTCGA"
+    TEST_QSEQ = ">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
+    # with tempinput(TEST_GSEQ) as temp_gseq:
+    # with tempinput(TEST_QSEQ) as temp_qseq:
+    actual = quma.quma_main(TEST_GSEQ, TEST_QSEQ)
     EXPECTED = (
         "genome\t0\tATCGTAGTCGA\t2\t2,8\n"
         + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"

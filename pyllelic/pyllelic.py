@@ -87,20 +87,20 @@ class BamOutput:
         )
 
         df2: pd.DataFrame = df.set_index("positions")
-        df3: pd.DataFrame = df2.stack()
+        df3: pd.Series = df2.stack()
 
         self.write_bam_output(df2.index.unique(), df3)
 
         return df2.index.unique()
 
-    def write_bam_output(self, positions: List[str], df: pd.DataFrame) -> None:
+    def write_bam_output(self, positions: List[str], df: pd.Series) -> None:
         """Extract alignments from sequencing reads and output text strings
         in bam values dictionary.
 
         Args:
             sams (Path): path to a sam file
             positions (List[str]): list of unique positions
-            df (pd.DataFrame): dataframe of sequencing reads
+            df (pd.Series): series of sequencing reads
         """
 
         for each1 in positions:
