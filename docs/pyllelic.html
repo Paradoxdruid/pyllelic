@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyllelic package &mdash; Pyllelic 0.1.6 documentation</title>
+  <title>pyllelic package &mdash; Pyllelic 0.2.0 documentation</title>
   
 
   
@@ -378,59 +378,46 @@ in reduced representation bisulfate DNA sequencing.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">BamOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sam_directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genome_string</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><span class="pre">pyllelic.config.Config</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyllelic.pyllelic.BamOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Storage container to process BAM sequencing files and store processed results.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.BamOutput.genome_parsing">
-<span class="sig-name descname"><span class="pre">genome_parsing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome_string</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.BamOutput.genome_parsing" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes out a list of genomic sequence strings for comparison to read data.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.BamOutput.pysam_index">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">pysam_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bamfile</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.BamOutput.pysam_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper function to run external samtools index.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.BamOutput.genome_values">
+<span class="sig-name descname"><span class="pre">genome_values</span></span><em class="property"><span class="pre">:</span> <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.BamOutput.genome_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>dictionary of read files and contents.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>bamfile</strong> (<em>Path</em>) – filepath to bam file</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>verification of samtools command, usually discarded</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>bool</p>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Dict[str, str]</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.BamOutput.run_sam_and_extract_df">
-<span class="sig-name descname"><span class="pre">run_sam_and_extract_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sams</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.indexes.base.Index</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.BamOutput.run_sam_and_extract_df" title="Permalink to this definition">¶</a></dt>
-<dd><p>Process samfiles, pulling out sequence and position data
-and writing to folders/files.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.BamOutput.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#pyllelic.pyllelic.BamOutput.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>path to bam file analyzed.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>sams</strong> (<em>Path</em>) – path to a samfile</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of unique positions in the samfile</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.Index</p>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.BamOutput.write_bam_output">
-<span class="sig-name descname"><span class="pre">write_bam_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">positions</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.series.Series</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.BamOutput.write_bam_output" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract alignments from sequencing reads and output text strings
-in bam values dictionary.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.BamOutput.positions">
+<span class="sig-name descname"><span class="pre">positions</span></span><em class="property"><span class="pre">:</span> <span class="pre">pandas.core.indexes.base.Index</span></em><a class="headerlink" href="#pyllelic.pyllelic.BamOutput.positions" title="Permalink to this definition">¶</a></dt>
+<dd><p>index of genomic positions in the bam file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sams</strong> (<em>Path</em>) – path to a sam file</p></li>
-<li><p><strong>positions</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of unique positions</p></li>
-<li><p><strong>df</strong> (<em>pd.Series</em>) – series of sequencing reads</p></li>
-</ul>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>“pd.Index</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.BamOutput.values">
+<span class="sig-name descname"><span class="pre">values</span></span><em class="property"><span class="pre">:</span> <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.BamOutput.values" title="Permalink to this definition">¶</a></dt>
+<dd><p>dictionary of reads at a given position</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Dict[str, str]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -448,74 +435,54 @@ and then performs methylation analysis, storing the results as QumaResults.</p>
 <p>Finally, the aggregate data is analyzed to create some aggregate metrics such as
 means, modes, and differences (diffs), as well as expose methods for plotting
 and statistical analysis.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.anderson_darling_test">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">anderson_darling_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_list</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyllelic.pyllelic.AD_stats" title="pyllelic.pyllelic.AD_stats"><span class="pre">pyllelic.pyllelic.AD_stats</span></a></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.anderson_darling_test" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run the Anderson-Darling normality test on methylation data at a point.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.cell_types">
+<span class="sig-name descname"><span class="pre">cell_types</span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.cell_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of cell types in the data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>raw_list</strong> (<em>pd.Series</em>) – list of fractional methylation levels per read.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>is the data significantly allelic (bool),</dt><dd><p>A-D statistic (float), critical values (list)</p>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#pyllelic.pyllelic.AD_stats" title="pyllelic.pyllelic.AD_stats">AD_stats</a>[bool, float, List[Any]]</p>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[str]</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.create_histogram">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">create_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_line</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">plotly.graph_objs._figure.Figure</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.create_histogram" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate a graph figure showing fractional methylation in
-a given cell line at a given site.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.config">
+<span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><span class="pre">pyllelic.config.Config</span></a></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.config" title="Permalink to this definition">¶</a></dt>
+<dd><p>pyllelic config object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – dataframe of individual data</p></li>
-<li><p><strong>cell_line</strong> (<em>str</em>) – name of cell line</p></li>
-<li><p><strong>position</strong> (<em>str</em>) – genomic position</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>plotly figure object</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>go.Figure</p>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config">Config</a></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.extract_cell_types">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">extract_cell_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_sets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.extract_cell_types" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a list[str] of cell line names in the dataset.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.find_diffs">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">find_diffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">means_df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modes_df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.find_diffs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find the differences between means and modes for each cell line at each pos
-in means and modes data.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.diffs">
+<span class="sig-name descname"><span class="pre">diffs</span></span><em class="property"><span class="pre">:</span> <span class="pre">pandas.core.frame.DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.diffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>dataframe of difference mean minus mode methylation values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>means_df</strong> (<em>pd.DataFrame</em>) – dataframe of means values</p></li>
-<li><p><strong>modes_df</strong> (<em>pd.DataFrame</em>) – dataframe of modes values</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>dataframe of difference values</p>
-</dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.files_set">
+<span class="sig-name descname"><span class="pre">files_set</span></span><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.files_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of bam files analyzed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.from_pickle">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_pickle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pyllelic.pyllelic.GPD</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.from_pickle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read pickled GenomicPositionData back to an object.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -528,26 +495,6 @@ in means and modes data.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>pd.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.get_str_values">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">get_str_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.get_str_values" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return list of values a a position in given dataframe of methylation data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – cell line dataframe</p></li>
-<li><p><strong>pos</strong> (<em>str</em>) – position being analyzed</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of values</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>List[str]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -567,98 +514,57 @@ a given cell line at a given site.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.index_and_fetch">
-<span class="sig-name descname"><span class="pre">index_and_fetch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.index_and_fetch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper to call processing of each sam file.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.individual_data">
+<span class="sig-name descname"><span class="pre">individual_data</span></span><em class="property"><span class="pre">:</span> <span class="pre">pandas.core.frame.DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.individual_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>dataframe of individual methylation values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>genome_string</strong> (<em>str</em>) – genomic sequence to align against</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of genomic positions analyzed</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list[str]</p>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.process_means">
-<span class="sig-name descname"><span class="pre">process_means</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.process_means" title="Permalink to this definition">¶</a></dt>
-<dd><p>Process the mean values at each position for each cell line.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.means">
+<span class="sig-name descname"><span class="pre">means</span></span><em class="property"><span class="pre">:</span> <span class="pre">pandas.core.frame.DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.means" title="Permalink to this definition">¶</a></dt>
+<dd><p>dataframe of mean methylation values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>dataframes of mean values for each position in each cell line</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>pd.DataFrame</p>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.process_modes">
-<span class="sig-name descname"><span class="pre">process_modes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.process_modes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Process the mode values at each position for each cell line.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.modes">
+<span class="sig-name descname"><span class="pre">modes</span></span><em class="property"><span class="pre">:</span> <span class="pre">pandas.core.frame.DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.modes" title="Permalink to this definition">¶</a></dt>
+<dd><p>dataframe of modes of methylation values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>dataframes of mode values for each position in each cell line</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>pd.DataFrame</p>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.quma_full_threaded">
-<span class="sig-name descname"><span class="pre">quma_full_threaded</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#pyllelic.pyllelic.QumaResult" title="pyllelic.pyllelic.QumaResult"><span class="pre">pyllelic.pyllelic.QumaResult</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.quma_full_threaded" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run external QUMA methylation analysis on all specified cell lines,
-using multiprocessing library.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.positions">
+<span class="sig-name descname"><span class="pre">positions</span></span><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.positions" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of genomic positions in the data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>dictionary of cell_types and quma results</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Dict[str, <a class="reference internal" href="#pyllelic.pyllelic.QumaResult" title="pyllelic.pyllelic.QumaResult">QumaResult</a>]</p>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[str]</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.return_individual_data">
-<span class="sig-name descname"><span class="pre">return_individual_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.return_individual_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a dataframe for methylation values at each position for each cell line.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.quma_results">
+<span class="sig-name descname"><span class="pre">quma_results</span></span><em class="property"><span class="pre">:</span> <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#pyllelic.pyllelic.QumaResult" title="pyllelic.pyllelic.QumaResult"><span class="pre">pyllelic.pyllelic.QumaResult</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.quma_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of QumaResults.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>methylation values for each position in each cell line</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>pd.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.return_read_values">
-<span class="sig-name descname"><span class="pre">return_read_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_sites</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.return_read_values" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a genomic position, cell line, and data, find fractional methylation
-values for each read in the dataset.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pos</strong> (<em>str</em>) – genomic position of read</p></li>
-<li><p><strong>key</strong> (<em>str</em>) – cell line name</p></li>
-<li><p><strong>min_sites</strong> (<em>int</em>) – minimum bound for # methylation sites to consider</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of fractional methylation for each read</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>List[float]</p>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Dict[str, <a class="reference internal" href="#pyllelic.pyllelic.QumaResult" title="pyllelic.pyllelic.QumaResult">QumaResult</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -675,6 +581,12 @@ values for each read in the dataset.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.save_pickle">
+<span class="sig-name descname"><span class="pre">save_pickle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.save_pickle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save GenomicPositionData object as a pickled file.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.summarize_allelic_data">
 <span class="sig-name descname"><span class="pre">summarize_allelic_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.summarize_allelic_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a dataframe only of likely allelic methylation positions</p>
@@ -684,23 +596,6 @@ values for each read in the dataset.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>pd.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.truncate_diffs">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">truncate_diffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diffs_df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.truncate_diffs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove missing or non-interesting diffs, and sort by magnitude.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>diffs_df</strong> (<em>pd.DataFrame</em>) – dataframe of diffs values</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>truncated dataframe</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -723,33 +618,12 @@ values for each read in the dataset.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">QumaResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_files</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genomic_files</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyllelic.pyllelic.QumaResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Storage container to process and store quma-style methylation results.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.QumaResult.access_quma">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">access_quma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genomic_contents</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_contents</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.QumaResult.access_quma" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper function to run internal QUMA tool.</p>
-<p>Args:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.QumaResult.values">
+<span class="sig-name descname"><span class="pre">values</span></span><em class="property"><span class="pre">:</span> <span class="pre">pandas.core.frame.DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.QumaResult.values" title="Permalink to this definition">¶</a></dt>
+<dd><p>dataframe of quma methylation analysis values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>output from quma command</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.QumaResult.process_raw_quma">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">process_raw_quma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quma_result</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyllelic.pyllelic.QumaResult.process_raw_quma" title="Permalink to this definition">¶</a></dt>
-<dd><p>Spit and process raw quma results into a pandas dataframe.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>quma_result</strong> (<em>str</em>) – console output from quma program.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>intermediate dataframe to append</p>
-</dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
