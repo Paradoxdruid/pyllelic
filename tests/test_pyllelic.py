@@ -172,13 +172,13 @@ class Test_BamOutput:
 
     def test_run_sam_and_extract_df(self, set_up_bam_output):
         bam_output = set_up_bam_output
-        actual_positions = bam_output.run_sam_and_extract_df(Path(bam_output.name))
+        actual_positions = bam_output._run_sam_and_extract_df(Path(bam_output.name))
         assert actual_positions == EXPECTED_BAM_OUTPUT_POSITIONS
 
     def test_write_bam_output(self, set_up_bam_output):
         bam_output = set_up_bam_output
         # print(f"Initial bam values:\n{bam_output.values}")
-        bam_output.write_bam_output(bam_output.positions, EXPECTED_STACKED_BAM)
+        bam_output._write_bam_output(bam_output.positions, EXPECTED_STACKED_BAM)
         # print(f"Revised bam values:\n{bam_output.values}")
         assert bam_output.values == EXPECTED_WRITE_DF_OUTPUT
 
@@ -186,7 +186,7 @@ class Test_BamOutput:
     def test_pysam_index(self, mock_pysam, set_up_bam_output):
         bam_output = set_up_bam_output
         TEST_PATH = Path().cwd()
-        bam_output.pysam_index(TEST_PATH)
+        bam_output._pysam_index(TEST_PATH)
         mock_pysam.index.assert_called_once_with(os.fspath(TEST_PATH))
 
     def test__genome_range(self, set_up_bam_output):
@@ -250,7 +250,7 @@ class Test_QumaOutput:
             + "12\t5\t58.3\t1\t1\t0\t1\t100.0\t1A\t1\t1\n"
         )
         EXPECTED = ["FAIL", "11"]
-        actual = quma_output.process_raw_quma(TEST_QUMA_RESULT)
+        actual = quma_output._process_raw_quma(TEST_QUMA_RESULT)
         assert EXPECTED == actual
 
     def test__pool_processing(self, set_up_quma_output):
@@ -304,7 +304,7 @@ class Test_QumaOutput:
             + "9\t1\t88.9\t1\t1\t0\t1\t100.0\t1\t1\t1\n"
         )
         # with mock.patch("builtins.open", new=my_open):
-        actual = quma_output.access_quma(TEST_GSEQ, TEST_QSEQ)
+        actual = quma_output._access_quma(TEST_GSEQ, TEST_QSEQ)
         assert EXPECTED == actual
 
 
