@@ -22,9 +22,9 @@ jupyter:
 <!-- #region hidden=true -->
 This notebook illustrates the import and use of `pyllelic` in a jupyter environment.
 
-Source code: https://github.com/Paradoxdruid/pyllelic 
+Source code: <https://github.com/Paradoxdruid/pyllelic>
 
-Documentation: https://paradoxdruid.github.io/pyllelic/
+Documentation: <https://paradoxdruid.github.io/pyllelic/>
 <!-- #endregion -->
 
 <!-- #region heading_collapsed=true -->
@@ -37,7 +37,7 @@ Documentation: https://paradoxdruid.github.io/pyllelic/
 
 <!-- #region hidden=true -->
 We can download rrbs (reduced representation bisulfite sequencing) data from the Encode project:
-http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeHaibMethylRrbs/
+<http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeHaibMethylRrbs/>
 <!-- #endregion -->
 
 <!-- #region hidden=true -->
@@ -49,7 +49,7 @@ Those files are in unaligned fastq format.  We will need to align these to a ref
 
 To align reads, we'll use bowtie2 and samtools (through its pysam wrapper).
 
-First, we need to download a genomic index sequence: http://hgdownload.soe.ucsc.edu/goldenPath/hg19
+First, we need to download a genomic index sequence: <http://hgdownload.soe.ucsc.edu/goldenPath/hg19>
 <!-- #endregion -->
 
 <!-- #region hidden=true -->
@@ -117,9 +117,9 @@ Now, that sorted file (again, rename to capture cell-line and tissue info) is re
 from pyllelic import pyllelic
 ```
 
- 1. Set up your disk location:
-    ```base_path``` should be the directory we'll do our work in
- 2. Make a sub-directory under ```base_path``` with a folder named ```test``` and put the ```.bam``` and ```.bai``` files in ```test```
+1. Set up your disk location:  ```base_path``` should be the directory we'll do our work in
+
+2. Make a sub-directory under ```base_path``` with a folder named ```test``` and put the ```.bam``` and ```.bai``` files in ```test```
 
 ```python
 pyllelic.set_up_env_variables(
@@ -134,7 +134,6 @@ pyllelic.set_up_env_variables(
 ```
 
 ## Main Parsing Functions
-
 
 ### Find files to analyze
 
@@ -180,7 +179,6 @@ data.quma_results[data.means.index[0]].values.head()
 
 ## Write Output
 
-
 ### Save entire object as pickle
 
 ```python
@@ -212,7 +210,6 @@ data.quma_results[data.means.index[0]].values.head()
 ```
 
 ## Initial Data Analysis
-
 
 ### View raw data of methylation percentage per read
 
