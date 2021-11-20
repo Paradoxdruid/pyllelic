@@ -3,13 +3,14 @@
    in reduced representation bisulfate DNA sequencing.
 """
 
+import logging
 import os
-import pickle
+import pickle  # nosec
 import signal
 import sys
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union, NamedTuple, TypeVar
+from typing import Any, Dict, List, NamedTuple, Optional, TypeVar, Union
 
 import numpy as np
 import pandas as pd
@@ -21,8 +22,6 @@ from tqdm.notebook import tqdm
 
 from . import quma
 from .config import Config
-
-import logging
 
 logging.basicConfig(filename="pyllelic_test.log", level=logging.DEBUG)
 
@@ -95,7 +94,7 @@ class BamOutput:
 
         self.write_bam_output(df2.index.unique(), df3)
 
-        return df2.index.unique()
+        return df2.index.unique().tolist()
 
     def write_bam_output(self, positions: List[str], df: pd.Series) -> None:
         """Extract alignments from sequencing reads and output text strings
@@ -348,7 +347,9 @@ class GenomicPositionData:
         ]
 
         for sams in tqdm(sam_path, desc="Files"):
-            self._bam_output[sams] = BamOutput(sams, self.genome_string, self.config)
+            self._bam_output[str(sams)] = BamOutput(
+                sams, self.genome_string, self.config
+            )
 
     def _calculate_positions(self) -> List[str]:
         """Return sorted list of all positions analyzed.
@@ -380,7 +381,7 @@ class GenomicPositionData:
 
         quma_results: Dict[str, QumaResult] = {}
         for name, bam_result in tqdm(self._bam_output.items(), desc="Cell Lines"):
-            cell_line_name: str = name.name.split("_")[1]
+            cell_line_name: str = name.split("_")[1]
 
             read_files: List[str] = [each for each in bam_result.values.values()]
             genomic_files: List[str] = [
@@ -421,7 +422,7 @@ class GenomicPositionData:
         """Read pickled GenomicPositionData back to an object."""
 
         with open(filename, "rb") as input_file:
-            data = pickle.load(input_file)
+            data = pickle.load(input_file)  # nosec
 
         return data
 

@@ -18,7 +18,7 @@ Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/
 <summary>Click to expand...</summary>
 
 ```python
-    import pyllelic
+    from pyllelic import pyllelic
 
     pyllelic.set_up_env_variables(  # Specify file and directory locations
         base_path="/Users/abonham/documents/test_allelic/",

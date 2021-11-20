@@ -22,11 +22,13 @@ jupyter:
 <!-- #region hidden=true -->
 This notebook illustrates the import and use of `pyllelic` in a jupyter environment.
 
-See https://github.com/Paradoxdruid/pyllelic for further details.
+Source code: https://github.com/Paradoxdruid/pyllelic 
+
+Documentation: https://paradoxdruid.github.io/pyllelic/
 <!-- #endregion -->
 
 <!-- #region heading_collapsed=true -->
-## Pre-setup
+## Pre-setup / File preparation
 <!-- #endregion -->
 
 <!-- #region heading_collapsed=true hidden=true -->
@@ -42,7 +44,7 @@ http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeHaibMethylRrbs/
 Those files are in unaligned fastq format.  We will need to align these to a reference human genome.
 <!-- #endregion -->
 
-<!-- #region hidden=true -->
+<!-- #region heading_collapsed=true hidden=true -->
 ### Aligning reads (using process.py)
 
 To align reads, we'll use bowtie2 and samtools (through its pysam wrapper).
@@ -50,29 +52,35 @@ To align reads, we'll use bowtie2 and samtools (through its pysam wrapper).
 First, we need to download a genomic index sequence: http://hgdownload.soe.ucsc.edu/goldenPath/hg19
 <!-- #endregion -->
 
-```python hidden=true
+<!-- #region hidden=true -->
+```python
 # Processing imports
-# from pathlib import Path
+from pathlib import Path
 ```
+<!-- #endregion -->
 
-```python hidden=true
+<!-- #region hidden=true -->
+```python
 # Set up file paths
-# index = Path(
-#     "/home/andrew/allellic/hg19.p13.plusMT.no_alt_analysis_set//hg19.p13.plusMT.no_alt_analysis_set"
-# )
-# fastq = Path("/home/andrew/allellic/wgEncodeHaibMethylRrbsU87HaibRawDataRep1.fastq.gz")
+index = Path(
+    "/home/andrew/allellic/hg19.p13.plusMT.no_alt_analysis_set//hg19.p13.plusMT.no_alt_analysis_set"
+)
+fastq = Path("/home/andrew/allellic/wgEncodeHaibMethylRrbsU87HaibRawDataRep1.fastq.gz")
 ```
+<!-- #endregion -->
 
 <!-- #region hidden=true -->
 **WARNING:** The next command is processor, RAM, and time intensive, and only needs to be run once!
 <!-- #endregion -->
 
-```python hidden=true
+<!-- #region hidden=true -->
+```python
 # Convert fastq to bam
-# pyllelic.process.bowtie2_fastq_to_bam(index={bowtie_index_filename_without_suffix},
-#                                       fastq={fastq_file_name},
-#                                       cores=6)
+pyllelic.process.bowtie2_fastq_to_bam(index={bowtie_index_filename_without_suffix},
+                                      fastq={fastq_file_name},
+                                      cores=6)
 ```
+<!-- #endregion -->
 
 <!-- #region hidden=true -->
 Notes:
@@ -83,17 +91,21 @@ Notes:
 Next, we need to sort and index the bam file using samtools functions.
 <!-- #endregion -->
 
-```python hidden=true
+<!-- #region hidden=true -->
+```python
 # Sort the bamfile
-# bamfile = Path("/home/andrew/allellic/wgEncodeHaibMethylRrbsU87HaibRawDataRep1.bam")
-# pyllelic.process_pysam_sort(bamfile)
+bamfile = Path("/home/andrew/allellic/wgEncodeHaibMethylRrbsU87HaibRawDataRep1.bam")
+pyllelic.process_pysam_sort(bamfile)
 ```
+<!-- #endregion -->
 
-```python hidden=true
+<!-- #region hidden=true -->
+```python
 # Create an index of the sorted bamfile
-# sorted_bam = Path("")
-# pyllelic.process_pysam_index(b)
+sorted_bam = Path("")
+pyllelic.process_pysam_index(b)
 ```
+<!-- #endregion -->
 
 <!-- #region hidden=true -->
 Now, that sorted file (again, rename to capture cell-line and tissue info) is ready to be put in the `test` folder for analysis by pyllelic!
@@ -102,28 +114,17 @@ Now, that sorted file (again, rename to capture cell-line and tissue info) is re
 ## Set-up
 
 ```python
-from pyllelic import pyllelic_class as pyllelic
+from pyllelic import pyllelic
 ```
 
+ 1. Set up your disk location:
+    ```base_path``` should be the directory we'll do our work in
+ 2. Make a sub-directory under ```base_path``` with a folder named ```test``` and put the ```.bam``` and ```.bai``` files in ```test```
+
 ```python
-# set up your disk location:
-# base_path should be the directory we'll do our work in
-# make a sub-directory under base_path with a folder named "test"
-# and put the .bam and .bai files in "test"
-
-# OSX setup
-# pyllelic.set_up_env_variables(
-#     base_path="/Users/abonham/documents/test_allelic/",
-#     prom_file="TERT-promoter-genomic-sequence.txt",
-#     prom_start="1293000",
-#     prom_end="1296000",
-#     chrom="5",
-#     offset=1298163,
-# )
-
-# Windows set-up
 pyllelic.set_up_env_variables(
-    base_path="/home/andrew/allellic/",
+    base_path="/home/andrew/allellic/",  # Windows WSL set-up
+#     base_path="/Users/abonham/documents/test_allelic/",  # OSX setup
     prom_file="TERT-promoter-genomic-sequence.txt",
     prom_start="1293000",
     prom_end="1296000",
@@ -134,84 +135,96 @@ pyllelic.set_up_env_variables(
 
 ## Main Parsing Functions
 
+
+### Find files to analyze
+
 ```python
-files_set = pyllelic.make_list_of_bam_files()  # finds bam files
+files_set = pyllelic.make_list_of_bam_files()
 ```
 
 ```python
-# Uncomment for debugging:
-files_set
+# files_set # uncomment for debugging
 ```
+
+```python
+files_set = files_set[0:2]  # grab only first two files for quick run
+```
+
+### Perform full methylation analysis and generate data object
 
 ```python
 data = pyllelic.GenomicPositionData(config=pyllelic.config, files_set=files_set)
 ```
 
+### Check main data outcomes
+
 ```python
-# from pathlib import PosixPath
-# bam = data._bam_output[PosixPath('/home/andrew/allellic/test/fh_SW1710_URINARY_TRACT.TERT.bam')]
+data.means.head()
 ```
 
 ```python
-# bam.values
-```
-
-```python
-data.means
-```
-
-```python
-data.modes
-```
-
-```python
-data.diffs
-```
-
-```python
-data.quma_results["SW1710"].values.head()
-```
-
-```python
-# Uncomment for debugging:
 ", ".join(data.positions)
 ```
 
-## Write Output to excel files
-
 ```python
-data.save()
+data.modes.head()
 ```
 
 ```python
-# Set the filename to whatever you want
-data.write_means_modes_diffs("Full1")
+data.diffs.head()
 ```
 
 ```python
-import cloudpickle
+data.quma_results[data.means.index[0]].values.head()
+```
+
+## Write Output
+
+
+### Save entire object as pickle
+
+```python
+# data.save_pickle("test3_data.pickle")
+```
+
+### Save Quma Results to excel
+
+```python
+# data.save("output.xlsx")
+```
+
+### Save analysis files (means, modes, diffs) to excel
+
+```python
+# data.write_means_modes_diffs("Full1") # Sets the filename stub
+```
+
+### Reopen saved object
+
+```python
+# data = pyllelic.GenomicPositionData.from_pickle("test3_data.pickle")
 ```
 
 ```python
-with open(r"big_data.pickle", "wb") as output_file:
-    cloudpickle.dump(data, output_file)
+# old import system, do not use
+# with open(r"big_data.pickle", "rb") as input_file:
+#     data = cloudpickle.load(input_file)
 ```
 
-```python
-with open(r"big_data.pickle", "rb") as input_file:
-    data2 = cloudpickle.load(input_file)
-```
+## Initial Data Analysis
+
+
+### View raw data of methylation percentage per read
 
 ```python
-data2.__dict__.keys()
+data.individual_data.head()
 ```
 
-```python
-data2.individual_data.loc["OVK18"].dropna()["1293111"]
-```
+### Find values with a methylation difference above a threshold
 
 ```python
-large_diffs = data.diffs[(data.diffs >= 0.01).any(1)].dropna(how="all", axis=1)
+DIFF_THRESHOLD = 0.01
+large_diffs = data.diffs[(data.diffs >= DIFF_THRESHOLD).any(1)].dropna(how="all", axis=1)
 ```
 
 ```python
@@ -227,16 +240,14 @@ temp.loc[(temp != 0)].dropna()
 interesting = {}
 for index, row in large_diffs.iterrows():
     if row.loc[(row != 0)].dropna().any():
-        print(row.loc[(row != 0)].dropna())
         interesting[index] = row.loc[(row != 0)].dropna()
 ```
 
 ```python
-interesting
+import pandas as pd
 ```
 
 ```python
-import pandas as pd
 big_diffs = pd.DataFrame.from_dict(interesting)
 ```
 
@@ -251,23 +262,159 @@ big_diffs.to_excel("big_diffs.xlsx")
 ## Visualizing Data
 
 ```python
-data.quma_results["SW1710"].values
+import plotly.express as px
+```
+
+### Raw quma results
+
+```python
+data.quma_results[data.means.index[0]].values.head()
 ```
 
 ```python
-data.individual_data
+data.individual_data.head()
+```
+
+### Histograms of reads at a cell line and genomic position
+
+```python
+CELL = data.means.index[1]
+POS = data.means.columns[5]
+data.histogram(CELL, POS)
+```
+
+### Plotting read methylation distributions
+
+```python
+import pandas as pd
 ```
 
 ```python
-data2.histogram("OVK18", "1293111")
+df = data.individual_data.copy()
+```
+
+```python
+df.head()
+```
+
+```python
+def to_1D(series):
+    """From https://towardsdatascience.com/dealing-with-list-values-in-pandas-dataframes-a177e534f173"""
+    if isinstance(series, pd.Series):
+        series = series.dropna()
+        return pd.Series([x for _list in series for x in _list])
+```
+
+```python
+POS = data.means.columns[5]
+```
+
+```python
+to_1D(df.loc[:,POS]).value_counts()
+```
+
+```python
+to_1D(df.loc[:,POS])
+```
+
+```python
+to_1D(df.loc[:,POS]).mode()
+```
+
+#### Distribution at one cell line, position
+
+```python
+px.bar(to_1D(df.loc[:,POS]).value_counts(normalize=True))
+```
+
+#### Distribution across a cell line
+
+```python
+CELL = data.means.index[1]
+```
+
+```python
+df2 = df.loc[CELL]
+```
+
+```python
+df2.head()
+```
+
+```python
+df2.explode().value_counts()
+```
+
+```python
+px.violin(df2.explode())
+```
+
+#### Distribution across all cell lines
+
+```python
+all_values = []
+```
+
+```python
+for each in df.index:
+    temp = pd.Series(df.loc[each].explode())
+#     print(temp)
+    all_values.append(temp)
+#     print(all_values)
+```
+
+```python
+flat_list = [item for sublist in all_values for item in sublist]
+```
+
+```python
+flat_series = pd.Series(flat_list)
+```
+
+```python
+flat_series.value_counts()
+```
+
+```python
+px.violin(flat_series)
+```
+
+### Identify large differences
+
+```python
+def find_big_diffs(df, min_diff: float):
+    out = {}
+    for each in df.columns:
+    #     print(each)
+        mean = to_1D(df[each].dropna()).mean()
+        mode = to_1D(df[each].dropna()).mode()
+    #     print(mode)
+        if not mode.empty:   
+    #         print(f"Mean: {mean}, mode: {mode}")
+            diff = abs(mean - mode.values[0])
+            if diff > min_diff:
+                out[each] = diff
+#                 print(f"Position: {each}, diff: {diff}")
+#                 print(out)
+    if out:
+        return out
+```
+
+```python
+big_ones = find_big_diffs(df, 0.1)
+big_ones
 ```
 
 ## Statistical Tests for Normality
 
 ```python
-data2.summarize_allelic_data()
+summ = data.summarize_allelic_data()
 ```
 
 ```python
+summ.head()
+```
 
+```python
+summ.pivot(index="position", columns="cellLine", values="ad_stat")
 ```

@@ -316,7 +316,7 @@ class Test_GenomicPositionData:
 
     @pytest.fixture()
     def set_up_genomic_position_data(self, tmp_path):
-        p, fp_bam = setup_bam_files(tmp_path)
+        p, _ = setup_bam_files(tmp_path)
         setup_config(p)
         INPUT_BAM_LIST = ["fh_test.bam"]
         return pyllelic.GenomicPositionData(
