@@ -166,15 +166,13 @@ class Test_BamOutput:
 
         assert bam_output.name == str(tmp_path / "test" / "fh_test.bam")
         assert bam_output.values == EXPECTED_BAM_OUTPUT_VALUES
-        pd.testing.assert_index_equal(
-            bam_output.positions, EXPECTED_BAM_OUTPUT_POSITIONS
-        )
+        assert bam_output.positions == EXPECTED_BAM_OUTPUT_POSITIONS
         assert bam_output.genome_values == EXPECTED_BAM_OUTPUT_GENOME_VALUES
 
     def test_run_sam_and_extract_df(self, set_up_bam_output):
         bam_output = set_up_bam_output
         actual_positions = bam_output.run_sam_and_extract_df(Path(bam_output.name))
-        pd.testing.assert_index_equal(actual_positions, EXPECTED_BAM_OUTPUT_POSITIONS)
+        assert actual_positions == EXPECTED_BAM_OUTPUT_POSITIONS
 
     def test_write_bam_output(self, set_up_bam_output):
         bam_output = set_up_bam_output
