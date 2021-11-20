@@ -4,11 +4,12 @@
 """
 
 import os
+import pickle
 import signal
 import sys
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union, NamedTuple
+from typing import Any, Dict, List, Optional, Union, NamedTuple, TypeVar
 
 import numpy as np
 import pandas as pd
@@ -24,6 +25,9 @@ from .config import Config
 import logging
 
 logging.basicConfig(filename="pyllelic_test.log", level=logging.DEBUG)
+
+
+GPD = TypeVar("GPD", bound="GenomicPositionData")
 
 # Initialize shared configuration object
 config = Config()
@@ -320,7 +324,7 @@ class GenomicPositionData:
         self._bam_output: Dict[str, BamOutput] = {}
         self.index_and_fetch()
         self.positions: List[str] = self._calculate_positions()
-        self.cell_types = self._bam_output.keys()
+        self.cell_types = list(self._bam_output.keys())
 
         self.quma_results: Dict[str, QumaResult] = self.quma_full_threaded()
 
@@ -343,7 +347,7 @@ class GenomicPositionData:
             self.config.base_directory / "test" / f for f in self.files_set
         ]
 
-        for sams in tqdm(sam_path):
+        for sams in tqdm(sam_path, desc="Files"):
             self._bam_output[sams] = BamOutput(sams, self.genome_string, self.config)
 
     def _calculate_positions(self) -> List[str]:
@@ -405,6 +409,21 @@ class GenomicPositionData:
             each.values.to_excel(writer, sheet_name=name)
 
         writer.save()
+
+    def save_pickle(self, filename: str) -> None:
+        """Save GenomicPositionData object as a pickled file."""
+
+        with open(filename, "wb") as output_file:
+            pickle.dump(self, output_file)
+
+    @staticmethod
+    def from_pickle(filename: str) -> GPD:
+        """Read pickled GenomicPositionData back to an object."""
+
+        with open(filename, "rb") as input_file:
+            data = pickle.load(input_file)
+
+        return data
 
     def process_means(self) -> pd.DataFrame:
         """Process the mean values at each position for each cell line.
