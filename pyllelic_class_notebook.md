@@ -118,7 +118,6 @@ from pyllelic import pyllelic
 ```
 
 1. Set up your disk location:  ```base_path``` should be the directory we'll do our work in
-
 2. Make a sub-directory under ```base_path``` with a folder named ```test``` and put the ```.bam``` and ```.bai``` files in ```test```
 
 ```python
