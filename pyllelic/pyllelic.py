@@ -49,12 +49,20 @@ class BamOutput:
     def __init__(self, sam_directory: Path, genome_string: str, config: Config) -> None:
         self._config: Config = config
         self.name: str = str(sam_directory)
-        self.values: Dict[str, str] = {}
-        self.positions: pd.Index = self.run_sam_and_extract_df(sam_directory)
-        self.genome_values: Dict[str, str] = {}
-        self.genome_parsing(genome_string)
+        """str: path to bam file analyzed."""
 
-    def run_sam_and_extract_df(self, sams: Path) -> pd.Index:
+        self.values: Dict[str, str] = {}
+        """Dict[str, str]: dictionary of reads at a given position"""
+
+        self.positions: pd.Index = self._run_sam_and_extract_df(sam_directory)
+        """"pd.Index: index of genomic positions in the bam file."""
+
+        self.genome_values: Dict[str, str] = {}
+        """Dict[str, str]: dictionary of read files and contents."""
+
+        self._genome_parsing(genome_string)
+
+    def _run_sam_and_extract_df(self, sams: Path) -> pd.Index:
         """Process samfiles, pulling out sequence and position data
         and writing to folders/files.
 
@@ -67,7 +75,7 @@ class BamOutput:
 
         # Index samfile if index file doesn't exist
         if not sams.with_suffix(".bai").exists():
-            _: bool = self.pysam_index(sams)  # we don't care what the output is
+            _: bool = self._pysam_index(sams)  # we don't care what the output is
 
         # Grab the promoter region of interest
         samm: pysam.AlignmentFile = pysam.AlignmentFile(sams, "rb")
@@ -92,11 +100,11 @@ class BamOutput:
         df2: pd.DataFrame = df.set_index("positions")
         df3: pd.Series = df2.stack()
 
-        self.write_bam_output(df2.index.unique(), df3)
+        self._write_bam_output(df2.index.unique(), df3)
 
         return df2.index.unique().tolist()
 
-    def write_bam_output(self, positions: List[str], df: pd.Series) -> None:
+    def _write_bam_output(self, positions: List[str], df: pd.Series) -> None:
         """Extract alignments from sequencing reads and output text strings
         in bam values dictionary.
 
@@ -132,7 +140,7 @@ class BamOutput:
             self.values[each1] = "\n".join(read_file)
 
     @staticmethod
-    def pysam_index(bamfile: Path) -> bool:
+    def _pysam_index(bamfile: Path) -> bool:
         """Helper function to run external samtools index.
 
         Args:
@@ -172,7 +180,7 @@ class BamOutput:
 
         return genome_string[start:end]
 
-    def genome_parsing(self, genome_string: str) -> None:
+    def _genome_parsing(self, genome_string: str) -> None:
         """Writes out a list of genomic sequence strings for comparison to read data."""
 
         # Grab list of read files in that directory:
@@ -199,9 +207,10 @@ class QumaResult:
         self._genomic_files: List[str] = genomic_files
         self._positions: List[str] = positions
         self.values: pd.DataFrame = self._pool_processing()
+        """pd.DataFrame: dataframe of quma methylation analysis values."""
 
     @staticmethod
-    def process_raw_quma(quma_result: str) -> List[str]:
+    def _process_raw_quma(quma_result: str) -> List[str]:
         """Spit and process raw quma results into a pandas dataframe.
 
         Args:
@@ -274,15 +283,15 @@ class QumaResult:
             pd.DataFrame: dataframe of quma results
         """
 
-        quma_result: str = self.access_quma(genomic_contents, read_contents)
+        quma_result: str = self._access_quma(genomic_contents, read_contents)
 
-        processed_quma: List[str] = self.process_raw_quma(quma_result)
+        processed_quma: List[str] = self._process_raw_quma(quma_result)
         # Next, add this readname to the holding data frame
         int_df: pd.DataFrame = pd.DataFrame({position: processed_quma})
         return int_df
 
     @staticmethod
-    def access_quma(genomic_contents: str, read_contents: str) -> str:
+    def _access_quma(genomic_contents: str, read_contents: str) -> str:
         """Helper function to run internal QUMA tool.
 
         Args:
@@ -313,7 +322,10 @@ class GenomicPositionData:
 
     def __init__(self, config: Config, files_set: List[str]) -> None:
         self.config: Config = config
+        """Config: pyllelic config object."""
+
         self.files_set: List[str] = files_set
+        """List[str]: list of bam files analyzed."""
 
         with open(self.config.promoter_file, "r") as f:
             genome_base = f.readlines()
@@ -321,18 +333,29 @@ class GenomicPositionData:
             self.genome_string: str = "".join(map(str, genome_base_lines))
 
         self._bam_output: Dict[str, BamOutput] = {}
-        self.index_and_fetch()
+        self._index_and_fetch()
         self.positions: List[str] = self._calculate_positions()
+        """List[str]: list of genomic positions in the data."""
+
         self.cell_types = list(self._bam_output.keys())
+        """List[str]: list of cell types in the data."""
 
-        self.quma_results: Dict[str, QumaResult] = self.quma_full_threaded()
+        self.quma_results: Dict[str, QumaResult] = self._quma_full_threaded()
+        """Dict[str, QumaResult]: list of QumaResults."""
 
-        self.means: pd.DataFrame = self.process_means()
-        self.modes: pd.DataFrame = self.process_modes()
-        self.diffs: pd.DataFrame = self.find_diffs(self.means, self.modes)
-        self.individual_data: pd.DataFrame = self.return_individual_data()
+        self.means: pd.DataFrame = self._process_means()
+        """pd.DataFrame: dataframe of mean methylation values."""
 
-    def index_and_fetch(self) -> None:
+        self.modes: pd.DataFrame = self._process_modes()
+        """pd.DataFrame: dataframe of modes of methylation values."""
+
+        self.diffs: pd.DataFrame = self._find_diffs(self.means, self.modes)
+        """pd.DataFrame: dataframe of difference mean minus mode methylation values."""
+
+        self.individual_data: pd.DataFrame = self._return_individual_data()
+        """pd.DataFrame: dataframe of individual methylation values."""
+
+    def _index_and_fetch(self) -> None:
         """Wrapper to call processing of each sam file.
 
         Args:
@@ -365,13 +388,13 @@ class GenomicPositionData:
 
         return sorted(list(set(positions)))
 
-    @staticmethod
-    def extract_cell_types(file_sets: List[str]) -> List[str]:
-        """Returns a list[str] of cell line names in the dataset."""
+    # @staticmethod
+    # def extract_cell_types(file_sets: List[str]) -> List[str]:
+    #     """Returns a list[str] of cell line names in the dataset."""
 
-        return [file.split("_")[1] for file in file_sets]
+    #     return [file.split("_")[1] for file in file_sets]
 
-    def quma_full_threaded(self) -> Dict[str, QumaResult]:
+    def _quma_full_threaded(self) -> Dict[str, QumaResult]:
         """Run external QUMA methylation analysis on all specified cell lines,
         using multiprocessing library.
 
@@ -426,7 +449,7 @@ class GenomicPositionData:
 
         return data
 
-    def process_means(self) -> pd.DataFrame:
+    def _process_means(self) -> pd.DataFrame:
         """Process the mean values at each position for each cell line.
 
         Returns:
@@ -438,7 +461,7 @@ class GenomicPositionData:
         for pos in self.positions:
             working_df[pos] = ""
             for key in self.quma_results.keys():
-                values_list: List[float] = self.return_read_values(pos, key)
+                values_list: List[float] = self._return_read_values(pos, key)
                 if values_list:
                     pos_means: float = float(np.mean(values_list))
                 else:  # No data or data doesn't meet minimums for analysis
@@ -450,7 +473,7 @@ class GenomicPositionData:
 
         return means_df
 
-    def process_modes(self) -> pd.DataFrame:
+    def _process_modes(self) -> pd.DataFrame:
         """Process the mode values at each position for each cell line.
 
         Returns:
@@ -462,7 +485,7 @@ class GenomicPositionData:
         for pos in self.positions:
             working_df[pos] = ""
             for key in self.quma_results.keys():
-                values_list: List[float] = self.return_read_values(pos, key)
+                values_list: List[float] = self._return_read_values(pos, key)
 
                 if values_list:
                     pos_modes: float = stats.mode(values_list)[0][0]
@@ -475,7 +498,7 @@ class GenomicPositionData:
 
         return modes_df
 
-    def return_individual_data(self) -> pd.DataFrame:
+    def _return_individual_data(self) -> pd.DataFrame:
         """Return a dataframe for methylation values at each position for each cell line.
 
         Returns:
@@ -486,7 +509,7 @@ class GenomicPositionData:
         for pos in tqdm(self.positions, desc="Position"):
             working_df[pos] = ""  # Create position column in dataframe
             for key in tqdm(self.quma_results.keys(), desc="Cell Line", leave=False):
-                values_list: List[float] = self.return_read_values(pos, key)
+                values_list: List[float] = self._return_read_values(pos, key)
                 if values_list:
                     data_for_df: Union[List[float], float] = values_list
                 else:  # No data or data doesn't meet minimums for analysis
@@ -496,7 +519,7 @@ class GenomicPositionData:
 
         return working_df
 
-    def return_read_values(
+    def _return_read_values(
         self,
         pos: str,
         key: str,
@@ -524,7 +547,7 @@ class GenomicPositionData:
         df: pd.DataFrame = self.quma_results[key].values
         if pos in df.columns:  # type: ignore[union-attr]
 
-            values_to_check: List[str] = self.get_str_values(df, pos)
+            values_to_check: List[str] = self._get_str_values(df, pos)
             for value in values_to_check:
                 if not any(substring in value for substring in bad_values):
                     if len(value) > min_num_meth_sites:
@@ -536,7 +559,7 @@ class GenomicPositionData:
         return values_list
 
     @staticmethod
-    def get_str_values(df: pd.DataFrame, pos: str) -> List[str]:
+    def _get_str_values(df: pd.DataFrame, pos: str) -> List[str]:
         """Return list of values a a position in given dataframe of methylation data.
 
         Args:
@@ -549,7 +572,7 @@ class GenomicPositionData:
         return df.loc[:, pos].dropna().astype(str)  # type: ignore[union-attr]
 
     @staticmethod
-    def find_diffs(means_df: pd.DataFrame, modes_df: pd.DataFrame) -> pd.DataFrame:
+    def _find_diffs(means_df: pd.DataFrame, modes_df: pd.DataFrame) -> pd.DataFrame:
         """Find the differences between means and modes for each cell line at each pos
         in means and modes data.
 
@@ -564,7 +587,7 @@ class GenomicPositionData:
         return means_df.subtract(modes_df)
 
     @staticmethod
-    def truncate_diffs(diffs_df: pd.DataFrame) -> pd.DataFrame:
+    def _truncate_diffs(diffs_df: pd.DataFrame) -> pd.DataFrame:
         """Remove missing or non-interesting diffs, and sort by magnitude.
 
         Args:
@@ -602,7 +625,7 @@ class GenomicPositionData:
         )
 
     @staticmethod
-    def create_histogram(
+    def _create_histogram(
         data: pd.DataFrame, cell_line: str, position: str
     ) -> go.Figure:
         """Generate a graph figure showing fractional methylation in
@@ -649,7 +672,7 @@ class GenomicPositionData:
         """
         data = self.individual_data
 
-        fig: go.Figure = self.create_histogram(data, cell_line, position)
+        fig: go.Figure = self._create_histogram(data, cell_line, position)
         fig.show()
 
     def generate_ad_stats(self) -> pd.DataFrame:
@@ -660,7 +683,7 @@ class GenomicPositionData:
         """
         np.seterr(divide="ignore", invalid="ignore")  # ignore divide-by-zero errors
         df = self.individual_data
-        df2 = df.applymap(self.anderson_darling_test)
+        df2 = df.applymap(self._anderson_darling_test)
         return df2
 
     def summarize_allelic_data(self) -> pd.DataFrame:
@@ -682,7 +705,7 @@ class GenomicPositionData:
             for column in row.index:
                 value = row[column]
                 if np.all(pd.notnull(value)):
-                    good, stat, crits = self.anderson_darling_test(value)
+                    good, stat, crits = self._anderson_darling_test(value)
                     if good:
                         sig_dict["diff"].append(self.diffs.loc[index, column])
                         sig_dict["cellLine"].append(index)
@@ -694,7 +717,7 @@ class GenomicPositionData:
         return sig_df
 
     @staticmethod
-    def anderson_darling_test(raw_list: Optional[pd.Series]) -> AD_stats:
+    def _anderson_darling_test(raw_list: Optional[pd.Series]) -> AD_stats:
         """Run the Anderson-Darling normality test on methylation data at a point.
 
         Args:

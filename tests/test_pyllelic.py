@@ -26,6 +26,7 @@ from bam_input import (
     EXPECTED_STACKED_BAM,
     EXPECTED_WRITE_DF_OUTPUT,
     INPUT_READ_FILE,
+    EXPECTED_MEANS,
 )
 
 # Required libraries for test data
@@ -317,12 +318,15 @@ class Test_GenomicPositionData:
         p, _ = setup_bam_files(tmp_path)
         setup_config(p)
         INPUT_BAM_LIST = ["fh_test.bam"]
-        return pyllelic.GenomicPositionData(
-            config=pyllelic.config, files_set=INPUT_BAM_LIST
+        return (
+            p,
+            pyllelic.GenomicPositionData(
+                config=pyllelic.config, files_set=INPUT_BAM_LIST
+            ),
         )
 
     def test_init(self, set_up_genomic_position_data):
-        genomic_position_data = set_up_genomic_position_data
+        p, genomic_position_data = set_up_genomic_position_data
 
         positions = []
         for each in EXPECTED_BAM_OUTPUT_POSITIONS:
@@ -331,57 +335,17 @@ class Test_GenomicPositionData:
         EXPECTED_POSITIONS = sorted(set(positions))
 
         assert genomic_position_data.positions == EXPECTED_POSITIONS
+        assert genomic_position_data.cell_types == [str(p / "test" / "fh_test.bam")]
 
+    def test_process_means(self, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
 
-# # Mock out main to ensure it just tests functionality of the main function
-# @mock.patch("pyllelic.pyllelic.make_list_of_bam_files")
-# @mock.patch("pyllelic.pyllelic.index_and_fetch")
-# @mock.patch("pyllelic.pyllelic.genome_parsing")
-# @mock.patch("pyllelic.pyllelic.extract_cell_types")
-# @mock.patch("pyllelic.pyllelic.run_quma_and_compile_list_of_df")
-# @mock.patch("pyllelic.pyllelic.process_means")
-# @mock.patch("pyllelic.pyllelic.process_modes")
-# @mock.patch("pyllelic.pyllelic.find_diffs")
-# @mock.patch("pyllelic.pyllelic.write_means_modes_diffs")
-# @mock.patch("pyllelic.pyllelic.sys.argv")
-# def test_main(
-#     mock_argv,
-#     mock_writer,
-#     mock_diffs,
-#     mock_modes,
-#     mock_means,
-#     mock_run_quma,
-#     mock_extract,
-#     mock_genome_parse,
-#     mock_index,
-#     mock_bamlist,
-# ):
-#     """Test main module with a bunch of mocks."""
-#     # Set up, patching all called functions
-#     mock_bamlist.return_value = ["good1.bam", "good2.bam"]
-#     mock_index.return_value = ["1", "2", "3"]
-#     mock_genome_parse.return_value = None
-#     mock_extract.return_value = ["TEST1", "TEST2", "TEST3"]
-#     mock_run_quma.return_value = SAMPLE_DICT_OF_DFS
-#     intermediate_means = EXPECTED_INTERMEDIATE_MEANS
-#     mock_means.return_value = intermediate_means.astype("object")
-#     intermediate_modes = EXPECTED_INTERMEDIATE_MODES
-#     mock_modes.return_value = intermediate_modes.astype("object")
-#     intermediate_diffs = EXPECTED_INTERMEDIATE_DIFFS
-#     mock_diffs.return_value = intermediate_diffs.astype("object")
-#     mock_writer.return_value = None
-#     mock_argv.return_value = ["program", "output.xlsx"]
+        print(genomic_position_data.means.to_dict())
 
-#     pyllelic.main()
+        intermediate = EXPECTED_MEANS
+        expected = intermediate.astype("object")
 
-#     # Asserts
-#     mock_bamlist.assert_called_once()
-#     mock_index.assert_called_once_with(["good1.bam", "good2.bam"])
-#     mock_extract.assert_called_once_with(["good1.bam", "good2.bam"])
-#     mock_run_quma.assert_called_once()
-#     mock_means.assert_called_once()
-#     mock_modes.assert_called_once()
-#     mock_writer.assert_called_once()
+        pd.testing.assert_frame_equal(genomic_position_data.means, expected)
 
 
 # def test_extract_cell_types():

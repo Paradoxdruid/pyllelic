@@ -60,6 +60,29 @@ EXPECTED_INTERMEDIATE_MODES = pd.DataFrame.from_dict(
     columns=["1", "2", "3"],
 )
 
+EXPECTED_MEANS = pd.DataFrame.from_dict(
+    {
+        "1293588": {"process": np.nan},
+        "1294262": {"process": np.nan},
+        "1294316": {"process": np.nan},
+        "1294343": {"process": np.nan},
+        "1294369": {"process": np.nan},
+        "1294419": {"process": np.nan},
+        "1294872": {"process": np.nan},
+        "1294972": {"process": np.nan},
+        "1295089": {"process": np.nan},
+        "1295246": {"process": np.nan},
+        "1295320": {"process": np.nan},
+        "1295365": {"process": np.nan},
+        "1295743": {"process": np.nan},
+        "1295770": {"process": np.nan},
+        "1295876": {"process": np.nan},
+        "1295903": {"process": np.nan},
+        "1295937": {"process": np.nan},
+        "1295964": {"process": np.nan},
+    }
+)
+
 EXPECTED_INTERMEDIATE_DIFFS = pd.DataFrame.from_dict(
     {
         "TEST1": [np.float64(1 / 6), np.float64(1 / 6), np.float64(0.0)],

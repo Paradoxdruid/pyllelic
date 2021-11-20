@@ -76,7 +76,8 @@ fastq = Path("/home/andrew/allellic/wgEncodeHaibMethylRrbsU87HaibRawDataRep1.fas
 <!-- #region hidden=true -->
 ```python
 # Convert fastq to bam
-pyllelic.process.bowtie2_fastq_to_bam(index={bowtie_index_filename_without_suffix},
+from pyllelic import process
+process.bowtie2_fastq_to_bam(index={bowtie_index_filename_without_suffix},
                                       fastq={fastq_file_name},
                                       cores=6)
 ```
@@ -95,7 +96,7 @@ Next, we need to sort and index the bam file using samtools functions.
 ```python
 # Sort the bamfile
 bamfile = Path("/home/andrew/allellic/wgEncodeHaibMethylRrbsU87HaibRawDataRep1.bam")
-pyllelic.process_pysam_sort(bamfile)
+process.process_pysam_sort(bamfile)
 ```
 <!-- #endregion -->
 
@@ -103,7 +104,7 @@ pyllelic.process_pysam_sort(bamfile)
 ```python
 # Create an index of the sorted bamfile
 sorted_bam = Path("")
-pyllelic.process_pysam_index(b)
+process.process_pysam_index(b)
 ```
 <!-- #endregion -->
 
