@@ -14,13 +14,10 @@ Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/
 
 ## Example exploratory use in jupyter notebook
 
-<details>
-<summary>Click to expand...</summary>
-
 ```python
     from pyllelic import pyllelic
 
-    pyllelic.set_up_env_variables(  # Specify file and directory locations
+    config = pyllelic.set_up_env_variables(  # Specify file and directory locations
         base_path="/Users/abonham/documents/test_allelic/",
         prom_file="TERT-promoter-genomic-sequence.txt",
         prom_start="1293000",
@@ -28,10 +25,10 @@ Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/
         chrom="5",
     )
 
-    files_set = pyllelic.make_list_of_bam_files()  # finds bam files
+    files_set = pyllelic.make_list_of_bam_files(config)  # finds bam files
 
     # Run pyllelic; make take some time depending on number of bam files
-    data = pyllelic.GenomicPositionData(config=pyllelic.config, files_set=files_set)
+    data = pyllelic.GenomicPositionData(config=config, files_set=files_set)
 
     positions = data.positions
 
@@ -54,15 +51,13 @@ Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/
     data.quma_results["CELL_LINE"]  # see summary data for a cell line
 ```
 
-</details>
-
 ----------------------------------
 
 ## Dependencies and Installation
 
 ### Conda environment
 
-* Create a new conda environment using python 3.7:
+Create a new conda environment using python 3.7:
 
 ```bash
 conda create --name PYLLELIC python=3.7

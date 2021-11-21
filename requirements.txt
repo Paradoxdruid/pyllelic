@@ -8,7 +8,6 @@ xlrd
 openpyxl
 tqdm
 pysam
-scikit-bio
 biopython
 ipywidgets
 jupyter_contrib_nbextensions

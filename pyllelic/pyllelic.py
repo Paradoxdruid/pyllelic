@@ -7,10 +7,10 @@ import logging
 import os
 import pickle  # nosec
 import signal
-import sys
 from multiprocessing import Pool, cpu_count
+from multiprocessing.pool import AsyncResult
 from pathlib import Path
-from typing import Any, Dict, List, NamedTuple, Optional, TypeVar, Union
+from typing import Dict, List, NamedTuple, Optional, TypeVar, Union
 
 import numpy as np
 import pandas as pd
@@ -18,18 +18,14 @@ import plotly.graph_objects as go
 import pysam
 from Bio import pairwise2
 from scipy import stats
-from tqdm.notebook import tqdm
+from tqdm.auto import tqdm
 
 from . import quma
 from .config import Config
 
 logging.basicConfig(filename="pyllelic_test.log", level=logging.DEBUG)
 
-
 GPD = TypeVar("GPD", bound="GenomicPositionData")
-
-# Initialize shared configuration object
-config = Config()
 
 # Initialized multiprocessing limits
 NUM_THREADS = cpu_count() - 1
@@ -40,7 +36,7 @@ class AD_stats(NamedTuple):
 
     sig: bool
     stat: float
-    crits: List[Any]
+    crits: List[np.ndarray]
 
 
 class BamOutput:
@@ -154,9 +150,8 @@ class BamOutput:
 
         return True
 
-    @staticmethod
     def _genome_range(
-        position: str, genome_string: str, offset: Optional[int] = None
+        self, position: str, genome_string: str, offset: Optional[int] = None
     ) -> str:
         """Helper to return a genome string (e.g., "ATCGACTAG")
         given a position and an entire string.
@@ -173,7 +168,7 @@ class BamOutput:
         # OFFSET: int = 1298163  # TERT offset
 
         if not offset:
-            offset = config.offset
+            offset = self._config.offset
 
         start: int = offset - (int(position) + 30)
         end: int = offset - (int(position) + 1)
@@ -241,7 +236,7 @@ class QumaResult:
         # Set up a holding data frame from all the data
         holding_df: pd.DataFrame = pd.DataFrame()
 
-        returns: List[Any] = []
+        returns: List[AsyncResult] = []
         with Pool(NUM_THREADS, self._init_worker) as pool:
 
             for position, read, genomic in zip(
@@ -426,7 +421,7 @@ class GenomicPositionData:
         """
 
         writer: pd.ExcelWriter = pd.ExcelWriter(
-            config.base_directory.joinpath(filename)
+            self.config.base_directory.joinpath(filename)
         )
 
         for name, each in self.quma_results.items():
@@ -609,17 +604,17 @@ class GenomicPositionData:
         """
 
         self.means.to_excel(
-            config.base_directory / str(filename + "_means.xlsx"),
+            self.config.base_directory / str(filename + "_means.xlsx"),
             sheet_name="Means",
             index=True,
         )
         self.modes.to_excel(
-            config.base_directory / str(filename + "_modes.xlsx"),
+            self.config.base_directory / str(filename + "_modes.xlsx"),
             sheet_name="Modes",
             index=True,
         )
         self.diffs.to_excel(
-            config.base_directory / str(filename + "_diff.xlsx"),
+            self.config.base_directory / str(filename + "_diff.xlsx"),
             sheet_name="Diff",
             index=True,
         )
@@ -693,7 +688,7 @@ class GenomicPositionData:
             pd.DataFrame: dataframe of cell lines with likely allelic positions
         """
         np.seterr(divide="ignore", invalid="ignore")  # ignore divide-by-zero errors
-        sig_dict: Dict[str, List[Any]] = {
+        sig_dict: Dict[str, List[np.ndarray]] = {
             "cellLine": [],
             "position": [],
             "ad_stat": [],
@@ -724,13 +719,13 @@ class GenomicPositionData:
             raw_list (pd.Series): list of fractional methylation levels per read.
 
         Returns:
-            AD_stats[bool, float, List[Any]]: is the data significantly allelic (bool),
-                                    A-D statistic (float), critical values (list)
+            AD_stats[bool, float, List[np.ndarray]]: is the data significantly
+                allelic (bool), A-D statistic (float), critical values (list)
         """
 
         if np.all(pd.notnull(raw_list)):
             stat: float
-            crits: List[Any]
+            crits: List[np.ndarray]
             stat, crits, _ = stats.anderson(raw_list)
             is_sig: bool = bool(stat > crits[4])
             return AD_stats(is_sig, stat, crits)
@@ -763,33 +758,37 @@ def set_up_env_variables(
         offset (int): genomic position of promoter to offset reads
     """
 
-    config.base_directory = Path(base_path)
-    config.promoter_file = Path(base_path) / prom_file
-    config.results_directory = Path(base_path) / "results"
-    config.bam_directory = Path(base_path) / "bam_output"
-    config.analysis_directory = Path(base_path) / "test"
-    config.promoter_start = prom_start
-    config.promoter_end = prom_end
-    config.chromosome = chrom
-    config.offset = offset
+    config = Config(
+        base_directory=Path(base_path),
+        promoter_file=Path(base_path) / prom_file,
+        results_directory=Path(base_path) / "results",
+        bam_directory=Path(base_path) / "bam_output",
+        analysis_directory=Path(base_path) / "test",
+        promoter_start=prom_start,
+        promoter_end=prom_end,
+        chromosome=chrom,
+        offset=offset,
+    )
+
+    return config
+    # config.base_directory = Path(base_path)
+    # config.promoter_file = Path(base_path) / prom_file
+    # config.results_directory = Path(base_path) / "results"
+    # config.bam_directory = Path(base_path) / "bam_output"
+    # config.analysis_directory = Path(base_path) / "test"
+    # config.promoter_start = prom_start
+    # config.promoter_end = prom_end
+    # config.chromosome = chrom
+    # config.offset = offset
 
 
-def make_list_of_bam_files() -> List[str]:
+def make_list_of_bam_files(config: Config) -> List[str]:
     """Check analysis directory for all valid .bam files.
+
+    Args:
+        Config: pyllelic configuration options.
 
     Returns:
         list[str]: list of files
     """
     return [f.name for f in config.analysis_directory.iterdir() if f.suffix == ".bam"]
-
-
-# Main magic
-if __name__ == "__main__":
-    if sys.argv[1]:
-        filename: str = sys.argv[1]
-    else:  # pragma: no cover
-        filename = "output.xlsx"
-
-    files_to_analyze = make_list_of_bam_files()
-
-    data = GenomicPositionData(config=config, files_set=files_to_analyze)

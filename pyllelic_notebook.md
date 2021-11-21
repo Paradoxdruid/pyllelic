@@ -122,7 +122,7 @@ from pyllelic import pyllelic
 2. Make a sub-directory under ```base_path``` with a folder named ```test``` and put the ```.bam``` and ```.bai``` files in ```test```
 
 ```python
-pyllelic.set_up_env_variables(
+config = pyllelic.set_up_env_variables(
     base_path="/home/andrew/allellic/",  # Windows WSL set-up
 #     base_path="/Users/abonham/documents/test_allelic/",  # OSX setup
     prom_file="TERT-promoter-genomic-sequence.txt",
@@ -138,7 +138,7 @@ pyllelic.set_up_env_variables(
 ### Find files to analyze
 
 ```python
-files_set = pyllelic.make_list_of_bam_files()
+files_set = pyllelic.make_list_of_bam_files(config)
 ```
 
 ```python
@@ -152,7 +152,7 @@ files_set = files_set[0:2]  # grab only first two files for quick run
 ### Perform full methylation analysis and generate data object
 
 ```python
-data = pyllelic.GenomicPositionData(config=pyllelic.config, files_set=files_set)
+data = pyllelic.GenomicPositionData(config=config, files_set=files_set)
 ```
 
 ### Check main data outcomes
