@@ -405,7 +405,7 @@ class GenomicPositionData:
             genomic_files: List[str] = [
                 each for each in bam_result.genome_values.values()
             ]
-            positions = self.positions
+            positions = bam_result.positions
 
             quma_results[cell_line_name] = QumaResult(
                 read_files, genomic_files, positions
