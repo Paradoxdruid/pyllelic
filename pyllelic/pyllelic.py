@@ -178,8 +178,7 @@ class BamOutput:
         end: int = offset - (int(position) + 1)
         if genome_string[start:end]:
             return genome_string[start:end]
-        else:
-            raise ValueError("Position not in genomic promoter file")
+        raise ValueError("Position not in genomic promoter file")
 
     def _genome_parsing(self, genome_string: str) -> None:
         """Writes out a list of genomic sequence strings for comparison to read data."""
@@ -389,12 +388,6 @@ class GenomicPositionData:
 
         return sorted(list(set(positions)))
 
-    # @staticmethod
-    # def extract_cell_types(file_sets: List[str]) -> List[str]:
-    #     """Returns a list[str] of cell line names in the dataset."""
-
-    #     return [file.split("_")[1] for file in file_sets]
-
     def _quma_full_threaded(self) -> Dict[str, QumaResult]:
         """Run external QUMA methylation analysis on all specified cell lines,
         using multiprocessing library.
@@ -481,7 +474,7 @@ class GenomicPositionData:
             pd.DataFrame: dataframes of mode values for each position in each cell line
         """
 
-        # Gives the modes of each positions-- NOT the mean of the entire dataframe!
+        # Gives the modes of each positions-- NOT the mode of the entire dataframe!
         working_df: pd.DataFrame = pd.DataFrame()
         for pos in self.positions:
             working_df[pos] = ""
@@ -540,7 +533,7 @@ class GenomicPositionData:
 
         bad_values: List[str] = ["N", "F"]  # for interpreting quma returns
         min_num_meth_sites: int = (
-            min_sites  # Only include is read has >2 methylation sites
+            min_sites  # Only include is read has minimum methylation sites
         )
 
         values_list: List[float] = []
@@ -676,6 +669,117 @@ class GenomicPositionData:
         fig: go.Figure = self._create_histogram(data, cell_line, position)
         fig.show()
 
+    @staticmethod
+    def _create_heatmap(
+        df: pd.DataFrame, min_values: int, width: int, height: int
+    ) -> go.Figure:
+        """Generate a graph figure showing heatmap of mean methylation across
+        cell lines.
+
+        Args:
+            df (pd.DataFrame): dataframe of mean methylation
+            min_values (int): minimum number of points data must exist at a position
+            width (int): figure width
+            height (int): figure height
+
+        Returns:
+            go.Figure: plotly figure object
+        """
+
+        values_needed = len(df.index) - min_values
+        df = df.loc[:, (df.isnull().sum(axis=0) <= values_needed)]
+
+        fig: go.Figure = go.Figure()
+        fig.add_trace(
+            go.Heatmap(
+                z=df,
+                x=df.columns,
+                y=df.index,
+                hoverongaps=False,
+            ),
+        )
+        fig.update_traces(
+            dict(showscale=False, coloraxis=None, colorscale="RdBu_r"),
+            selector={"type": "heatmap"},
+        )
+
+        fig.update_layout(
+            title_text="Mean Methylation Heatmap",
+            xaxis_title_text="Position",
+            yaxis_title_text="Cell Line",
+            aspect="equal",
+            template="seaborn",
+            autosize=False,
+            width=width,
+            height=height,
+        )
+
+        return fig
+
+    def heatmap(self, min_values: int, width: int = 800, height: int = 3000) -> None:
+        """Display a graph figure showing heatmap of mean methylation across
+        cell lines.
+
+        Args:
+            min_values (int): minimum number of points data must exist at a position
+            width (int): figure width, defaults to 800
+            height (int): figure height, defaults to 3000
+        """
+
+        data = self.means
+
+        fig: go.Figure = self._create_heatmap(data, min_values, width, height)
+        fig.show()
+
+    @staticmethod
+    def _create_methylation_diffs_bar_graph(df: pd.DataFrame) -> go.Figure:
+        """Generate a graph figure showing bar graph of significant methylation across
+        cell lines.
+
+        Args:
+            df (pd.DataFrame): dataframe of significant methylation positions
+
+        Returns:
+            go.Figure: plotly figure object
+        """
+        data = df.pivot(index="position", columns="cellLine", values="ad_stat")
+        data = data.dropna(axis=1, how="all").count(axis=1).to_frame()
+
+        fig = go.Figure()
+        fig.add_trace(go.Bar(x=data.index, y=data.values.flatten()))
+        fig.update_layout(
+            xaxis_type="linear",
+            showlegend=False,
+            title="Significant Methylation Differences",
+            template="seaborn",
+        )
+        fig.update_xaxes(
+            tickformat="r",
+            tickangle=45,
+            nticks=40,
+            title="Position",
+            range=[int(data.index.min()), int(data.index.max())],
+        )
+        fig.update_yaxes(title="# of significant differences")
+        fig.update_traces(width=50)
+
+        return fig
+
+    def sig_methylation_differences(
+        self, cell_lines: Optional[List[str]] = None
+    ) -> None:
+        """Display a graph figure showing a bar chart of significantly different
+        mean / mode methylation across all or a subset of cell lines.
+
+        Args:
+            cell_lines (Optional[List[str]]): set of cell lines to analyze,
+            defaults to all cell lines.
+        """
+        data = self.summarize_allelic_data(cell_lines)
+
+        fig: go.Figure = self._create_methylation_diffs_bar_graph(data)
+        fig.show()
+
     def generate_ad_stats(self) -> pd.DataFrame:
         """Generate Anderson-Darling normality statistics for an individual data df.
 
@@ -687,12 +791,24 @@ class GenomicPositionData:
         df2 = df.applymap(self._anderson_darling_test)
         return df2
 
-    def summarize_allelic_data(self) -> pd.DataFrame:
-        """Create a dataframe only of likely allelic methylation positions
+    def summarize_allelic_data(
+        self, cell_lines: Optional[List[str]] = None
+    ) -> pd.DataFrame:
+        """Create a dataframe only of likely allelic methylation positions.
+
+        Args:
+            cell_lines (Optional[List[str]]): set of cell lines to analyze,
+            defaults to all cell lines.
 
         Returns:
             pd.DataFrame: dataframe of cell lines with likely allelic positions
         """
+
+        if cell_lines:
+            data = self.individual_data[self.individual_data.index.isin(cell_lines)]
+        else:
+            data = self.individual_data
+
         np.seterr(divide="ignore", invalid="ignore")  # ignore divide-by-zero errors
         sig_dict: Dict[str, List[np.ndarray]] = {
             "cellLine": [],
@@ -702,7 +818,7 @@ class GenomicPositionData:
             "diff": [],
             "raw": [],
         }
-        for index, row in self.individual_data.iterrows():
+        for index, row in data.iterrows():
             for column in row.index:
                 value = row[column]
                 if np.all(pd.notnull(value)):
@@ -777,15 +893,6 @@ def set_up_env_variables(
     )
 
     return config
-    # config.base_directory = Path(base_path)
-    # config.promoter_file = Path(base_path) / prom_file
-    # config.results_directory = Path(base_path) / "results"
-    # config.bam_directory = Path(base_path) / "bam_output"
-    # config.analysis_directory = Path(base_path) / "test"
-    # config.promoter_start = prom_start
-    # config.promoter_end = prom_end
-    # config.chromosome = chrom
-    # config.offset = offset
 
 
 def make_list_of_bam_files(config: Config) -> List[str]:
