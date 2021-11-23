@@ -30,6 +30,10 @@ GPD = TypeVar("GPD", bound="GenomicPositionData")
 # Initialized multiprocessing limits
 NUM_THREADS = cpu_count() - 1
 
+# SANITY ALIGNMENT LIMITS
+MIN_NUMBER_READS = 1
+MIN_PERCENT_ALIGNMENT = 50
+
 
 class AD_stats(NamedTuple):
     """Helper class for NamedTuple results from anderson_darling_test"""
@@ -172,8 +176,10 @@ class BamOutput:
 
         start: int = offset - (int(position) + 30)
         end: int = offset - (int(position) + 1)
-
-        return genome_string[start:end]
+        if genome_string[start:end]:
+            return genome_string[start:end]
+        else:
+            raise ValueError("Position not in genomic promoter file")
 
     def _genome_parsing(self, genome_string: str) -> None:
         """Writes out a list of genomic sequence strings for comparison to read data."""
@@ -219,7 +225,7 @@ class QumaResult:
         for line in quma_result.splitlines():
             if not line.lstrip().startswith("g"):
                 fields: List[str] = line.split("\t")
-                if float(fields[7]) < 70:  # checks for high mercent match
+                if float(fields[7]) < MIN_PERCENT_ALIGNMENT:
                     dots.append("FAIL")
                 else:
                     dots.append(fields[13])
@@ -518,7 +524,7 @@ class GenomicPositionData:
         self,
         pos: str,
         key: str,
-        min_sites: int = 1,
+        min_sites: int = MIN_NUMBER_READS,
     ) -> List[float]:
         """Given a genomic position, cell line, and data, find fractional methylation
         values for each read in the dataset.
@@ -545,7 +551,7 @@ class GenomicPositionData:
             values_to_check: List[str] = self._get_str_values(df, pos)
             for value in values_to_check:
                 if not any(substring in value for substring in bad_values):
-                    if len(value) > min_num_meth_sites:
+                    if len(value) >= min_num_meth_sites:
                         fraction_val: float = float(value.count("1")) / float(
                             len(value)
                         )  # number of methylated sites in each read

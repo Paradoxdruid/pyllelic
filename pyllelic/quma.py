@@ -487,34 +487,53 @@ def _find_best_dataset(
     ffres: Dict[str, Any], frres: Dict[str, Any]
 ) -> Tuple[Dict[str, Any], int]:
     """Helper to find best data returned."""
-    # Find best dataset:
-    if ffres["aliMis"] > frres["aliMis"]:
-        fres = frres
-        fdir = -1
-    elif ffres["aliMis"] < frres["aliMis"]:
-        fres = ffres
-        fdir = 1
-    elif ffres["perc"] > frres["perc"]:
-        fres = ffres
-        fdir = 1
-    elif ffres["perc"] < frres["perc"]:
-        fres = frres
-        fdir = -1
-    elif ffres["unconv"] > frres["unconv"]:
-        fres = frres
-        fdir = -1
-    elif ffres["unconv"] < frres["unconv"]:
-        fres = ffres
-        fdir = 1
-    elif ffres["pconv"] < frres["pconv"]:
-        fres = frres
-        fdir = -1
-    elif ffres["pconv"] > frres["pconv"]:
+    # Find best dataset: FIXME
+
+    if ffres["aliLen"] > frres["aliLen"]:
         fres = ffres
         fdir = 1
     else:
-        fres = ffres
-        fdir = 1
+        fres = frres
+        fdir = -1
+    # print(f"Forward:\n{ffres}\n\nRevese:\n{frres}\n")
+    # if ffres["aliMis"] > frres["aliMis"]:
+    #     print("Cond 1")
+    #     fres = frres
+    #     fdir = -1
+    # elif ffres["aliMis"] < frres["aliMis"]:
+    #     print("Cond 2")
+    #     fres = ffres
+    #     fdir = 1
+    # elif ffres["perc"] > frres["perc"]:
+    #     print("Cond 3")
+    #     fres = ffres
+    #     fdir = 1
+    # elif ffres["perc"] < frres["perc"]:
+    #     print("Cond 4")
+    #     fres = frres
+    #     fdir = -1
+    # elif ffres["unconv"] > frres["unconv"]:
+    #     print("Cond 5")
+    #     fres = frres
+    #     fdir = -1
+    # elif ffres["unconv"] < frres["unconv"]:
+    #     print("Cond 6")
+    #     fres = ffres
+    #     fdir = 1
+    # elif ffres["pconv"] < frres["pconv"]:
+    #     print("Cond 7")
+    #     fres = frres
+    #     fdir = -1
+    # elif ffres["pconv"] > frres["pconv"]:
+    #     print("Cond 8")
+    #     fres = ffres
+    #     fdir = 1
+    # else:
+    #     print("Cond 9")
+    #     fres = ffres
+    #     fdir = 1
+
+    # print(f"fres: {fres},\nfdir: {fdir}")
     return fres, fdir
 
 
