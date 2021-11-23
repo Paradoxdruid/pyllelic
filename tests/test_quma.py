@@ -336,8 +336,11 @@ def test__find_best_dataset():
     TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
     TEST_FRRES["aliMis"] = 2
     EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
-    EXPECTED_DIRECTION = 1
+    EXPECTED_DIRECTION = -1
     actual_res, actual_dir = quma._find_best_dataset(TEST_FFRES, TEST_FRRES)
+
+    EXPECTED_RES["aliMis"] = 2
+
     assert EXPECTED_RES == actual_res
     assert EXPECTED_DIRECTION == actual_dir
 
@@ -359,7 +362,8 @@ def test__find_best_dataset_fwd_perc():
     TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
     TEST_FRRES["perc"] = 70.0
     EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
-    EXPECTED_DIRECTION = 1
+    EXPECTED_RES["perc"] = 70.0
+    EXPECTED_DIRECTION = -1
     actual_res, actual_dir = quma._find_best_dataset(TEST_FFRES, TEST_FRRES)
     assert EXPECTED_RES == actual_res
     assert EXPECTED_DIRECTION == actual_dir
@@ -368,8 +372,9 @@ def test__find_best_dataset_fwd_perc():
 def test__find_best_dataset_rev_perc():
     TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
     TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
-    TEST_FFRES["perc"] = 70.0
+    TEST_FFRES["perc"] = 100.0
     EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
+    EXPECTED_RES["perc"] = 100.0
     EXPECTED_DIRECTION = -1
     actual_res, actual_dir = quma._find_best_dataset(TEST_FFRES, TEST_FRRES)
     assert EXPECTED_RES == actual_res
@@ -381,7 +386,9 @@ def test__find_best_dataset_fwd_unconv():
     TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
     TEST_FRRES["unconv"] = 1
     EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
-    EXPECTED_DIRECTION = 1
+    EXPECTED_RES["perc"] = 100.0
+    EXPECTED_RES["unconv"] = 1
+    EXPECTED_DIRECTION = -1
     actual_res, actual_dir = quma._find_best_dataset(TEST_FFRES, TEST_FRRES)
     assert EXPECTED_RES == actual_res
     assert EXPECTED_DIRECTION == actual_dir
@@ -392,6 +399,7 @@ def test__find_best_dataset_rev_unconv():
     TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
     TEST_FFRES["unconv"] = 1
     EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
+    EXPECTED_RES["unconv"] = 0
     EXPECTED_DIRECTION = -1
     actual_res, actual_dir = quma._find_best_dataset(TEST_FFRES, TEST_FRRES)
     assert EXPECTED_RES == actual_res
@@ -403,7 +411,8 @@ def test__find_best_dataset_fwd_pconv():
     TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
     TEST_FRRES["pconv"] = 70.0
     EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
-    EXPECTED_DIRECTION = 1
+    EXPECTED_RES["pconv"] = 70.0
+    EXPECTED_DIRECTION = -1
     actual_res, actual_dir = quma._find_best_dataset(TEST_FFRES, TEST_FRRES)
     assert EXPECTED_RES == actual_res
     assert EXPECTED_DIRECTION == actual_dir

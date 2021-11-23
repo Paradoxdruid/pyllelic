@@ -88,11 +88,11 @@ def setup_config(my_path):
     d = my_path
     prom_file = d / "test.txt"
     prom_file.write_text(TEST_PROM_FILE)
-    TEST_START = "1293000"
+    TEST_START = "1293200"
     TEST_END = "1296000"
     TEST_CHR = "5"
-    TEST_OFFSET = 0
-    pyllelic.set_up_env_variables(
+    TEST_OFFSET = 1298163
+    config = pyllelic.set_up_env_variables(
         base_path=my_path,
         prom_file=prom_file,
         prom_start=TEST_START,
@@ -100,6 +100,8 @@ def setup_config(my_path):
         chrom=TEST_CHR,
         offset=TEST_OFFSET,
     )
+
+    return config
 
 
 # Tests
@@ -112,7 +114,7 @@ def test_set_up_env_variables():
     TEST_CHR = "5"
     TEST_OFFSET = 0
     EXPECTED_RESULTS = TEST_BASE_PATH / "results"
-    pyllelic.set_up_env_variables(
+    config = pyllelic.set_up_env_variables(
         base_path=TEST_BASE_PATH,
         prom_file=TEST_PROM_FILE,
         prom_start=TEST_START,
@@ -121,15 +123,16 @@ def test_set_up_env_variables():
         offset=TEST_OFFSET,
     )
 
-    assert TEST_BASE_PATH == pyllelic.config.base_directory
-    assert TEST_PROM_FILE == pyllelic.config.promoter_file
-    assert TEST_START == pyllelic.config.promoter_start
-    assert TEST_END == pyllelic.config.promoter_end
-    assert EXPECTED_RESULTS == pyllelic.config.results_directory
+    assert TEST_BASE_PATH == config.base_directory
+    assert TEST_PROM_FILE == config.promoter_file
+    assert TEST_START == config.promoter_start
+    assert TEST_END == config.promoter_end
+    assert EXPECTED_RESULTS == config.results_directory
 
 
-def test_make_list_of_bam_files():
+def test_make_list_of_bam_files(tmp_path):
     """Test making list of bam files, mocking config."""
+    config = setup_config(tmp_path)
     TEST_LIST = [
         Path("bad1.txt"),
         Path("bad2.bai"),
@@ -139,7 +142,7 @@ def test_make_list_of_bam_files():
     EXPECTED = ["good1.bam", "good2.bam"]
     with mock.patch.object(pyllelic.Path, "iterdir") as mock_iterdir:
         mock_iterdir.return_value = TEST_LIST
-        actual = pyllelic.make_list_of_bam_files()
+        actual = pyllelic.make_list_of_bam_files(config)
 
     assert EXPECTED == actual
 
@@ -155,11 +158,11 @@ class Test_BamOutput:
     @pytest.fixture()
     def set_up_bam_output(self, tmp_path):
         p, fp_bam = setup_bam_files(tmp_path)
-        setup_config(p)
+        config = setup_config(p)
         return pyllelic.BamOutput(
             sam_directory=fp_bam,
             genome_string=TEST_PROM_FILE,
-            config=pyllelic.config,
+            config=config,
         )
 
     def test_init(self, tmp_path, set_up_bam_output):
@@ -228,12 +231,12 @@ class Test_QumaOutput:
         EXPECTED_QUMA_VALUES = pd.DataFrame.from_dict(
             {
                 "1293588": {
-                    0: "1111",
-                    1: "11111",
-                    2: "11111",
-                    3: "11111",
-                    4: "11111",
-                    5: "11111",
+                    0: "G11-1",
+                    1: "G11-1",
+                    2: "G11-1",
+                    3: "G11-1",
+                    4: "G11-1",
+                    5: "1111",
                 }
             }
         )
@@ -249,7 +252,7 @@ class Test_QumaOutput:
             + "2\tquery2\tATCGATAGCATT\tATCGATAGCATT\tATCG-TAGTCGA\t"
             + "12\t5\t58.3\t1\t1\t0\t1\t100.0\t1A\t1\t1\n"
         )
-        EXPECTED = ["FAIL", "11"]
+        EXPECTED = ["1A", "11"]
         actual = quma_output._process_raw_quma(TEST_QUMA_RESULT)
         assert EXPECTED == actual
 
@@ -259,18 +262,19 @@ class Test_QumaOutput:
         EXPECTED_RESULTS = pd.DataFrame.from_dict(
             {
                 "1293588": {
-                    0: "1111",
-                    1: "11111",
-                    2: "11111",
-                    3: "11111",
-                    4: "11111",
-                    5: "11111",
+                    0: "G11-1",
+                    1: "G11-1",
+                    2: "G11-1",
+                    3: "G11-1",
+                    4: "G11-1",
+                    5: "1111",
                 }
             }
         )
 
         actual = quma_output._pool_processing()
 
+        print(actual.to_dict())
         pd.testing.assert_frame_equal(actual, EXPECTED_RESULTS)
 
     @mock.patch("pyllelic.pyllelic.signal.signal")
@@ -316,13 +320,11 @@ class Test_GenomicPositionData:
     @pytest.fixture()
     def set_up_genomic_position_data(self, tmp_path):
         p, _ = setup_bam_files(tmp_path)
-        setup_config(p)
+        config = setup_config(p)
         INPUT_BAM_LIST = ["fh_test.bam"]
         return (
             p,
-            pyllelic.GenomicPositionData(
-                config=pyllelic.config, files_set=INPUT_BAM_LIST
-            ),
+            pyllelic.GenomicPositionData(config=config, files_set=INPUT_BAM_LIST),
         )
 
     def test_init(self, set_up_genomic_position_data):
@@ -340,75 +342,12 @@ class Test_GenomicPositionData:
     def test_process_means(self, set_up_genomic_position_data):
         _, genomic_position_data = set_up_genomic_position_data
 
-        print(genomic_position_data.means.to_dict())
+        # print(genomic_position_data.means.to_dict())
 
         intermediate = EXPECTED_MEANS
         expected = intermediate.astype("object")
 
         pd.testing.assert_frame_equal(genomic_position_data.means, expected)
-
-
-# def test_extract_cell_types():
-#     """Check correct response and exception to bad data."""
-#     input_list = [
-#         "fh_TEST1_TISSUE.TERT.bam",
-#         "fh_TEST2_TISSUE.TERT.bam",
-#         "fh_TEST3_TISSUE.TERT.bam",
-#     ]
-#     expected_result = ["TEST1", "TEST2", "TEST3"]
-#     result = pyllelic.extract_cell_types(input_list)
-#     assert expected_result == result
-
-#     with pytest.raises(IndexError):
-#         bad_input = ["text", "text2_", "_text3"]
-#         pyllelic.extract_cell_types(bad_input)
-
-
-# @mock.patch("pyllelic.pyllelic.read_df_of_quma_results")
-# @mock.patch("pyllelic.pyllelic.quma_full_threaded")
-# def test_run_quma_and_compile_list_of_df(mock_quma, mock_read):
-#     TEST_CELL_TYPES = ["TEST1", "TEST2", "TEST3"]
-#     TEST_FILENAME = "output.txt"
-#     pyllelic.run_quma_and_compile_list_of_df(TEST_CELL_TYPES, TEST_FILENAME, True)
-#     mock_quma.assert_called_once()
-#     mock_read.assert_called_once()
-
-
-# @mock.patch("pyllelic.pyllelic.pd")
-# def test_read_df_of_quma_results(mock_pandas):
-#     TEST_FILENAME = "output.xls"
-#     pyllelic.read_df_of_quma_results(TEST_FILENAME)
-#     mock_pandas.read_excel.assert_called_once()
-
-
-# def test_process_means():
-#     """Check whether the expected and result DataFrames are identical."""
-#     in_pos = ["1", "2", "3"]
-#     in_cell = ["TEST1", "TEST2", "TEST3"]
-#     result = pyllelic.process_means(
-#         dict_of_dfs=SAMPLE_DICT_OF_DFS, positions=in_pos, cell_types=in_cell
-#     )
-
-#     intermediate = EXPECTED_INTERMEDIATE_MEANS
-
-#     expected = intermediate.astype("object")
-
-#     pd.testing.assert_frame_equal(result, expected)
-
-
-# def test_process_modes():
-#     """Check whether the expected and result DataFrames are identical."""
-#     in_pos = ["1", "2", "3"]
-#     in_cell = ["TEST1", "TEST2", "TEST3"]
-#     result = pyllelic.process_modes(
-#         dict_of_dfs=SAMPLE_DICT_OF_DFS, positions=in_pos, cell_types=in_cell
-#     )
-
-#     intermediate = EXPECTED_INTERMEDIATE_MODES
-
-#     expected = intermediate.astype("object")
-
-#     pd.testing.assert_frame_equal(result, expected)
 
 
 # def test_return_individual_data():
