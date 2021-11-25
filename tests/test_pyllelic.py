@@ -301,13 +301,11 @@ class Test_QumaOutput:
         TEST_QSEQ = ">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
 
         EXPECTED = (
-            "genome\t0\tATCGTAGTCGA\t2\t2,8\n"
-            + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"
-            + "11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n"
-            + "2\tquery2\tATCGATAGCATT\tATCG-TAGT\tATCGATAGC\t"
-            + "9\t1\t88.9\t1\t1\t0\t1\t100.0\t1\t1\t1\n"
+            "genome\t0\tATCGTAGTCGA\t1\t0\n1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\t"
+            + "ATCGTAGTCGA\t11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n2\tquery2\t"
+            + "ATCGATAGCATT\tATCG-TAGT\tATCGATAGC\t9\t1\t88.9\t1\t1\t0\t1\t"
+            + "100.0\t1\t1\t1\n"
         )
-        # with mock.patch("builtins.open", new=my_open):
         actual = quma_output._access_quma(TEST_GSEQ, TEST_QSEQ)
         assert EXPECTED == actual
 
