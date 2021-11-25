@@ -300,7 +300,7 @@ class QumaResult:
             str: output from quma command
         """
 
-        result = quma.quma_main(genomic_contents, read_contents)
+        result = quma.Quma(genomic_contents, read_contents).values
 
         return result
 

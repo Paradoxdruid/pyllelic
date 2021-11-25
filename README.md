@@ -23,6 +23,7 @@ Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/
         prom_start="1293200",
         prom_end="1296000",
         chrom="5",
+        offset=1298163,
     )
 
     files_set = pyllelic.make_list_of_bam_files(config)  # finds bam files
