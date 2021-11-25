@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Encoded bam inputs for testing pyllelic."""
+"""Encoded inputs for testing pyllelic."""
 
 # flake8: noqa
 

@@ -10,7 +10,7 @@ import tempfile
 from contextlib import contextmanager
 
 # import tempfile
-from bam_input import (
+from inputs import (
     SAMPLE_BAM,
     SAMPLE_BAI,
     TEST_PROM_FILE,
@@ -36,7 +36,7 @@ import pandas as pd
 from pathlib import Path
 
 # Module to test
-import pyllelic.pyllelic as pyllelic
+from pyllelic import pyllelic
 
 
 # Helper methods
@@ -92,7 +92,7 @@ def setup_config(my_path):
     TEST_END = "1296000"
     TEST_CHR = "5"
     TEST_OFFSET = 1298163
-    config = pyllelic.set_up_env_variables(
+    config = pyllelic.configure(
         base_path=my_path,
         prom_file=prom_file,
         prom_start=TEST_START,
@@ -105,7 +105,7 @@ def setup_config(my_path):
 
 
 # Tests
-def test_set_up_env_variables():
+def test_configure():
     """Test setting environment variables with mock object."""
     TEST_BASE_PATH = Path().cwd()
     TEST_PROM_FILE = TEST_BASE_PATH / "test.txt"
@@ -114,7 +114,7 @@ def test_set_up_env_variables():
     TEST_CHR = "5"
     TEST_OFFSET = 0
     EXPECTED_RESULTS = TEST_BASE_PATH / "results"
-    config = pyllelic.set_up_env_variables(
+    config = pyllelic.configure(
         base_path=TEST_BASE_PATH,
         prom_file=TEST_PROM_FILE,
         prom_start=TEST_START,

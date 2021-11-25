@@ -6,7 +6,7 @@
   ⭐ &nbsp;&nbsp;the project to show your appreciation. :arrow_upper_right:
 </p>
 
-<img src="./assets/pyllelic_logo.png" width="100" height="100" style="float: left; margin-right: 10px;">
+<img src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_logo.png" width="100" height="100" style="float: left; margin-right: 10px;">
 
 **pyllelic**: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.
 
@@ -17,10 +17,10 @@ Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/
 ```python
     from pyllelic import pyllelic
 
-    config = pyllelic.set_up_env_variables(  # Specify file and directory locations
+    config = pyllelic.configure(  # Specify file and directory locations
         base_path="/Users/abonham/documents/test_allelic/",
         prom_file="TERT-promoter-genomic-sequence.txt",
-        prom_start="1293000",
+        prom_start="1293200",
         prom_end="1296000",
         chrom="5",
     )
@@ -42,11 +42,15 @@ Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/
 
     individual_data = data.individual_data
 
-    data.save() # save methylation results
+    data.save("output.xlsx")  # save methylation results
+
+    data.save_pickle("my_run.pickle")  # save data object for later analysis
     
-    data.write_means_modes_diffs(filename="output.xlsx")  # write output data to excel files
+    data.write_means_modes_diffs(filename="Run1_")  # write output data files
 
     data.histogram("CELL_LINE", "POSITION")  # visualize data for a point
+
+    data.heatmap(min_values=1)  # methylation level heatmap
 
     data.quma_results["CELL_LINE"]  # see summary data for a cell line
 ```

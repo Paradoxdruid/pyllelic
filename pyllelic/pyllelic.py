@@ -369,7 +369,7 @@ class GenomicPositionData:
             self.config.base_directory / "test" / f for f in self.files_set
         ]
 
-        for sams in tqdm(sam_path, desc="Files"):
+        for sams in tqdm(sam_path, desc="Process BAM Files"):
             self._bam_output[str(sams)] = BamOutput(
                 sams, self.genome_string, self.config
             )
@@ -397,7 +397,9 @@ class GenomicPositionData:
         """
 
         quma_results: Dict[str, QumaResult] = {}
-        for name, bam_result in tqdm(self._bam_output.items(), desc="Cell Lines"):
+        for name, bam_result in tqdm(
+            self._bam_output.items(), desc="Process methylation"
+        ):
             cell_line_name: str = name.split("_")[1]
 
             read_files: List[str] = [each for each in bam_result.values.values()]
@@ -500,9 +502,9 @@ class GenomicPositionData:
         """
 
         working_df: pd.DataFrame = pd.DataFrame()
-        for pos in tqdm(self.positions, desc="Position"):
+        for pos in self.positions:
             working_df[pos] = ""  # Create position column in dataframe
-            for key in tqdm(self.quma_results.keys(), desc="Cell Line", leave=False):
+            for key in self.quma_results.keys():
                 values_list: List[float] = self._return_read_values(pos, key)
                 if values_list:
                     data_for_df: Union[List[float], float] = values_list
@@ -707,7 +709,7 @@ class GenomicPositionData:
             title_text="Mean Methylation Heatmap",
             xaxis_title_text="Position",
             yaxis_title_text="Cell Line",
-            aspect="equal",
+            # aspect="equal",
             template="seaborn",
             autosize=False,
             width=width,
@@ -860,7 +862,7 @@ class GenomicPositionData:
 # Module level helper functions
 
 
-def set_up_env_variables(
+def configure(
     base_path: str,
     prom_file: str,
     prom_start: str,
