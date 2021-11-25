@@ -180,21 +180,21 @@
 <p>Configuration options for pyllelic.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyllelic.config.Config">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyllelic.config.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/source')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">promoter_file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/source/promoter.txt')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results_directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/source/results')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bam_directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/source/bam_output')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/source/test')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">promoter_start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'1293000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">promoter_end</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'1296000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chromosome</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'5'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1298163</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyllelic.config.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyllelic.config.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">PosixPath('/')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">promoter_file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">PosixPath('/promoter.txt')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results_directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">PosixPath('/results')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bam_directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">PosixPath('/bam_output')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">PosixPath('/test')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">promoter_start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'1293200'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">promoter_end</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'1296000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chromosome</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'5'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1298163</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyllelic.config.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.config.Config.analysis_directory">
-<span class="sig-name descname"><span class="pre">analysis_directory</span></span><em class="property"><span class="pre">:</span> <span class="pre">pathlib.Path</span></em><em class="property"> <span class="pre">=</span> <span class="pre">PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/source/test')</span></em><a class="headerlink" href="#pyllelic.config.Config.analysis_directory" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">analysis_directory</span></span><em class="property"><span class="pre">:</span> <span class="pre">pathlib.Path</span></em><em class="property"> <span class="pre">=</span> <span class="pre">PosixPath('/test')</span></em><a class="headerlink" href="#pyllelic.config.Config.analysis_directory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.config.Config.bam_directory">
-<span class="sig-name descname"><span class="pre">bam_directory</span></span><em class="property"><span class="pre">:</span> <span class="pre">pathlib.Path</span></em><em class="property"> <span class="pre">=</span> <span class="pre">PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/source/bam_output')</span></em><a class="headerlink" href="#pyllelic.config.Config.bam_directory" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">bam_directory</span></span><em class="property"><span class="pre">:</span> <span class="pre">pathlib.Path</span></em><em class="property"> <span class="pre">=</span> <span class="pre">PosixPath('/bam_output')</span></em><a class="headerlink" href="#pyllelic.config.Config.bam_directory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.config.Config.base_directory">
-<span class="sig-name descname"><span class="pre">base_directory</span></span><em class="property"><span class="pre">:</span> <span class="pre">pathlib.Path</span></em><em class="property"> <span class="pre">=</span> <span class="pre">PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/source')</span></em><a class="headerlink" href="#pyllelic.config.Config.base_directory" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">base_directory</span></span><em class="property"><span class="pre">:</span> <span class="pre">pathlib.Path</span></em><em class="property"> <span class="pre">=</span> <span class="pre">PosixPath('/')</span></em><a class="headerlink" href="#pyllelic.config.Config.base_directory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -214,17 +214,17 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.config.Config.promoter_file">
-<span class="sig-name descname"><span class="pre">promoter_file</span></span><em class="property"><span class="pre">:</span> <span class="pre">pathlib.Path</span></em><em class="property"> <span class="pre">=</span> <span class="pre">PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/source/promoter.txt')</span></em><a class="headerlink" href="#pyllelic.config.Config.promoter_file" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">promoter_file</span></span><em class="property"><span class="pre">:</span> <span class="pre">pathlib.Path</span></em><em class="property"> <span class="pre">=</span> <span class="pre">PosixPath('/promoter.txt')</span></em><a class="headerlink" href="#pyllelic.config.Config.promoter_file" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.config.Config.promoter_start">
-<span class="sig-name descname"><span class="pre">promoter_start</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'1293000'</span></em><a class="headerlink" href="#pyllelic.config.Config.promoter_start" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">promoter_start</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'1293200'</span></em><a class="headerlink" href="#pyllelic.config.Config.promoter_start" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.config.Config.results_directory">
-<span class="sig-name descname"><span class="pre">results_directory</span></span><em class="property"><span class="pre">:</span> <span class="pre">pathlib.Path</span></em><em class="property"> <span class="pre">=</span> <span class="pre">PosixPath('/mnt/c/Users/Andrew/Dropbox/Github/pyllelic/source/results')</span></em><a class="headerlink" href="#pyllelic.config.Config.results_directory" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">results_directory</span></span><em class="property"><span class="pre">:</span> <span class="pre">pathlib.Path</span></em><em class="property"> <span class="pre">=</span> <span class="pre">PosixPath('/results')</span></em><a class="headerlink" href="#pyllelic.config.Config.results_directory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -350,7 +350,7 @@
 in reduced representation bisulfate DNA sequencing.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.AD_stats">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">AD_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sig</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crits</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyllelic.pyllelic.AD_stats" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">AD_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sig</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crits</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyllelic.pyllelic.AD_stats" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
 <p>Helper class for NamedTuple results from anderson_darling_test</p>
 <dl class="py property">
@@ -500,6 +500,22 @@ and statistical analysis.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.heatmap">
+<span class="sig-name descname"><span class="pre">heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">3000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.heatmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display a graph figure showing heatmap of mean methylation across
+cell lines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_values</strong> (<em>int</em>) – minimum number of points data must exist at a position</p></li>
+<li><p><strong>width</strong> (<em>int</em>) – figure width, defaults to 800</p></li>
+<li><p><strong>height</strong> (<em>int</em>) – figure height, defaults to 3000</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.histogram">
 <span class="sig-name descname"><span class="pre">histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell_line</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.histogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display a graph figure showing fractional methylation in
@@ -587,15 +603,36 @@ a given cell line at a given site.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.summarize_allelic_data">
-<span class="sig-name descname"><span class="pre">summarize_allelic_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.summarize_allelic_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a dataframe only of likely allelic methylation positions</p>
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.sig_methylation_differences">
+<span class="sig-name descname"><span class="pre">sig_methylation_differences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell_lines</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.sig_methylation_differences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display a graph figure showing a bar chart of significantly different
+mean / mode methylation across all or a subset of cell lines.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>dataframe of cell lines with likely allelic positions</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cell_lines</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – set of cell lines to analyze,</p></li>
+<li><p><strong>lines.</strong> (<em>defaults to all cell</em>) – </p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>pd.DataFrame</p>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.summarize_allelic_data">
+<span class="sig-name descname"><span class="pre">summarize_allelic_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell_lines</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.summarize_allelic_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a dataframe only of likely allelic methylation positions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cell_lines</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – set of cell lines to analyze,</p></li>
+<li><p><strong>lines.</strong> (<em>defaults to all cell</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataframe of cell lines with likely allelic positions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -632,22 +669,8 @@ a given cell line at a given site.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.make_list_of_bam_files">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">make_list_of_bam_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyllelic.pyllelic.make_list_of_bam_files" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check analysis directory for all valid .bam files.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>list of files</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[str]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.set_up_env_variables">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">set_up_env_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prom_file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prom_start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prom_end</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrom</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.set_up_env_variables" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pyllelic.pyllelic.configure">
+<span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">configure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prom_file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prom_start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prom_end</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrom</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#pyllelic.pyllelic.configure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper method to set up all our environmental variables, such as for testing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -660,6 +683,23 @@ in “test” sub-directory in this folder</p></li>
 <li><p><strong>chrom</strong> (<em>str</em>) – chromosome promoter is located on</p></li>
 <li><p><strong>offset</strong> (<em>int</em>) – genomic position of promoter to offset reads</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.make_list_of_bam_files">
+<span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">make_list_of_bam_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><span class="pre">pyllelic.config.Config</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pyllelic.pyllelic.make_list_of_bam_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check analysis directory for all valid .bam files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>Config</strong> – pyllelic configuration options.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of files</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list[str]</p>
 </dd>
 </dl>
 </dd></dl>
