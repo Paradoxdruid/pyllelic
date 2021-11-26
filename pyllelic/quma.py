@@ -332,7 +332,7 @@ class Quma:
         for each in seq:
             try:
                 new += mappings[each]
-            except KeyError:
+            except KeyError:  # pragma: no cover
                 new += each
 
         return new

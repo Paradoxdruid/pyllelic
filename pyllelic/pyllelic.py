@@ -260,7 +260,7 @@ class QumaResult:
         for each in results:
             try:
                 holding_df = pd.concat([holding_df, each], axis=1)
-            except (AttributeError, KeyError):
+            except (AttributeError, KeyError):  # pragma: no cover
                 pass
 
         return holding_df

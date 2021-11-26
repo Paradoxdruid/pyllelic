@@ -6,22 +6,14 @@ import base64
 import pytest
 import unittest.mock as mock
 import os
-import tempfile
-from contextlib import contextmanager
 
-# import tempfile
 from inputs import (
     SAMPLE_BAM,
     SAMPLE_BAI,
     TEST_PROM_FILE,
     EXPECTED_BAM_OUTPUT_POSITIONS,
     EXPECTED_BAM_OUTPUT_VALUES,
-    # SAMPLE_DICT_OF_DFS,
-    # TEST_DF_SEQ_READS,
-    # EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA,
-    # EXPECTED_INTERMEDIATE_MODES,
-    # EXPECTED_INTERMEDIATE_DIFFS,
-    # EXPECTED_INTERMEDIATE_MEANS,
+    EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA,
     EXPECTED_BAM_OUTPUT_GENOME_VALUES,
     EXPECTED_STACKED_BAM,
     EXPECTED_WRITE_DF_OUTPUT,
@@ -32,7 +24,7 @@ from inputs import (
 # Required libraries for test data
 import pandas as pd
 
-# import numpy as np
+import numpy as np
 from pathlib import Path
 
 # Module to test
@@ -40,16 +32,16 @@ from pyllelic import pyllelic
 
 
 # Helper methods
-@contextmanager
-def tempinput(data):  # pragma: no cover
-    """Helper for virtual files."""
-    temp = tempfile.NamedTemporaryFile(delete=False)
-    temp.write(data)
-    temp.close()
-    try:
-        yield temp.name
-    finally:
-        os.unlink(temp.name)
+@pytest.fixture(scope="session")
+def set_up_genomic_position_data(tmp_path_factory):
+    tmp_path = tmp_path_factory.mktemp("data")
+    p, _ = setup_bam_files(tmp_path)
+    config = setup_config(p)
+    INPUT_BAM_LIST = ["fh_test.bam"]
+    return (
+        p,
+        pyllelic.GenomicPositionData(config=config, files_set=INPUT_BAM_LIST),
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -315,19 +307,8 @@ class Test_GenomicPositionData:
 
     # pylint: disable=no-self-use
 
-    @pytest.fixture()
-    def set_up_genomic_position_data(self, tmp_path):
-        p, _ = setup_bam_files(tmp_path)
-        config = setup_config(p)
-        INPUT_BAM_LIST = ["fh_test.bam"]
-        return (
-            p,
-            pyllelic.GenomicPositionData(config=config, files_set=INPUT_BAM_LIST),
-        )
-
     def test_init(self, set_up_genomic_position_data):
         p, genomic_position_data = set_up_genomic_position_data
-
         positions = []
         for each in EXPECTED_BAM_OUTPUT_POSITIONS:
             positions.append(each)
@@ -340,12 +321,199 @@ class Test_GenomicPositionData:
     def test_process_means(self, set_up_genomic_position_data):
         _, genomic_position_data = set_up_genomic_position_data
 
-        # print(genomic_position_data.means.to_dict())
-
         intermediate = EXPECTED_MEANS
         expected = intermediate.astype("object")
 
         pd.testing.assert_frame_equal(genomic_position_data.means, expected)
+
+    def test__create_histogram(self, mocker, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_go = mocker.patch("pyllelic.pyllelic.go")
+        TEST_CELL_LINE = "TEST1"
+        TEST_POSITION = "1"
+        intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
+        TEST_DATA = intermediate.astype("object")
+
+        _ = genomic_position_data._create_histogram(
+            TEST_DATA, TEST_CELL_LINE, TEST_POSITION
+        )
+
+        mocked_go.Figure.assert_called_once()
+        mocked_go.Histogram.assert_called_once_with(
+            x=TEST_DATA.loc[TEST_CELL_LINE, TEST_POSITION],
+            xbins=dict(
+                start=-0.1,
+                end=1.1,
+                size=0.2,
+            ),
+        )
+
+    def test_histogram(self, set_up_genomic_position_data, mocker):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_go = mocker.patch("pyllelic.pyllelic.go")
+        TEST_CELL_LINE = "test.bam"
+        TEST_POSITION = genomic_position_data.positions[0]
+
+        genomic_position_data.histogram(TEST_CELL_LINE, TEST_POSITION)
+
+        mocked_go.Figure.assert_called_once()
+        mocked_go.Histogram.assert_called_once()
+
+    def test__create_heatmap(self, mocker, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_go = mocker.patch("pyllelic.pyllelic.go")
+        intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
+        TEST_DATA = intermediate.astype("object")
+
+        _ = genomic_position_data._create_heatmap(
+            TEST_DATA, min_values=1, height=600, width=600
+        )
+
+        mocked_go.Figure.assert_called_once()
+        mocked_go.Heatmap.assert_called_once()
+
+    def test_heatmap(self, set_up_genomic_position_data, mocker):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_go = mocker.patch("pyllelic.pyllelic.go")
+
+        genomic_position_data.heatmap(min_values=1)
+
+        mocked_go.Figure.assert_called_once()
+        mocked_go.Heatmap.assert_called_once()
+
+    def test_summarize_allelelic_data(self, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+        EXPECTED = pd.DataFrame(
+            {
+                "cellLine": [],
+                "position": [],
+                "ad_stat": [],
+                "p_crit": [],
+                "diff": [],
+                "raw": [],
+            }
+        )
+
+        actual = genomic_position_data.summarize_allelic_data()
+        # print(actual.to_markdown())
+
+        pd.testing.assert_frame_equal(EXPECTED, actual)
+
+    def test__create_methylation_diffs_bar_graph(
+        self, mocker, set_up_genomic_position_data
+    ):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_go = mocker.patch("pyllelic.pyllelic.go")
+        intermediate = pd.DataFrame.from_dict(
+            {
+                "cellLine": ["1", "2"],
+                "position": ["1", "2"],
+                "ad_stat": [0, 1],
+                "p_crit": [1, 2],
+                "diff": [1, 2],
+                "raw": [1, 2],
+            }
+        )
+        TEST_DATA = intermediate.astype("object")
+
+        _ = genomic_position_data._create_methylation_diffs_bar_graph(TEST_DATA)
+
+        mocked_go.Figure.assert_called_once()
+        mocked_go.Bar.assert_called_once()
+
+    # def test_sig_methylation_differences(self, set_up_genomic_position_data, mocker):
+    #     _, genomic_position_data = set_up_genomic_position_data
+    #     mocked_go = mocker.patch("pyllelic.pyllelic.go")
+
+    #     genomic_position_data.sig_methylation_differences()
+
+    #     mocked_go.Figure.assert_called_once()
+    #     mocked_go.Bar.assert_called_once()
+
+    def test_anderson_darling_test_with_values(self, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+        TEST_LIST = pd.Series([1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)])
+        actual = genomic_position_data._anderson_darling_test(TEST_LIST)
+        EXPECTED = (
+            False,
+            0.9267475729317516,
+            np.array([0.592, 0.675, 0.809, 0.944, 1.123]),
+        )
+        assert EXPECTED[0] == actual[0]
+        np.testing.assert_equal(EXPECTED[1], actual[1])
+        assert (EXPECTED[2] == actual[2]).all()
+
+    def test_anderson_darling_test_with_bad(self, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+        TEST_LIST = [np.nan]
+        actual = genomic_position_data._anderson_darling_test(TEST_LIST)
+        EXPECTED = (False, np.nan, [np.nan])
+        assert EXPECTED[0] == actual[0]
+        np.testing.assert_equal(EXPECTED[1], actual[1])
+        assert EXPECTED[2] == actual[2]
+
+    def test_generate_ad_stats(self, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+        TEST_DF = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
+        EXPECTED = pd.DataFrame.from_dict(
+            {
+                "TEST1": [
+                    (
+                        False,
+                        0.9267475729317516,
+                        np.array([0.592, 0.675, 0.809, 0.944, 1.123]),
+                    ),
+                    (
+                        False,
+                        0.9267475729317516,
+                        np.array([0.592, 0.675, 0.809, 0.944, 1.123]),
+                    ),
+                    (False, np.nan, np.array([0.592, 0.675, 0.809, 0.944, 1.123])),
+                ],
+                "TEST2": [
+                    (False, np.nan, np.array([0.592, 0.675, 0.809, 0.944, 1.123])),
+                    (False, np.nan, np.array([0.592, 0.675, 0.809, 0.944, 1.123])),
+                    (False, np.nan, np.array([0.592, 0.675, 0.809, 0.944, 1.123])),
+                ],
+                "TEST3": [
+                    (False, np.nan, [np.nan]),
+                    (False, np.nan, [np.nan]),
+                    (
+                        False,
+                        0.7995458667216608,
+                        np.array([0.72, 0.82, 0.984, 1.148, 1.365]),
+                    ),
+                ],
+            },
+            orient="index",
+            columns=["1", "2", "3"],
+        )
+        genomic_position_data.individual_data = TEST_DF
+        actual = genomic_position_data.generate_ad_stats()
+        EXPECTED_TEST2_1 = EXPECTED.loc["TEST2", "1"]
+        np.testing.assert_equal(EXPECTED_TEST2_1, actual.loc["TEST2", "1"])
+
+    def test_write_means_modes_diffs(self, mocker, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+        TEST_FILENAME = "output"
+        mocker.patch.object(genomic_position_data.means, "to_excel")
+        mocker.patch.object(genomic_position_data.modes, "to_excel")
+        mocker.patch.object(genomic_position_data.diffs, "to_excel")
+
+        genomic_position_data.write_means_modes_diffs(TEST_FILENAME)
+
+        genomic_position_data.means.to_excel.assert_called()
+        genomic_position_data.modes.to_excel.assert_called()
+        genomic_position_data.diffs.to_excel.assert_called()
+
+    # def test_save(self, mocker, set_up_genomic_position_data):
+    #     _, genomic_position_data = set_up_genomic_position_data
+    #     TEST_FILENAME = "output"
+    #     mocked_excel_writer = mocker.patch("pyllelic.pyllelic.pd.ExcelWriter")
+
+    #     genomic_position_data.save(TEST_FILENAME)
+
+    #     mocked_excel_writer.ExcelWriter.assert_called()
 
 
 # def test_return_individual_data():
@@ -415,137 +583,4 @@ class Test_GenomicPositionData:
 # def test_truncate_diffs():
 #     EXPECTED = EXPECTED_INTERMEDIATE_DIFFS.dropna(how="all")
 #     actual = pyllelic.truncate_diffs(EXPECTED_INTERMEDIATE_DIFFS)
-#     pd.testing.assert_frame_equal(EXPECTED, actual)
-
-
-# # https://coderbook.com/@marcus/how-to-mock-and-unit-test-with-pandas/
-# # https://stackoverflow.com/questions/65579240/unittest-mock-pandas-to-csv
-# def test_write_means_modes_diffs():
-#     TEST_DF = EXPECTED_INTERMEDIATE_MEANS
-#     TEST_FILENAME = "output"
-#     with mock.patch.object(TEST_DF, "to_excel") as to_excel_mock:
-#         pyllelic.write_means_modes_diffs(TEST_DF, TEST_DF, TEST_DF, TEST_FILENAME)
-
-#         to_excel_mock.assert_called()
-
-
-# @mock.patch("pyllelic.pyllelic.go")
-# def test_create_histogram(mock_go):
-#     TEST_CELL_LINE = "TEST1"
-#     TEST_POSITION = "1"
-#     intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
-#     TEST_DATA = intermediate.astype("object")
-
-#     _ = pyllelic.create_histogram(TEST_DATA, TEST_CELL_LINE, TEST_POSITION)
-
-#     mock_go.Figure.assert_called_once()
-#     mock_go.Histogram.assert_called_once_with(
-#         x=TEST_DATA.loc[TEST_CELL_LINE, TEST_POSITION],
-#         xbins=dict(
-#             start=-0.1,
-#             end=1.1,
-#             size=0.2,
-#         ),
-#     )
-
-
-# @mock.patch("pyllelic.pyllelic.go")
-# def test_histogram(mock_go):
-#     TEST_CELL_LINE = "TEST1"
-#     TEST_POSITION = "1"
-#     intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
-#     TEST_DATA = intermediate.astype("object")
-
-#     pyllelic.histogram(TEST_DATA, TEST_CELL_LINE, TEST_POSITION)
-
-#     mock_go.Figure.assert_called_once()
-#     mock_go.Histogram.assert_called_once_with(
-#         x=TEST_DATA.loc[TEST_CELL_LINE, TEST_POSITION],
-#         xbins=dict(
-#             start=-0.1,
-#             end=1.1,
-#             size=0.2,
-#         ),
-#     )
-
-
-# def test_anderson_darling_test_with_values():
-#     TEST_LIST = pd.Series([1.0, 1.0, 1.0, (2 / 3), (2 / 3), (2 / 3)])
-#     actual = pyllelic.anderson_darling_test(TEST_LIST)
-#     EXPECTED = (
-#         False,
-#         0.9267475729317516,
-#         np.array([0.592, 0.675, 0.809, 0.944, 1.123]),
-#     )
-#     assert EXPECTED[0] == actual[0]
-#     np.testing.assert_equal(EXPECTED[1], actual[1])
-#     assert (EXPECTED[2] == actual[2]).all()
-
-
-# def test_anderson_darling_test_with_bad():
-#     TEST_LIST = [np.nan]
-#     actual = pyllelic.anderson_darling_test(TEST_LIST)
-#     EXPECTED = (False, np.nan, [np.nan])
-#     assert EXPECTED[0] == actual[0]
-#     np.testing.assert_equal(EXPECTED[1], actual[1])
-#     assert EXPECTED[2] == actual[2]
-
-
-# def test_generate_ad_stats():
-#     TEST_DF = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
-#     EXPECTED = pd.DataFrame.from_dict(
-#         {
-#             "TEST1": [
-#                 (
-#                     False,
-#                     0.9267475729317516,
-#                     np.array([0.592, 0.675, 0.809, 0.944, 1.123]),
-#                 ),
-#                 (
-#                     False,
-#                     0.9267475729317516,
-#                     np.array([0.592, 0.675, 0.809, 0.944, 1.123]),
-#                 ),
-#                 (False, np.nan, np.array([0.592, 0.675, 0.809, 0.944, 1.123])),
-#             ],
-#             "TEST2": [
-#                 (False, np.nan, np.array([0.592, 0.675, 0.809, 0.944, 1.123])),
-#                 (False, np.nan, np.array([0.592, 0.675, 0.809, 0.944, 1.123])),
-#                 (False, np.nan, np.array([0.592, 0.675, 0.809, 0.944, 1.123])),
-#             ],
-#             "TEST3": [
-#                 (False, np.nan, [np.nan]),
-#                 (False, np.nan, [np.nan]),
-#                 (
-#                     False,
-#                     0.7995458667216608,
-#                     np.array([0.72, 0.82, 0.984, 1.148, 1.365]),
-#                 ),
-#             ],
-#         },
-#         orient="index",
-#         columns=["1", "2", "3"],
-#     )
-#     actual = pyllelic.generate_ad_stats(TEST_DF)
-#     EXPECTED_TEST2_1 = EXPECTED.loc["TEST2", "1"]
-#     np.testing.assert_equal(EXPECTED_TEST2_1, actual.loc["TEST2", "1"])
-
-
-# def test_summarize_allelelic_data():
-#     TEST_INDIV = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
-#     TEST_DIFFS = EXPECTED_INTERMEDIATE_DIFFS
-#     EXPECTED = pd.DataFrame(
-#         {
-#             "cellLine": [],
-#             "position": [],
-#             "ad_stat": [],
-#             "p_crit": [],
-#             "diff": [],
-#             "raw": [],
-#         }
-#     )
-
-#     actual = pyllelic.summarize_allelic_data(TEST_INDIV, TEST_DIFFS)
-#     print(actual.to_markdown())
-
 #     pd.testing.assert_frame_equal(EXPECTED, actual)
