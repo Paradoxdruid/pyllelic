@@ -134,3 +134,5 @@ _build/
 # Data storage
 *.pickle
 
+# Ignore in-progress testing
+pyllelic_playground.md

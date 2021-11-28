@@ -15,6 +15,8 @@ jupyter:
 
 # Example Pyllelic Use-Case Notebook
 
+<img src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_logo.png?raw=true" alt="pyllelic logo" width="100"/>
+
 <!-- #region heading_collapsed=true -->
 ## Background
 <!-- #endregion -->
@@ -27,11 +29,9 @@ Source code: <https://github.com/Paradoxdruid/pyllelic>
 Documentation: <https://paradoxdruid.github.io/pyllelic/>
 <!-- #endregion -->
 
-<!-- #region heading_collapsed=true -->
 ## Pre-setup / File preparation
-<!-- #endregion -->
 
-<!-- #region heading_collapsed=true hidden=true -->
+<!-- #region heading_collapsed=true -->
 ### Obtaining fastq data
 <!-- #endregion -->
 
@@ -44,9 +44,11 @@ We can download rrbs (reduced representation bisulfite sequencing) data from the
 Those files are in unaligned fastq format.  We will need to align these to a reference human genome.
 <!-- #endregion -->
 
-<!-- #region heading_collapsed=true hidden=true -->
+<!-- #region heading_collapsed=true -->
 ### Aligning reads (using process.py)
+<!-- #endregion -->
 
+<!-- #region hidden=true -->
 To align reads, we'll use bowtie2 and samtools (through its pysam wrapper).
 
 First, we need to download a genomic index sequence: <http://hgdownload.soe.ucsc.edu/goldenPath/hg19>
@@ -63,9 +65,9 @@ from pathlib import Path
 ```python
 # Set up file paths
 index = Path(
-    "/home/andrew/allellic/hg19.p13.plusMT.no_alt_analysis_set//hg19.p13.plusMT.no_alt_analysis_set"
+    "/{your_directory}/hg19.p13.plusMT.no_alt_analysis_set//hg19.p13.plusMT.no_alt_analysis_set"
 )
-fastq = Path("/home/andrew/allellic/wgEncodeHaibMethylRrbsU87HaibRawDataRep1.fastq.gz")
+fastq = Path("/{your_directory}/wgEncodeHaibMethylRrbsU87HaibRawDataRep1.fastq.gz")
 ```
 <!-- #endregion -->
 
@@ -86,8 +88,8 @@ process.bowtie2_fastq_to_bam(index={bowtie_index_filename_without_suffix},
 <!-- #region hidden=true -->
 Notes:
 
-* cores is number of processor cores, adjust for your system
-* instead of `out.bam` use a filename that encodes cell-line and tissue.  Our convention is: `fh_CELLLINE_TISSUE.TERT.bam`
+* `cores` is number of processor cores, adjust for your system
+* We recommend renaming your `.bam` file to encode cell-line and tissue.  Our convention is: `fh_CELLLINE_TISSUE.REGION.bam`
 
 Next, we need to sort and index the bam file using samtools functions.
 <!-- #endregion -->
@@ -95,21 +97,44 @@ Next, we need to sort and index the bam file using samtools functions.
 <!-- #region hidden=true -->
 ```python
 # Sort the bamfile
-bamfile = Path("/home/andrew/allellic/wgEncodeHaibMethylRrbsU87HaibRawDataRep1.bam")
-process.process_pysam_sort(bamfile)
+bamfile = Path("/{your_directory}/{bam_filename}.bam")
+process.pysam_sort(bamfile)
 ```
 <!-- #endregion -->
 
 <!-- #region hidden=true -->
 ```python
 # Create an index of the sorted bamfile
-sorted_bam = Path("")
-process.process_pysam_index(b)
+sorted_bam = Path("/{your_directory}/{bam_filename}_sorted.bam")
+process.pysam_index(sorted_bam)
 ```
 <!-- #endregion -->
 
+<!-- #region heading_collapsed=true -->
+### Retrieve promoter sequence
+<!-- #endregion -->
+
 <!-- #region hidden=true -->
-Now, that sorted file (again, rename to capture cell-line and tissue info) is ready to be put in the `test` folder for analysis by pyllelic!
+We will download the genomic region of interest from the UCSC Genome browser and save it in a text file:
+<!-- #endregion -->
+
+<!-- #region hidden=true -->
+```python
+# Retrieve promoter genomic sequence
+process.retrieve_promoter_seq("{prom_filename}.txt", chrom: "chr5", start: 1293200, end: 1296000)
+```
+<!-- #endregion -->
+
+<!-- #region heading_collapsed=true -->
+### Organize directory contents
+<!-- #endregion -->
+
+<!-- #region hidden=true -->
+Place sorted bam files and index files (again, rename to capture cell-line and tissue info) in the `test` folder for analysis by pyllelic.
+<!-- #endregion -->
+
+<!-- #region hidden=true -->
+Place the promoter sequence in your main directory.
 <!-- #endregion -->
 
 ## Set-up
@@ -122,11 +147,11 @@ from pyllelic import pyllelic
 2. Make a sub-directory under ```base_path``` with a folder named ```test``` and put the ```.bam``` and ```.bai``` files in ```test```
 
 ```python
-config = pyllelic.set_up_env_variables(
+config = pyllelic.configure(
     base_path="/home/andrew/allellic/",  # Windows WSL set-up
-#     base_path="/Users/abonham/documents/test_allelic/",  # OSX setup
+    #     base_path="/Users/abonham/documents/test_allelic/",  # OSX setup
     prom_file="TERT-promoter-genomic-sequence.txt",
-    prom_start="1293000",
+    prom_start="1293200",
     prom_end="1296000",
     chrom="5",
     offset=1298163,
@@ -146,10 +171,12 @@ files_set = pyllelic.make_list_of_bam_files(config)
 ```
 
 ```python
-files_set = files_set[0:2]  # grab only first two files for quick run
+# files_set = files_set[0:2]  # grab only first twenty files for quick run
 ```
 
 ### Perform full methylation analysis and generate data object
+
+**Warning**: This step is processor and time intensive and will perform all processing and analysis of the bam file data.
 
 ```python
 data = pyllelic.GenomicPositionData(config=config, files_set=files_set)
@@ -158,11 +185,11 @@ data = pyllelic.GenomicPositionData(config=config, files_set=files_set)
 ### Check main data outcomes
 
 ```python
-data.means.head()
+", ".join(data.positions)
 ```
 
 ```python
-", ".join(data.positions)
+data.means.head()
 ```
 
 ```python
@@ -174,7 +201,15 @@ data.diffs.head()
 ```
 
 ```python
+data.diffs.loc[:,data.diffs.any()]
+```
+
+```python
 data.quma_results[data.means.index[0]].values.head()
+```
+
+```python
+data.individual_data.loc[data.means.index[0], data.means.columns[0]]
 ```
 
 ## Write Output
@@ -182,7 +217,7 @@ data.quma_results[data.means.index[0]].values.head()
 ### Save entire object as pickle
 
 ```python
-# data.save_pickle("test3_data.pickle")
+# data.save_pickle("test_data.pickle")
 ```
 
 ### Save Quma Results to excel
@@ -194,72 +229,43 @@ data.quma_results[data.means.index[0]].values.head()
 ### Save analysis files (means, modes, diffs) to excel
 
 ```python
-# data.write_means_modes_diffs("Full1") # Sets the filename stub
+# data.write_means_modes_diffs("Full_") # Sets the filename stub
 ```
 
 ### Reopen saved object
 
 ```python
-# data = pyllelic.GenomicPositionData.from_pickle("test3_data.pickle")
+# data = pyllelic.GenomicPositionData.from_pickle("test_data2.pickle")
 ```
 
-```python
-# old import system, do not use
-# with open(r"big_data.pickle", "rb") as input_file:
-#     data = cloudpickle.load(input_file)
-```
-
-## Initial Data Analysis
+## Data Analysis
 
 ### View raw data of methylation percentage per read
 
 ```python
-data.individual_data.head()
+df = data.individual_data
 ```
 
-### Find values with a methylation difference above a threshold
+### Statistical Tests for Normality
 
 ```python
-DIFF_THRESHOLD = 0.01
-large_diffs = data.diffs[(data.diffs >= DIFF_THRESHOLD).any(1)].dropna(how="all", axis=1)
-```
-
-```python
-large_diffs
+summ = data.summarize_allelic_data()
 ```
 
 ```python
-temp = large_diffs.loc["HUH6"]
-temp.loc[(temp != 0)].dropna()
+summ.head()
 ```
 
 ```python
-interesting = {}
-for index, row in large_diffs.iterrows():
-    if row.loc[(row != 0)].dropna().any():
-        interesting[index] = row.loc[(row != 0)].dropna()
+ad_big_diffs = summ.pivot(index="position", columns="cellLine", values="ad_stat")
 ```
 
 ```python
-import pandas as pd
+ad_big_diffs = ad_big_diffs.dropna(axis=1, how="all").count(axis=1).to_frame()
 ```
 
 ```python
-big_diffs = pd.DataFrame.from_dict(interesting)
-```
-
-```python
-big_diffs
-```
-
-```python
-big_diffs.to_excel("big_diffs.xlsx")
-```
-
-## Visualizing Data
-
-```python
-import plotly.express as px
+ad_big_diffs.head()
 ```
 
 ### Raw quma results
@@ -272,12 +278,80 @@ data.quma_results[data.means.index[0]].values.head()
 data.individual_data.head()
 ```
 
+## Visualizing Data
+
+```python
+import plotly.express as px
+```
+
 ### Histograms of reads at a cell line and genomic position
 
 ```python
 CELL = data.means.index[1]
 POS = data.means.columns[5]
 data.histogram(CELL, POS)
+```
+
+### Heatmap of mean methylation values
+
+```python
+data.heatmap(min_values=1, width=600, height=800, data_type="means")
+```
+
+### Bar chart of significant methylation differences
+
+```python
+data.sig_methylation_differences()
+```
+
+### Find values with a methylation difference above a threshold
+
+```python
+import pandas as pd
+```
+
+```python
+DIFF_THRESHOLD = 0.001
+```
+
+```python
+large_diffs = data.diffs[(data.diffs >= DIFF_THRESHOLD).any(1)].dropna(
+    how="all", axis=1
+)
+```
+
+```python
+large_diffs.head()
+```
+
+```python
+interesting = {}
+for index, row in large_diffs.iterrows():
+    if row.loc[(row != 0)].dropna().any():
+        interesting[index] = row.loc[(row != 0)].dropna()
+```
+
+```python
+big_diffs = pd.DataFrame.from_dict(interesting)
+```
+
+```python
+big_diffs.head()
+```
+
+```python
+big_diffs_counts = big_diffs.dropna(axis=1, how="all").count(axis=1).to_frame()
+```
+
+```python
+fig = px.bar(big_diffs_counts, template="seaborn")
+fig.update_layout(xaxis_type="linear", showlegend=False, barmode="stack")
+fig.update_xaxes(
+    tickformat="r", tickangle=45, nticks=40, title="Position", range=[1292981, 1295979]
+)
+fig.update_yaxes(title="# of large differences")
+fig.update_traces(width=50)
+fig.show()
 ```
 
 ### Plotting read methylation distributions
@@ -355,7 +429,7 @@ all_values = []
 ```python
 for each in df.index:
     temp = pd.Series(df.loc[each].explode())
-#     print(temp)
+    #     print(temp)
     all_values.append(temp)
 #     print(all_values)
 ```
@@ -382,17 +456,17 @@ px.violin(flat_series)
 def find_big_diffs(df, min_diff: float):
     out = {}
     for each in df.columns:
-    #     print(each)
+        #     print(each)
         mean = to_1D(df[each].dropna()).mean()
         mode = to_1D(df[each].dropna()).mode()
-    #     print(mode)
-        if not mode.empty:   
-    #         print(f"Mean: {mean}, mode: {mode}")
+        #     print(mode)
+        if not mode.empty:
+            #         print(f"Mean: {mean}, mode: {mode}")
             diff = abs(mean - mode.values[0])
             if diff > min_diff:
                 out[each] = diff
-#                 print(f"Position: {each}, diff: {diff}")
-#                 print(out)
+    #                 print(f"Position: {each}, diff: {diff}")
+    #                 print(out)
     if out:
         return out
 ```
@@ -402,16 +476,54 @@ big_ones = find_big_diffs(df, 0.1)
 big_ones
 ```
 
-## Statistical Tests for Normality
-
 ```python
-summ = data.summarize_allelic_data()
+big_ones
 ```
 
 ```python
-summ.head()
+ad_big_diffs.shape
 ```
 
 ```python
-summ.pivot(index="position", columns="cellLine", values="ad_stat")
+import plotly.express as px
+
+fig = px.bar(ad_big_diffs, template="seaborn")
+fig.update_layout(
+    xaxis_type="linear",
+    showlegend=False,
+    title="TERT Dataset Significant Methylation Differences",
+    barmode="overlay",
+)
+fig.update_xaxes(
+    tickformat="r", tickangle=45, nticks=40, title="Position", range=[1292981, 1295979]
+)
+fig.update_yaxes(title="# of significant differences")
+fig.update_traces(width=50)
+fig.show()
+```
+
+```python
+ad_big_diffs.values.flatten()
+```
+
+```python
+import plotly.graph_objects as go
+```
+
+```python
+fig = go.Figure()
+fig.add_trace(go.Bar(x=ad_big_diffs.index, y=ad_big_diffs.values.flatten()))
+fig.update_layout(
+    xaxis_type="linear",
+    showlegend=False,
+    title="Significant Methylation Differences",
+#     barmode="overlay",
+    template="seaborn"
+)
+fig.update_xaxes(
+    tickformat="r", tickangle=45, nticks=40, title="Position", range=[int(ad_big_diffs.index.min()), int(ad_big_diffs.index.max())],
+)
+fig.update_yaxes(title="# of significant differences")
+fig.update_traces(width=50)
+fig.show()
 ```

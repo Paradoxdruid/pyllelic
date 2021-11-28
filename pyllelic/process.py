@@ -3,6 +3,8 @@
 
 import gzip
 import os
+import re
+import requests
 import subprocess
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -11,7 +13,7 @@ import pysam
 from Bio import SeqIO
 
 
-def process_fastq_to_list(filepath: Path) -> Optional[List[SeqIO.SeqRecord]]:
+def fastq_to_list(filepath: Path) -> Optional[List[SeqIO.SeqRecord]]:
     """Read a .fastq or fastq.gz file into an in-memory record_list.
 
     This is a time and memory intensive operation!
@@ -106,7 +108,7 @@ def bowtie2_fastq_to_bam(index: Path, fastq: Path, cores: int) -> bytes:
         "-bS",
         "-",
         ">",
-        fastq.stem + ".bam",
+        fastq.parent + fastq.stem + ".bam",
     ]
 
     output: subprocess.CompletedProcess = subprocess.run(
@@ -117,7 +119,7 @@ def bowtie2_fastq_to_bam(index: Path, fastq: Path, cores: int) -> bytes:
     return out
 
 
-def process_pysam_sort(bamfile: Path) -> bool:
+def pysam_sort(bamfile: Path) -> bool:
     """Helper function to run pysam samtools sort.
 
     Args:
@@ -127,12 +129,12 @@ def process_pysam_sort(bamfile: Path) -> bool:
         bool: verification of samtools command, usually discarded
     """
 
-    pysam.sort("-o", f">{bamfile.stem}_sorted.bam", os.fspath(bamfile))
+    pysam.sort("-o", f"{bamfile.parent}/{bamfile.stem}_sorted.bam", os.fspath(bamfile))
 
     return True
 
 
-def process_pysam_index(bamfile: Path) -> bool:
+def pysam_index(bamfile: Path) -> bool:
     """Helper function to run external samtools index.
 
     Args:
@@ -145,3 +147,22 @@ def process_pysam_index(bamfile: Path) -> bool:
     pysam.index(os.fspath(bamfile))
 
     return True
+
+
+def retrieve_promoter_seq(filename: str, chrom: str, start: int, end: int) -> None:
+    """Retrieve the genomic sequence of interest from UCSC Genome Browser.
+
+    Args:
+        filename (Path): path to store genomic sequence
+        chrom (str): chromosome of interest, e.g. "chr5"
+        start (int): start position for region of interest
+        end (int): end position for region of interest
+    """
+    response = requests.get(
+        f"https://genome.ucsc.edu/cgi-bin/das/hg19/dna?segment={chrom}:{start},{end}"
+    )
+    pattern = re.compile(r"<DNA.*>(.*)<\/DNA>", flags=re.DOTALL)
+    match = pattern.findall(response.text)
+    seq = match[0].replace("\n", "")
+
+    Path(filename).write_text(seq)

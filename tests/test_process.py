@@ -52,7 +52,7 @@ def test_process_fastq_to_list():
         my_file.write(FASTQ_CONTENTS)
         my_file.seek(0)
         TEST_FILEPATH = Path(my_file.name)
-        actual = process.process_fastq_to_list(TEST_FILEPATH)
+        actual = process.fastq_to_list(TEST_FILEPATH)
 
     assert EXPECTED.seq == actual[0].seq
 
@@ -60,7 +60,7 @@ def test_process_fastq_to_list():
 def test_process_fastq_to_list_wrong_filetype():
     with tempfile.NamedTemporaryFile(suffix=".txt", prefix="test1") as my_file:
         TEST_FILEPATH = Path(my_file.name)
-        actual = process.process_fastq_to_list(TEST_FILEPATH)
+        actual = process.fastq_to_list(TEST_FILEPATH)
 
     assert actual is None
 
@@ -68,7 +68,7 @@ def test_process_fastq_to_list_wrong_filetype():
 def test_process_fastq_to_list_wrong_filetype_multi_extension():
     with tempfile.NamedTemporaryFile(suffix=".fastq.txt", prefix="test1") as my_file:
         TEST_FILEPATH = Path(my_file.name)
-        actual = process.process_fastq_to_list(TEST_FILEPATH)
+        actual = process.fastq_to_list(TEST_FILEPATH)
 
     assert actual is None
 
@@ -82,7 +82,7 @@ def test_process_fastq_to_list_gz():
         gzip_file.close()
         my_file.seek(0)
         TEST_FILEPATH = Path(my_file.name)
-        actual = process.process_fastq_to_list(TEST_FILEPATH)
+        actual = process.fastq_to_list(TEST_FILEPATH)
 
     assert EXPECTED.seq == actual[0].seq
 
@@ -150,7 +150,7 @@ def test_bowtie2_fastq_to_bam(mock_subp):
 @mock.patch("pyllelic.process.pysam")
 def test_process_pysam_sort(mock_pysam):
     TEST_PATH = Path().cwd()
-    _ = process.process_pysam_sort(TEST_PATH)
+    _ = process.pysam_sort(TEST_PATH)
     mock_pysam.sort.assert_called_once_with(
         "-o", f">{TEST_PATH.stem}_sorted.bam", os.fspath(TEST_PATH)
     )
@@ -159,5 +159,5 @@ def test_process_pysam_sort(mock_pysam):
 @mock.patch("pyllelic.process.pysam")
 def test_pysam_index(mock_pysam):
     TEST_PATH = Path().cwd()
-    _ = process.process_pysam_index(TEST_PATH)
+    _ = process.pysam_index(TEST_PATH)
     mock_pysam.index.assert_called_once_with(os.fspath(TEST_PATH))

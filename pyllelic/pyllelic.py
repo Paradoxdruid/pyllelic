@@ -3,8 +3,6 @@
    in reduced representation bisulfate DNA sequencing.
 """
 
-import logging
-import os
 import pickle  # nosec
 import signal
 from multiprocessing import Pool, cpu_count
@@ -22,8 +20,6 @@ from tqdm.auto import tqdm
 
 from . import quma
 from .config import Config
-
-logging.basicConfig(filename="pyllelic_test.log", level=logging.DEBUG)
 
 GPD = TypeVar("GPD", bound="GenomicPositionData")
 
@@ -72,10 +68,6 @@ class BamOutput:
         Returns:
             pd.Index: list of unique positions in the samfile
         """
-
-        # Index samfile if index file doesn't exist
-        if not sams.with_suffix(".bai").exists():
-            _: bool = self._pysam_index(sams)  # we don't care what the output is
 
         # Grab the promoter region of interest
         samm: pysam.AlignmentFile = pysam.AlignmentFile(sams, "rb")
@@ -138,21 +130,6 @@ class BamOutput:
                 # returns aligned target sequence
 
             self.values[each1] = "\n".join(read_file)
-
-    @staticmethod
-    def _pysam_index(bamfile: Path) -> bool:
-        """Helper function to run external samtools index.
-
-        Args:
-            bamfile (Path): filepath to bam file
-
-        Returns:
-            bool: verification of samtools command, usually discarded
-        """
-
-        pysam.index(os.fspath(bamfile))
-
-        return True
 
     def _genome_range(
         self, position: str, genome_string: str, offset: Optional[int] = None
@@ -673,7 +650,7 @@ class GenomicPositionData:
 
     @staticmethod
     def _create_heatmap(
-        df: pd.DataFrame, min_values: int, width: int, height: int
+        df: pd.DataFrame, min_values: int, width: int, height: int, title_type: str
     ) -> go.Figure:
         """Generate a graph figure showing heatmap of mean methylation across
         cell lines.
@@ -683,6 +660,7 @@ class GenomicPositionData:
             min_values (int): minimum number of points data must exist at a position
             width (int): figure width
             height (int): figure height
+            title_type (str): type of figure being plotted
 
         Returns:
             go.Figure: plotly figure object
@@ -706,7 +684,7 @@ class GenomicPositionData:
         )
 
         fig.update_layout(
-            title_text="Mean Methylation Heatmap",
+            title_text=f"{title_type} Methylation Heatmap",
             xaxis_title_text="Position",
             yaxis_title_text="Cell Line",
             # aspect="equal",
@@ -718,19 +696,46 @@ class GenomicPositionData:
 
         return fig
 
-    def heatmap(self, min_values: int, width: int = 800, height: int = 3000) -> None:
+    def heatmap(
+        self,
+        min_values: int,
+        width: int = 800,
+        height: int = 2000,
+        cell_lines: Optional[List[str]] = None,
+        data_type: str = "means",
+    ) -> None:
         """Display a graph figure showing heatmap of mean methylation across
         cell lines.
 
         Args:
             min_values (int): minimum number of points data must exist at a position
             width (int): figure width, defaults to 800
-            height (int): figure height, defaults to 3000
+            height (int): figure height, defaults to 2000
+            cell_lines (Optional[List[str]]): set of cell lines to analyze,
+            defaults to all cell lines.
+            data_type (str): type of data to plot. Can to 'means', 'modes', or 'diffs'
         """
 
-        data = self.means
+        title_type: str
+        data: pd.DataFrame
+        if data_type == "means":
+            data = self.means
+            title_type = "Mean"
+        elif data_type == "modes":
+            data = self.modes
+            title_type = "Mode"
+        elif data_type == "diffs":
+            data = self.diffs
+            title_type = "Difference"
+        else:
+            raise ValueError("Invalid data type")
 
-        fig: go.Figure = self._create_heatmap(data, min_values, width, height)
+        if cell_lines:
+            data = data[data.index.isin(cell_lines)]
+
+        fig: go.Figure = self._create_heatmap(
+            data, min_values, width, height, title_type
+        )
         fig.show()
 
     @staticmethod
