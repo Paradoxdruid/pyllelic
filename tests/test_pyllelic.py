@@ -5,7 +5,8 @@
 import base64
 import pytest
 import unittest.mock as mock
-import os
+
+# import os
 
 from inputs import (
     SAMPLE_BAM,
@@ -177,12 +178,12 @@ class Test_BamOutput:
         # print(f"Revised bam values:\n{bam_output.values}")
         assert bam_output.values == EXPECTED_WRITE_DF_OUTPUT
 
-    @mock.patch("pyllelic.pyllelic.pysam")
-    def test_pysam_index(self, mock_pysam, set_up_bam_output):
-        bam_output = set_up_bam_output
-        TEST_PATH = Path().cwd()
-        bam_output._pysam_index(TEST_PATH)
-        mock_pysam.index.assert_called_once_with(os.fspath(TEST_PATH))
+    # @mock.patch("pyllelic.pyllelic.pysam")
+    # def test_pysam_index(self, mock_pysam, set_up_bam_output):
+    #     bam_output = set_up_bam_output
+    #     TEST_PATH = Path().cwd()
+    #     bam_output._pysam_index(TEST_PATH)
+    #     mock_pysam.index.assert_called_once_with(os.fspath(TEST_PATH))
 
     def test__genome_range(self, set_up_bam_output):
         """Check if correct genome string is returned."""
@@ -366,7 +367,11 @@ class Test_GenomicPositionData:
         TEST_DATA = intermediate.astype("object")
 
         _ = genomic_position_data._create_heatmap(
-            TEST_DATA, min_values=1, height=600, width=600
+            TEST_DATA,
+            min_values=1,
+            height=600,
+            width=600,
+            title_type="means",
         )
 
         mocked_go.Figure.assert_called_once()

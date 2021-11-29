@@ -138,7 +138,7 @@ def test_bowtie2_fastq_to_bam(mock_subp):
         "-bS",
         "-",
         ">",
-        TEST_FASTQ.stem + ".bam",
+        "/Users/user/" + TEST_FASTQ.stem + ".bam",
     ]
     _ = process.bowtie2_fastq_to_bam(TEST_INDEX, TEST_FASTQ, TEST_CORES)
 
@@ -152,7 +152,7 @@ def test_process_pysam_sort(mock_pysam):
     TEST_PATH = Path().cwd()
     _ = process.pysam_sort(TEST_PATH)
     mock_pysam.sort.assert_called_once_with(
-        "-o", f">{TEST_PATH.stem}_sorted.bam", os.fspath(TEST_PATH)
+        "-o", f"{TEST_PATH.parent}/{TEST_PATH.stem}_sorted.bam", os.fspath(TEST_PATH)
     )
 
 

@@ -108,7 +108,7 @@ def bowtie2_fastq_to_bam(index: Path, fastq: Path, cores: int) -> bytes:
         "-bS",
         "-",
         ">",
-        fastq.parent + fastq.stem + ".bam",
+        str(fastq.parent) + "/" + fastq.stem + ".bam",
     ]
 
     output: subprocess.CompletedProcess = subprocess.run(
