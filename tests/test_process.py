@@ -161,3 +161,37 @@ def test_pysam_index(mock_pysam):
     TEST_PATH = Path().cwd()
     _ = process.pysam_index(TEST_PATH)
     mock_pysam.index.assert_called_once_with(os.fspath(TEST_PATH))
+
+
+@mock.patch("pyllelic.process.subprocess")
+def test_prepare_genome(mock_subp):
+    TEST_INDEX = Path("/Users/user/bowtie_index")
+    TEST_ALIGNER = Path("/usr/bin/bowtie2/")
+    TEST_COMMAND = [
+        "bismark_genome_preparation",
+        "--path_to_aligner",
+        TEST_ALIGNER,
+        str(TEST_INDEX),
+    ]
+    _ = process.prepare_genome(TEST_INDEX, TEST_ALIGNER)
+
+    mock_subp.run.assert_called_once_with(
+        TEST_COMMAND, capture_output=True, text=True, check=True
+    )
+
+
+@mock.patch("pyllelic.process.subprocess")
+def test_bismark(mock_subp):
+    TEST_GENOME = Path("/Users/user/bowtie_index")
+    TEST_FASTQ = Path("/Users/user/test.fastq")
+    TEST_COMMAND = [
+        "bismark",
+        "--genome",
+        TEST_GENOME,
+        TEST_FASTQ,
+    ]
+    _ = process.bismark(TEST_GENOME, TEST_FASTQ)
+
+    mock_subp.run.assert_called_once_with(
+        TEST_COMMAND, capture_output=True, text=True, check=True
+    )

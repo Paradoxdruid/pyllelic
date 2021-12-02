@@ -99,16 +99,16 @@ def bowtie2_fastq_to_bam(index: Path, fastq: Path, cores: int) -> bytes:
         "-p",
         str(cores),
         "-x",
-        os.fspath(index),
+        str(index),
         "-U",
-        os.fspath(fastq),
+        str(fastq),
         "|",
         "samtools",
         "view",
         "-bS",
         "-",
         ">",
-        str(fastq.parent) + "/" + fastq.stem + ".bam",
+        str(fastq.parent) + "/" + str(fastq.stem) + ".bam",
     ]
 
     output: subprocess.CompletedProcess = subprocess.run(
@@ -166,3 +166,63 @@ def retrieve_promoter_seq(filename: str, chrom: str, start: int, end: int) -> No
     seq = match[0].replace("\n", "")
 
     Path(filename).write_text(seq)
+
+
+def prepare_genome(index: Path, aligner: Path = Path("/usr/bin/bowtie2/")) -> bytes:
+    """Helper function to run external bismark genome preparation tool.
+
+    Uses genomes from, e.g.: http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/
+
+    Bismark documentation at:
+    https://github.com/FelixKrueger/Bismark/tree/master/Docs
+
+    Args:
+        index (Path): filepath to unprocessed genome file.
+        aligner (Path): filepath to bowtie2 alignment program.
+
+    Returns:
+        bytes: output from genome preparation shell command, usually discarded
+    """
+
+    command: List[str] = [
+        "bismark_genome_preparation",
+        "--path_to_aligner",
+        aligner,
+        str(index),
+    ]
+
+    output: subprocess.CompletedProcess = subprocess.run(
+        command, capture_output=True, text=True, check=True
+    )
+    out: bytes = output.stdout
+
+    return out
+
+
+def bismark(genome: Path, fastq: Path) -> bytes:
+    """Helper function to run external bismark tool.
+
+    Bismark documentation at:
+    https://github.com/FelixKrueger/Bismark/tree/master/Docs
+
+    Args:
+        genome (Path): filepath to directory of bismark processed genome files.
+        fastq (Path): filepath to fastq file to process.
+
+    Returns:
+        bytes: output from bismark shell command, usually discarded
+    """
+
+    command: List[str] = [
+        "bismark",
+        "--genome",
+        str(genome),
+        str(fastq),
+    ]
+
+    output: subprocess.CompletedProcess = subprocess.run(
+        command, capture_output=True, text=True, check=True
+    )
+    out: bytes = output.stdout
+
+    return out
