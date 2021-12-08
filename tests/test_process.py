@@ -170,7 +170,7 @@ def test_prepare_genome(mock_subp):
     TEST_COMMAND = [
         "bismark_genome_preparation",
         "--path_to_aligner",
-        TEST_ALIGNER,
+        str(TEST_ALIGNER),
         str(TEST_INDEX),
     ]
     _ = process.prepare_genome(TEST_INDEX, TEST_ALIGNER)
@@ -187,8 +187,8 @@ def test_bismark(mock_subp):
     TEST_COMMAND = [
         "bismark",
         "--genome",
-        TEST_GENOME,
-        TEST_FASTQ,
+        str(TEST_GENOME),
+        str(TEST_FASTQ),
     ]
     _ = process.bismark(TEST_GENOME, TEST_FASTQ)
 

@@ -187,7 +187,7 @@ def prepare_genome(index: Path, aligner: Path = Path("/usr/bin/bowtie2/")) -> by
     command: List[str] = [
         "bismark_genome_preparation",
         "--path_to_aligner",
-        aligner,
+        str(aligner),
         str(index),
     ]
 
