@@ -1,0 +1,77 @@
+{% set name = "pyllelic" %}
+{% set version = "0.2.4" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
+  sha256: 97690e8810446f9e06210679e6cb3ec8430b159438fb3e508b3db3c3a06f314d
+
+build:
+  number: 0
+  skip: True  # [py<36]
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - biopython
+    - ipywidgets
+    - jupyter_contrib_nbextensions
+    - notebook
+    - numpy
+    - openpyxl
+    - pandas
+    - pip
+    - plotly
+    - pysam
+    - python
+    - samtools
+    - scikit-bio
+    - scipy
+    - tqdm
+    - xlrd
+    - xlsxwriter
+  run:
+    - biopython
+    - ipywidgets
+    - jupyter_contrib_nbextensions
+    - notebook
+    - numpy
+    - openpyxl
+    - pandas
+    - plotly
+    - pysam
+    - python
+    - samtools
+    - scikit-bio
+    - scipy
+    - tqdm
+    - xlrd
+    - xlsxwriter
+
+test:
+  imports:
+    - pyllelic
+  requires:
+    - pip
+  commands:
+    - pip check
+
+about:
+  home: "https://github.com/Paradoxdruid/pyllelic"
+  license: "GNU General Public v3 (GPLv3)"
+  license_family: GPL3
+  license_file: LICENSE.md
+  summary: "Analysis of allele-specific methylation in bisulfite DNA sequencing."
+  description: |
+    pyllelic: a tool for detection of allelic-specific methylation variation
+    in bisulfite DNA sequencing files.
+  doc_url: "https://paradoxdruid.github.io/pyllelic/"
+  dev_url: "https://github.com/Paradoxdruid/pyllelic"
+
+
+extra:
+  recipe-maintainers:
+    - Paradoxdruid
