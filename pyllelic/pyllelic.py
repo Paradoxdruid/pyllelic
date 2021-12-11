@@ -183,6 +183,7 @@ class QumaResult:
         self._read_files: List[str] = read_files
         self._genomic_files: List[str] = genomic_files
         self._positions: List[str] = positions
+        self._raw_quma: List[str] = []
         self.values: pd.DataFrame = self._pool_processing()
         """pd.DataFrame: dataframe of quma methylation analysis values."""
 
@@ -236,7 +237,8 @@ class QumaResult:
         # Add to excel file
         for each in results:
             try:
-                holding_df = pd.concat([holding_df, each], axis=1)
+                holding_df = pd.concat([holding_df, each[0]], axis=1)
+                self._raw_quma.append(each[1])
             except (AttributeError, KeyError):  # pragma: no cover
                 pass
 
@@ -265,7 +267,7 @@ class QumaResult:
         processed_quma: List[str] = self._process_raw_quma(quma_result)
         # Next, add this readname to the holding data frame
         int_df: pd.DataFrame = pd.DataFrame({position: processed_quma})
-        return int_df
+        return int_df, quma_result
 
     @staticmethod
     def _access_quma(genomic_contents: str, read_contents: str) -> str:

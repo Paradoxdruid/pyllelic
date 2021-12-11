@@ -10,8 +10,9 @@ import re
 from io import StringIO
 from typing import Any, Dict, List, Tuple, Optional
 
-from Bio import pairwise2
+# from Bio import pairwise2
 from Bio.Align import substitution_matrices
+from Bio import Align
 
 # import logging
 
@@ -337,6 +338,24 @@ class Quma:
 
         return new
 
+    @staticmethod
+    def _matching_substrings(alignment: Align.PairwiseAlignment) -> Tuple[str, str]:
+        matches = str(alignment).splitlines()[1]
+        q_matches = str(alignment).splitlines()[0]
+        g_matches = str(alignment).splitlines()[2]
+
+        left_start_index = len(matches) - len(matches.lstrip())
+        right_end_index = len(matches) - len(matches.rstrip())
+
+        if right_end_index == 0:
+            q_substring = q_matches[left_start_index:]
+            g_substring = g_matches[left_start_index:]
+        else:
+            q_substring = q_matches[left_start_index:-right_end_index]
+            g_substring = g_matches[left_start_index:-right_end_index]
+
+        return (q_substring, g_substring)
+
     def _align_seq_and_generate_stats(
         self, gfile: str, qfile: str, cpg: Dict[str, Any]
     ) -> Dict[str, Any]:
@@ -367,16 +386,41 @@ class Quma:
 
         bio_gseq = gfile.splitlines()[1]
         bio_qseq = qfile.splitlines()[1]
-        # flipping to correct output comparison
-        bio_alignments = pairwise2.align.localds(bio_qseq, bio_gseq, MATRIX, -10, -0.5)
-        genome_ali = bio_alignments[0].seqB[
-            bio_alignments[0].start : bio_alignments[0].end
-        ]
-        query_ali = bio_alignments[0].seqA[
-            bio_alignments[0].start : bio_alignments[0].end
-        ]
+
+        # ##### Original implementation ###############
+
+        # bio_alignments = pairwise2.align.localds(bio_qseq, bio_gseq, MATRIX, -10, -0.5)
+        # genome_ali = bio_alignments[0].seqB[
+        #     bio_alignments[0].start : bio_alignments[0].end
+        # ]
+        # query_ali = bio_alignments[0].seqA[
+        #     bio_alignments[0].start : bio_alignments[0].end
+        # ]
+        # fh_old = f">genome\n{genome_ali}\n>que\n{query_ali}\n"
+
+        # ##### End original implementation #########
+
+        # ##### Alternative implementation ##########
+        aligner = Align.PairwiseAligner(
+            mode="local",
+            substitution_matrix=MATRIX,
+            open_gap_score=-10,
+            extend_gap_score=-0.5,
+        )
+        bio_alignments = list(aligner.align(bio_qseq, bio_gseq))
+        bio_alignment = bio_alignments[0]
+
+        query_ali, genome_ali = self._matching_substrings(bio_alignment)
+        # raw_alignment_ = format(bio_alignment)
+        # raw_alignment = raw_alignment_.split("\n")
+        # query_ali = raw_alignment[0].replace(" ", "-")
+        # genome_ali = raw_alignment[2].replace(" ", "-")
+
         fh_ = f">genome\n{genome_ali}\n>que\n{query_ali}\n"
-        # logging.debug(f"gseq={bio_gseq},aligned={genome_ali}")
+        # logging.debug(f"gseq={bio_gseq}\nqseq={bio_qseq}\nOrig:{fh_old}\nAlt:{fh_}")
+
+        # ###### End alternative implementation ###########
+
         fh: List[str] = fh_.split("\n")
 
         for i, line in enumerate(fh):
