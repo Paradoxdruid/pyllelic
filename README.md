@@ -12,6 +12,32 @@
 
 Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/>** and see [`pyllelic_notebook.ipynb`](https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.md) for an interactive demonstration.
 
+## Dependencies and Installation
+
+### Conda environment
+
+Create a new conda environment using python 3.8:
+
+```bash
+conda create --name PYLLELIC python=3.8
+conda activate PYLLELIC
+conda config --env --add channels conda-forge bioconda
+conda install pandas numpy scipy plotly xlsxwriter xlrd openpyxl tqdm
+conda install pysam bismark biopython notebook jupyter_contrib_nbextensions ipywidgets
+```
+
+### Install pyllelic
+
+```bash
+python3 -m pip install pyllelic
+```
+
+or for latest code:
+
+```bash
+python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
+```
+
 ## Example exploratory use in jupyter notebook
 
 ```python
@@ -57,29 +83,6 @@ Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/
 ```
 
 ----------------------------------
-
-## Dependencies and Installation
-
-### Conda environment
-
-Create a new conda environment using python 3.7:
-
-```bash
-conda create --name PYLLELIC python=3.7
-conda activate PYLLELIC
-```
-
-### Install pyllelic
-
-```bash
-pip install pyllelic
-```
-
-or
-
-```bash
-git clone https://github.com/Paradoxdruid/pyllelic.git
-```
 
 ## Authors
 
