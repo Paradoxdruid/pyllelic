@@ -102,9 +102,9 @@ class Quma:
         biseq: List[Dict[str, str]] = []
         fa: Dict[str, str] = {}
 
-        multi = re.findall(r"(.*)$", multi, re.MULTILINE)
+        multi2: List[str] = re.findall(r"(.*)$", multi, re.MULTILINE)
 
-        for line in multi:
+        for line in multi2:
 
             if ">" in line:
                 if fa and not fa["seq"]:  # pragma: no cover
@@ -190,7 +190,7 @@ class Quma:
         return new
 
     @staticmethod
-    def _find_cpg(gseq: str) -> Tuple[List[str], Dict[str, Any], Dict[str, Any]]:
+    def _find_cpg(gseq: str) -> Dict[str, int]:
         """Find CpG sites in genomic string."""
         positions = []
         cpgf = {}
@@ -436,17 +436,14 @@ class Quma:
             print("qAli len != gAli len")
             # sys.exit()
 
-        results = self._process_alignment_matches(ref, cpg)
+        results = self._process_alignment_matches(ref)
         return results
 
-    def _process_alignment_matches(
-        self, ref: Dict[str, Any], cpg: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    def _process_alignment_matches(self, ref: Dict[str, Any]) -> Dict[str, Any]:
         """Process alignment data to populate results dictionary.
 
         Args:
             ref (Dict[str, Any]): initial results dictionary
-            cpg (Dict[str, Any]): dictionary of CpG locations
 
         Returns:
             Dict[str, Any]: results dictionary

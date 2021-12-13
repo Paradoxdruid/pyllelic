@@ -183,15 +183,16 @@ def prepare_genome(index: Path, aligner: Optional[Path] = None) -> bytes:
     Returns:
         bytes: output from genome preparation shell command, usually discarded
     """
+    command: List[str]
     if aligner:
-        command: List[str] = [
+        command = [
             "bismark_genome_preparation",
             "--path_to_aligner",
             str(aligner),
             str(index),
         ]
     else:
-        command: List[str] = [
+        command = [
             "bismark_genome_preparation",
             str(index),
         ]

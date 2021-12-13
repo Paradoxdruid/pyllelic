@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, TypeVar, Tuple, Union
 
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import plotly.graph_objects as go
 import pysam
@@ -35,8 +36,8 @@ class AD_stats(NamedTuple):
     """Helper class for NamedTuple results from anderson_darling_test"""
 
     sig: bool
-    stat: float
-    crits: List[np.ndarray]
+    stat: npt.ArrayLike
+    crits: List[npt.ArrayLike]
 
 
 class BamOutput:
@@ -819,7 +820,7 @@ class GenomicPositionData:
             data = self.individual_data
 
         np.seterr(divide="ignore", invalid="ignore")  # ignore divide-by-zero errors
-        sig_dict: Dict[str, List[np.ndarray]] = {
+        sig_dict: Dict[str, List[npt.ArrayLike]] = {
             "cellLine": [],
             "position": [],
             "ad_stat": [],
@@ -855,10 +856,10 @@ class GenomicPositionData:
         """
 
         if np.all(pd.notnull(raw_list)):
-            stat: float
-            crits: List[np.ndarray]
+            stat: npt.ArrayLike
+            crits: List[npt.ArrayLike]
             stat, crits, _ = stats.anderson(raw_list)
-            is_sig: bool = bool(stat > crits[4])
+            is_sig: bool = bool(stat > crits[4])  # type: ignore
             return AD_stats(is_sig, stat, crits)
         return AD_stats(False, np.nan, [np.nan])
 
@@ -876,7 +877,7 @@ def configure(
     prom_end: str,
     chrom: str,
     offset: int,
-) -> None:
+) -> Config:
     """Helper method to set up all our environmental variables, such as for testing.
 
     Args:
@@ -887,6 +888,9 @@ def configure(
         prom_end (str): final position to analyze in promoter region
         chrom (str): chromosome promoter is located on
         offset (int): genomic position of promoter to offset reads
+
+    Returns:
+        Config: configuration dataclass instance.
     """
 
     config = Config(
