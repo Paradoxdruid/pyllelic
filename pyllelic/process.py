@@ -168,7 +168,7 @@ def retrieve_promoter_seq(filename: str, chrom: str, start: int, end: int) -> No
     Path(filename).write_text(seq)
 
 
-def prepare_genome(index: Path, aligner: Path = Path("/usr/bin/bowtie2/")) -> bytes:
+def prepare_genome(index: Path, aligner: Optional[Path] = None) -> bytes:
     """Helper function to run external bismark genome preparation tool.
 
     Uses genomes from, e.g.: http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/
@@ -178,18 +178,23 @@ def prepare_genome(index: Path, aligner: Path = Path("/usr/bin/bowtie2/")) -> by
 
     Args:
         index (Path): filepath to unprocessed genome file.
-        aligner (Path): filepath to bowtie2 alignment program.
+        aligner (Optional[Path]): filepath to bowtie2 alignment program.
 
     Returns:
         bytes: output from genome preparation shell command, usually discarded
     """
-
-    command: List[str] = [
-        "bismark_genome_preparation",
-        "--path_to_aligner",
-        str(aligner),
-        str(index),
-    ]
+    if aligner:
+        command: List[str] = [
+            "bismark_genome_preparation",
+            "--path_to_aligner",
+            str(aligner),
+            str(index),
+        ]
+    else:
+        command: List[str] = [
+            "bismark_genome_preparation",
+            str(index),
+        ]
 
     output: subprocess.CompletedProcess = subprocess.run(
         command, capture_output=True, text=True, check=True

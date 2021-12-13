@@ -17,84 +17,90 @@ jupyter:
 
 <img src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_logo.png?raw=true" alt="pyllelic logo" width="100"/>
 
-<!-- #region heading_collapsed=true -->
-## Background
-<!-- #endregion -->
 
-<!-- #region hidden=true -->
+## Background
+
+
 This notebook illustrates the import and use of `pyllelic` in a jupyter environment.
 
 Source code: <https://github.com/Paradoxdruid/pyllelic>
 
 Documentation: <https://paradoxdruid.github.io/pyllelic/>
-<!-- #endregion -->
+
 
 ## Pre-setup / File preparation
 
-<!-- #region heading_collapsed=true -->
-### Obtaining fastq data
-<!-- #endregion -->
 
-<!-- #region hidden=true -->
+### Obtaining fastq data
+
+
 We can download rrbs (reduced representation bisulfite sequencing) data from the Encode project:
 <http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeHaibMethylRrbs/>
-<!-- #endregion -->
 
-<!-- #region hidden=true -->
+
 Those files are in unaligned fastq format.  We will need to align these to a reference human genome.
+
+
+### Retrieve promoter sequence
+
+
+We will download the genomic region of interest from the UCSC Genome browser and save it in a text file:
+
+<!-- #region -->
+```python
+from pyllelic import process
+# Retrieve promoter genomic sequence
+process.retrieve_promoter_seq("{prom_filename}.txt", chrom: "chr5", start: 1293200, end: 1296000)
+```
 <!-- #endregion -->
 
-<!-- #region heading_collapsed=true -->
-### Aligning reads (using process.py)
-<!-- #endregion -->
+### Preparing bisultife-converted genome
 
-<!-- #region hidden=true -->
-To align reads, we'll use bowtie2 and samtools (through its pysam wrapper).
+
+To prepare the genome and align reads, we'll use [bismark](https://github.com/FelixKrueger/Bismark), bowtie2, and samtools (through its pysam wrapper).
 
 First, we need to download a genomic index sequence: <http://hgdownload.soe.ucsc.edu/goldenPath/hg19>
-<!-- #endregion -->
 
-<!-- #region hidden=true -->
+<!-- #region -->
 ```python
 # Processing imports
 from pathlib import Path
-```
-<!-- #endregion -->
 
-<!-- #region hidden=true -->
-```python
 # Set up file paths
-index = Path(
-    "/{your_directory}/hg19.p13.plusMT.no_alt_analysis_set//hg19.p13.plusMT.no_alt_analysis_set"
-)
-fastq = Path("/{your_directory}/wgEncodeHaibMethylRrbsU87HaibRawDataRep1.fastq.gz")
+genome = Path("/{your_directory}/{genome_file_directory}")
+fastq = Path("/{your_directory}/{your_fastq_file.fastq.gz}")
 ```
 <!-- #endregion -->
 
-<!-- #region hidden=true -->
 **WARNING:** The next command is processor, RAM, and time intensive, and only needs to be run once!
-<!-- #endregion -->
 
-<!-- #region hidden=true -->
+<!-- #region -->
 ```python
-# Convert fastq to bam
-from pyllelic import process
-process.bowtie2_fastq_to_bam(index={bowtie_index_filename_without_suffix},
-                                      fastq={fastq_file_name},
-                                      cores=6)
+# Prepare genome via bismark
+process.prepare_genome(genome) # can optionally give path to bowtie2 if not in PATH
 ```
 <!-- #endregion -->
 
-<!-- #region hidden=true -->
+### Aligning reads
+
+
+**WARNING:** The next command is processor, RAM, and time intensive, and only needs to be run once!
+
+<!-- #region -->
+```python
+# Convert fastq to bismark-aligned bam
+from pyllelic import process
+process.bismark(genome, fastq)
+```
+<!-- #endregion -->
+
 Notes:
 
-* `cores` is number of processor cores, adjust for your system
 * We recommend renaming your `.bam` file to encode cell-line and tissue.  Our convention is: `fh_CELLLINE_TISSUE.REGION.bam`
 
 Next, we need to sort and index the bam file using samtools functions.
-<!-- #endregion -->
 
-<!-- #region hidden=true -->
+<!-- #region -->
 ```python
 # Sort the bamfile
 bamfile = Path("/{your_directory}/{bam_filename}.bam")
@@ -102,7 +108,7 @@ process.pysam_sort(bamfile)
 ```
 <!-- #endregion -->
 
-<!-- #region hidden=true -->
+<!-- #region -->
 ```python
 # Create an index of the sorted bamfile
 sorted_bam = Path("/{your_directory}/{bam_filename}_sorted.bam")
@@ -110,32 +116,12 @@ process.pysam_index(sorted_bam)
 ```
 <!-- #endregion -->
 
-<!-- #region heading_collapsed=true -->
-### Retrieve promoter sequence
-<!-- #endregion -->
-
-<!-- #region hidden=true -->
-We will download the genomic region of interest from the UCSC Genome browser and save it in a text file:
-<!-- #endregion -->
-
-<!-- #region hidden=true -->
-```python
-# Retrieve promoter genomic sequence
-process.retrieve_promoter_seq("{prom_filename}.txt", chrom: "chr5", start: 1293200, end: 1296000)
-```
-<!-- #endregion -->
-
-<!-- #region heading_collapsed=true -->
 ### Organize directory contents
-<!-- #endregion -->
 
-<!-- #region hidden=true -->
-Place sorted bam files and index files (again, rename to capture cell-line and tissue info) in the `test` folder for analysis by pyllelic.
-<!-- #endregion -->
 
-<!-- #region hidden=true -->
-Place the promoter sequence in your main directory.
-<!-- #endregion -->
+* Place sorted bam files and index files (again, rename to capture cell-line and tissue info) in the `test` folder for analysis by pyllelic.
+* Place the promoter sequence in your main directory.
+
 
 ## Set-up
 
@@ -168,10 +154,6 @@ files_set = pyllelic.make_list_of_bam_files(config)
 
 ```python
 # files_set # uncomment for debugging
-```
-
-```python
-# files_set = files_set[0:2]  # grab only first twenty files for quick run
 ```
 
 ### Perform full methylation analysis and generate data object
@@ -280,9 +262,6 @@ data.individual_data.head()
 
 ## Visualizing Data
 
-```python
-import plotly.express as px
-```
 
 ### Histograms of reads at a cell line and genomic position
 
@@ -305,6 +284,10 @@ data.sig_methylation_differences()
 ```
 
 ### Find values with a methylation difference above a threshold
+
+```python
+import plotly.express as px
+```
 
 ```python
 import pandas as pd
@@ -355,10 +338,6 @@ fig.show()
 ```
 
 ### Plotting read methylation distributions
-
-```python
-import pandas as pd
-```
 
 ```python
 df = data.individual_data.copy()
