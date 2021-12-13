@@ -159,16 +159,15 @@
 <span class="sd">   in reduced representation bisulfate DNA sequencing.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pickle</span>  <span class="c1"># nosec</span>
 <span class="kn">import</span> <span class="nn">signal</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span><span class="p">,</span> <span class="n">cpu_count</span>
 <span class="kn">from</span> <span class="nn">multiprocessing.pool</span> <span class="kn">import</span> <span class="n">AsyncResult</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.typing</span> <span class="k">as</span> <span class="nn">npt</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
 <span class="kn">import</span> <span class="nn">pysam</span>
@@ -178,8 +177,6 @@
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">quma</span>
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">Config</span>
-
-<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;pyllelic_test.log&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
 
 <span class="n">GPD</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;GPD&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s2">&quot;GenomicPositionData&quot;</span><span class="p">)</span>
 
@@ -195,8 +192,8 @@
     <span class="sd">&quot;&quot;&quot;Helper class for NamedTuple results from anderson_darling_test&quot;&quot;&quot;</span>
 
     <span class="n">sig</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="n">stat</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">crits</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span></div>
+    <span class="n">stat</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span>
+    <span class="n">crits</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="BamOutput"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.BamOutput">[docs]</a><span class="k">class</span> <span class="nc">BamOutput</span><span class="p">:</span>
@@ -228,10 +225,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            pd.Index: list of unique positions in the samfile</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># Index samfile if index file doesn&#39;t exist</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">sams</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.bai&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="n">_</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pysam_index</span><span class="p">(</span><span class="n">sams</span><span class="p">)</span>  <span class="c1"># we don&#39;t care what the output is</span>
 
         <span class="c1"># Grab the promoter region of interest</span>
         <span class="n">samm</span><span class="p">:</span> <span class="n">pysam</span><span class="o">.</span><span class="n">AlignmentFile</span> <span class="o">=</span> <span class="n">pysam</span><span class="o">.</span><span class="n">AlignmentFile</span><span class="p">(</span><span class="n">sams</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
@@ -295,21 +288,6 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">each1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">read_file</span><span class="p">)</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_pysam_index</span><span class="p">(</span><span class="n">bamfile</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Helper function to run external samtools index.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            bamfile (Path): filepath to bam file</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            bool: verification of samtools command, usually discarded</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">pysam</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">bamfile</span><span class="p">))</span>
-
-        <span class="k">return</span> <span class="kc">True</span>
-
     <span class="k">def</span> <span class="nf">_genome_range</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">genome_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -362,6 +340,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_read_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_files</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_genomic_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">genomic_files</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_positions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">positions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw_quma</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pool_processing</span><span class="p">()</span>
         <span class="sd">&quot;&quot;&quot;pd.DataFrame: dataframe of quma methylation analysis values.&quot;&quot;&quot;</span>
 
@@ -415,7 +394,8 @@
         <span class="c1"># Add to excel file</span>
         <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">holding_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">holding_df</span><span class="p">,</span> <span class="n">each</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">holding_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">holding_df</span><span class="p">,</span> <span class="n">each</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_raw_quma</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">each</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
                 <span class="k">pass</span>
 
@@ -430,13 +410,13 @@
 
     <span class="k">def</span> <span class="nf">_thread_worker</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">genomic_contents</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">read_contents</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Queue worker for quma functions.</span>
 
 <span class="sd">        Args:</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pd.DataFrame: dataframe of quma results</span>
+<span class="sd">            Tuple[pd.DataFrame, str]: dataframe of quma results and raw quma results</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">quma_result</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_access_quma</span><span class="p">(</span><span class="n">genomic_contents</span><span class="p">,</span> <span class="n">read_contents</span><span class="p">)</span>
@@ -444,7 +424,7 @@
         <span class="n">processed_quma</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_raw_quma</span><span class="p">(</span><span class="n">quma_result</span><span class="p">)</span>
         <span class="c1"># Next, add this readname to the holding data frame</span>
         <span class="n">int_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">position</span><span class="p">:</span> <span class="n">processed_quma</span><span class="p">})</span>
-        <span class="k">return</span> <span class="n">int_df</span>
+        <span class="k">return</span> <span class="n">int_df</span><span class="p">,</span> <span class="n">quma_result</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_access_quma</span><span class="p">(</span><span class="n">genomic_contents</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">read_contents</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -829,7 +809,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_create_heatmap</span><span class="p">(</span>
-        <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">min_values</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">min_values</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">title_type</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Generate a graph figure showing heatmap of mean methylation across</span>
 <span class="sd">        cell lines.</span>
@@ -839,6 +819,7 @@
 <span class="sd">            min_values (int): minimum number of points data must exist at a position</span>
 <span class="sd">            width (int): figure width</span>
 <span class="sd">            height (int): figure height</span>
+<span class="sd">            title_type (str): type of figure being plotted</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            go.Figure: plotly figure object</span>
@@ -862,7 +843,7 @@
         <span class="p">)</span>
 
         <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
-            <span class="n">title_text</span><span class="o">=</span><span class="s2">&quot;Mean Methylation Heatmap&quot;</span><span class="p">,</span>
+            <span class="n">title_text</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title_type</span><span class="si">}</span><span class="s2"> Methylation Heatmap&quot;</span><span class="p">,</span>
             <span class="n">xaxis_title_text</span><span class="o">=</span><span class="s2">&quot;Position&quot;</span><span class="p">,</span>
             <span class="n">yaxis_title_text</span><span class="o">=</span><span class="s2">&quot;Cell Line&quot;</span><span class="p">,</span>
             <span class="c1"># aspect=&quot;equal&quot;,</span>
@@ -874,19 +855,46 @@
 
         <span class="k">return</span> <span class="n">fig</span>
 
-<div class="viewcode-block" id="GenomicPositionData.heatmap"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.heatmap">[docs]</a>    <span class="k">def</span> <span class="nf">heatmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_values</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="GenomicPositionData.heatmap"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.heatmap">[docs]</a>    <span class="k">def</span> <span class="nf">heatmap</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">min_values</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">800</span><span class="p">,</span>
+        <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span>
+        <span class="n">cell_lines</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;means&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Display a graph figure showing heatmap of mean methylation across</span>
 <span class="sd">        cell lines.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            min_values (int): minimum number of points data must exist at a position</span>
 <span class="sd">            width (int): figure width, defaults to 800</span>
-<span class="sd">            height (int): figure height, defaults to 3000</span>
+<span class="sd">            height (int): figure height, defaults to 2000</span>
+<span class="sd">            cell_lines (Optional[List[str]]): set of cell lines to analyze,</span>
+<span class="sd">            defaults to all cell lines.</span>
+<span class="sd">            data_type (str): type of data to plot. Can to &#39;means&#39;, &#39;modes&#39;, or &#39;diffs&#39;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">means</span>
+        <span class="n">title_type</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+        <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s2">&quot;means&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">means</span>
+            <span class="n">title_type</span> <span class="o">=</span> <span class="s2">&quot;Mean&quot;</span>
+        <span class="k">elif</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s2">&quot;modes&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modes</span>
+            <span class="n">title_type</span> <span class="o">=</span> <span class="s2">&quot;Mode&quot;</span>
+        <span class="k">elif</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s2">&quot;diffs&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffs</span>
+            <span class="n">title_type</span> <span class="o">=</span> <span class="s2">&quot;Difference&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid data type&quot;</span><span class="p">)</span>
 
-        <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_heatmap</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">min_values</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cell_lines</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">cell_lines</span><span class="p">)]</span>
+
+        <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_heatmap</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">min_values</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">title_type</span>
+        <span class="p">)</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
     <span class="nd">@staticmethod</span>
@@ -968,7 +976,7 @@
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">individual_data</span>
 
         <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>  <span class="c1"># ignore divide-by-zero errors</span>
-        <span class="n">sig_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">sig_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;cellLine&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;ad_stat&quot;</span><span class="p">:</span> <span class="p">[],</span>
@@ -1004,10 +1012,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">notnull</span><span class="p">(</span><span class="n">raw_list</span><span class="p">)):</span>
-            <span class="n">stat</span><span class="p">:</span> <span class="nb">float</span>
-            <span class="n">crits</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+            <span class="n">stat</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span>
+            <span class="n">crits</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">]</span>
             <span class="n">stat</span><span class="p">,</span> <span class="n">crits</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">anderson</span><span class="p">(</span><span class="n">raw_list</span><span class="p">)</span>
-            <span class="n">is_sig</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">stat</span> <span class="o">&gt;</span> <span class="n">crits</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+            <span class="n">is_sig</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">stat</span> <span class="o">&gt;</span> <span class="n">crits</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
             <span class="k">return</span> <span class="n">AD_stats</span><span class="p">(</span><span class="n">is_sig</span><span class="p">,</span> <span class="n">stat</span><span class="p">,</span> <span class="n">crits</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">AD_stats</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">])</span></div>
 
@@ -1025,7 +1033,7 @@
     <span class="n">prom_end</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">chrom</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Config</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Helper method to set up all our environmental variables, such as for testing.</span>
 
 <span class="sd">    Args:</span>
@@ -1036,6 +1044,9 @@
 <span class="sd">        prom_end (str): final position to analyze in promoter region</span>
 <span class="sd">        chrom (str): chromosome promoter is located on</span>
 <span class="sd">        offset (int): genomic position of promoter to offset reads</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Config: configuration dataclass instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>

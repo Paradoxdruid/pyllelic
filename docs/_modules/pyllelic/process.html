@@ -159,6 +159,8 @@
 
 <span class="kn">import</span> <span class="nn">gzip</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
@@ -167,7 +169,7 @@
 <span class="kn">from</span> <span class="nn">Bio</span> <span class="kn">import</span> <span class="n">SeqIO</span>
 
 
-<div class="viewcode-block" id="process_fastq_to_list"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.process_fastq_to_list">[docs]</a><span class="k">def</span> <span class="nf">process_fastq_to_list</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">SeqIO</span><span class="o">.</span><span class="n">SeqRecord</span><span class="p">]]:</span>
+<div class="viewcode-block" id="fastq_to_list"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.fastq_to_list">[docs]</a><span class="k">def</span> <span class="nf">fastq_to_list</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">SeqIO</span><span class="o">.</span><span class="n">SeqRecord</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;Read a .fastq or fastq.gz file into an in-memory record_list.</span>
 
 <span class="sd">    This is a time and memory intensive operation!</span>
@@ -253,16 +255,16 @@
         <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
         <span class="nb">str</span><span class="p">(</span><span class="n">cores</span><span class="p">),</span>
         <span class="s2">&quot;-x&quot;</span><span class="p">,</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">index</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">),</span>
         <span class="s2">&quot;-U&quot;</span><span class="p">,</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">fastq</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">fastq</span><span class="p">),</span>
         <span class="s2">&quot;|&quot;</span><span class="p">,</span>
         <span class="s2">&quot;samtools&quot;</span><span class="p">,</span>
         <span class="s2">&quot;view&quot;</span><span class="p">,</span>
         <span class="s2">&quot;-bS&quot;</span><span class="p">,</span>
         <span class="s2">&quot;-&quot;</span><span class="p">,</span>
         <span class="s2">&quot;&gt;&quot;</span><span class="p">,</span>
-        <span class="n">fastq</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s2">&quot;.bam&quot;</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">fastq</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">fastq</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.bam&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
     <span class="n">output</span><span class="p">:</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CompletedProcess</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
@@ -273,7 +275,7 @@
     <span class="k">return</span> <span class="n">out</span></div>
 
 
-<div class="viewcode-block" id="process_pysam_sort"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.process_pysam_sort">[docs]</a><span class="k">def</span> <span class="nf">process_pysam_sort</span><span class="p">(</span><span class="n">bamfile</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="pysam_sort"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.pysam_sort">[docs]</a><span class="k">def</span> <span class="nf">pysam_sort</span><span class="p">(</span><span class="n">bamfile</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Helper function to run pysam samtools sort.</span>
 
 <span class="sd">    Args:</span>
@@ -283,12 +285,12 @@
 <span class="sd">        bool: verification of samtools command, usually discarded</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">pysam</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&gt;</span><span class="si">{</span><span class="n">bamfile</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">_sorted.bam&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">bamfile</span><span class="p">))</span>
+    <span class="n">pysam</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bamfile</span><span class="o">.</span><span class="n">parent</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">bamfile</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">_sorted.bam&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">bamfile</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="process_pysam_index"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.process_pysam_index">[docs]</a><span class="k">def</span> <span class="nf">process_pysam_index</span><span class="p">(</span><span class="n">bamfile</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="pysam_index"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.pysam_index">[docs]</a><span class="k">def</span> <span class="nf">pysam_index</span><span class="p">(</span><span class="n">bamfile</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Helper function to run external samtools index.</span>
 
 <span class="sd">    Args:</span>
@@ -301,6 +303,91 @@
     <span class="n">pysam</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">bamfile</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="retrieve_promoter_seq"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.retrieve_promoter_seq">[docs]</a><span class="k">def</span> <span class="nf">retrieve_promoter_seq</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chrom</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Retrieve the genomic sequence of interest from UCSC Genome Browser.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (Path): path to store genomic sequence</span>
+<span class="sd">        chrom (str): chromosome of interest, e.g. &quot;chr5&quot;</span>
+<span class="sd">        start (int): start position for region of interest</span>
+<span class="sd">        end (int): end position for region of interest</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;https://genome.ucsc.edu/cgi-bin/das/hg19/dna?segment=</span><span class="si">{</span><span class="n">chrom</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;&lt;DNA.*&gt;(.*)&lt;\/DNA&gt;&quot;</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">seq</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="prepare_genome"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.prepare_genome">[docs]</a><span class="k">def</span> <span class="nf">prepare_genome</span><span class="p">(</span><span class="n">index</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">aligner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Helper function to run external bismark genome preparation tool.</span>
+
+<span class="sd">    Uses genomes from, e.g.: http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/</span>
+
+<span class="sd">    Bismark documentation at:</span>
+<span class="sd">    https://github.com/FelixKrueger/Bismark/tree/master/Docs</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        index (Path): filepath to unprocessed genome file.</span>
+<span class="sd">        aligner (Optional[Path]): filepath to bowtie2 alignment program.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bytes: output from genome preparation shell command, usually discarded</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">command</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">aligner</span><span class="p">:</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;bismark_genome_preparation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;--path_to_aligner&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">aligner</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">),</span>
+        <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;bismark_genome_preparation&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">),</span>
+        <span class="p">]</span>
+
+    <span class="n">output</span><span class="p">:</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CompletedProcess</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">command</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">out</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">stdout</span>
+
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="bismark"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.bismark">[docs]</a><span class="k">def</span> <span class="nf">bismark</span><span class="p">(</span><span class="n">genome</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">fastq</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Helper function to run external bismark tool.</span>
+
+<span class="sd">    Bismark documentation at:</span>
+<span class="sd">    https://github.com/FelixKrueger/Bismark/tree/master/Docs</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        genome (Path): filepath to directory of bismark processed genome files.</span>
+<span class="sd">        fastq (Path): filepath to fastq file to process.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bytes: output from bismark shell command, usually discarded</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">command</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;bismark&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--genome&quot;</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">genome</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">fastq</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="n">output</span><span class="p">:</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CompletedProcess</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">command</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">out</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">stdout</span>
+
+    <span class="k">return</span> <span class="n">out</span></div>
 </pre></div>
 
            </div>
