@@ -201,9 +201,8 @@ class Test_Quma:
     def test__process_alignment_matches(self, set_up_quma):
         quma_result = set_up_quma
         TEST_REF = TEST_ALIGN_REF.copy()
-        TEST_CPG = {"2": 1, "7": 1, "14": 1}
         EXPECTED = EXPECTED_ALIGN_MATCH
-        actual = quma_result._process_alignment_matches(TEST_REF, TEST_CPG)
+        actual = quma_result._process_alignment_matches(TEST_REF)
         assert EXPECTED == actual
 
     def test__generate_summary_stats(self, set_up_quma):
