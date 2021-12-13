@@ -195,3 +195,26 @@ def test_bismark(mock_subp):
     mock_subp.run.assert_called_once_with(
         TEST_COMMAND, capture_output=True, text=True, check=True
     )
+
+
+def test_retrieve_promoter_seq(requests_mock):
+    EXPECTED = (
+        "cgcgtgtccatcaaaacgtgaaggtgaacctcgtaagtttatgcaaactggacaggagggagagcaga"
+        + "ggcagagatcaccgtgtccactcgacgtcctgagcgaaaagccacgtgtgcccacgtgacgatggagac"
+        + "aggaggaccagggctctgcctgcccccttttctgagcccctactgcattcagctctggggcctg"
+    )
+    requests_mock.get(
+        "https://genome.ucsc.edu/cgi-bin/das/hg19/dna?segment=chr5:1293200,1293400",
+        text='<?xml version="1.0" standalone="no"?>\n<!DOCTYPE DASDNA SYSTEM '
+        + '"http://www.biodas.org/dtd/dasdna.dtd">\n<DASDNA>\n<SEQUENCE id="chr5" '
+        + 'start="1293200" stop="1293400" version="1.00">\n<DNA length="201">\n'
+        + "cgcgtgtccatcaaaacgtgaaggtgaacctcgtaagtttatgcaaactg\ngacaggagggagagcaga"
+        + "ggcagagatcaccgtgtccactcgacgtcctg\nagcgaaaagccacgtgtgcccacgtgacgatggagac"
+        + "aggaggaccaggg\nctctgcctgcccccttttctgagcccctactgcattcagctctggggcct\ng\n"
+        + "</DNA>\n</SEQUENCE>\n</DASDNA>\n",
+    )
+
+    with tempfile.NamedTemporaryFile(suffix=".txt", prefix="promoter") as my_file:
+        process.retrieve_promoter_seq(my_file.name, "chr5", 1293200, 1293400)
+        actual = Path(my_file.name).read_text()
+        assert actual == EXPECTED

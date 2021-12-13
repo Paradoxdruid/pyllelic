@@ -40,6 +40,13 @@ TEST_DF_SEQ_READS = pd.DataFrame.from_dict(
     columns=["sequence"],
 ).stack()
 
+EXPECTED_RAW_QUMA = (
+    "genome\t0\tATCGTAGTCGA\t1\t0\n1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\t"
+    + "ATCGTAGTCGA\t11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n2\tquery2\t"
+    + "ATCGATAGCATT\tATCG-TAGT\tATCGATAGC\t9\t1\t88.9\t1\t1\t0\t1\t"
+    + "100.0\t1\t1\t1\n"
+)
+
 EXPECTED_INTERMEDIATE_MEANS = pd.DataFrame.from_dict(
     {
         "TEST1": [np.float64(5 / 6), np.float64(5 / 6), np.float64(1.0)],

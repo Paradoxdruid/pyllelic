@@ -20,6 +20,7 @@ from inputs import (
     EXPECTED_WRITE_DF_OUTPUT,
     INPUT_READ_FILE,
     EXPECTED_MEANS,
+    EXPECTED_RAW_QUMA,
 )
 
 # Required libraries for test data
@@ -286,21 +287,16 @@ class Test_QumaOutput:
 
         actual = quma_output._thread_worker(TEST_GSEQ, TEST_QSEQ, TEST_READ_NAME)
 
-        pd.testing.assert_frame_equal(actual, EXPECTED)
+        pd.testing.assert_frame_equal(actual[0], EXPECTED)
+        assert actual[1] == EXPECTED_RAW_QUMA
 
     def test_access_quma(self, set_up_quma_output):
         quma_output = set_up_quma_output
         TEST_GSEQ = ">genome\nATCGTAGTCGA"
         TEST_QSEQ = ">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
 
-        EXPECTED = (
-            "genome\t0\tATCGTAGTCGA\t1\t0\n1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\t"
-            + "ATCGTAGTCGA\t11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n2\tquery2\t"
-            + "ATCGATAGCATT\tATCG-TAGT\tATCGATAGC\t9\t1\t88.9\t1\t1\t0\t1\t"
-            + "100.0\t1\t1\t1\n"
-        )
         actual = quma_output._access_quma(TEST_GSEQ, TEST_QSEQ)
-        assert EXPECTED == actual
+        assert EXPECTED_RAW_QUMA == actual
 
 
 class Test_GenomicPositionData:
@@ -318,6 +314,13 @@ class Test_GenomicPositionData:
 
         assert genomic_position_data.positions == EXPECTED_POSITIONS
         assert genomic_position_data.cell_types == [str(p / "test" / "fh_test.bam")]
+
+    # def test_save(self, set_up_genomic_position_data, mocker):
+    #     _, genomic_position_data = set_up_genomic_position_data
+    #     mocker.patch("pyllelic.pyllelic.pd")
+    #     genomic_position_data.save()
+
+    #     mocker.assert_called()
 
     def test_process_means(self, set_up_genomic_position_data):
         _, genomic_position_data = set_up_genomic_position_data

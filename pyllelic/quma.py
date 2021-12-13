@@ -389,7 +389,7 @@ class Quma:
 
         # ##### Original implementation ###############
 
-        # bio_alignments = pairwise2.align.localds(bio_qseq, bio_gseq, MATRIX, -10, -0.5)
+        # bio_alignments = pairwise2.align.localds(bio_qseq, bio_gseq, MATRIX,-10,-0.5)
         # genome_ali = bio_alignments[0].seqB[
         #     bio_alignments[0].start : bio_alignments[0].end
         # ]

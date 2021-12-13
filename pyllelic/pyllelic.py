@@ -8,7 +8,7 @@ import signal
 from multiprocessing import Pool, cpu_count
 from multiprocessing.pool import AsyncResult
 from pathlib import Path
-from typing import Dict, List, NamedTuple, Optional, TypeVar, Union
+from typing import Dict, List, NamedTuple, Optional, TypeVar, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -253,13 +253,13 @@ class QumaResult:
 
     def _thread_worker(
         self, genomic_contents: str, read_contents: str, position: str
-    ) -> pd.DataFrame:
+    ) -> Tuple[pd.DataFrame, str]:
         """Queue worker for quma functions.
 
         Args:
 
         Returns:
-            pd.DataFrame: dataframe of quma results
+            Tuple[pd.DataFrame, str]: dataframe of quma results and raw quma results
         """
 
         quma_result: str = self._access_quma(genomic_contents, read_contents)
