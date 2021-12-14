@@ -1,51 +1,32 @@
-{% set name = "pyllelic" %}
-{% set version = "0.2.4" %}
+{% set name = "pyllelic" %}{% set version = "0.2.6" %}
+
 
 package:
-  name: "{{ name|lower }}"
-  version: "{{ version }}"
+  name: {{ name|lower }}
+  version: {{ version }}
 
 source:
-  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
-  sha256: 97690e8810446f9e06210679e6cb3ec8430b159438fb3e508b3db3c3a06f314d
+  url: https://github.com/Paradoxdruid/pyllelic/archive/v0.2.6.tar.gz
+  sha256: f71ab34676d4fa75360ad931ba62d7958e6808d08fccb0277044adc9c4b95c4b
 
 build:
   number: 0
-  skip: True  # [py<36]
-  script: "{{ PYTHON }} -m pip install . -vv"
+  noarch: python
+  script: {{ PYTHON }} -m pip install . -vv
 
 requirements:
   host:
-    - biopython
-    - ipywidgets
-    - jupyter_contrib_nbextensions
-    - notebook
-    - numpy
-    - openpyxl
-    - pandas
     - pip
-    - plotly
-    - pysam
-    - python
-    - samtools
-    - scikit-bio
-    - scipy
-    - tqdm
-    - xlrd
-    - xlsxwriter
+    - python >=3.8
   run:
     - biopython
-    - ipywidgets
-    - jupyter_contrib_nbextensions
-    - notebook
+    - bismark
     - numpy
     - openpyxl
     - pandas
     - plotly
     - pysam
-    - python
-    - samtools
-    - scikit-bio
+    - python >=3.8
     - scipy
     - tqdm
     - xlrd
@@ -54,23 +35,15 @@ requirements:
 test:
   imports:
     - pyllelic
-  requires:
-    - pip
   commands:
     - pip check
+  requires:
+    - pip
 
 about:
-  home: "https://github.com/Paradoxdruid/pyllelic"
-  license: "GNU General Public v3 (GPLv3)"
-  license_family: GPL3
-  license_file: LICENSE.md
-  summary: "Analysis of allele-specific methylation in bisulfite DNA sequencing."
-  description: |
-    pyllelic: a tool for detection of allelic-specific methylation variation
-    in bisulfite DNA sequencing files.
-  doc_url: "https://paradoxdruid.github.io/pyllelic/"
-  dev_url: "https://github.com/Paradoxdruid/pyllelic"
-
+  home: https://github.com/Paradoxdruid/pyllelic
+  license: GPL-3.0
+  license_file: LICENSE
 
 extra:
   recipe-maintainers:
