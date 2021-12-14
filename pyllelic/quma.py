@@ -432,9 +432,9 @@ class Quma:
         ref["qAli"] = ref["qAli"].replace(" ", "-")
         ref["gAli"] = ref["gAli"].replace(" ", "-")
 
-        if len(ref["qAli"]) != len(ref["gAli"]):  # pragma: no cover
-            print("qAli len != gAli len")
-            # sys.exit()
+        # if len(ref["qAli"]) != len(ref["gAli"]):  # pragma: no cover
+        #     print("qAli len != gAli len")
+        #     # sys.exit()
 
         results = self._process_alignment_matches(ref)
         return results

@@ -1,6 +1,6 @@
 # pyllelic
 
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Paradoxdruid/pyllelic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Paradoxdruid/pyllelic/context:python)  [![CodeFactor](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic/badge)](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic)  [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c8c86fe25a644cb69b8b6e789ca1c18f)](https://www.codacy.com/gh/Paradoxdruid/pyllelic/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Paradoxdruid/pyllelic&amp;utm_campaign=Badge_Grade)  [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/c8c86fe25a644cb69b8b6e789ca1c18f)](https://www.codacy.com/gh/Paradoxdruid/pyllelic/dashboard)  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)  [![PyPI](https://img.shields.io/pypi/v/pyllelic?color=success)](https://pypi.org/project/pyllelic/) ![GitHub](https://img.shields.io/github/license/Paradoxdruid/fealden)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Paradoxdruid/pyllelic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Paradoxdruid/pyllelic/context:python)  [![CodeFactor](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic/badge)](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic)  [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c8c86fe25a644cb69b8b6e789ca1c18f)](https://www.codacy.com/gh/Paradoxdruid/pyllelic/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Paradoxdruid/pyllelic&amp;utm_campaign=Badge_Grade)  [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/c8c86fe25a644cb69b8b6e789ca1c18f)](https://www.codacy.com/gh/Paradoxdruid/pyllelic/dashboard)  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)  [![PyPI](https://img.shields.io/pypi/v/pyllelic?color=success)](https://pypi.org/project/pyllelic/) [![Anaconda-Server Badge](https://anaconda.org/paradoxdruid/pyllelic/badges/version.svg)](https://anaconda.org/paradoxdruid/pyllelic) ![GitHub](https://img.shields.io/github/license/Paradoxdruid/fealden)
 
 <p align="right">
   ⭐ &nbsp;&nbsp;the project to show your appreciation. :arrow_upper_right:
@@ -14,27 +14,30 @@ Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/
 
 ## Dependencies and Installation
 
-### Conda environment
+### Using Conda (preferred)
 
 Create a new conda environment using python 3.8:
 
 ```bash
 conda create --name PYLLELIC python=3.8
 conda activate PYLLELIC
-conda config --env --add channels conda-forge bioconda
-conda install pandas numpy scipy plotly xlsxwriter xlrd openpyxl tqdm
-conda install pysam bismark biopython notebook jupyter_contrib_nbextensions ipywidgets
+conda config --env --add channels conda-forge
+conda config --env --add channels bioconda
+conda config --env --add channels paradoxdruid
+conda install pyllelic 
+
+# Optional but usual use case:
+conda install notebook jupyter_contrib_nbextensions ipywidgets
 ```
 
-### Install pyllelic
+### PyPi installation
+
+This will require independent installation of samtools, bowtie2, and bismark packages.
 
 ```bash
+# PyPi
 python3 -m pip install pyllelic
-```
-
-or for latest code:
-
-```bash
+# or Github
 python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
 ```
 
