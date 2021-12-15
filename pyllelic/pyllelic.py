@@ -380,7 +380,7 @@ class GenomicPositionData:
         for name, bam_result in tqdm(
             self._bam_output.items(), desc="Process methylation"
         ):
-            cell_line_name: str = name.split("_")[1]
+            cell_line_name: str = Path(name).name.split("_")[1]
 
             read_files: List[str] = [each for each in bam_result.values.values()]
             genomic_files: List[str] = [
