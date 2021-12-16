@@ -8,63 +8,78 @@ import pytest  # noqa
 import pyllelic.quma as quma
 
 # Common test data
-EXPECTED_ALIGN_MATCH = {
-    "qAli": "ATCGATCCGGCATACG",
-    "gAli": "ATCGATCCGGCATACG",
-    "gap": 0,
-    "menum": 3,
-    "unconv": 0,
-    "conv": 3,
-    "pconv": 100.0,
-    "match": 16,
-    "val": "111",
-    "perc": 100.0,
-    "aliMis": 0,
-    "aliLen": 16,
-}
+# EXPECTED_ALIGN_MATCH = {
+#     "qAli": "ATCGATCCGGCATACG",
+#     "gAli": "ATCGATCCGGCATACG",
+#     "gap": 0,
+#     "menum": 3,
+#     "unconv": 0,
+#     "conv": 3,
+#     "pconv": 100.0,
+#     "match": 16,
+#     "val": "111",
+#     "perc": 100.0,
+#     "aliMis": 0,
+#     "aliLen": 16,
+# }
 
-TEST_FORMAT_DICT = {
-    "qAli": "ATCGATCCGGCATACG",
-    "gAli": "ATCGATCCGGCATACG",
-    "aliLen": 16,
-    "aliMis": 0,
-    "perc": 100.0,
-    "gap": 0,
-    "menum": 0,
-    "unconv": 0,
-    "conv": 3,
-    "pconv": 100.0,
-    "val": 100.0,
-}
+EXPECTED_ALIGN_MATCH = quma.Result(
+    qAli="ATCGATCCGGCATACG",
+    gAli="ATCGATCCGGCATACG",
+    gap=0,
+    menum=3,
+    unconv=0,
+    conv=3,
+    pconv=100.0,
+    match=16,
+    val="111",
+    perc=100.0,
+    aliMis=0,
+    aliLen=16,
+)
 
-TEST_SUMMARY_REF = {
-    "qAli": "ATCGATCCGGCATACG",
-    "gAli": "ATCGATCCGGCATACG",
-    "gap": 0,
-    "menum": 3,
-    "unconv": 0,
-    "conv": 3,
-    "pconv": 0,
-    "match": 16,
-    "val": "111",
-    "perc": 0,
-    "aliMis": 0,
-    "aliLen": 16,
-}
+TEST_FORMAT_DICT = quma.Result(
+    qAli="ATCGATCCGGCATACG",
+    gAli="ATCGATCCGGCATACG",
+    aliLen=16,
+    aliMis=0,
+    perc=100.0,
+    gap=0,
+    menum=0,
+    unconv=0,
+    conv=3,
+    pconv=100.0,
+    val=100.0,
+)
 
-TEST_ALIGN_REF = {
-    "qAli": "ATCGATCCGGCATACG",
-    "gAli": "ATCGATCCGGCATACG",
-    "gap": 0,
-    "menum": 0,
-    "unconv": 0,
-    "conv": 0,
-    "pconv": "",
-    "match": 0,
-    "val": "",
-    "perc": "",
-    "aliMis": 0,
-}
+TEST_SUMMARY_REF = quma.Result(
+    qAli="ATCGATCCGGCATACG",
+    gAli="ATCGATCCGGCATACG",
+    gap=0,
+    menum=3,
+    unconv=0,
+    conv=3,
+    pconv=0,
+    match=16,
+    val="111",
+    perc=0,
+    aliMis=0,
+    aliLen=16,
+)
+
+TEST_ALIGN_REF = quma.Result(
+    qAli="ATCGATCCGGCATACG",
+    gAli="ATCGATCCGGCATACG",
+    gap=0,
+    menum=0,
+    unconv=0,
+    conv=0,
+    pconv="",
+    match=0,
+    val="",
+    perc="",
+    aliMis=0,
+)
 
 
 class Test_Quma:
@@ -86,8 +101,8 @@ class Test_Quma:
             "genome\t0\tATCGTAGTCGA\t1\t0\n"
             + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"
             + "11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n"
-            + "2\tquery2\tATCGATAGCATT\tATCG-TAGT\tATCGATAGC\t"
-            + "9\t1\t88.9\t1\t1\t0\t1\t100.0\t1\t1\t1\n"
+            + "2\tquery2\tATCGATAGCATT\tATCG-TAGTCGA\tATCGATAGCATT\t"
+            + "12\t4\t66.7\t1\t1\t0\t1\t100.0\t1\t1\t1\n"
         )
 
         assert EXPECTED == actual
@@ -101,8 +116,8 @@ class Test_Quma:
     def test__parse_biseq(self, set_up_quma):
         quma_result = set_up_quma
         EXPECTED = [
-            {"com": "query1", "seq": "ATCGTAGTCGA"},
-            {"com": "query2", "seq": "ATCGATAGCATT"},
+            quma.Fasta(com="query1", pos=None, seq="ATCGTAGTCGA"),
+            quma.Fasta(com="query2", pos=None, seq="ATCGATAGCATT"),
         ]
         actual = quma_result._parse_biseq()
         assert EXPECTED == actual
@@ -143,28 +158,28 @@ class Test_Quma:
     def test__process_fasta_output(self, set_up_quma):
         quma_result = set_up_quma
         TEST_QSEQ = [
-            {"com": "read0", "seq": "ATCGATCCGGCATACG"},
-            {"com": "read1", "seq": "ATCGATCCGGCATACG"},
+            quma.Fasta(com="read0", seq="ATCGATCCGGCATACG"),
+            quma.Fasta(com="read1", seq="ATCGATCCGGCATACG"),
         ]
         TEST_QFILEF = "queryF"
         TEST_QFILER = "queryR"
         TEST_GFILEPF = ">genomeF\nATCGATCCGGCATACG"
-        TEST_CPGF = {"2": 1, "7": 1, "14": 1}
+        # TEST_CPGF = {"2": 1, "7": 1, "14": 1}
         EXPECTED = [
-            {
-                "fa": {"com": "read0", "seq": "ATCGATCCGGCATACG", "pos": "1"},
-                "res": EXPECTED_ALIGN_MATCH,
-                "dir": 1,
-                "gdir": 1,
-                "exc": 1,
-            },
-            {
-                "fa": {"com": "read1", "seq": "ATCGATCCGGCATACG", "pos": "2"},
-                "res": EXPECTED_ALIGN_MATCH,
-                "dir": 1,
-                "gdir": 1,
-                "exc": 1,
-            },
+            quma.Reference(
+                fasta=quma.Fasta(com="read0", seq="ATCGATCCGGCATACG", pos="1"),
+                res=EXPECTED_ALIGN_MATCH,
+                dir=1,
+                gdir=1,
+                exc=1,
+            ),
+            quma.Reference(
+                fasta=quma.Fasta(com="read1", seq="ATCGATCCGGCATACG", pos="2"),
+                res=EXPECTED_ALIGN_MATCH,
+                dir=1,
+                gdir=1,
+                exc=1,
+            ),
         ]
 
         actual = quma_result._process_fasta_output(
@@ -172,7 +187,6 @@ class Test_Quma:
             TEST_QFILEF,
             TEST_QFILER,
             TEST_GFILEPF,
-            TEST_CPGF,
         )
         assert EXPECTED == actual
 
@@ -191,16 +205,14 @@ class Test_Quma:
         quma_result = set_up_quma
         TEST_GFILE = ">genome\nATCGATCCGGCATACG\n"
         TEST_QFILE = ">read1\nATCGATCCGGCATACG\n"
-        TEST_CPG = {"2": 1, "7": 1, "14": 1}
+        # TEST_CPG = {"2": 1, "7": 1, "14": 1}
         EXPECTED = EXPECTED_ALIGN_MATCH
-        actual = quma_result._align_seq_and_generate_stats(
-            TEST_GFILE, TEST_QFILE, TEST_CPG
-        )
+        actual = quma_result._align_seq_and_generate_stats(TEST_GFILE, TEST_QFILE)
         assert EXPECTED == actual
 
     def test__process_alignment_matches(self, set_up_quma):
         quma_result = set_up_quma
-        TEST_REF = TEST_ALIGN_REF.copy()
+        TEST_REF = TEST_ALIGN_REF
         EXPECTED = EXPECTED_ALIGN_MATCH
         actual = quma_result._process_alignment_matches(TEST_REF)
         assert EXPECTED == actual
@@ -214,11 +226,11 @@ class Test_Quma:
 
     def test__generate_summary_stats_bad(self, set_up_quma):
         quma_result = set_up_quma
-        TEST_REF = TEST_SUMMARY_REF.copy()
-        TEST_REF["conv"] = 0
-        EXPECTED = EXPECTED_ALIGN_MATCH.copy()
-        EXPECTED["pconv"] = 0
-        EXPECTED["conv"] = 0
+        TEST_REF = TEST_SUMMARY_REF
+        TEST_REF.conv = 0
+        EXPECTED = EXPECTED_ALIGN_MATCH
+        EXPECTED.pconv = 0
+        EXPECTED.conv = 0
         actual = quma_result._generate_summary_stats(TEST_REF)
         assert EXPECTED == actual
 
@@ -240,25 +252,25 @@ class Test_Quma:
 
     def test__find_best_dataset(self, set_up_quma):
         quma_result = set_up_quma
-        TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FRRES["aliMis"] = 2
-        EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
+        TEST_FFRES = EXPECTED_ALIGN_MATCH
+        TEST_FRRES = EXPECTED_ALIGN_MATCH
+        TEST_FRRES.aliMis = 2
+        EXPECTED_RES = EXPECTED_ALIGN_MATCH
         EXPECTED_DIRECTION = -1
         actual_res, actual_dir = quma_result._find_best_dataset(TEST_FFRES, TEST_FRRES)
 
-        EXPECTED_RES["aliMis"] = 2
+        EXPECTED_RES.aliMis = 2
 
         assert EXPECTED_RES == actual_res
         assert EXPECTED_DIRECTION == actual_dir
 
     def test__find_best_dataset_rev(self, set_up_quma):
         quma_result = set_up_quma
-        TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FFRES["aliMis"] = 2
-        EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
-        EXPECTED_RES["aliMis"] = 0
+        TEST_FFRES = EXPECTED_ALIGN_MATCH
+        TEST_FRRES = EXPECTED_ALIGN_MATCH
+        TEST_FFRES.aliMis = 2
+        EXPECTED_RES = EXPECTED_ALIGN_MATCH
+        EXPECTED_RES.aliMis = 0
         EXPECTED_DIRECTION = -1
         actual_res, actual_dir = quma_result._find_best_dataset(TEST_FFRES, TEST_FRRES)
         assert EXPECTED_RES == actual_res
@@ -266,11 +278,11 @@ class Test_Quma:
 
     def test__find_best_dataset_fwd_perc(self, set_up_quma):
         quma_result = set_up_quma
-        TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FRRES["perc"] = 70.0
-        EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
-        EXPECTED_RES["perc"] = 70.0
+        TEST_FFRES = EXPECTED_ALIGN_MATCH
+        TEST_FRRES = EXPECTED_ALIGN_MATCH
+        TEST_FRRES.perc = 70.0
+        EXPECTED_RES = EXPECTED_ALIGN_MATCH
+        EXPECTED_RES.perc = 70.0
         EXPECTED_DIRECTION = -1
         actual_res, actual_dir = quma_result._find_best_dataset(TEST_FFRES, TEST_FRRES)
         assert EXPECTED_RES == actual_res
@@ -278,11 +290,11 @@ class Test_Quma:
 
     def test__find_best_dataset_rev_perc(self, set_up_quma):
         quma_result = set_up_quma
-        TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FFRES["perc"] = 100.0
-        EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
-        EXPECTED_RES["perc"] = 100.0
+        TEST_FFRES = EXPECTED_ALIGN_MATCH
+        TEST_FRRES = EXPECTED_ALIGN_MATCH
+        TEST_FFRES.perc = 100.0
+        EXPECTED_RES = EXPECTED_ALIGN_MATCH
+        EXPECTED_RES.perc = 100.0
         EXPECTED_DIRECTION = -1
         actual_res, actual_dir = quma_result._find_best_dataset(TEST_FFRES, TEST_FRRES)
         assert EXPECTED_RES == actual_res
@@ -290,12 +302,12 @@ class Test_Quma:
 
     def test__find_best_dataset_fwd_unconv(self, set_up_quma):
         quma_result = set_up_quma
-        TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FRRES["unconv"] = 1
-        EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
-        EXPECTED_RES["perc"] = 100.0
-        EXPECTED_RES["unconv"] = 1
+        TEST_FFRES = EXPECTED_ALIGN_MATCH
+        TEST_FRRES = EXPECTED_ALIGN_MATCH
+        TEST_FRRES.unconv = 1
+        EXPECTED_RES = EXPECTED_ALIGN_MATCH
+        EXPECTED_RES.perc = 100.0
+        EXPECTED_RES.unconv = 1
         EXPECTED_DIRECTION = -1
         actual_res, actual_dir = quma_result._find_best_dataset(TEST_FFRES, TEST_FRRES)
         assert EXPECTED_RES == actual_res
@@ -303,11 +315,11 @@ class Test_Quma:
 
     def test__find_best_dataset_rev_unconv(self, set_up_quma):
         quma_result = set_up_quma
-        TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FFRES["unconv"] = 1
-        EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
-        EXPECTED_RES["unconv"] = 0
+        TEST_FFRES = EXPECTED_ALIGN_MATCH
+        TEST_FRRES = EXPECTED_ALIGN_MATCH
+        TEST_FFRES.unconv = 1
+        EXPECTED_RES = EXPECTED_ALIGN_MATCH
+        EXPECTED_RES.unconv = 0
         EXPECTED_DIRECTION = -1
         actual_res, actual_dir = quma_result._find_best_dataset(TEST_FFRES, TEST_FRRES)
         assert EXPECTED_RES == actual_res
@@ -315,11 +327,11 @@ class Test_Quma:
 
     def test__find_best_dataset_fwd_pconv(self, set_up_quma):
         quma_result = set_up_quma
-        TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FRRES["pconv"] = 70.0
-        EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
-        EXPECTED_RES["pconv"] = 70.0
+        TEST_FFRES = EXPECTED_ALIGN_MATCH
+        TEST_FRRES = EXPECTED_ALIGN_MATCH
+        TEST_FRRES.pconv = 70.0
+        EXPECTED_RES = EXPECTED_ALIGN_MATCH
+        EXPECTED_RES.pconv = 70.0
         EXPECTED_DIRECTION = -1
         actual_res, actual_dir = quma_result._find_best_dataset(TEST_FFRES, TEST_FRRES)
         assert EXPECTED_RES == actual_res
@@ -327,10 +339,10 @@ class Test_Quma:
 
     def test__find_best_dataset_rev_pconv(self, set_up_quma):
         quma_result = set_up_quma
-        TEST_FFRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FRRES = EXPECTED_ALIGN_MATCH.copy()
-        TEST_FFRES["pconv"] = 70.0
-        EXPECTED_RES = EXPECTED_ALIGN_MATCH.copy()
+        TEST_FFRES = EXPECTED_ALIGN_MATCH
+        TEST_FRRES = EXPECTED_ALIGN_MATCH
+        TEST_FFRES.pconv = 70.0
+        EXPECTED_RES = EXPECTED_ALIGN_MATCH
         EXPECTED_DIRECTION = -1
         actual_res, actual_dir = quma_result._find_best_dataset(TEST_FFRES, TEST_FRRES)
         assert EXPECTED_RES == actual_res
@@ -340,18 +352,20 @@ class Test_Quma:
         quma_result = set_up_quma
         TEST_SEQ = "ATCGATCCGGCATACG"
         TEST_DATA = [
-            {
-                "fa": {"pos": "0", "com": "read0", "seq": "ATCGATCCGGCATACG"},
-                "res": TEST_FORMAT_DICT,
-                "dir": "0",
-                "gdir": "0",
-            },
-            {
-                "fa": {"pos": "0", "com": "read1", "seq": "ATCGATCCGGCATACG"},
-                "res": TEST_FORMAT_DICT,
-                "dir": "0",
-                "gdir": "0",
-            },
+            quma.Reference(
+                fasta=quma.Fasta(pos="0", com="read0", seq="ATCGATCCGGCATACG"),
+                res=TEST_FORMAT_DICT,
+                dir=0,
+                gdir=0,
+                exc=0,
+            ),
+            quma.Reference(
+                fasta=quma.Fasta(pos="0", com="read1", seq="ATCGATCCGGCATACG"),
+                res=TEST_FORMAT_DICT,
+                dir=0,
+                gdir=0,
+                exc=0,
+            ),
         ]
 
         EXPECTED = (
