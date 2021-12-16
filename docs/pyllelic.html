@@ -780,15 +780,138 @@ in “test” sub-directory in this folder</p></li>
 <p>Tools to quantify methylation in reduced representation
 bisulfite sequencing reads.</p>
 <dl class="py class">
+<dt class="sig sig-object py" id="pyllelic.quma.Fasta">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyllelic.quma.</span></span><span class="sig-name descname"><span class="pre">Fasta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">com</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyllelic/quma.html#Fasta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.quma.Fasta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Dataclass to wrap fasta results.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Fasta.com">
+<span class="sig-name descname"><span class="pre">com</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">''</span></em><a class="headerlink" href="#pyllelic.quma.Fasta.com" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Fasta.pos">
+<span class="sig-name descname"><span class="pre">pos</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#pyllelic.quma.Fasta.pos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Fasta.seq">
+<span class="sig-name descname"><span class="pre">seq</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">''</span></em><a class="headerlink" href="#pyllelic.quma.Fasta.seq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="pyllelic.quma.Quma">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyllelic.quma.</span></span><span class="sig-name descname"><span class="pre">Quma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gfile_contents</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qfile_contents</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyllelic/quma.html#Quma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.quma.Quma" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Quma methylation analysis parser for bisulfite conversion DNA sequencing.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.quma.Quma.values">
-<span class="sig-name descname"><span class="pre">values</span></span><a class="headerlink" href="#pyllelic.quma.Quma.values" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">values</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#pyllelic.quma.Quma.values" title="Permalink to this definition">¶</a></dt>
 <dd><p>QUMA output values in tabular form.</p>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyllelic.quma.Reference">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyllelic.quma.</span></span><span class="sig-name descname"><span class="pre">Reference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fasta</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyllelic.quma.Fasta" title="pyllelic.quma.Fasta"><span class="pre">pyllelic.quma.Fasta</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyllelic.quma.Result" title="pyllelic.quma.Result"><span class="pre">pyllelic.quma.Result</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gdir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyllelic/quma.html#Reference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.quma.Reference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Dataclass of quma analysis intermediates.</p>
+<p>Includes fasta sequence, quma results, directon of read, genomic direction,
+and whether result meets exclusion criteria.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Reference.dir">
+<span class="sig-name descname"><span class="pre">dir</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyllelic.quma.Reference.dir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Reference.exc">
+<span class="sig-name descname"><span class="pre">exc</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyllelic.quma.Reference.exc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Reference.fasta">
+<span class="sig-name descname"><span class="pre">fasta</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#pyllelic.quma.Fasta" title="pyllelic.quma.Fasta"><span class="pre">pyllelic.quma.Fasta</span></a></em><a class="headerlink" href="#pyllelic.quma.Reference.fasta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Reference.gdir">
+<span class="sig-name descname"><span class="pre">gdir</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyllelic.quma.Reference.gdir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Reference.res">
+<span class="sig-name descname"><span class="pre">res</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#pyllelic.quma.Result" title="pyllelic.quma.Result"><span class="pre">pyllelic.quma.Result</span></a></em><a class="headerlink" href="#pyllelic.quma.Reference.res" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyllelic.quma.Result">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyllelic.quma.</span></span><span class="sig-name descname"><span class="pre">Result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qAli</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gAli</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perc</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pconv</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">menum</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unconv</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conv</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aliMis</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aliLen</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyllelic/quma.html#Result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.quma.Result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Dataclass of quma aligment comparison results.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Result.aliLen">
+<span class="sig-name descname"><span class="pre">aliLen</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#pyllelic.quma.Result.aliLen" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Result.aliMis">
+<span class="sig-name descname"><span class="pre">aliMis</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#pyllelic.quma.Result.aliMis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Result.conv">
+<span class="sig-name descname"><span class="pre">conv</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#pyllelic.quma.Result.conv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Result.gAli">
+<span class="sig-name descname"><span class="pre">gAli</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">''</span></em><a class="headerlink" href="#pyllelic.quma.Result.gAli" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Result.gap">
+<span class="sig-name descname"><span class="pre">gap</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#pyllelic.quma.Result.gap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Result.match">
+<span class="sig-name descname"><span class="pre">match</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#pyllelic.quma.Result.match" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Result.menum">
+<span class="sig-name descname"><span class="pre">menum</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#pyllelic.quma.Result.menum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Result.pconv">
+<span class="sig-name descname"><span class="pre">pconv</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><em class="property"> <span class="pre">=</span> <span class="pre">0.0</span></em><a class="headerlink" href="#pyllelic.quma.Result.pconv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Result.perc">
+<span class="sig-name descname"><span class="pre">perc</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><em class="property"> <span class="pre">=</span> <span class="pre">0.0</span></em><a class="headerlink" href="#pyllelic.quma.Result.perc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Result.qAli">
+<span class="sig-name descname"><span class="pre">qAli</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">''</span></em><a class="headerlink" href="#pyllelic.quma.Result.qAli" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Result.unconv">
+<span class="sig-name descname"><span class="pre">unconv</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#pyllelic.quma.Result.unconv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Result.val">
+<span class="sig-name descname"><span class="pre">val</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">''</span></em><a class="headerlink" href="#pyllelic.quma.Result.val" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
