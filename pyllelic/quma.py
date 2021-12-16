@@ -68,7 +68,7 @@ class Fasta:
     """Dataclass to wrap fasta results."""
 
     com: str = ""
-    pos: int = None
+    pos: Optional[str] = None
     seq: str = ""
 
 
@@ -174,7 +174,7 @@ class Quma:
             str: sequence string
         """
         _ = ""
-        seq: str = re.sub(r"\r\n", "\n", seq)
+        seq = re.sub(r"\r\n", "\n", seq)
         seq = re.sub(r"\r", "\n", seq)
         seq = seq.upper()
 
@@ -219,7 +219,6 @@ class Quma:
         """
         new: str = ""
         for each in seq:
-            each: str
             if each in pattern:
                 new += each
         return new
@@ -265,9 +264,9 @@ class Quma:
         Returns:
             str: fasta-formatted text file contents.
         """
-        line: int = line or MAX_LINE_LENGTH
+        line = line or MAX_LINE_LENGTH
 
-        seq: str = re.sub(r"[0-9]| |\t|\n|\r|\f", "", seq)
+        seq = re.sub(r"[0-9]| |\t|\n|\r|\f", "", seq)
 
         reg = r"(.{1," + str(line) + "})"
         seq = re.sub(reg, r"\1\n", seq)
@@ -382,7 +381,6 @@ class Quma:
 
         new: str = ""
         for each in seq:
-            each: str
             try:
                 new += mappings[each]
             except KeyError:  # pragma: no cover
@@ -554,14 +552,12 @@ class Quma:
             result.pconv = 0
 
         result.perc = self._percentage(result.match, result.aliLen, calc_type="total")
-        result.perc = float(result.perc)
-        result.pconv = float(result.pconv)
         result.aliMis = result.aliLen - result.match
 
         return result
 
     @staticmethod
-    def _percentage(a: int, b: int, calc_type: str) -> Optional[str]:
+    def _percentage(a: int, b: int, calc_type: str) -> float:
         """Helper to return percentages.
 
         Args:
@@ -570,14 +566,14 @@ class Quma:
             calc_type (str): 'sum' or 'total' calculation type
 
         Returns:
-            Optional[str]: string of percentage
+           float: percentage
         """
 
         if calc_type == "sum":
-            return f"{(100 * a / (a + b)):3.1f}"
+            return float(f"{(100 * a / (a + b)):3.1f}")
         if calc_type == "total":
-            return f"{(100 * a / b):3.1f}"
-        return None  # pragma: no cover
+            return float(f"{(100 * a / b):3.1f}")
+        raise ValueError("No or incorrect calc_type provided")
 
     @staticmethod
     def _find_best_dataset(ffres: Result, frres: Result) -> Tuple[Result, int]:

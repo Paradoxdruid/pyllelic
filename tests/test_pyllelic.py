@@ -230,7 +230,7 @@ class Test_QumaOutput:
                     2: "G11-1",
                     3: "G11-1",
                     4: "G11-1",
-                    5: "G111",
+                    5: "1111",
                 }
             }
         )
@@ -261,14 +261,13 @@ class Test_QumaOutput:
                     2: "G11-1",
                     3: "G11-1",
                     4: "G11-1",
-                    5: "G111",
+                    5: "1111",
                 }
             }
         )
 
         actual = quma_output._pool_processing()
 
-        print(actual.to_dict())
         pd.testing.assert_frame_equal(actual, EXPECTED_RESULTS)
 
     @mock.patch("pyllelic.pyllelic.signal.signal")

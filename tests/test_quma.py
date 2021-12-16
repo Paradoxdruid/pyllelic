@@ -97,12 +97,20 @@ class Test_Quma:
         quma_result = set_up_quma
         actual = quma_result.values
 
+        # EXPECTED = (
+        #     "genome\t0\tATCGTAGTCGA\t1\t0\n"
+        #     + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"
+        #     + "11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n"
+        #     + "2\tquery2\tATCGATAGCATT\tATCG-TAGTCGA\tATCGATAGCATT\t"
+        #     + "12\t4\t66.7\t1\t1\t0\t1\t100.0\t1\t1\t1\n"
+        # )
+
         EXPECTED = (
             "genome\t0\tATCGTAGTCGA\t1\t0\n"
             + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"
             + "11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n"
-            + "2\tquery2\tATCGATAGCATT\tATCG-TAGTCGA\tATCGATAGCATT\t"
-            + "12\t4\t66.7\t1\t1\t0\t1\t100.0\t1\t1\t1\n"
+            + "2\tquery2\tATCGATAGCATT\tATCG-TAGT\tATCGATAGC\t"
+            + "9\t1\t88.9\t1\t1\t0\t1\t100.0\t1\t1\t1\n"
         )
 
         assert EXPECTED == actual
