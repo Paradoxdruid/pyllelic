@@ -246,13 +246,13 @@ class Test_Quma:
         quma_result = set_up_quma
         TEST_SUM_A = 3
         TEST_SUM_B = 7
-        EXPECTED_SUM = "30.0"
+        EXPECTED_SUM = 30.0
         actual_sum = quma_result._percentage(TEST_SUM_A, TEST_SUM_B, calc_type="sum")
         assert EXPECTED_SUM == actual_sum
 
         TEST_TOTAL_A = 3
         TEST_TOTAL_B = 6
-        EXPECTED_TOTAL = "50.0"
+        EXPECTED_TOTAL = 50.0
         actual_total = quma_result._percentage(
             TEST_TOTAL_A, TEST_TOTAL_B, calc_type="total"
         )
