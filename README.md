@@ -24,10 +24,10 @@ Easiest:
 
 ```bash
 # Get environment.yml file from this repo
-wget https://github.com/Paradoxdruid/pyllelic/blob/master/environment.yml?raw=true
+curl -L https://github.com/Paradoxdruid/pyllelic/blob/master/environment.yml?raw=true > env.yml
 
 # Create and activate conda environment
-conda create -f environment.yml
+conda env create --file=env.yml
 conda activate pyllelic
 ```
 
@@ -47,6 +47,12 @@ conda install notebook jupyter_contrib_nbextensions ipywidgets
 ```
 
 </details>
+
+### Docker container
+
+```bash
+docker pull ghcr.io/paradoxdruid/pyllelic:latest
+```
 
 ### PyPi installation
 

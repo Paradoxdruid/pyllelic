@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/Paradoxdruid/pyllelic/archive/v0.2.7.tar.gz
-  sha256: 7e652e1c3a83f9bf530f51df719e476aeb331689b3136c6cbd1cac48e5c04f04
+  sha256: ae90df840dd499d9fa594512852709c6270c109169f6ad9b1630287ae21b4bb7
 
 build:
   number: 0
@@ -21,7 +21,7 @@ requirements:
   run:
     - biopython
     - bismark
-    - numpy >=1.20.1
+    - numpy
     - openpyxl
     - pandas
     - plotly
