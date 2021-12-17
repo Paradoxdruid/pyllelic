@@ -71,7 +71,7 @@ class BamOutput:
         """
 
         # Grab the promoter region of interest
-        samm: pysam.AlignmentFile = pysam.AlignmentFile(sams, "rb")
+        samm: pysam.AlignmentFile = pysam.AlignmentFile(str(sams), "rb")
         itern = samm.fetch(
             self._config.chromosome,
             int(self._config.promoter_start),
