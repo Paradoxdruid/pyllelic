@@ -1,6 +1,8 @@
 # pyllelic
 
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Paradoxdruid/pyllelic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Paradoxdruid/pyllelic/context:python)  [![CodeFactor](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic/badge)](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic)  [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c8c86fe25a644cb69b8b6e789ca1c18f)](https://www.codacy.com/gh/Paradoxdruid/pyllelic/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Paradoxdruid/pyllelic&amp;utm_campaign=Badge_Grade)  [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/c8c86fe25a644cb69b8b6e789ca1c18f)](https://www.codacy.com/gh/Paradoxdruid/pyllelic/dashboard)  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)  [![PyPI](https://img.shields.io/pypi/v/pyllelic?color=success)](https://pypi.org/project/pyllelic/) [![Anaconda-Server Badge](https://anaconda.org/paradoxdruid/pyllelic/badges/version.svg)](https://anaconda.org/paradoxdruid/pyllelic) ![GitHub](https://img.shields.io/github/license/Paradoxdruid/fealden)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Paradoxdruid/pyllelic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Paradoxdruid/pyllelic/context:python)  [![CodeFactor](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic/badge)](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic)  [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c8c86fe25a644cb69b8b6e789ca1c18f)](https://www.codacy.com/gh/Paradoxdruid/pyllelic/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Paradoxdruid/pyllelic&amp;utm_campaign=Badge_Grade)  [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/c8c86fe25a644cb69b8b6e789ca1c18f)](https://www.codacy.com/gh/Paradoxdruid/pyllelic/dashboard)  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)  
+
+[![PyPI](https://img.shields.io/pypi/v/pyllelic?color=success)](https://pypi.org/project/pyllelic/) [![Anaconda-Server Badge](https://anaconda.org/paradoxdruid/pyllelic/badges/version.svg)](https://anaconda.org/paradoxdruid/pyllelic) ![GitHub](https://img.shields.io/github/license/Paradoxdruid/fealden)
 
 <p align="right">
   ⭐ &nbsp;&nbsp;the project to show your appreciation. :arrow_upper_right:
@@ -18,9 +20,23 @@ Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/
 
 Create a new conda environment using python 3.8:
 
+Easiest:
+
 ```bash
-conda create --name PYLLELIC python=3.8
-conda activate PYLLELIC
+# Get environment.yml file from this repo
+wget https://github.com/Paradoxdruid/pyllelic/blob/master/environment.yml?raw=true
+
+# Create and activate conda environment
+conda create -f environment.yml
+conda activate pyllelic
+```
+
+<details>
+  <summary>or more explictly step by step instructions</summary>
+
+```bash
+conda create --name pyllelic python=3.8
+conda activate pyllelic
 conda config --env --add channels conda-forge
 conda config --env --add channels bioconda
 conda config --env --add channels paradoxdruid
@@ -30,7 +46,12 @@ conda install pyllelic
 conda install notebook jupyter_contrib_nbextensions ipywidgets
 ```
 
+</details>
+
 ### PyPi installation
+
+<details>
+  <summary>PyPi instructions</summary>
 
 This will require independent installation of samtools, bowtie2, and bismark packages.
 
@@ -40,6 +61,8 @@ python3 -m pip install pyllelic
 # or Github
 python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
 ```
+
+</details>
 
 ## Example exploratory use in jupyter notebook
 
@@ -64,13 +87,13 @@ python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
 
     cell_types = data.cell_types
 
-    means_df = data.means
+    means_df = data.means  # mean methylation of reads
 
-    modes_df = data.modes
+    modes_df = data.modes  # mode methylation of reads
     
-    diff_df = data.diffs
+    diff_df = data.diffs  # difference mean - mode of reads
 
-    individual_data = data.individual_data
+    individual_data = data.individual_data  # read methylation values
 
     data.save("output.xlsx")  # save methylation results
 
