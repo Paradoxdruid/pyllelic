@@ -1,4 +1,4 @@
-{% set name = "pyllelic" %}{% set version = "0.2.6" %}
+{% set name = "pyllelic" %}{% set version = "0.2.7" %}
 
 
 package:
@@ -6,8 +6,8 @@ package:
   version: {{ version }}
 
 source:
-  url: https://github.com/Paradoxdruid/pyllelic/archive/v0.2.6.tar.gz
-  sha256: f71ab34676d4fa75360ad931ba62d7958e6808d08fccb0277044adc9c4b95c4b
+  url: https://github.com/Paradoxdruid/pyllelic/archive/v0.2.7.tar.gz
+  sha256: 7e652e1c3a83f9bf530f51df719e476aeb331689b3136c6cbd1cac48e5c04f04
 
 build:
   number: 0
@@ -21,7 +21,7 @@ requirements:
   run:
     - biopython
     - bismark
-    - numpy
+    - numpy >=1.20.1
     - openpyxl
     - pandas
     - plotly
