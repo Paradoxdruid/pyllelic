@@ -459,8 +459,9 @@ class GenomicPositionData:
 
         # Gives the modes of each positions-- NOT the mode of the entire dataframe!
         working_df: pd.DataFrame = pd.DataFrame()
+        pos_dict = {each: "" for each in self.positions}
+        working_df = working_df.assign(**pos_dict)
         for pos in self.positions:
-            working_df[pos] = ""
             for key in self.quma_results.keys():
                 values_list: List[float] = self._return_read_values(pos, key)
 
@@ -483,8 +484,9 @@ class GenomicPositionData:
         """
 
         working_df: pd.DataFrame = pd.DataFrame()
+        pos_dict = {each: "" for each in self.positions}
+        working_df = working_df.assign(**pos_dict)
         for pos in self.positions:
-            working_df[pos] = ""  # Create position column in dataframe
             for key in self.quma_results.keys():
                 values_list: List[float] = self._return_read_values(pos, key)
                 if values_list:
