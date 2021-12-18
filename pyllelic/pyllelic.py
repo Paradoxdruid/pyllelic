@@ -434,7 +434,7 @@ class GenomicPositionData:
 
         # Gives the means of each positions-- NOT the mean of the entire dataframe!
         working_df: pd.DataFrame = pd.DataFrame()
-        pos_dict = {each: "" for each in self.positions}
+        pos_dict: Dict[str, str] = {each: "" for each in self.positions}
         working_df = working_df.assign(**pos_dict)
         for pos in self.positions:
             for key in self.quma_results.keys():
@@ -459,7 +459,7 @@ class GenomicPositionData:
 
         # Gives the modes of each positions-- NOT the mode of the entire dataframe!
         working_df: pd.DataFrame = pd.DataFrame()
-        pos_dict = {each: "" for each in self.positions}
+        pos_dict: Dict[str, str] = {each: "" for each in self.positions}
         working_df = working_df.assign(**pos_dict)
         for pos in self.positions:
             for key in self.quma_results.keys():
@@ -484,7 +484,7 @@ class GenomicPositionData:
         """
 
         working_df: pd.DataFrame = pd.DataFrame()
-        pos_dict = {each: "" for each in self.positions}
+        pos_dict: Dict[str, str] = {each: "" for each in self.positions}
         working_df = working_df.assign(**pos_dict)
         for pos in self.positions:
             for key in self.quma_results.keys():
@@ -518,7 +518,7 @@ class GenomicPositionData:
 
         bad_values: List[str] = ["N", "F"]  # for interpreting quma returns
         min_num_meth_sites: int = (
-            min_sites  # Only include is read has minimum methylation sites
+            min_sites  # Only include if read has minimum methylation sites
         )
 
         values_list: List[float] = []
