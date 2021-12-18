@@ -182,29 +182,32 @@ class Quma:
         if re.findall(reg, seq):
             seq = re.sub(r"^\s*>(.*)?\n", "", seq)
 
-        # see https://stackoverflow.com/questions/22714864
         elif re.findall(
-            r"^ORIGIN\s*\n((\s+(\d+(?P<tmp>(?:\s+\w+)*)+))+)\s*\n//", seq, re.MULTILINE
-        ):  # pragma: no cover
+            r"^ORIGIN\s*\n((\s+(\d+(?:\s+\w+)+))+)\s*\n//", seq, re.MULTILINE
+        ):  # pragma: no cover lgtm [py/redos]
             seq = re.findall(reg, seq, re.MULTILINE)[0][0]
 
         elif re.findall(
-            r"^SQ\s+SEQUENCE.*\n((\s+(?P<tmp>(?:\w+\s+)*)+\d+)+)\n\/\/",
+            r"^SQ\s+SEQUENCE.*\n((\s+(?:\w+\s+)+\d+)+)\n\/\/",
             seq,
             re.MULTILINE,
-        ):  # pragma: no cover
+        ):  # pragma: no cover lgtm [py/redos]
             seq = re.findall(
-                r"^SQ\s+SEQUENCE.*\n((\s+(?P<tmp>(?:\w+\s+)*)+\d+)+)\n\/\/",
+                r"^SQ\s+SEQUENCE.*\n((\s+(?:\w+\s+)+\d+)+)\n\/\/",
                 seq,
                 re.MULTILINE,
-            )[0][0]
+            )[0][
+                0
+            ]  # lgtm [py/redos]
 
         elif re.findall(
-            r"\.\.\s*\n((\s+(\d+(?P<tmp>(?:\s+\w+)*)+))+)\s*", seq, re.MULTILINE
-        ):  # pragma: no cover
+            r"\.\.\s*\n((\s+(\d+(?:\s+\w+)+))+)\s*", seq, re.MULTILINE
+        ):  # pragma: no cover lgtm [py/redos]
             seq = re.findall(
-                r"\.\.\s*\n((\s+(\d+(?P<tmp>(?:\s+\w+)*)+))+)\s*", seq, re.MULTILINE
-            )[0]
+                r"\.\.\s*\n((\s+(\d+(?:\s+\w+)+))+)\s*", seq, re.MULTILINE
+            )[
+                0
+            ]  # lgtm [py/redos]
         elif re.findall(r"^\s*>.+\s.+", seq, re.MULTILINE):  # pragma: no cover
             seq = re.findall(r"^\s*>(.+?)\s(?=.+)", seq, re.MULTILINE)[0][0]
             _ = seq
