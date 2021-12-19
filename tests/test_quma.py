@@ -147,14 +147,6 @@ class Test_Quma:
         actual = quma_result._check_char_in_allowed(SEQ, PATTERN)
         assert EXPECTED == actual
 
-    def test__find_cpg(self, set_up_quma):
-        quma_result = set_up_quma
-        TEST_SEQ = "ATCGATCCGGCATACG"
-        EXPECTED = {"2": 1, "7": 1, "14": 1}
-        actual = quma_result._find_cpg(TEST_SEQ)
-        print(repr(actual))
-        assert EXPECTED == actual
-
     def test__fasta_make(self, set_up_quma):
         quma_result = set_up_quma
         TEST_SEQ = "ATCGTAGTCGA"

@@ -483,9 +483,9 @@ class GenomicPositionData:
             pd.DataFrame: methylation values for each position in each cell line
         """
 
-        working_df: pd.DataFrame = pd.DataFrame()
-        pos_dict: Dict[str, str] = {each: "" for each in self.positions}
-        working_df = working_df.assign(**pos_dict)
+        working_df: pd.DataFrame = pd.DataFrame(
+            index=list(self.quma_results.keys()), columns=self.positions
+        )
         for pos in self.positions:
             for key in self.quma_results.keys():
                 values_list: List[float] = self._return_read_values(pos, key)
