@@ -10,7 +10,7 @@
 import re
 from dataclasses import dataclass
 from io import StringIO
-from typing import Any, Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple, Optional
 from Bio.Align import substitution_matrices
 from Bio import Align
 
@@ -38,7 +38,7 @@ MAT: str = """    A   T   G   C   S   W   R   Y   K   M   B   V   H   D   N   U
     N  -2  -2  -2  -2  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -2
     U  -4   5  -4  -4  -4   1  -4   1   1  -4  -1  -4  -1  -1  -2   5
     """
-MATRIX: Any = substitution_matrices.read(StringIO(MAT))
+MATRIX: substitution_matrices.Array = substitution_matrices.read(StringIO(MAT))
 
 ALPHABET: str = "ACGTURYMWSKDHBVNacgturymwskdhbvn"
 
@@ -124,6 +124,25 @@ class Quma:
 
         return self._parse_seq(seq)
 
+    @staticmethod
+    def _scrub_whitespace(string: str) -> str:
+        """Remove whitespace and repeated newlines.
+
+        Args:
+            string (str): input fasta string.
+
+        Returns:
+            str: scrubbed fasta string.
+        """
+        return (
+            string.strip()
+            .replace("\r\n\r\n", "\r\n")
+            .replace("\n\n", "\n")
+            .replace("\r\r", "\r")
+            .replace("\r\n", "\n")
+            .replace("\r", "\n")
+        )
+
     def _parse_biseq(self) -> List[Fasta]:
         """Parse bisulfite sequencing fasta file.
 
@@ -132,20 +151,10 @@ class Quma:
         """
 
         multi: str = self._qfile_contents
-        multi = re.sub(r"^[\r\s]+", "", multi)
-        multi = re.sub(r"[\r\s]+$", "", multi)
-        multi = re.sub(r"(\r\n){2}", "\r\n", multi)
-        multi = re.sub(r"(\n){2}", "\n", multi)
-        multi = re.sub(r"(\r){2}", "\r", multi)
-
-        multi = re.sub(r"\r\n", "\n", multi)
-        multi = re.sub(r"\r", "\n", multi)
+        multi = self._scrub_whitespace(multi)
         biseq: List[Fasta] = []
-        # fa: Fasta = Fasta()
 
-        multi2: List[str] = re.findall(r"(.*)$", multi, re.MULTILINE)
-
-        for line in multi2:
+        for line in multi.splitlines():
 
             if ">" in line:
                 fa: Fasta = Fasta()
@@ -157,10 +166,7 @@ class Quma:
                 line = self._check_char_in_allowed(line, ALPHABET)
                 if line == "":
                     continue
-                try:
-                    fa.seq += line.upper()
-                except KeyError:
-                    fa.seq = line.upper()
+                fa.seq += line.upper()
 
         return biseq
 
@@ -173,10 +179,8 @@ class Quma:
         Returns:
             str: sequence string
         """
-        _ = ""
-        seq = re.sub(r"\r\n", "\n", seq)
-        seq = re.sub(r"\r", "\n", seq)
-        seq = seq.upper()
+
+        seq = seq.replace("\r\n", "\n").replace("\r", "\n").upper()
 
         reg = re.compile(r"^\s*>.*?\n", re.MULTILINE)
         if re.findall(reg, seq):
@@ -225,40 +229,8 @@ class Quma:
         Returns:
             str: string with unallowed characters removed.
         """
-        new: str = ""
-        for each in seq:
-            if each in pattern:
-                new += each
-        return new
 
-    @staticmethod
-    def _find_cpg(gseq: str) -> Dict[str, int]:
-        """Find CpG sites in genomic string.
-
-        Args:
-            gseq (str): genomic sequence
-
-        Returns:
-            Dict[str, int]: cpg dictionary
-        """
-
-        positions: List[str] = []
-        cpgf: Dict[str, int] = {}
-        cpgr: Dict[str, int] = {}
-        length: int = len(gseq)
-        pos: int = 0
-        while True:
-            try:
-                pos = gseq.index("CG", pos)
-            except ValueError:
-                break
-
-            cpgf[str(pos)] = 1
-            positions.append(str(pos))
-            cpgr[str(length - pos - 2)] = 1
-            pos += 1
-
-        return cpgf
+        return "".join([each for each in seq if each in pattern])
 
     @staticmethod
     def _fasta_make(seq: str, seq_name: str, line: int = None) -> str:
@@ -490,7 +462,7 @@ class Quma:
         gAli: str = result.gAli
         qAli: str = result.qAli[: len(gAli)]
 
-        cpg: Dict[str, int] = self._find_cpg(gAli)
+        cpg: List[int] = [m.start() for m in re.finditer("CG", gAli)]
         result.aliLen = len(qAli)
 
         # Loop through sequence looking for CpG conversion
@@ -512,7 +484,7 @@ class Quma:
 
             if q == "-":
                 result.gap += 1
-                if cpg.get(str(j - 1)):
+                if (j - 1) in cpg:
                     result.val += "-"
                 continue
 
@@ -524,7 +496,7 @@ class Quma:
                 continue
 
             # If this is a CpG C on the genome, inspect query
-            if cpg.get(str(j - 1)):
+            if (j - 1) in cpg:
                 if q == "C":
                     result.conv += 1
                     result.menum += 1
