@@ -15,7 +15,8 @@ import numpy.typing as npt
 import pandas as pd
 import plotly.graph_objects as go
 import pysam
-from Bio import pairwise2
+
+from Bio import Align
 from scipy import stats
 from tqdm.auto import tqdm
 
@@ -116,19 +117,26 @@ class BamOutput:
             # Set up sequences to check for alignment
             target_sequences: List[str] = df.loc[each1].tolist()
             for target_sequence in target_sequences:
-                alignment = pairwise2.align.localms(
-                    query_sequence, target_sequence, 2, -3, -5, -2
+                aligner: Align.PairwiseAligner = Align.PairwiseAligner(
+                    mode="local",
+                    match_score=2,
+                    mismatch_score=-3,
+                    open_gap_score=-5,
+                    extend_gap_score=-2,
                 )
-                aligned_segment = alignment[0].seqA[
-                    alignment[0].start : alignment[0].end
-                ]
-                alignments.append(aligned_segment)
+                bio_alignments: Align.PairwiseAlignments = list(
+                    aligner.align(query_sequence, target_sequence)
+                )
+                bio_alignment: Align.PairwiseAlignment = bio_alignments[0]
+
+                query_ali: str
+                query_ali, _ = quma.Quma._matching_substrings(bio_alignment)
+                alignments.append(query_ali)
 
             read_file: List[str] = []
             for index, each in enumerate(alignments):
                 read_file.append(str(">read" + str(index)))
                 read_file.append(each)
-                # returns aligned target sequence
 
             self.values[each1] = "\n".join(read_file)
 

@@ -447,6 +447,8 @@ class Quma:
         #     # sys.exit()
 
         results: Result = self._process_alignment_matches(result)
+        results: Result = self._generate_summary_stats(results)
+
         return results
 
     def _process_alignment_matches(self, result: Result) -> Result:
@@ -508,13 +510,11 @@ class Quma:
                     result.val += q
                 continue
 
-        results: Result = self._generate_summary_stats(result)
-
         # kludge:
-        if results.val == "":
-            results.val = "-"
+        if result.val == "":
+            result.val = "-"
         # logging.debug(f"results={results}")
-        return results
+        return result
 
     def _generate_summary_stats(self, result: Result) -> Result:
         """Helper to generate summary statistics in results dictionary.
