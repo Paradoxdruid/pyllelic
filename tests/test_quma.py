@@ -127,6 +127,17 @@ class Test_Quma:
             quma.Fasta(com="query1", pos=None, seq="ATCGTAGTCGA"),
             quma.Fasta(com="query2", pos=None, seq="ATCGATAGCATT"),
         ]
+        quma_result._qfile_contents = ">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
+        actual = quma_result._parse_biseq()
+        assert EXPECTED == actual
+
+    def test__parse_biseq_empty_line(self, set_up_quma):
+        quma_result = set_up_quma
+        EXPECTED = [
+            quma.Fasta(com="query1", pos=None, seq=""),
+            quma.Fasta(com="query2", pos=None, seq="ATCGATAGCATT"),
+        ]
+        quma_result._qfile_contents = ">query1\nEEEEEEE\n>query2\nATCGATAGCATT"
         actual = quma_result._parse_biseq()
         assert EXPECTED == actual
 
@@ -249,6 +260,13 @@ class Test_Quma:
             TEST_TOTAL_A, TEST_TOTAL_B, calc_type="total"
         )
         assert EXPECTED_TOTAL == actual_total
+
+    def test__percentage_invalid(self, set_up_quma):
+        quma_result = set_up_quma
+        TEST_SUM_A = 3
+        TEST_SUM_B = 7
+        with pytest.raises(ValueError):
+            _ = quma_result._percentage(TEST_SUM_A, TEST_SUM_B, calc_type="FAKE")
 
     def test__find_best_dataset(self, set_up_quma):
         quma_result = set_up_quma

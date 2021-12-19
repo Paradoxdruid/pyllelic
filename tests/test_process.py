@@ -6,7 +6,6 @@ import pytest  # noqa  # pylint: disable=unused-import
 import unittest.mock as mock
 import os
 import tempfile
-from contextlib import contextmanager
 
 # Required libraries for test data
 from pathlib import Path
@@ -31,18 +30,6 @@ TEST_FASTQ_CONTENTS = b"""@SEQ_ID
 GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
 +
 !''*((((***+))%%%++)(%%%%).1***-+*''))**55CCF>>>>>>CCCCCCC65"""
-
-
-@contextmanager
-def tempinput(data, suffix):  # pragma: no cover
-    """Helper for virtual files."""
-    temp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
-    temp.write(data)
-    temp.close()
-    try:
-        yield temp.name
-    finally:
-        os.unlink(temp.name)
 
 
 def test_process_fastq_to_list():
@@ -174,6 +161,20 @@ def test_prepare_genome(mock_subp):
         str(TEST_INDEX),
     ]
     _ = process.prepare_genome(TEST_INDEX, TEST_ALIGNER)
+
+    mock_subp.run.assert_called_once_with(
+        TEST_COMMAND, capture_output=True, text=True, check=True
+    )
+
+
+@mock.patch("pyllelic.process.subprocess")
+def test_prepare_genome_no_aligner(mock_subp):
+    TEST_INDEX = Path("/Users/user/bowtie_index")
+    TEST_COMMAND = [
+        "bismark_genome_preparation",
+        str(TEST_INDEX),
+    ]
+    _ = process.prepare_genome(TEST_INDEX)
 
     mock_subp.run.assert_called_once_with(
         TEST_COMMAND, capture_output=True, text=True, check=True

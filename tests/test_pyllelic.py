@@ -9,6 +9,7 @@ import unittest.mock as mock
 # import os
 
 from inputs import (
+    EXPECTED_INTERMEDIATE_DIFFS,
     SAMPLE_BAM,
     SAMPLE_BAI,
     TEST_PROM_FILE,
@@ -203,6 +204,13 @@ class Test_BamOutput:
         assert result == gen_str[8:37]
         assert isinstance(result, str)
 
+    def test__genome_range_invalid(self, set_up_bam_output):
+        """Check if correct genome string is returned."""
+        bam_output = set_up_bam_output
+        gen_str = ""
+        with pytest.raises(ValueError):
+            _ = bam_output._genome_range(position=2, genome_string=gen_str, offset=40)
+
     def test_genome_parsing(self, set_up_bam_output):
         pass
 
@@ -389,6 +397,40 @@ class Test_GenomicPositionData:
         mocked_go.Figure.assert_called_once()
         mocked_go.Heatmap.assert_called_once()
 
+    def test_heatmap_cell_lines(self, set_up_genomic_position_data, mocker):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_go = mocker.patch("pyllelic.pyllelic.go")
+
+        TEST_CELL_LINE = "test.bam"
+        genomic_position_data.heatmap(min_values=1, cell_lines=[TEST_CELL_LINE])
+
+        mocked_go.Figure.assert_called_once()
+        mocked_go.Heatmap.assert_called_once()
+
+    def test_heatmap_modes(self, set_up_genomic_position_data, mocker):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_go = mocker.patch("pyllelic.pyllelic.go")
+
+        genomic_position_data.heatmap(min_values=1, data_type="modes")
+
+        mocked_go.Figure.assert_called_once()
+        mocked_go.Heatmap.assert_called_once()
+
+    def test_heatmap_diffs(self, set_up_genomic_position_data, mocker):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_go = mocker.patch("pyllelic.pyllelic.go")
+
+        genomic_position_data.heatmap(min_values=1, data_type="diffs")
+
+        mocked_go.Figure.assert_called_once()
+        mocked_go.Heatmap.assert_called_once()
+
+    def test_heatmap_invalid(self, set_up_genomic_position_data, mocker):
+        _, genomic_position_data = set_up_genomic_position_data
+
+        with pytest.raises(ValueError):
+            genomic_position_data.heatmap(min_values=1, data_type="FAKE")
+
     def test_summarize_allelelic_data(self, set_up_genomic_position_data):
         _, genomic_position_data = set_up_genomic_position_data
         EXPECTED = pd.DataFrame(
@@ -516,14 +558,37 @@ class Test_GenomicPositionData:
         genomic_position_data.modes.to_excel.assert_called()
         genomic_position_data.diffs.to_excel.assert_called()
 
-    # def test_save(self, mocker, set_up_genomic_position_data):
-    #     _, genomic_position_data = set_up_genomic_position_data
-    #     TEST_FILENAME = "output"
-    #     mocked_excel_writer = mocker.patch("pyllelic.pyllelic.pd.ExcelWriter")
+    def test_save(self, mocker, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+        TEST_FILENAME = "output"
+        # mocked_excel_writer = mocker.patch("pyllelic.pyllelic.pd.ExcelWriter")
+        mocked_dataframe = mocker.patch("pyllelic.pyllelic.pd.DataFrame.to_excel")
+        genomic_position_data.save(TEST_FILENAME)
 
-    #     genomic_position_data.save(TEST_FILENAME)
+        mocked_dataframe.assert_called()
+        # mocked_excel_writer.ExcelWriter.assert_called()
 
-    #     mocked_excel_writer.ExcelWriter.assert_called()
+    def test_save_pickle(self, mocker, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_pickle = mocker.patch("pyllelic.pyllelic.pickle")
+
+        TEST_FILENAME = "example.pickle"
+        genomic_position_data.save_pickle(TEST_FILENAME)
+
+        mocked_pickle.dump.assert_called()
+
+    def test_from_pickle(self, mocker):
+        mocked_pickle = mocker.patch("pyllelic.pyllelic.pickle")
+
+        TEST_FILENAME = "example.pickle"
+        _ = pyllelic.GenomicPositionData.from_pickle(TEST_FILENAME)
+        mocked_pickle.load.assert_called()
+
+    def test__truncate_diffs(self):
+        TEST_DIFFS = EXPECTED_INTERMEDIATE_DIFFS.astype("object")
+        EXPECTED_TRUNCATED_DIFF = TEST_DIFFS.dropna(how="all")
+        actual = pyllelic.GenomicPositionData._truncate_diffs(TEST_DIFFS)
+        pd.testing.assert_frame_equal(actual, EXPECTED_TRUNCATED_DIFF)
 
 
 # def test_return_individual_data():
