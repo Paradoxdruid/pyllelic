@@ -442,12 +442,7 @@ class Quma:
         result.qAli = result.qAli.replace(" ", "-")
         result.gAli = result.gAli.replace(" ", "-")
 
-        # if len(ref["qAli"]) != len(ref["gAli"]):  # pragma: no cover
-        #     print("qAli len != gAli len")
-        #     # sys.exit()
-
         results: Result = self._process_alignment_matches(result)
-        results: Result = self._generate_summary_stats(results)
 
         return results
 
@@ -513,8 +508,10 @@ class Quma:
         # kludge:
         if result.val == "":
             result.val = "-"
+
+        results: Result = self._generate_summary_stats(result)
         # logging.debug(f"results={results}")
-        return result
+        return results
 
     def _generate_summary_stats(self, result: Result) -> Result:
         """Helper to generate summary statistics in results dictionary.
