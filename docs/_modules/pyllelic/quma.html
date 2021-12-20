@@ -166,7 +166,7 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">Bio.Align</span> <span class="kn">import</span> <span class="n">substitution_matrices</span>
 <span class="kn">from</span> <span class="nn">Bio</span> <span class="kn">import</span> <span class="n">Align</span>
 
@@ -194,7 +194,7 @@
 <span class="s2">    N  -2  -2  -2  -2  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -2</span>
 <span class="s2">    U  -4   5  -4  -4  -4   1  -4   1   1  -4  -1  -4  -1  -1  -2   5</span>
 <span class="s2">    &quot;&quot;&quot;</span>
-<span class="n">MATRIX</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">substitution_matrices</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="n">MAT</span><span class="p">))</span>
+<span class="n">MATRIX</span><span class="p">:</span> <span class="n">substitution_matrices</span><span class="o">.</span><span class="n">Array</span> <span class="o">=</span> <span class="n">substitution_matrices</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="n">MAT</span><span class="p">))</span>
 
 <span class="n">ALPHABET</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ACGTURYMWSKDHBVNacgturymwskdhbvn&quot;</span>
 
@@ -280,6 +280,25 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_seq</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
 
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_scrub_whitespace</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Remove whitespace and repeated newlines.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            string (str): input fasta string.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: scrubbed fasta string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">string</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n\r\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_parse_biseq</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Fasta</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Parse bisulfite sequencing fasta file.</span>
 
@@ -288,20 +307,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">multi</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qfile_contents</span>
-        <span class="n">multi</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[\r\s]+&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">multi</span><span class="p">)</span>
-        <span class="n">multi</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\r\s]+$&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">multi</span><span class="p">)</span>
-        <span class="n">multi</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\r\n)</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">multi</span><span class="p">)</span>
-        <span class="n">multi</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\n)</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">multi</span><span class="p">)</span>
-        <span class="n">multi</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\r)</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">multi</span><span class="p">)</span>
-
-        <span class="n">multi</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\r\n&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">multi</span><span class="p">)</span>
-        <span class="n">multi</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\r&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">multi</span><span class="p">)</span>
+        <span class="n">multi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub_whitespace</span><span class="p">(</span><span class="n">multi</span><span class="p">)</span>
         <span class="n">biseq</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Fasta</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="c1"># fa: Fasta = Fasta()</span>
 
-        <span class="n">multi2</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(.*)$&quot;</span><span class="p">,</span> <span class="n">multi</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">multi2</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">multi</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
 
             <span class="k">if</span> <span class="s2">&quot;&gt;&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
                 <span class="n">fa</span><span class="p">:</span> <span class="n">Fasta</span> <span class="o">=</span> <span class="n">Fasta</span><span class="p">()</span>
@@ -313,10 +322,7 @@
                 <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_char_in_allowed</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">ALPHABET</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                     <span class="k">continue</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">fa</span><span class="o">.</span><span class="n">seq</span> <span class="o">+=</span> <span class="n">line</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                    <span class="n">fa</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                <span class="n">fa</span><span class="o">.</span><span class="n">seq</span> <span class="o">+=</span> <span class="n">line</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">biseq</span>
 
@@ -329,35 +335,45 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            str: sequence string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">seq</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\r\n&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">seq</span><span class="p">)</span>
-        <span class="n">seq</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\r&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">seq</span><span class="p">)</span>
-        <span class="n">seq</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+        <span class="n">seq</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
 
         <span class="n">reg</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\s*&gt;.*?\n&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span> <span class="n">seq</span><span class="p">):</span>
             <span class="n">seq</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\s*&gt;(.*)?\n&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">seq</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s2">&quot;^ORIGIN\s*\n((\s+(\d+(?:\s+\w+)+))+)\s*\n//&quot;</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span>
+            <span class="sa">r</span><span class="s2">&quot;^ORIGIN\s*\n((\s+(\d+(?:\s+\w+)+))+)\s*\n//&quot;</span><span class="p">,</span>  <span class="c1"># lgtm [py/redos]</span>
+            <span class="n">seq</span><span class="p">,</span>
+            <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">,</span>
         <span class="p">):</span>  <span class="c1"># pragma: no cover</span>
-            <span class="n">seq</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">seq</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s2">&quot;^SQ\s+SEQUENCE.*\n((\s+(?:\w+\s+)+\d+)+)\n\/\/&quot;</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span>
+            <span class="sa">r</span><span class="s2">&quot;^SQ\s+SEQUENCE.*\n((\s+(?:\w+\s+)+\d+)+)\n\/\/&quot;</span><span class="p">,</span>
+            <span class="n">seq</span><span class="p">,</span>
+            <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">,</span>
         <span class="p">):</span>  <span class="c1"># pragma: no cover</span>
             <span class="n">seq</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span>
-                <span class="sa">r</span><span class="s2">&quot;^SQ\s+SEQUENCE.*\n((\s+(?:\w+\s+)+\d+)+)\n\/\/&quot;</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span>
-            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="sa">r</span><span class="s2">&quot;^SQ\s+SEQUENCE.*\n((\s+(?:\w+\s+)+\d+)+)\n\/\/&quot;</span><span class="p">,</span>  <span class="c1"># lgtm [py/redos]</span>
+                <span class="n">seq</span><span class="p">,</span>
+                <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">,</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">][</span>
+                <span class="mi">0</span>
+            <span class="p">]</span>  <span class="c1"># lgtm [py/redos]</span>
 
         <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s2">&quot;\.\.\s*\n((\s+(\d+(\s+\w+)+))+)\s*&quot;</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span>
+            <span class="sa">r</span><span class="s2">&quot;\.\.\s*\n((\s+(\d+(?:\s+\w+)+))+)\s*&quot;</span><span class="p">,</span>  <span class="c1"># lgtm [py/redos]</span>
+            <span class="n">seq</span><span class="p">,</span>
+            <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">,</span>
         <span class="p">):</span>  <span class="c1"># pragma: no cover</span>
-            <span class="n">seq</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\.\.\s*\n((\s+(\d+(\s+\w+)+))+)\s*&quot;</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)[</span>
-                <span class="mi">0</span>
-            <span class="p">]</span>
+            <span class="n">seq</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span>
+                <span class="sa">r</span><span class="s2">&quot;\.\.\s*\n((\s+(\d+(?:\s+\w+)+))+)\s*&quot;</span><span class="p">,</span>  <span class="c1"># lgtm [py/redos]</span>
+                <span class="n">seq</span><span class="p">,</span>
+                <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">,</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\s*&gt;.+\s.+&quot;</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
-            <span class="n">seq</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\s*&gt;(.+?)\s(?=.+)&quot;</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">seq</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\s*&gt;(.+?)\s(?=.+)&quot;</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">_</span> <span class="o">=</span> <span class="n">seq</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_char_in_allowed</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">ALPHABET</span><span class="p">)</span>
@@ -373,40 +389,8 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            str: string with unallowed characters removed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">new</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">pattern</span><span class="p">:</span>
-                <span class="n">new</span> <span class="o">+=</span> <span class="n">each</span>
-        <span class="k">return</span> <span class="n">new</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_find_cpg</span><span class="p">(</span><span class="n">gseq</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Find CpG sites in genomic string.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            gseq (str): genomic sequence</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Dict[str, int]: cpg dictionary</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">positions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">cpgf</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">cpgr</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">gseq</span><span class="p">)</span>
-        <span class="n">pos</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">pos</span> <span class="o">=</span> <span class="n">gseq</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="k">break</span>
-
-            <span class="n">cpgf</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">pos</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="n">positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pos</span><span class="p">))</span>
-            <span class="n">cpgr</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">length</span> <span class="o">-</span> <span class="n">pos</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="k">return</span> <span class="n">cpgf</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">each</span> <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">seq</span> <span class="k">if</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">pattern</span><span class="p">])</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_fasta_make</span><span class="p">(</span><span class="n">seq</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">seq_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -618,11 +602,8 @@
         <span class="n">result</span><span class="o">.</span><span class="n">qAli</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">qAli</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
         <span class="n">result</span><span class="o">.</span><span class="n">gAli</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">gAli</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
 
-        <span class="c1"># if len(ref[&quot;qAli&quot;]) != len(ref[&quot;gAli&quot;]):  # pragma: no cover</span>
-        <span class="c1">#     print(&quot;qAli len != gAli len&quot;)</span>
-        <span class="c1">#     # sys.exit()</span>
-
         <span class="n">results</span><span class="p">:</span> <span class="n">Result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_alignment_matches</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">results</span>
 
     <span class="k">def</span> <span class="nf">_process_alignment_matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">Result</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
@@ -638,57 +619,40 @@
         <span class="n">gAli</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">gAli</span>
         <span class="n">qAli</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">qAli</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">gAli</span><span class="p">)]</span>
 
-        <span class="n">cpg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_cpg</span><span class="p">(</span><span class="n">gAli</span><span class="p">)</span>
+        <span class="c1"># cpg: List[int] = [m.start() for m in re.finditer(&quot;CG&quot;, gAli)]</span>
         <span class="n">result</span><span class="o">.</span><span class="n">aliLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">qAli</span><span class="p">)</span>
 
-        <span class="c1"># Loop through sequence looking for CpG conversion</span>
-        <span class="n">j</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">aliLen</span><span class="p">):</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">match</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="s2">&quot;T&quot;</span> <span class="ow">and</span> <span class="n">b</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">qAli</span><span class="p">,</span> <span class="n">gAli</span><span class="p">)</span>
+        <span class="p">)</span>
 
-            <span class="n">g</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">gAli</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">q</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">qAli</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">gap</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">gAli</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">),</span> <span class="n">qAli</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)])</span>
 
-            <span class="k">if</span> <span class="n">g</span> <span class="o">!=</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
-                <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
-
-            <span class="k">if</span> <span class="n">q</span> <span class="o">==</span> <span class="n">g</span> <span class="ow">or</span> <span class="n">g</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span> <span class="ow">and</span> <span class="n">q</span> <span class="o">==</span> <span class="s2">&quot;T&quot;</span><span class="p">:</span>
-                <span class="n">result</span><span class="o">.</span><span class="n">match</span> <span class="o">+=</span> <span class="mi">1</span>
-
-            <span class="k">if</span> <span class="n">g</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
-                <span class="n">result</span><span class="o">.</span><span class="n">gap</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="n">q</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
-                <span class="n">result</span><span class="o">.</span><span class="n">gap</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="k">if</span> <span class="n">cpg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span>
-                    <span class="n">result</span><span class="o">.</span><span class="n">val</span> <span class="o">+=</span> <span class="s2">&quot;-&quot;</span>
-                <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">result</span><span class="o">.</span><span class="n">aliLen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">break</span>
-
-            <span class="c1"># End if genome sequence isn&#39;t a C</span>
-            <span class="k">if</span> <span class="n">g</span> <span class="o">!=</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="c1"># If this is a CpG C on the genome, inspect query</span>
-            <span class="k">if</span> <span class="n">cpg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span>
-                <span class="k">if</span> <span class="n">q</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span>
-                    <span class="n">result</span><span class="o">.</span><span class="n">conv</span> <span class="o">+=</span> <span class="mi">1</span>
-                    <span class="n">result</span><span class="o">.</span><span class="n">menum</span> <span class="o">+=</span> <span class="mi">1</span>
-                    <span class="n">result</span><span class="o">.</span><span class="n">val</span> <span class="o">+=</span> <span class="s2">&quot;1&quot;</span>
-                <span class="k">elif</span> <span class="n">q</span> <span class="o">==</span> <span class="s2">&quot;T&quot;</span><span class="p">:</span>
+        <span class="c1"># https://stackoverflow.com/questions/28034947/</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">ni</span> <span class="o">=</span> <span class="n">gAli</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ni</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">qAli</span><span class="p">[</span><span class="n">ni</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;T&quot;</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">match</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="n">result</span><span class="o">.</span><span class="n">unconv</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="n">result</span><span class="o">.</span><span class="n">val</span> <span class="o">+=</span> <span class="s2">&quot;0&quot;</span>
+                <span class="k">elif</span> <span class="n">qAli</span><span class="p">[</span><span class="n">ni</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">conv</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">val</span> <span class="o">+=</span> <span class="s2">&quot;1&quot;</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">menum</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">result</span><span class="o">.</span><span class="n">val</span> <span class="o">+=</span> <span class="n">q</span>
-                <span class="k">continue</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">val</span> <span class="o">+=</span> <span class="n">qAli</span><span class="p">[</span><span class="n">ni</span><span class="p">]</span>
 
-        <span class="n">results</span><span class="p">:</span> <span class="n">Result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_summary_stats</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">ni</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
 
         <span class="c1"># kludge:</span>
-        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">val</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">val</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+
+        <span class="n">results</span><span class="p">:</span> <span class="n">Result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_summary_stats</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="c1"># logging.debug(f&quot;results={results}&quot;)</span>
         <span class="k">return</span> <span class="n">results</span>
 

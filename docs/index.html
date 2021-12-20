@@ -159,22 +159,137 @@
             
   <section id="welcome-to-pyllelic-s-documentation">
 <h1>Welcome to Pyllelic’s documentation!<a class="headerlink" href="#welcome-to-pyllelic-s-documentation" title="Permalink to this headline">¶</a></h1>
+<img src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_logo.png?raw=true" width="50" height="50" style="float: left; margin-right: 10px;"><p><strong>pyllelic</strong>: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">pyllelic</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pyllelic.html">pyllelic package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyllelic.html">pyllelic package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyllelic.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyllelic.html#module-pyllelic.config">pyllelic.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyllelic.html#module-pyllelic.process">pyllelic.process module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyllelic.html#module-pyllelic.pyllelic">pyllelic.pyllelic module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyllelic.html#module-pyllelic.quma">pyllelic.quma module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyllelic.html#module-pyllelic">Module contents</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
+</section>
+<section id="readme">
+<h1>Readme<a class="headerlink" href="#readme" title="Permalink to this headline">¶</a></h1>
+<p>Pyllelic documention is available at
+<a class="reference external" href="https://paradoxdruid.github.io/pyllelic/">https://paradoxdruid.github.io/pyllelic/</a> and see
+<a class="reference external" href="https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.md">pyllelic_notebook.ipynb</a>
+for an interactive demonstration.</p>
+<section id="dependencies-and-installation">
+<h2>Dependencies and Installation<a class="headerlink" href="#dependencies-and-installation" title="Permalink to this headline">¶</a></h2>
+<section id="using-conda-preferred">
+<h3>Using Conda (preferred)<a class="headerlink" href="#using-conda-preferred" title="Permalink to this headline">¶</a></h3>
+<p>Create a new conda environment using python 3.8:</p>
+<p>Easiest:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get environment.yml file from this repo</span>
+curl -L https://github.com/Paradoxdruid/pyllelic/blob/master/environment.yml?raw<span class="o">=</span><span class="nb">true</span> &gt; env.yml
+
+<span class="c1"># Create and activate conda environment</span>
+conda env create --file<span class="o">=</span>env.yml
+conda activate pyllelic
+</pre></div>
+</div>
+<details><summary><p>or more explict step by step instructions</p>
+</summary><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda create --name pyllelic <span class="nv">python</span><span class="o">=</span><span class="m">3</span>.8
+conda activate pyllelic
+conda config --env --add channels conda-forge
+conda config --env --add channels bioconda
+conda config --env --add channels paradoxdruid
+conda install pyllelic
+
+<span class="c1"># Optional but usual use case:</span>
+conda install notebook jupyter_contrib_nbextensions ipywidgets
+</pre></div>
+</div>
+</details></section>
+<section id="docker-container">
+<h3>Docker container<a class="headerlink" href="#docker-container" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker pull ghcr.io/paradoxdruid/pyllelic:latest
+</pre></div>
+</div>
+</section>
+<section id="pypi-installation">
+<h3>PyPi installation<a class="headerlink" href="#pypi-installation" title="Permalink to this headline">¶</a></h3>
+<details><summary><p>PyPi instructions</p>
+</summary><p>This will require independent installation of samtools, bowtie2, and
+bismark packages.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># PyPi</span>
+python3 -m pip install pyllelic
+<span class="c1"># or Github</span>
+python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
+</pre></div>
+</div>
+</details></section>
+</section>
+<section id="example-exploratory-use-in-jupyter-notebook">
+<h2>Example exploratory use in jupyter notebook<a class="headerlink" href="#example-exploratory-use-in-jupyter-notebook" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyllelic</span> <span class="kn">import</span> <span class="n">pyllelic</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">pyllelic</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span>  <span class="c1"># Specify file and directory locations</span>
+    <span class="n">base_path</span><span class="o">=</span><span class="s2">&quot;/Users/abonham/documents/test_allelic/&quot;</span><span class="p">,</span>
+    <span class="n">prom_file</span><span class="o">=</span><span class="s2">&quot;TERT-promoter-genomic-sequence.txt&quot;</span><span class="p">,</span>
+    <span class="n">prom_start</span><span class="o">=</span><span class="s2">&quot;1293200&quot;</span><span class="p">,</span>
+    <span class="n">prom_end</span><span class="o">=</span><span class="s2">&quot;1296000&quot;</span><span class="p">,</span>
+    <span class="n">chrom</span><span class="o">=</span><span class="s2">&quot;5&quot;</span><span class="p">,</span>
+    <span class="n">offset</span><span class="o">=</span><span class="mi">1298163</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">files_set</span> <span class="o">=</span> <span class="n">pyllelic</span><span class="o">.</span><span class="n">make_list_of_bam_files</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>  <span class="c1"># finds bam files</span>
+
+<span class="c1"># Run pyllelic; make take some time depending on number of bam files</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pyllelic</span><span class="o">.</span><span class="n">GenomicPositionData</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">files_set</span><span class="o">=</span><span class="n">files_set</span><span class="p">)</span>
+
+<span class="n">positions</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">positions</span>
+
+<span class="n">cell_types</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">cell_types</span>
+
+<span class="n">means_df</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">means</span>  <span class="c1"># mean methylation of reads</span>
+
+<span class="n">modes_df</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">modes</span>  <span class="c1"># mode methylation of reads</span>
+
+<span class="n">diff_df</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">diffs</span>  <span class="c1"># difference mean - mode of reads</span>
+
+<span class="n">individual_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">individual_data</span>  <span class="c1"># read methylation values</span>
+
+<span class="n">data</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;output.xlsx&quot;</span><span class="p">)</span>  <span class="c1"># save methylation results</span>
+
+<span class="n">data</span><span class="o">.</span><span class="n">save_pickle</span><span class="p">(</span><span class="s2">&quot;my_run.pickle&quot;</span><span class="p">)</span>  <span class="c1"># save data object for later analysis</span>
+
+<span class="n">data</span><span class="o">.</span><span class="n">write_means_modes_diffs</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;Run1_&quot;</span><span class="p">)</span>  <span class="c1"># write output data files</span>
+
+<span class="n">data</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="s2">&quot;CELL_LINE&quot;</span><span class="p">,</span> <span class="s2">&quot;POSITION&quot;</span><span class="p">)</span>  <span class="c1"># visualize data for a point</span>
+
+<span class="n">data</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">min_values</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># methylation level heatmap</span>
+
+<span class="n">data</span><span class="o">.</span><span class="n">quma_results</span><span class="p">[</span><span class="s2">&quot;CELL_LINE&quot;</span><span class="p">]</span>  <span class="c1"># see summary data for a cell line</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="authors">
+<h2>Authors<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h2>
+<p>This software is developed as academic software by <a class="reference external" href="https://github.com/Paradoxdruid">Dr. Andrew J.
+Bonham</a> at the <a class="reference external" href="https://www.msudenver.edu">Metropolitan State
+University of Denver</a>. It is licensed
+under the GPL v3.0.</p>
+<p>This software incorporates implementation from
+<a class="reference external" href="http://quma.cdb.riken.jp">QUMA</a>, licensed under the GPL v3.0.</p>
+</section>
 </section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
 </section>
 

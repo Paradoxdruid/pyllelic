@@ -6,15 +6,175 @@
 Welcome to Pyllelic's documentation!
 ====================================
 
+.. raw:: html
+
+   <img src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_logo.png?raw=true" width="50" height="50" style="float: left; margin-right: 10px;">
+
+**pyllelic**: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.
+
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
    modules
+
+
+Readme
+======
+
+Pyllelic documention is available at
+`<https://paradoxdruid.github.io/pyllelic/>`_ and see
+`pyllelic_notebook.ipynb <https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.md>`_
+for an interactive demonstration.
+
+Dependencies and Installation
+-----------------------------
+
+Using Conda (preferred)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Create a new conda environment using python 3.8:
+
+Easiest:
+
+.. code:: bash
+
+   # Get environment.yml file from this repo
+   curl -L https://github.com/Paradoxdruid/pyllelic/blob/master/environment.yml?raw=true > env.yml
+
+   # Create and activate conda environment
+   conda env create --file=env.yml
+   conda activate pyllelic
+
+.. raw:: html
+
+   <details>
+
+.. raw:: html
+
+   <summary>
+
+or more explict step by step instructions
+
+.. raw:: html
+
+   </summary>
+
+.. code:: bash
+
+   conda create --name pyllelic python=3.8
+   conda activate pyllelic
+   conda config --env --add channels conda-forge
+   conda config --env --add channels bioconda
+   conda config --env --add channels paradoxdruid
+   conda install pyllelic 
+
+   # Optional but usual use case:
+   conda install notebook jupyter_contrib_nbextensions ipywidgets
+
+.. raw:: html
+
+   </details>
+
+Docker container
+~~~~~~~~~~~~~~~~
+
+.. code:: bash
+
+   docker pull ghcr.io/paradoxdruid/pyllelic:latest
+
+PyPi installation
+~~~~~~~~~~~~~~~~~
+
+.. raw:: html
+
+   <details>
+
+.. raw:: html
+
+   <summary>
+
+PyPi instructions
+
+.. raw:: html
+
+   </summary>
+
+This will require independent installation of samtools, bowtie2, and
+bismark packages.
+
+.. code:: bash
+
+   # PyPi
+   python3 -m pip install pyllelic
+   # or Github
+   python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
+
+.. raw:: html
+
+   </details>
+
+Example exploratory use in jupyter notebook
+-------------------------------------------
+
+.. code:: python
+
+       from pyllelic import pyllelic
+
+       config = pyllelic.configure(  # Specify file and directory locations
+           base_path="/Users/abonham/documents/test_allelic/",
+           prom_file="TERT-promoter-genomic-sequence.txt",
+           prom_start="1293200",
+           prom_end="1296000",
+           chrom="5",
+           offset=1298163,
+       )
+
+       files_set = pyllelic.make_list_of_bam_files(config)  # finds bam files
+
+       # Run pyllelic; make take some time depending on number of bam files
+       data = pyllelic.GenomicPositionData(config=config, files_set=files_set)
+
+       positions = data.positions
+
+       cell_types = data.cell_types
+
+       means_df = data.means  # mean methylation of reads
+
+       modes_df = data.modes  # mode methylation of reads
+       
+       diff_df = data.diffs  # difference mean - mode of reads
+
+       individual_data = data.individual_data  # read methylation values
+
+       data.save("output.xlsx")  # save methylation results
+
+       data.save_pickle("my_run.pickle")  # save data object for later analysis
+       
+       data.write_means_modes_diffs(filename="Run1_")  # write output data files
+
+       data.histogram("CELL_LINE", "POSITION")  # visualize data for a point
+
+       data.heatmap(min_values=1)  # methylation level heatmap
+
+       data.quma_results["CELL_LINE"]  # see summary data for a cell line
+
+--------------
+
+Authors
+-------
+
+This software is developed as academic software by `Dr. Andrew J.
+Bonham <https://github.com/Paradoxdruid>`__ at the `Metropolitan State
+University of Denver <https://www.msudenver.edu>`__. It is licensed
+under the GPL v3.0.
+
+This software incorporates implementation from
+`QUMA <http://quma.cdb.riken.jp>`__, licensed under the GPL v3.0.
+
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`

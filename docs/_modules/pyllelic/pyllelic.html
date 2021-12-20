@@ -85,7 +85,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyllelic</a></li>
 </ul>
@@ -171,7 +171,8 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
 <span class="kn">import</span> <span class="nn">pysam</span>
-<span class="kn">from</span> <span class="nn">Bio</span> <span class="kn">import</span> <span class="n">pairwise2</span>
+
+<span class="kn">from</span> <span class="nn">Bio</span> <span class="kn">import</span> <span class="n">Align</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
 <span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
@@ -227,7 +228,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Grab the promoter region of interest</span>
-        <span class="n">samm</span><span class="p">:</span> <span class="n">pysam</span><span class="o">.</span><span class="n">AlignmentFile</span> <span class="o">=</span> <span class="n">pysam</span><span class="o">.</span><span class="n">AlignmentFile</span><span class="p">(</span><span class="n">sams</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+        <span class="n">samm</span><span class="p">:</span> <span class="n">pysam</span><span class="o">.</span><span class="n">AlignmentFile</span> <span class="o">=</span> <span class="n">pysam</span><span class="o">.</span><span class="n">AlignmentFile</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">sams</span><span class="p">),</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
         <span class="n">itern</span> <span class="o">=</span> <span class="n">samm</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">chromosome</span><span class="p">,</span>
             <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">promoter_start</span><span class="p">),</span>
@@ -272,19 +273,26 @@
             <span class="c1"># Set up sequences to check for alignment</span>
             <span class="n">target_sequences</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">each1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">target_sequence</span> <span class="ow">in</span> <span class="n">target_sequences</span><span class="p">:</span>
-                <span class="n">alignment</span> <span class="o">=</span> <span class="n">pairwise2</span><span class="o">.</span><span class="n">align</span><span class="o">.</span><span class="n">localms</span><span class="p">(</span>
-                    <span class="n">query_sequence</span><span class="p">,</span> <span class="n">target_sequence</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span>
+                <span class="n">aligner</span><span class="p">:</span> <span class="n">Align</span><span class="o">.</span><span class="n">PairwiseAligner</span> <span class="o">=</span> <span class="n">Align</span><span class="o">.</span><span class="n">PairwiseAligner</span><span class="p">(</span>
+                    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+                    <span class="n">match_score</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                    <span class="n">mismatch_score</span><span class="o">=-</span><span class="mi">3</span><span class="p">,</span>
+                    <span class="n">open_gap_score</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span>
+                    <span class="n">extend_gap_score</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="n">aligned_segment</span> <span class="o">=</span> <span class="n">alignment</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">seqA</span><span class="p">[</span>
-                    <span class="n">alignment</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start</span> <span class="p">:</span> <span class="n">alignment</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end</span>
-                <span class="p">]</span>
-                <span class="n">alignments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aligned_segment</span><span class="p">)</span>
+                <span class="n">bio_alignments</span><span class="p">:</span> <span class="n">Align</span><span class="o">.</span><span class="n">PairwiseAlignments</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="n">aligner</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">query_sequence</span><span class="p">,</span> <span class="n">target_sequence</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">bio_alignment</span><span class="p">:</span> <span class="n">Align</span><span class="o">.</span><span class="n">PairwiseAlignment</span> <span class="o">=</span> <span class="n">bio_alignments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">query_ali</span><span class="p">:</span> <span class="nb">str</span>
+                <span class="n">query_ali</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">quma</span><span class="o">.</span><span class="n">Quma</span><span class="o">.</span><span class="n">_matching_substrings</span><span class="p">(</span><span class="n">bio_alignment</span><span class="p">)</span>
+                <span class="n">alignments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">query_ali</span><span class="p">)</span>
 
             <span class="n">read_file</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">each</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">alignments</span><span class="p">):</span>
                 <span class="n">read_file</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;&gt;read&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)))</span>
                 <span class="n">read_file</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">each</span><span class="p">)</span>
-                <span class="c1"># returns aligned target sequence</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">each1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">read_file</span><span class="p">)</span>
 
@@ -590,8 +598,9 @@
 
         <span class="c1"># Gives the means of each positions-- NOT the mean of the entire dataframe!</span>
         <span class="n">working_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="n">pos_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">each</span><span class="p">:</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="p">}</span>
+        <span class="n">working_df</span> <span class="o">=</span> <span class="n">working_df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="o">**</span><span class="n">pos_dict</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="p">:</span>
-            <span class="n">working_df</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">quma_results</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">values_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_read_values</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">values_list</span><span class="p">:</span>
@@ -614,8 +623,9 @@
 
         <span class="c1"># Gives the modes of each positions-- NOT the mode of the entire dataframe!</span>
         <span class="n">working_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="n">pos_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">each</span><span class="p">:</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="p">}</span>
+        <span class="n">working_df</span> <span class="o">=</span> <span class="n">working_df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="o">**</span><span class="n">pos_dict</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="p">:</span>
-            <span class="n">working_df</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">quma_results</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">values_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_read_values</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
 
@@ -637,9 +647,10 @@
 <span class="sd">            pd.DataFrame: methylation values for each position in each cell line</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">working_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="n">working_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">index</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">quma_results</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">positions</span>
+        <span class="p">)</span>
         <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="p">:</span>
-            <span class="n">working_df</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># Create position column in dataframe</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">quma_results</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">values_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_read_values</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">values_list</span><span class="p">:</span>
@@ -671,7 +682,7 @@
 
         <span class="n">bad_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">]</span>  <span class="c1"># for interpreting quma returns</span>
         <span class="n">min_num_meth_sites</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">min_sites</span>  <span class="c1"># Only include is read has minimum methylation sites</span>
+            <span class="n">min_sites</span>  <span class="c1"># Only include if read has minimum methylation sites</span>
         <span class="p">)</span>
 
         <span class="n">values_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
