@@ -463,51 +463,34 @@ class Quma:
         gAli: str = result.gAli
         qAli: str = result.qAli[: len(gAli)]
 
-        cpg: List[int] = [m.start() for m in re.finditer("CG", gAli)]
+        # cpg: List[int] = [m.start() for m in re.finditer("CG", gAli)]
         result.aliLen = len(qAli)
 
-        # Loop through sequence looking for CpG conversion
-        j: int = 0
-        for i in range(result.aliLen):
+        result.match = sum(
+            (a == b) or (a == "T" and b == "C") for a, b in zip(qAli, gAli)
+        )
 
-            g: str = gAli[i]
-            q: str = qAli[i]
+        result.gap = max([gAli.count("-"), qAli.count("-")])
 
-            if g != "-":
-                j += 1
-
-            if q == g or g == "C" and q == "T":
-                result.match += 1
-
-            if g == "-":
-                result.gap += 1
-                continue
-
-            if q == "-":
-                result.gap += 1
-                if (j - 1) in cpg:
-                    result.val += "-"
-                continue
-
-            if i == result.aliLen - 1:
-                break
-
-            # End if genome sequence isn't a C
-            if g != "C":
-                continue
-
-            # If this is a CpG C on the genome, inspect query
-            if (j - 1) in cpg:
-                if q == "C":
-                    result.conv += 1
-                    result.menum += 1
-                    result.val += "1"
-                elif q == "T":
+        # https://stackoverflow.com/questions/28034947/
+        i = 0
+        while True:
+            ni = gAli.find("CG", i)
+            if ni != -1:
+                if qAli[ni] == "T":
+                    result.match += 1
                     result.unconv += 1
                     result.val += "0"
+                elif qAli[ni] == "C":
+                    result.conv += 1
+                    result.val += "1"
+                    result.menum += 1
                 else:
-                    result.val += q
-                continue
+                    result.val += qAli[ni]
+
+                i = ni + 1
+            else:
+                break
 
         # kludge:
         if result.val == "":
