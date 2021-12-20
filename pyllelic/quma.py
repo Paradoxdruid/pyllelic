@@ -194,7 +194,7 @@ class Quma:
             seq = re.findall(reg, seq, re.MULTILINE)[0][0]
 
         elif re.findall(
-            r"^SQ\s+SEQUENCE.*\n((\s+(?:\w+\s+)+\d+)+)\n\/\/",
+            r"^SQ\s+SEQUENCE.*\n((\s+(?:\w+\s+)+\d+)+)\n\/\/",  # lgtm [py/redos]
             seq,
             re.MULTILINE,
         ):  # pragma: no cover
