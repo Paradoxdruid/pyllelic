@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyllelic.pyllelic &mdash; Pyllelic 0.2.0 documentation</title>
+  <title>pyllelic.pyllelic &mdash; Pyllelic 0.2.8 documentation</title>
   
 
   
@@ -259,7 +259,6 @@
 <span class="sd">        in bam values dictionary.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            sams (Path): path to a sam file</span>
 <span class="sd">            positions (List[str]): list of unique positions</span>
 <span class="sd">            df (pd.Series): series of sequencing reads</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -309,6 +308,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            str: genomic bases for indicated read / position</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: incorrect position</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># OFFSET: int = 1298163  # TERT offset</span>
@@ -323,7 +325,11 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Position not in genomic promoter file&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_genome_parsing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">genome_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Writes out a list of genomic sequence strings for comparison to read data.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Writes out a list of genomic sequence strings for comparison to read data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            genome_string (str): genomic sequence</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Grab list of read files in that directory:</span>
         <span class="n">read_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -422,6 +428,9 @@
         <span class="sd">&quot;&quot;&quot;Queue worker for quma functions.</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">            genomic_contents (str): genomic sequence</span>
+<span class="sd">            read_contents (str): query sequence</span>
+<span class="sd">            position(str): position of reads</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Tuple[pd.DataFrame, str]: dataframe of quma results and raw quma results</span>
@@ -439,6 +448,8 @@
         <span class="sd">&quot;&quot;&quot;Helper function to run internal QUMA tool.</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">            genomic_contents (str): genome sequence</span>
+<span class="sd">            read_contents (str): query sequence</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            str: output from quma command</span>
@@ -500,14 +511,7 @@
         <span class="sd">&quot;&quot;&quot;pd.DataFrame: dataframe of individual methylation values.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_index_and_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Wrapper to call processing of each sam file.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            genome_string (str): genomic sequence to align against</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            list[str]: list of genomic positions analyzed</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Wrapper to call processing of each sam file.&quot;&quot;&quot;</span>
 
         <span class="n">sam_path</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">base_directory</span> <span class="o">/</span> <span class="s2">&quot;test&quot;</span> <span class="o">/</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files_set</span>
@@ -562,7 +566,7 @@
         <span class="sd">&quot;&quot;&quot;Save quma results to an excel file.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            filename (str, optional): Filename to save to. Defaults to &quot;output.xlsx&quot;.</span>
+<span class="sd">            filename (str): Filename to save to. Defaults to &quot;output.xlsx&quot;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">writer</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span>
@@ -575,14 +579,25 @@
         <span class="n">writer</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="GenomicPositionData.save_pickle"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.save_pickle">[docs]</a>    <span class="k">def</span> <span class="nf">save_pickle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Save GenomicPositionData object as a pickled file.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Save GenomicPositionData object as a pickled file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): filename to save pickle</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
             <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GenomicPositionData.from_pickle"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.from_pickle">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_pickle</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GPD</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Read pickled GenomicPositionData back to an object.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Read pickled GenomicPositionData back to an object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): filename to read pickle</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            GPD: GenomicPositionData object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>  <span class="c1"># nosec</span>
@@ -884,6 +899,9 @@
 <span class="sd">            cell_lines (Optional[List[str]]): set of cell lines to analyze,</span>
 <span class="sd">            defaults to all cell lines.</span>
 <span class="sd">            data_type (str): type of data to plot. Can to &#39;means&#39;, &#39;modes&#39;, or &#39;diffs&#39;</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: invalid data type</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">title_type</span><span class="p">:</span> <span class="nb">str</span>
@@ -1018,7 +1036,7 @@
 <span class="sd">            raw_list (pd.Series): list of fractional methylation levels per read.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            AD_stats[bool, float, List[np.ndarray]]: is the data significantly</span>
+<span class="sd">            AD_stats: is the data significantly</span>
 <span class="sd">                allelic (bool), A-D statistic (float), critical values (list)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -1079,7 +1097,7 @@
     <span class="sd">&quot;&quot;&quot;Check analysis directory for all valid .bam files.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        Config: pyllelic configuration options.</span>
+<span class="sd">        config (Config): pyllelic configuration options.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        list[str]: list of files</span>
