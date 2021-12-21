@@ -38,6 +38,21 @@ EXPECTED_ALIGN_MATCH = quma.Result(
     aliLen=16,
 )
 
+EXPECTED_ALIGN_MISMATCH = quma.Result(
+    qAli="ATTGATCCGGCATACG",
+    gAli="ATCGATCCGGCATACG",
+    gap=0,
+    menum=2,
+    unconv=1,
+    conv=2,
+    pconv=66.7,
+    match=17,
+    val="011",
+    perc=106.2,
+    aliMis=-1,
+    aliLen=16,
+)
+
 TEST_FORMAT_DICT = quma.Result(
     qAli="ATCGATCCGGCATACG",
     gAli="ATCGATCCGGCATACG",
@@ -69,6 +84,20 @@ TEST_SUMMARY_REF = quma.Result(
 
 TEST_ALIGN_REF = quma.Result(
     qAli="ATCGATCCGGCATACG",
+    gAli="ATCGATCCGGCATACG",
+    gap=0,
+    menum=0,
+    unconv=0,
+    conv=0,
+    pconv="",
+    match=0,
+    val="",
+    perc="",
+    aliMis=0,
+)
+
+TEST_ALIGN_REF_MISMATCH = quma.Result(
+    qAli="ATTGATCCGGCATACG",
     gAli="ATCGATCCGGCATACG",
     gap=0,
     menum=0,
@@ -149,7 +178,6 @@ class Test_Quma:
         assert EXPECTED == actual
 
     def test__check_char_in_allowed(self, set_up_quma):
-        """Test if string with unallowed characters is returned."""
         quma_result = set_up_quma
         SEQ = "ABCDEFGHIJ"
         PATTERN = "JABC"
@@ -225,6 +253,14 @@ class Test_Quma:
         quma_result = set_up_quma
         TEST_REF = TEST_ALIGN_REF
         EXPECTED = EXPECTED_ALIGN_MATCH
+        actual = quma_result._process_alignment_matches(TEST_REF)
+        assert EXPECTED == actual
+
+    def test__process_alignment_matches_mismatch(self, set_up_quma):
+        quma_result = set_up_quma
+        TEST_REF = TEST_ALIGN_REF_MISMATCH
+        EXPECTED = EXPECTED_ALIGN_MISMATCH
+
         actual = quma_result._process_alignment_matches(TEST_REF)
         assert EXPECTED == actual
 

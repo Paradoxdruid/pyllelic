@@ -153,7 +153,7 @@ def retrieve_promoter_seq(filename: str, chrom: str, start: int, end: int) -> No
     """Retrieve the genomic sequence of interest from UCSC Genome Browser.
 
     Args:
-        filename (Path): path to store genomic sequence
+        filename (str): path to store genomic sequence
         chrom (str): chromosome of interest, e.g. "chr5"
         start (int): start position for region of interest
         end (int): end position for region of interest

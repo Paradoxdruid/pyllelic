@@ -103,7 +103,6 @@ class BamOutput:
         in bam values dictionary.
 
         Args:
-            sams (Path): path to a sam file
             positions (List[str]): list of unique positions
             df (pd.Series): series of sequencing reads
         """
@@ -153,6 +152,9 @@ class BamOutput:
 
         Returns:
             str: genomic bases for indicated read / position
+
+        Raises:
+            ValueError: incorrect position
         """
 
         # OFFSET: int = 1298163  # TERT offset
@@ -167,7 +169,11 @@ class BamOutput:
         raise ValueError("Position not in genomic promoter file")
 
     def _genome_parsing(self, genome_string: str) -> None:
-        """Writes out a list of genomic sequence strings for comparison to read data."""
+        """Writes out a list of genomic sequence strings for comparison to read data.
+
+        Args:
+            genome_string (str): genomic sequence
+        """
 
         # Grab list of read files in that directory:
         read_files: List[str] = list(self.values.keys())
@@ -266,6 +272,9 @@ class QumaResult:
         """Queue worker for quma functions.
 
         Args:
+            genomic_contents (str): genomic sequence
+            read_contents (str): query sequence
+            position(str): position of reads
 
         Returns:
             Tuple[pd.DataFrame, str]: dataframe of quma results and raw quma results
@@ -283,6 +292,8 @@ class QumaResult:
         """Helper function to run internal QUMA tool.
 
         Args:
+            genomic_contents (str): genome sequence
+            read_contents (str): query sequence
 
         Returns:
             str: output from quma command
@@ -344,14 +355,7 @@ class GenomicPositionData:
         """pd.DataFrame: dataframe of individual methylation values."""
 
     def _index_and_fetch(self) -> None:
-        """Wrapper to call processing of each sam file.
-
-        Args:
-            genome_string (str): genomic sequence to align against
-
-        Returns:
-            list[str]: list of genomic positions analyzed
-        """
+        """Wrapper to call processing of each sam file."""
 
         sam_path: List[Path] = [
             self.config.base_directory / "test" / f for f in self.files_set
@@ -406,7 +410,7 @@ class GenomicPositionData:
         """Save quma results to an excel file.
 
         Args:
-            filename (str, optional): Filename to save to. Defaults to "output.xlsx".
+            filename (str): Filename to save to. Defaults to "output.xlsx".
         """
 
         writer: pd.ExcelWriter = pd.ExcelWriter(
@@ -419,14 +423,25 @@ class GenomicPositionData:
         writer.save()
 
     def save_pickle(self, filename: str) -> None:
-        """Save GenomicPositionData object as a pickled file."""
+        """Save GenomicPositionData object as a pickled file.
+
+        Args:
+            filename (str): filename to save pickle
+        """
 
         with open(filename, "wb") as output_file:
             pickle.dump(self, output_file)
 
     @staticmethod
     def from_pickle(filename: str) -> GPD:
-        """Read pickled GenomicPositionData back to an object."""
+        """Read pickled GenomicPositionData back to an object.
+
+        Args:
+            filename (str): filename to read pickle
+
+        Returns:
+            GPD: GenomicPositionData object
+        """
 
         with open(filename, "rb") as input_file:
             data = pickle.load(input_file)  # nosec
@@ -728,6 +743,9 @@ class GenomicPositionData:
             cell_lines (Optional[List[str]]): set of cell lines to analyze,
             defaults to all cell lines.
             data_type (str): type of data to plot. Can to 'means', 'modes', or 'diffs'
+
+        Raises:
+            ValueError: invalid data type
         """
 
         title_type: str
@@ -862,7 +880,7 @@ class GenomicPositionData:
             raw_list (pd.Series): list of fractional methylation levels per read.
 
         Returns:
-            AD_stats[bool, float, List[np.ndarray]]: is the data significantly
+            AD_stats: is the data significantly
                 allelic (bool), A-D statistic (float), critical values (list)
         """
 
@@ -923,7 +941,7 @@ def make_list_of_bam_files(config: Config) -> List[str]:
     """Check analysis directory for all valid .bam files.
 
     Args:
-        Config: pyllelic configuration options.
+        config (Config): pyllelic configuration options.
 
     Returns:
         list[str]: list of files

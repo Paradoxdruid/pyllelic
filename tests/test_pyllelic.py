@@ -126,7 +126,6 @@ def test_configure():
 
 
 def test_make_list_of_bam_files(tmp_path):
-    """Test making list of bam files, mocking config."""
     config = setup_config(tmp_path)
     TEST_LIST = [
         Path("bad1.txt"),
@@ -188,7 +187,6 @@ class Test_BamOutput:
     #     mock_pysam.index.assert_called_once_with(os.fspath(TEST_PATH))
 
     def test__genome_range(self, set_up_bam_output):
-        """Check if correct genome string is returned."""
         bam_output = set_up_bam_output
         gen_str = "ATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGC"
         result = bam_output._genome_range(position=2, genome_string=gen_str, offset=40)
@@ -196,7 +194,6 @@ class Test_BamOutput:
         assert isinstance(result, str)
 
     def test__genome_range_no_offset(self, set_up_bam_output):
-        """Check if correct genome string is returned with no offset given."""
         bam_output = set_up_bam_output
         gen_str = "ATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGC"
         bam_output._config.offset = 40
@@ -205,7 +202,6 @@ class Test_BamOutput:
         assert isinstance(result, str)
 
     def test__genome_range_invalid(self, set_up_bam_output):
-        """Check if correct genome string is returned."""
         bam_output = set_up_bam_output
         gen_str = ""
         with pytest.raises(ValueError):

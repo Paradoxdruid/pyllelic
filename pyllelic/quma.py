@@ -237,7 +237,7 @@ class Quma:
         return "".join([each for each in seq if each in pattern])
 
     @staticmethod
-    def _fasta_make(seq: str, seq_name: str, line: int = None) -> str:
+    def _fasta_make(seq: str, seq_name: str, line: Optional[int] = None) -> str:
         """Write a sequence string to a fasta-formatted text file contents.
 
         Args:
@@ -454,10 +454,10 @@ class Quma:
         """Process alignment data to populate results dictionary.
 
         Args:
-            ref (Dict[str, Any]): initial results dictionary
+            result (Result): initial results object
 
         Returns:
-            Dict[str, Any]: results dictionary
+            Result: result object
         """
 
         gAli: str = result.gAli
@@ -493,7 +493,7 @@ class Quma:
                 break
 
         # kludge:
-        if result.val == "":
+        if result.val == "":  # pragma: no cover
             result.val = "-"
 
         results: Result = self._generate_summary_stats(result)
@@ -531,6 +531,9 @@ class Quma:
 
         Returns:
            float: percentage
+
+        Raises:
+            ValueError: wrong calc type
         """
 
         if calc_type == "sum":
