@@ -8,7 +8,7 @@
   ⭐ &nbsp;&nbsp;the project to show your appreciation. :arrow_upper_right:
 </p>
 
-<img src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_logo.png?raw=true" width="100" height="100" style="float: left; margin-right: 10px;">
+<img align="left" src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_logo.png?raw=true" width="100" height="100">
 
 **pyllelic**: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.
 
