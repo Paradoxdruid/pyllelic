@@ -1,16 +1,11 @@
-{% set name = "pyllelic" %}{% set version = "0.2.7" %}
-
-
 package:
-  name: {{ name|lower }}
-  version: {{ version }}
+  name: pyllelic
+  version: 0.2.8
 
 source:
-  url: https://github.com/Paradoxdruid/pyllelic/archive/v0.2.7.tar.gz
-  sha256: ae90df840dd499d9fa594512852709c6270c109169f6ad9b1630287ae21b4bb7
+  path: ./..
 
 build:
-  number: 0
   noarch: python
   script: {{ PYTHON }} -m pip install . -vv
 
