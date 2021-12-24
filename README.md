@@ -81,7 +81,7 @@ python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
         prom_start="1293200",
         prom_end="1296000",
         chrom="5",
-        offset=1298163,
+        offset=1293000, # start position of retrieved promoter sequence
     )
 
     files_set = pyllelic.make_list_of_bam_files(config)  # finds bam files

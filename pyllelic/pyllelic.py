@@ -16,7 +16,6 @@ import pandas as pd
 import plotly.graph_objects as go
 import pysam
 
-from Bio import Align
 from scipy import stats
 from tqdm.auto import tqdm
 
@@ -98,39 +97,17 @@ class BamOutput:
 
         return df2.index.unique().tolist()
 
-    def _write_bam_output(self, positions: List[str], df: pd.Series) -> None:
+    def _write_bam_output(self, positions: pd.Index, df: pd.Series) -> None:
         """Extract alignments from sequencing reads and output text strings
         in bam values dictionary.
 
         Args:
-            positions (List[str]): list of unique positions
+            positions (pd.Index): list of unique positions
             df (pd.Series): series of sequencing reads
         """
 
         for each1 in positions:
-            alignments: List[str] = []
-
-            # Set up query using alignment algorithm
-            query_sequence: List[str] = df.loc[each1].head(1).tolist()[0]
-
-            # Set up sequences to check for alignment
-            target_sequences: List[str] = df.loc[each1].tolist()
-            for target_sequence in target_sequences:
-                aligner: Align.PairwiseAligner = Align.PairwiseAligner(
-                    mode="local",
-                    match_score=2,
-                    mismatch_score=-3,
-                    open_gap_score=-5,
-                    extend_gap_score=-2,
-                )
-                bio_alignments: Align.PairwiseAlignments = list(
-                    aligner.align(query_sequence, target_sequence)
-                )
-                bio_alignment: Align.PairwiseAlignment = bio_alignments[0]
-
-                query_ali: str
-                query_ali, _ = quma.Quma._matching_substrings(bio_alignment)
-                alignments.append(query_ali)
+            alignments: List[str] = df.loc[each1].tolist()
 
             read_file: List[str] = []
             for index, each in enumerate(alignments):
@@ -157,13 +134,11 @@ class BamOutput:
             ValueError: incorrect position
         """
 
-        # OFFSET: int = 1298163  # TERT offset
-
         if not offset:
             offset = self._config.offset
 
-        start: int = offset - (int(position) + 30)
-        end: int = offset - (int(position) + 1)
+        start: int = int(position) - offset
+        end: int = (int(position) - offset) + 30
         if genome_string[start:end]:
             return genome_string[start:end]
         raise ValueError("Position not in genomic promoter file")
@@ -331,8 +306,8 @@ class GenomicPositionData:
             genome_base_lines: List[str] = [s.rstrip("\n") for s in genome_base]
             self.genome_string: str = "".join(map(str, genome_base_lines))
 
-        self._bam_output: Dict[str, BamOutput] = {}
-        self._index_and_fetch()
+        self._bam_output: Dict[str, BamOutput] = self._index_and_fetch()
+
         self.positions: List[str] = self._calculate_positions()
         """List[str]: list of genomic positions in the data."""
 
@@ -354,17 +329,19 @@ class GenomicPositionData:
         self.individual_data: pd.DataFrame = self._return_individual_data()
         """pd.DataFrame: dataframe of individual methylation values."""
 
-    def _index_and_fetch(self) -> None:
-        """Wrapper to call processing of each sam file."""
+    def _index_and_fetch(self) -> Dict[str, BamOutput]:
+        """Wrapper to call processing of each sam file.
+
+        Returns:
+            Dict[str, BamOutput]: dictionary of bam outputs"""
 
         sam_path: List[Path] = [
             self.config.base_directory / "test" / f for f in self.files_set
         ]
-
+        bam_dict: Dict[str, BamOutput] = {}
         for sams in tqdm(sam_path, desc="Process BAM Files"):
-            self._bam_output[str(sams)] = BamOutput(
-                sams, self.genome_string, self.config
-            )
+            bam_dict[str(sams)] = BamOutput(sams, self.genome_string, self.config)
+        return bam_dict
 
     def _calculate_positions(self) -> List[str]:
         """Return sorted list of all positions analyzed.
