@@ -189,16 +189,16 @@ class Test_BamOutput:
     def test__genome_range(self, set_up_bam_output):
         bam_output = set_up_bam_output
         gen_str = "ATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGC"
-        result = bam_output._genome_range(position=2, genome_string=gen_str, offset=40)
-        assert result == gen_str[8:37]
+        result = bam_output._genome_range(position=8, genome_string=gen_str, offset=2)
+        assert result == gen_str[6:36]
         assert isinstance(result, str)
 
     def test__genome_range_no_offset(self, set_up_bam_output):
         bam_output = set_up_bam_output
         gen_str = "ATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGC"
-        bam_output._config.offset = 40
-        result = bam_output._genome_range(position=2, genome_string=gen_str)
-        assert result == gen_str[8:37]
+        bam_output._config.offset = 2
+        result = bam_output._genome_range(position=8, genome_string=gen_str)
+        assert result == gen_str[6:36]
         assert isinstance(result, str)
 
     def test__genome_range_invalid(self, set_up_bam_output):
@@ -431,12 +431,47 @@ class Test_GenomicPositionData:
         _, genomic_position_data = set_up_genomic_position_data
         EXPECTED = pd.DataFrame(
             {
-                "cellLine": [],
-                "position": [],
-                "ad_stat": [],
-                "p_crit": [],
-                "diff": [],
-                "raw": [],
+                "cellLine": {0: "test.bam", 1: "test.bam"},
+                "position": {0: "1294316", 1: "1295770"},
+                "ad_stat": {0: 10.532004907486929, 1: 6.782800511425162},
+                "p_crit": {0: 0.944, 1: 0.957},
+                "diff": {0: 5.551115123125783e-17, 1: -0.052631578947368474},
+                "raw": {
+                    0: [
+                        0.3333333333333333,
+                        0.3333333333333333,
+                        0.3333333333333333,
+                        0.3333333333333333,
+                        0.3333333333333333,
+                        0.3333333333333333,
+                        0.3333333333333333,
+                        0.3333333333333333,
+                        0.3333333333333333,
+                        0.3333333333333333,
+                        0.3333333333333333,
+                    ],
+                    1: [
+                        0.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                    ],
+                },
             }
         )
 
