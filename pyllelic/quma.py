@@ -390,11 +390,13 @@ class Quma:
         left_start_index: int = len(matches) - len(matches.lstrip())
         right_end_index: int = len(matches) - len(matches.rstrip())
 
+        max_index: int = min(len(matches), len(g_matches), len(q_matches))
+
         q_substring: str
         g_substring: str
         if right_end_index == 0:
-            q_substring = q_matches[left_start_index:]
-            g_substring = g_matches[left_start_index:]
+            q_substring = q_matches[left_start_index:max_index]
+            g_substring = g_matches[left_start_index:max_index]
         else:
             q_substring = q_matches[left_start_index:-right_end_index]
             g_substring = g_matches[left_start_index:-right_end_index]
