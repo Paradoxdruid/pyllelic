@@ -123,7 +123,6 @@ dmypy.json
 .pyre/
 
 # Ignore tests in work
-*.ipynb
 .DS_Store
 .vscode/
 
@@ -135,4 +134,7 @@ _build/
 *.pickle
 
 # Ignore in-progress testing
+pyllelic_playground.ipynb
 pyllelic_playground.md
+pyllelic_notebook2.ipynb
+Untitled.ipynb
