@@ -207,7 +207,7 @@ def _make_stacked_fig(df: pd.DataFrame) -> go.Figure:
         margin=dict(l=0, r=0, t=40, b=0),
         barmode="stack",
         width=800,
-        height=len(fig_dict) * 40,
+        height=(len(fig_dict) * 40) + 40,
         template="ggplot2",
         paper_bgcolor="rgba(132,132,132,1)",
         title_text="Methylated and Unmethylated Reads by Cell Line",
