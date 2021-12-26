@@ -157,7 +157,7 @@ files_set = pyllelic.make_list_of_bam_files(config)
 ```
 
 ```python
-files_set = files_set[0:10]
+files_set = files_set[0:6]
 ```
 
 ### Perform full methylation analysis and generate data object
@@ -282,7 +282,11 @@ data.individual_data.head()
 ### Heatmap of mean methylation values
 
 ```python
-data.heatmap(min_values=40, width=800, height=2000, data_type="diffs")
+data.heatmap(min_values=1, width=800, height=200, data_type="diffs")
+```
+
+```python
+data.reads_graph()
 ```
 
 ### Bar chart of significant methylation differences

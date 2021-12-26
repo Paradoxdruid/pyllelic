@@ -20,6 +20,7 @@ from scipy import stats
 from tqdm.auto import tqdm
 
 from . import quma
+from . import visualization as viz
 from .config import Config
 
 GPD = TypeVar("GPD", bound="GenomicPositionData")
@@ -603,44 +604,6 @@ class GenomicPositionData:
             index=True,
         )
 
-    @staticmethod
-    def _create_histogram(
-        data: pd.DataFrame, cell_line: str, position: str
-    ) -> go.Figure:
-        """Generate a graph figure showing fractional methylation in
-        a given cell line at a given site.
-
-        Args:
-            data (pd.DataFrame): dataframe of individual data
-            cell_line (str): name of cell line
-            position (str): genomic position
-
-        Returns:
-            go.Figure: plotly figure object
-        """
-        fig: go.Figure = go.Figure()
-        fig.add_trace(
-            go.Histogram(
-                x=data.loc[cell_line, position],
-                xbins=dict(
-                    start=-0.1,
-                    end=1.1,
-                    size=0.2,
-                ),  # offset bins to center displayed bars
-            )
-        )
-        fig.update_layout(
-            title_text=f"Methylation at pos: {position} for cell line: {cell_line}",
-            xaxis_title_text="Fraction of Sites Methylated in Read",
-            yaxis_title_text="Read Count",
-            bargap=0.2,
-            template="seaborn",
-        )
-
-        fig.update_xaxes(range=[-0.1, 1.1])
-
-        return fig
-
     def histogram(self, cell_line: str, position: str) -> None:
         """Display a graph figure showing fractional methylation in
         a given cell line at a given site.
@@ -651,56 +614,24 @@ class GenomicPositionData:
         """
         data = self.individual_data
 
-        fig: go.Figure = self._create_histogram(data, cell_line, position)
+        fig: go.Figure = viz._create_histogram(data, cell_line, position)
         fig.show()
 
-    @staticmethod
-    def _create_heatmap(
-        df: pd.DataFrame, min_values: int, width: int, height: int, title_type: str
-    ) -> go.Figure:
-        """Generate a graph figure showing heatmap of mean methylation across
-        cell lines.
+    def reads_graph(self, cell_lines: Optional[List[str]] = None) -> None:
+        """Display a graph figure showing methylation of reads across cell lines.
 
         Args:
-            df (pd.DataFrame): dataframe of mean methylation
-            min_values (int): minimum number of points data must exist at a position
-            width (int): figure width
-            height (int): figure height
-            title_type (str): type of figure being plotted
-
-        Returns:
-            go.Figure: plotly figure object
+            cell_lines (Optional[List[str]]): set of cell lines to analyze,
+            defaults to all cell lines.
         """
 
-        values_needed = len(df.index) - min_values
-        df = df.loc[:, (df.isnull().sum(axis=0) <= values_needed)]
+        data = self.individual_data
 
-        fig: go.Figure = go.Figure()
-        fig.add_trace(
-            go.Heatmap(
-                z=df,
-                x=df.columns,
-                y=df.index,
-                hoverongaps=False,
-            ),
-        )
-        fig.update_traces(
-            dict(showscale=False, coloraxis=None, colorscale="RdBu_r"),
-            selector={"type": "heatmap"},
-        )
+        if cell_lines:
+            data = data[data.index.isin(cell_lines)]
 
-        fig.update_layout(
-            title_text=f"{title_type} Methylation Heatmap",
-            xaxis_title_text="Position",
-            yaxis_title_text="Cell Line",
-            # aspect="equal",
-            template="seaborn",
-            autosize=False,
-            width=width,
-            height=height,
-        )
-
-        return fig
+        fig: go.Figure = viz._make_stacked_fig(data)
+        fig.show()
 
     def heatmap(
         self,
@@ -742,44 +673,10 @@ class GenomicPositionData:
         if cell_lines:
             data = data[data.index.isin(cell_lines)]
 
-        fig: go.Figure = self._create_heatmap(
+        fig: go.Figure = viz._create_heatmap(
             data, min_values, width, height, title_type
         )
         fig.show()
-
-    @staticmethod
-    def _create_methylation_diffs_bar_graph(df: pd.DataFrame) -> go.Figure:
-        """Generate a graph figure showing bar graph of significant methylation across
-        cell lines.
-
-        Args:
-            df (pd.DataFrame): dataframe of significant methylation positions
-
-        Returns:
-            go.Figure: plotly figure object
-        """
-        data = df.pivot(index="position", columns="cellLine", values="ad_stat")
-        data = data.dropna(axis=1, how="all").count(axis=1).to_frame()
-
-        fig = go.Figure()
-        fig.add_trace(go.Bar(x=data.index, y=data.values.flatten()))
-        fig.update_layout(
-            xaxis_type="linear",
-            showlegend=False,
-            title="Significant Methylation Differences",
-            template="seaborn",
-        )
-        fig.update_xaxes(
-            tickformat="r",
-            tickangle=45,
-            nticks=40,
-            title="Position",
-            range=[int(data.index.min()), int(data.index.max())],
-        )
-        fig.update_yaxes(title="# of significant differences")
-        fig.update_traces(width=50)
-
-        return fig
 
     def sig_methylation_differences(
         self, cell_lines: Optional[List[str]] = None
@@ -793,7 +690,7 @@ class GenomicPositionData:
         """
         data = self.summarize_allelic_data(cell_lines)
 
-        fig: go.Figure = self._create_methylation_diffs_bar_graph(data)
+        fig: go.Figure = viz._create_methylation_diffs_bar_graph(data)
         fig.show()
 
     def generate_ad_stats(self) -> pd.DataFrame:
