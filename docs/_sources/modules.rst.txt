@@ -1,5 +1,5 @@
-pyllelic
-========
+pyllelic package
+================
 
 .. toctree::
    :maxdepth: 4

@@ -6,6 +6,7 @@
 Welcome to Pyllelic's documentation!
 ====================================
 
+
 .. raw:: html
 
    <img src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_logo.png?raw=true" width="50" height="50" style="float: left; margin-right: 10px;">
@@ -13,14 +14,17 @@ Welcome to Pyllelic's documentation!
 **pyllelic**: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
    :caption: Contents:
+   :hidden:
 
-   modules
+   index
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Function Reference
 
-Readme
-======
+   pyllelic
 
 Pyllelic documention is available at
 `<https://paradoxdruid.github.io/pyllelic/>`_ and see
@@ -28,7 +32,7 @@ Pyllelic documention is available at
 for an interactive demonstration.
 
 Dependencies and Installation
------------------------------
+=============================
 
 Using Conda (preferred)
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -114,8 +118,11 @@ bismark packages.
 
    </details>
 
+
+Quickstart
+==========
+
 Example exploratory use in jupyter notebook
--------------------------------------------
 
 .. code:: python
 
@@ -162,7 +169,7 @@ Example exploratory use in jupyter notebook
 --------------
 
 Authors
--------
+=======
 
 This software is developed as academic software by `Dr. Andrew J.
 Bonham <https://github.com/Paradoxdruid>`__ at the `Metropolitan State

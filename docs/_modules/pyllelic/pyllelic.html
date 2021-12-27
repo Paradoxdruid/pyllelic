@@ -172,11 +172,11 @@
 <span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
 <span class="kn">import</span> <span class="nn">pysam</span>
 
-<span class="kn">from</span> <span class="nn">Bio</span> <span class="kn">import</span> <span class="n">Align</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
 <span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">quma</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">visualization</span> <span class="k">as</span> <span class="n">viz</span>
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">Config</span>
 
 <span class="n">GPD</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;GPD&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s2">&quot;GenomicPositionData&quot;</span><span class="p">)</span>
@@ -254,39 +254,17 @@
 
         <span class="k">return</span> <span class="n">df2</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_write_bam_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">positions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_write_bam_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">positions</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Extract alignments from sequencing reads and output text strings</span>
 <span class="sd">        in bam values dictionary.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            positions (List[str]): list of unique positions</span>
+<span class="sd">            positions (pd.Index): list of unique positions</span>
 <span class="sd">            df (pd.Series): series of sequencing reads</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">each1</span> <span class="ow">in</span> <span class="n">positions</span><span class="p">:</span>
-            <span class="n">alignments</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-
-            <span class="c1"># Set up query using alignment algorithm</span>
-            <span class="n">query_sequence</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">each1</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-
-            <span class="c1"># Set up sequences to check for alignment</span>
-            <span class="n">target_sequences</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">each1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">target_sequence</span> <span class="ow">in</span> <span class="n">target_sequences</span><span class="p">:</span>
-                <span class="n">aligner</span><span class="p">:</span> <span class="n">Align</span><span class="o">.</span><span class="n">PairwiseAligner</span> <span class="o">=</span> <span class="n">Align</span><span class="o">.</span><span class="n">PairwiseAligner</span><span class="p">(</span>
-                    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
-                    <span class="n">match_score</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                    <span class="n">mismatch_score</span><span class="o">=-</span><span class="mi">3</span><span class="p">,</span>
-                    <span class="n">open_gap_score</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span>
-                    <span class="n">extend_gap_score</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="n">bio_alignments</span><span class="p">:</span> <span class="n">Align</span><span class="o">.</span><span class="n">PairwiseAlignments</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-                    <span class="n">aligner</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">query_sequence</span><span class="p">,</span> <span class="n">target_sequence</span><span class="p">)</span>
-                <span class="p">)</span>
-                <span class="n">bio_alignment</span><span class="p">:</span> <span class="n">Align</span><span class="o">.</span><span class="n">PairwiseAlignment</span> <span class="o">=</span> <span class="n">bio_alignments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-                <span class="n">query_ali</span><span class="p">:</span> <span class="nb">str</span>
-                <span class="n">query_ali</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">quma</span><span class="o">.</span><span class="n">Quma</span><span class="o">.</span><span class="n">_matching_substrings</span><span class="p">(</span><span class="n">bio_alignment</span><span class="p">)</span>
-                <span class="n">alignments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">query_ali</span><span class="p">)</span>
+            <span class="n">alignments</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">each1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
             <span class="n">read_file</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">each</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">alignments</span><span class="p">):</span>
@@ -313,13 +291,11 @@
 <span class="sd">            ValueError: incorrect position</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># OFFSET: int = 1298163  # TERT offset</span>
-
         <span class="k">if</span> <span class="ow">not</span> <span class="n">offset</span><span class="p">:</span>
             <span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">offset</span>
 
-        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">-</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">+</span> <span class="mi">30</span><span class="p">)</span>
-        <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">-</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">-</span> <span class="n">offset</span>
+        <span class="n">end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">-</span> <span class="n">offset</span><span class="p">)</span> <span class="o">+</span> <span class="mi">30</span>
         <span class="k">if</span> <span class="n">genome_string</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]:</span>
             <span class="k">return</span> <span class="n">genome_string</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Position not in genomic promoter file&quot;</span><span class="p">)</span>
@@ -487,8 +463,8 @@
             <span class="n">genome_base_lines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">genome_base</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">genome_string</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">genome_base_lines</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_bam_output</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BamOutput</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_index_and_fetch</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bam_output</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BamOutput</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index_and_fetch</span><span class="p">()</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_positions</span><span class="p">()</span>
         <span class="sd">&quot;&quot;&quot;List[str]: list of genomic positions in the data.&quot;&quot;&quot;</span>
 
@@ -510,17 +486,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">individual_data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_individual_data</span><span class="p">()</span>
         <span class="sd">&quot;&quot;&quot;pd.DataFrame: dataframe of individual methylation values.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_index_and_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Wrapper to call processing of each sam file.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_index_and_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BamOutput</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Wrapper to call processing of each sam file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict[str, BamOutput]: dictionary of bam outputs&quot;&quot;&quot;</span>
 
         <span class="n">sam_path</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">base_directory</span> <span class="o">/</span> <span class="s2">&quot;test&quot;</span> <span class="o">/</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files_set</span>
         <span class="p">]</span>
-
+        <span class="n">bam_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BamOutput</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">sams</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">sam_path</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Process BAM Files&quot;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_bam_output</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">sams</span><span class="p">)]</span> <span class="o">=</span> <span class="n">BamOutput</span><span class="p">(</span>
-                <span class="n">sams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">genome_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
-            <span class="p">)</span>
+            <span class="n">bam_dict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">sams</span><span class="p">)]</span> <span class="o">=</span> <span class="n">BamOutput</span><span class="p">(</span><span class="n">sams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">genome_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bam_dict</span>
 
     <span class="k">def</span> <span class="nf">_calculate_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Return sorted list of all positions analyzed.</span>
@@ -782,44 +760,6 @@
             <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_create_histogram</span><span class="p">(</span>
-        <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">cell_line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Generate a graph figure showing fractional methylation in</span>
-<span class="sd">        a given cell line at a given site.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            data (pd.DataFrame): dataframe of individual data</span>
-<span class="sd">            cell_line (str): name of cell line</span>
-<span class="sd">            position (str): genomic position</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            go.Figure: plotly figure object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
-            <span class="n">go</span><span class="o">.</span><span class="n">Histogram</span><span class="p">(</span>
-                <span class="n">x</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cell_line</span><span class="p">,</span> <span class="n">position</span><span class="p">],</span>
-                <span class="n">xbins</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-                    <span class="n">start</span><span class="o">=-</span><span class="mf">0.1</span><span class="p">,</span>
-                    <span class="n">end</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span>
-                    <span class="n">size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
-                <span class="p">),</span>  <span class="c1"># offset bins to center displayed bars</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
-            <span class="n">title_text</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Methylation at pos: </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2"> for cell line: </span><span class="si">{</span><span class="n">cell_line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">xaxis_title_text</span><span class="o">=</span><span class="s2">&quot;Fraction of Sites Methylated in Read&quot;</span><span class="p">,</span>
-            <span class="n">yaxis_title_text</span><span class="o">=</span><span class="s2">&quot;Read Count&quot;</span><span class="p">,</span>
-            <span class="n">bargap</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
-            <span class="n">template</span><span class="o">=</span><span class="s2">&quot;seaborn&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">])</span>
-
-        <span class="k">return</span> <span class="n">fig</span>
-
 <div class="viewcode-block" id="GenomicPositionData.histogram"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.histogram">[docs]</a>    <span class="k">def</span> <span class="nf">histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Display a graph figure showing fractional methylation in</span>
 <span class="sd">        a given cell line at a given site.</span>
@@ -830,56 +770,24 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">individual_data</span>
 
-        <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cell_line</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span>
+        <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_create_histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cell_line</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_create_heatmap</span><span class="p">(</span>
-        <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">min_values</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">title_type</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Generate a graph figure showing heatmap of mean methylation across</span>
-<span class="sd">        cell lines.</span>
+<div class="viewcode-block" id="GenomicPositionData.reads_graph"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.reads_graph">[docs]</a>    <span class="k">def</span> <span class="nf">reads_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_lines</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Display a graph figure showing methylation of reads across cell lines.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            df (pd.DataFrame): dataframe of mean methylation</span>
-<span class="sd">            min_values (int): minimum number of points data must exist at a position</span>
-<span class="sd">            width (int): figure width</span>
-<span class="sd">            height (int): figure height</span>
-<span class="sd">            title_type (str): type of figure being plotted</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            go.Figure: plotly figure object</span>
+<span class="sd">            cell_lines (Optional[List[str]]): set of cell lines to analyze,</span>
+<span class="sd">            defaults to all cell lines.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">values_needed</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">-</span> <span class="n">min_values</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">values_needed</span><span class="p">)]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">individual_data</span>
 
-        <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
-            <span class="n">go</span><span class="o">.</span><span class="n">Heatmap</span><span class="p">(</span>
-                <span class="n">z</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
-                <span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
-                <span class="n">y</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
-                <span class="n">hoverongaps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="p">),</span>
-        <span class="p">)</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">update_traces</span><span class="p">(</span>
-            <span class="nb">dict</span><span class="p">(</span><span class="n">showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">coloraxis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">colorscale</span><span class="o">=</span><span class="s2">&quot;RdBu_r&quot;</span><span class="p">),</span>
-            <span class="n">selector</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;heatmap&quot;</span><span class="p">},</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">cell_lines</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">cell_lines</span><span class="p">)]</span>
 
-        <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
-            <span class="n">title_text</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title_type</span><span class="si">}</span><span class="s2"> Methylation Heatmap&quot;</span><span class="p">,</span>
-            <span class="n">xaxis_title_text</span><span class="o">=</span><span class="s2">&quot;Position&quot;</span><span class="p">,</span>
-            <span class="n">yaxis_title_text</span><span class="o">=</span><span class="s2">&quot;Cell Line&quot;</span><span class="p">,</span>
-            <span class="c1"># aspect=&quot;equal&quot;,</span>
-            <span class="n">template</span><span class="o">=</span><span class="s2">&quot;seaborn&quot;</span><span class="p">,</span>
-            <span class="n">autosize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
-            <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">fig</span>
+        <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_make_stacked_fig</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="GenomicPositionData.heatmap"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.heatmap">[docs]</a>    <span class="k">def</span> <span class="nf">heatmap</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -921,44 +829,10 @@
         <span class="k">if</span> <span class="n">cell_lines</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">cell_lines</span><span class="p">)]</span>
 
-        <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_heatmap</span><span class="p">(</span>
+        <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_create_heatmap</span><span class="p">(</span>
             <span class="n">data</span><span class="p">,</span> <span class="n">min_values</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">title_type</span>
         <span class="p">)</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_create_methylation_diffs_bar_graph</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Generate a graph figure showing bar graph of significant methylation across</span>
-<span class="sd">        cell lines.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            df (pd.DataFrame): dataframe of significant methylation positions</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            go.Figure: plotly figure object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s2">&quot;position&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;cellLine&quot;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s2">&quot;ad_stat&quot;</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span>
-
-        <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
-            <span class="n">xaxis_type</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
-            <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Significant Methylation Differences&quot;</span><span class="p">,</span>
-            <span class="n">template</span><span class="o">=</span><span class="s2">&quot;seaborn&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span>
-            <span class="n">tickformat</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
-            <span class="n">tickangle</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span>
-            <span class="n">nticks</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
-            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Position&quot;</span><span class="p">,</span>
-            <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">())],</span>
-        <span class="p">)</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;# of significant differences&quot;</span><span class="p">)</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">update_traces</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">fig</span>
 
 <div class="viewcode-block" id="GenomicPositionData.sig_methylation_differences"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.sig_methylation_differences">[docs]</a>    <span class="k">def</span> <span class="nf">sig_methylation_differences</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">cell_lines</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -972,7 +846,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summarize_allelic_data</span><span class="p">(</span><span class="n">cell_lines</span><span class="p">)</span>
 
-        <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_methylation_diffs_bar_graph</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_create_methylation_diffs_bar_graph</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="GenomicPositionData.generate_ad_stats"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.generate_ad_stats">[docs]</a>    <span class="k">def</span> <span class="nf">generate_ad_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
