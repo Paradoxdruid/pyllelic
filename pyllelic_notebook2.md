@@ -17,9 +17,7 @@ jupyter:
 
 <img src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_logo.png?raw=true" alt="pyllelic logo" width="100"/>
 
-
 ## Background
-
 
 This notebook illustrates the import and use of `pyllelic` in a jupyter environment.
 
@@ -27,22 +25,16 @@ Source code: <https://github.com/Paradoxdruid/pyllelic>
 
 Documentation: <https://paradoxdruid.github.io/pyllelic/>
 
-
 ## Pre-setup / File preparation
 
-
 ### Obtaining fastq data
-
 
 We can download rrbs (reduced representation bisulfite sequencing) data from the Encode project:
 <http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeHaibMethylRrbs/>
 
-
 Those files are in unaligned fastq format.  We will need to align these to a reference human genome.
 
-
 ### Retrieve promoter sequence
-
 
 We will download the genomic region of interest from the UCSC Genome browser and save it in a text file:
 
@@ -55,7 +47,6 @@ process.retrieve_promoter_seq("{prom_filename}.txt", chrom: "chr5", start: 12932
 <!-- #endregion -->
 
 ### Preparing bisultife-converted genome
-
 
 To prepare the genome and align reads, we'll use [bismark](https://github.com/FelixKrueger/Bismark), bowtie2, and samtools (through its pysam wrapper).
 
@@ -82,7 +73,6 @@ process.prepare_genome(genome) # can optionally give path to bowtie2 if not in P
 <!-- #endregion -->
 
 ### Aligning reads
-
 
 **WARNING:** The next command is processor, RAM, and time intensive, and only needs to be run once!
 
@@ -118,10 +108,8 @@ process.pysam_index(sorted_bam)
 
 ### Organize directory contents
 
-
 * Place sorted bam files and index files (again, rename to capture cell-line and tissue info) in the `test` folder for analysis by pyllelic.
 * Place the promoter sequence in your main directory.
-
 
 ## Set-up
 
@@ -269,7 +257,6 @@ data.individual_data.head()
 ```
 
 ## Visualizing Data
-
 
 ### Histograms of reads at a cell line and genomic position
 
