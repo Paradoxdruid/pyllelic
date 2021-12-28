@@ -334,31 +334,9 @@ class Test_GenomicPositionData:
         np.array_equal(genomic_position_data.means.values, expected.values)
         # pd.testing.assert_frame_equal(genomic_position_data.means, expected)
 
-    def test__create_histogram(self, mocker, set_up_genomic_position_data):
-        _, genomic_position_data = set_up_genomic_position_data
-        mocked_go = mocker.patch("pyllelic.pyllelic.go")
-        TEST_CELL_LINE = "TEST1"
-        TEST_POSITION = "1"
-        intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
-        TEST_DATA = intermediate.astype("object")
-
-        _ = genomic_position_data._create_histogram(
-            TEST_DATA, TEST_CELL_LINE, TEST_POSITION
-        )
-
-        mocked_go.Figure.assert_called_once()
-        mocked_go.Histogram.assert_called_once_with(
-            x=TEST_DATA.loc[TEST_CELL_LINE, TEST_POSITION],
-            xbins=dict(
-                start=-0.1,
-                end=1.1,
-                size=0.2,
-            ),
-        )
-
     def test_histogram(self, set_up_genomic_position_data, mocker):
         _, genomic_position_data = set_up_genomic_position_data
-        mocked_go = mocker.patch("pyllelic.pyllelic.go")
+        mocked_go = mocker.patch("pyllelic.visualization.go")
         TEST_POSITION = genomic_position_data.positions[0]
         TEST_CELL_LINE = genomic_position_data.means.index[0]
 
@@ -367,26 +345,9 @@ class Test_GenomicPositionData:
         mocked_go.Figure.assert_called_once()
         mocked_go.Histogram.assert_called_once()
 
-    def test__create_heatmap(self, mocker, set_up_genomic_position_data):
-        _, genomic_position_data = set_up_genomic_position_data
-        mocked_go = mocker.patch("pyllelic.pyllelic.go")
-        intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
-        TEST_DATA = intermediate.astype("object")
-
-        _ = genomic_position_data._create_heatmap(
-            TEST_DATA,
-            min_values=1,
-            height=600,
-            width=600,
-            title_type="means",
-        )
-
-        mocked_go.Figure.assert_called_once()
-        mocked_go.Heatmap.assert_called_once()
-
     def test_heatmap(self, set_up_genomic_position_data, mocker):
         _, genomic_position_data = set_up_genomic_position_data
-        mocked_go = mocker.patch("pyllelic.pyllelic.go")
+        mocked_go = mocker.patch("pyllelic.visualization.go")
 
         genomic_position_data.heatmap(min_values=1)
 
@@ -395,7 +356,7 @@ class Test_GenomicPositionData:
 
     def test_heatmap_cell_lines(self, set_up_genomic_position_data, mocker):
         _, genomic_position_data = set_up_genomic_position_data
-        mocked_go = mocker.patch("pyllelic.pyllelic.go")
+        mocked_go = mocker.patch("pyllelic.visualization.go")
 
         TEST_CELL_LINE = "test.bam"
         genomic_position_data.heatmap(min_values=1, cell_lines=[TEST_CELL_LINE])
@@ -405,7 +366,7 @@ class Test_GenomicPositionData:
 
     def test_heatmap_modes(self, set_up_genomic_position_data, mocker):
         _, genomic_position_data = set_up_genomic_position_data
-        mocked_go = mocker.patch("pyllelic.pyllelic.go")
+        mocked_go = mocker.patch("pyllelic.visualization.go")
 
         genomic_position_data.heatmap(min_values=1, data_type="modes")
 
@@ -414,7 +375,7 @@ class Test_GenomicPositionData:
 
     def test_heatmap_diffs(self, set_up_genomic_position_data, mocker):
         _, genomic_position_data = set_up_genomic_position_data
-        mocked_go = mocker.patch("pyllelic.pyllelic.go")
+        mocked_go = mocker.patch("pyllelic.visualization.go")
 
         genomic_position_data.heatmap(min_values=1, data_type="diffs")
 
@@ -482,31 +443,9 @@ class Test_GenomicPositionData:
 
         pd.testing.assert_frame_equal(EXPECTED, actual)
 
-    def test__create_methylation_diffs_bar_graph(
-        self, mocker, set_up_genomic_position_data
-    ):
-        _, genomic_position_data = set_up_genomic_position_data
-        mocked_go = mocker.patch("pyllelic.pyllelic.go")
-        intermediate = pd.DataFrame.from_dict(
-            {
-                "cellLine": ["1", "2"],
-                "position": ["1", "2"],
-                "ad_stat": [0, 1],
-                "p_crit": [1, 2],
-                "diff": [1, 2],
-                "raw": [1, 2],
-            }
-        )
-        TEST_DATA = intermediate.astype("object")
-
-        _ = genomic_position_data._create_methylation_diffs_bar_graph(TEST_DATA)
-
-        mocked_go.Figure.assert_called_once()
-        mocked_go.Bar.assert_called_once()
-
     # def test_sig_methylation_differences(self, set_up_genomic_position_data, mocker):
     #     _, genomic_position_data = set_up_genomic_position_data
-    #     mocked_go = mocker.patch("pyllelic.pyllelic.go")
+    #     mocked_go = mocker.patch("pyllelic.visualization.go")
 
     #     genomic_position_data.sig_methylation_differences()
 
