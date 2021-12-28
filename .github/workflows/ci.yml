@@ -9,8 +9,8 @@ on:
     branches:
       - '*'
 
-  schedule:
-    - cron: '0 0 * * *'
+  # schedule:
+  #   - cron: '0 0 * * *'
 
 env:
   CACHE_NUMBER: 0  # increase to reset cache manually
@@ -25,13 +25,13 @@ jobs:
             label: linux-64
             prefix: /usr/share/miniconda3/envs/my-env
 
-          - os: macos-latest
-            label: osx-64
-            prefix: /Users/runner/miniconda3/envs/my-env
+          # - os: macos-latest
+          #   label: osx-64
+          #   prefix: /Users/runner/miniconda3/envs/my-env
 
-          - os: windows-latest
-            label: win-64
-            prefix: C:\Miniconda3\envs\my-env
+          # - os: windows-latest
+          #   label: win-64
+          #   prefix: C:\Miniconda3\envs\my-env
 
     name: ${{ matrix.label }}
     runs-on: ${{ matrix.os }}
@@ -57,6 +57,7 @@ jobs:
 
       - name: Update environment
         run: mamba env update -n my-env -f environment.yml
+        run: mamba env install -n my-env pytest pytest-mock requests-mock
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Run tests
