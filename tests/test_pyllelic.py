@@ -99,6 +99,16 @@ def setup_config(my_path):
     return config
 
 
+# Repeated test parameters
+TEST_QUMA_RESULT = (
+    "genome\t0\tATCGTAGTCGA\t2\t2,8\n"
+    + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"
+    + "11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n"
+    + "2\tquery2\tATCGATAGCATT\tATCGATAGCATT\tATCG-TAGTCGA\t"
+    + "12\t5\t58.3\t1\t1\t0\t1\t100.0\t1A\t1\t1\n"
+)
+
+
 # Tests
 def test_configure():
     """Test setting environment variables with mock object."""
@@ -243,15 +253,16 @@ class Test_QumaOutput:
 
     def test_process_raw_quma(self, set_up_quma_output):
         quma_output = set_up_quma_output
-        TEST_QUMA_RESULT = (
-            "genome\t0\tATCGTAGTCGA\t2\t2,8\n"
-            + "1\tquery1\tATCGTAGTCGA\tATCGTAGTCGA\tATCGTAGTCGA\t"
-            + "11\t0\t100.0\t0\t2\t0\t2\t100.0\t11\t1\t1\n"
-            + "2\tquery2\tATCGATAGCATT\tATCGATAGCATT\tATCG-TAGTCGA\t"
-            + "12\t5\t58.3\t1\t1\t0\t1\t100.0\t1A\t1\t1\n"
-        )
+
         EXPECTED = ["1A", "11"]
         actual = quma_output._process_raw_quma(TEST_QUMA_RESULT)
+        assert EXPECTED == actual
+
+    def test_process_raw_quma_below_min_alignment(self, set_up_quma_output):
+        quma_output = set_up_quma_output
+        TEST_QUMA_RESULT_FAIL = TEST_QUMA_RESULT[:157] + "4" + TEST_QUMA_RESULT[158:]
+        EXPECTED = ["FAIL", "11"]
+        actual = quma_output._process_raw_quma(TEST_QUMA_RESULT_FAIL)
         assert EXPECTED == actual
 
     def test__pool_processing(self, set_up_quma_output):
@@ -388,6 +399,27 @@ class Test_GenomicPositionData:
         with pytest.raises(ValueError):
             genomic_position_data.heatmap(min_values=1, data_type="FAKE")
 
+    def test_reads_graph(self, set_up_genomic_position_data, mocker):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_px = mocker.patch("pyllelic.visualization.px")
+        mocked_sp = mocker.patch("pyllelic.visualization.sp")
+
+        genomic_position_data.reads_graph()
+
+        mocked_px.bar.assert_called()
+        mocked_sp.make_subplots.assert_called_once()
+
+    def test_reads_graph_cell_lines(self, set_up_genomic_position_data, mocker):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_px = mocker.patch("pyllelic.visualization.px")
+        mocked_sp = mocker.patch("pyllelic.visualization.sp")
+        CELL_LINES = ["test.bam"]
+
+        genomic_position_data.reads_graph(cell_lines=CELL_LINES)
+
+        mocked_px.bar.assert_called()
+        mocked_sp.make_subplots.assert_called_once()
+
     def test_summarize_allelelic_data(self, set_up_genomic_position_data):
         _, genomic_position_data = set_up_genomic_position_data
         EXPECTED = pd.DataFrame(
@@ -439,18 +471,26 @@ class Test_GenomicPositionData:
         with np.testing.suppress_warnings() as sup:  # ignore degrees of freedom warning
             sup.filter(RuntimeWarning, "Degrees of freedom")
             sup.filter(module=np.ma.core)
-            actual = genomic_position_data.summarize_allelic_data()
+            CELL_LINES = ["test.bam"]
+            actual1 = genomic_position_data.summarize_allelic_data(
+                cell_lines=CELL_LINES
+            )
+            actual2 = genomic_position_data.summarize_allelic_data()
 
-        pd.testing.assert_frame_equal(EXPECTED, actual)
+        pd.testing.assert_frame_equal(EXPECTED, actual1)
+        pd.testing.assert_frame_equal(EXPECTED, actual2)
 
-    # def test_sig_methylation_differences(self, set_up_genomic_position_data, mocker):
-    #     _, genomic_position_data = set_up_genomic_position_data
-    #     mocked_go = mocker.patch("pyllelic.visualization.go")
+    def test_sig_methylation_differences(self, set_up_genomic_position_data, mocker):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_go = mocker.patch("pyllelic.visualization.go")
 
-    #     genomic_position_data.sig_methylation_differences()
+        with np.testing.suppress_warnings() as sup:  # ignore degrees of freedom warning
+            sup.filter(RuntimeWarning, "Degrees of freedom")
+            sup.filter(module=np.ma.core)
+            genomic_position_data.sig_methylation_differences()
 
-    #     mocked_go.Figure.assert_called_once()
-    #     mocked_go.Bar.assert_called_once()
+            mocked_go.Figure.assert_called_once()
+            mocked_go.Bar.assert_called_once()
 
     def test_anderson_darling_test_with_values(self, set_up_genomic_position_data):
         _, genomic_position_data = set_up_genomic_position_data
@@ -559,73 +599,3 @@ class Test_GenomicPositionData:
         EXPECTED_TRUNCATED_DIFF = TEST_DIFFS.dropna(how="all")
         actual = pyllelic.GenomicPositionData._truncate_diffs(TEST_DIFFS)
         pd.testing.assert_frame_equal(actual, EXPECTED_TRUNCATED_DIFF)
-
-
-# def test_return_individual_data():
-#     """Check whether the expected and result DataFrames are identical."""
-#     in_pos = ["1", "2", "3"]
-#     in_cell = ["TEST1", "TEST2", "TEST3"]
-#     result = pyllelic.return_individual_data(
-#         dict_of_dfs=SAMPLE_DICT_OF_DFS, positions=in_pos, cell_types=in_cell
-#     )
-#     print(result.to_markdown())
-
-#     intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
-
-#     expected = intermediate.astype("object")
-
-#     pd.testing.assert_frame_equal(result, expected)
-
-
-# def test_return_read_values():
-#     """Check whether returned fractional methylation list is correct."""
-#     in_pos = "1"
-#     in_key = "TEST1"
-#     in_min_reads = 1
-#     in_min_sites = 1
-
-#     expected = [
-#         1.0,
-#         1.0,
-#         1.0,
-#         2 / 3,
-#         2 / 3,
-#         2 / 3,
-#     ]
-
-#     result = pyllelic.return_read_values(
-#         pos=in_pos,
-#         key=in_key,
-#         dict_of_dfs=SAMPLE_DICT_OF_DFS,
-#         min_reads=in_min_reads,
-#         min_sites=in_min_sites,
-#     )
-
-#     assert result == expected
-
-
-# def test_get_str_values():
-#     TEST_DATAFRAME = SAMPLE_DICT_OF_DFS.get("TEST1")
-#     TEST_POSITION = "1"
-#     EXPECTED = pd.Series(["111", "111", "111", "011", "011", "011"], name="1")
-#     actual = pyllelic.get_str_values(TEST_DATAFRAME, TEST_POSITION)
-
-#     pd.testing.assert_series_equal(EXPECTED, actual)
-
-
-# def test_find_diffs():
-#     """Check whether the expected and result DataFrames are identical."""
-#     means = EXPECTED_INTERMEDIATE_MEANS
-#     modes = EXPECTED_INTERMEDIATE_MODES
-
-#     expected = EXPECTED_INTERMEDIATE_DIFFS
-
-#     result = pyllelic.find_diffs(means, modes)
-
-#     pd.testing.assert_frame_equal(result, expected)
-
-
-# def test_truncate_diffs():
-#     EXPECTED = EXPECTED_INTERMEDIATE_DIFFS.dropna(how="all")
-#     actual = pyllelic.truncate_diffs(EXPECTED_INTERMEDIATE_DIFFS)
-#     pd.testing.assert_frame_equal(EXPECTED, actual)

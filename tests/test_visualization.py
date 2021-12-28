@@ -12,22 +12,23 @@ from inputs import EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
 import pyllelic.visualization as viz  # noqa  # pylint: disable=unused-import
 
 
+TEST_INDIVIDUAL_DATA = pd.DataFrame.from_dict(
+    {
+        "cellLine": ["1", "2"],
+        "position": ["1", "2"],
+        "ad_stat": [0, 1],
+        "p_crit": [1, 2],
+        "diff": [1, 2],
+        "raw": [1, 2],
+    }
+).astype("object")
+
+
 def test__create_heatmap(mocker):
     mocked_go = mocker.patch("pyllelic.visualization.go")
-    intermediate = pd.DataFrame.from_dict(
-        {
-            "cellLine": ["1", "2"],
-            "position": ["1", "2"],
-            "ad_stat": [0, 1],
-            "p_crit": [1, 2],
-            "diff": [1, 2],
-            "raw": [1, 2],
-        }
-    )
-    TEST_DATA = intermediate.astype("object")
 
     _ = viz._create_heatmap(
-        TEST_DATA,
+        TEST_INDIVIDUAL_DATA,
         min_values=1,
         height=600,
         width=600,
@@ -60,19 +61,8 @@ def test__create_histogram(mocker):
 
 def test__create_methylation_diffs_bar_graph(mocker):
     mocked_go = mocker.patch("pyllelic.visualization.go")
-    intermediate = pd.DataFrame.from_dict(
-        {
-            "cellLine": ["1", "2"],
-            "position": ["1", "2"],
-            "ad_stat": [0, 1],
-            "p_crit": [1, 2],
-            "diff": [1, 2],
-            "raw": [1, 2],
-        }
-    )
-    TEST_DATA = intermediate.astype("object")
 
-    _ = viz._create_methylation_diffs_bar_graph(TEST_DATA)
+    _ = viz._create_methylation_diffs_bar_graph(TEST_INDIVIDUAL_DATA)
 
     mocked_go.Figure.assert_called_once()
     mocked_go.Bar.assert_called_once()
