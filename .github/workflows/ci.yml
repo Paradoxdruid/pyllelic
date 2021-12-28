@@ -56,7 +56,7 @@ jobs:
         id: cache
 
       - name: Update environment
-        run: mamba env update -n my-env -f environment.yml && mamba env install -n my-env pytest pytest-mock requests-mock
+        run: mamba env update -n my-env -f environment.yml && mamba install -n my-env pytest pytest-mock requests-mock
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Run tests
