@@ -36,10 +36,19 @@ pyllelic.quma module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+pyllelic.visualization module
+-------------------------------
 
-.. automodule:: pyllelic
+.. automodule:: pyllelic.visualization
+   :members:
+   :undoc-members:
+   :private-members:
+   :show-inheritance:
+
+.. Module contents
+.. ---------------
+
+.. .. automodule:: pyllelic
    :members:
    :undoc-members:
    :show-inheritance:

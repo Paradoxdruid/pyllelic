@@ -82,8 +82,8 @@ python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
     from pyllelic import pyllelic
 
     config = pyllelic.configure(  # Specify file and directory locations
-        base_path="/Users/abonham/documents/test_allelic/",
-        prom_file="TERT-promoter-genomic-sequence.txt",
+        base_path="/home/jovyan/assets/",
+        prom_file="tert_genome.txt",
         prom_start="1293200",
         prom_end="1296000",
         chrom="5",

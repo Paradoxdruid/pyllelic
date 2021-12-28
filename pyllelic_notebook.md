@@ -122,13 +122,12 @@ from pyllelic import pyllelic
 
 ```python
 config = pyllelic.configure(
-    base_path="/home/andrew/allellic/",  # Windows WSL set-up
-    #     base_path="/Users/abonham/documents/test_allelic/",  # OSX setup
-    prom_file="TERT-promoter-genomic-sequence.txt",
+    base_path="/home/jovyan/assets/",
+    prom_file="tert_genome.txt",
     prom_start="1293200",
     prom_end="1296000",
     chrom="5",
-    offset=1298163,
+    offset=1293000,
 )
 ```
 

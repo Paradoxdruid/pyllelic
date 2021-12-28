@@ -129,12 +129,12 @@ Example exploratory use in jupyter notebook
        from pyllelic import pyllelic
 
        config = pyllelic.configure(  # Specify file and directory locations
-           base_path="/Users/abonham/documents/test_allelic/",
-           prom_file="TERT-promoter-genomic-sequence.txt",
+           base_path="/home/jovyan/assets/",
+           prom_file="tert_genome.txt",
            prom_start="1293200",
            prom_end="1296000",
            chrom="5",
-           offset=1298163,
+           offset=1293000,
        )
 
        files_set = pyllelic.make_list_of_bam_files(config)  # finds bam files
