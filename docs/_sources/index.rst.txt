@@ -31,6 +31,12 @@ Pyllelic documention is available at
 `pyllelic_notebook.ipynb <https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.md>`_
 for an interactive demonstration.
 
+.. raw:: html
+
+  <p align="center">
+  <img src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_demo.gif?raw=true" alt="pyllelic demo gif">
+  </p>
+
 Dependencies and Installation
 =============================
 

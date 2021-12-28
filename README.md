@@ -4,21 +4,23 @@
 
 [![PyPI](https://img.shields.io/pypi/v/pyllelic?color=success)](https://pypi.org/project/pyllelic/) [![Anaconda-Server Badge](https://anaconda.org/paradoxdruid/pyllelic/badges/version.svg)](https://anaconda.org/paradoxdruid/pyllelic) ![GitHub](https://img.shields.io/github/license/Paradoxdruid/fealden)
 
+<img align="left" src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_logo.png?raw=true" width="100" height="100">
+
+**pyllelic**: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.
+
+Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/>** and see [`pyllelic_notebook.ipynb`](https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.md) for an interactive demonstration.
+
 ## Quickstart
 
 Run an interactive sample pyllelic environment in your web browser using [`mybinder.org`](https://mybinder.org):
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Paradoxdruid/pyllelic/HEAD?filepath=pyllelic_binder_example.ipynb)
 
-<p align="right">
-  ⭐ &nbsp;&nbsp;the project to show your appreciation. :arrow_upper_right:
+## pyllelic in action
+
+<p align="center">
+<img src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_demo.gif?raw=true" alt="pyllelic demo gif">
 </p>
-
-<img align="left" src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_logo.png?raw=true" width="100" height="100">
-
-**pyllelic**: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.
-
-Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/>** and see [`pyllelic_notebook.ipynb`](https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.md) for an interactive demonstration.
 
 ## Dependencies and Installation
 
