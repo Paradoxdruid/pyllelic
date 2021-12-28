@@ -56,7 +56,7 @@ jobs:
         id: cache
 
       - name: Update environment
-        run: mamba env update -n my-env -f environment.yml && mamba install -n my-env pytest pytest-mock requests-mock
+        run: mamba env update -n my-env -f environment.yml && mamba install -n my-env pytest pytest-mock requests-mock && mamba install -n my-env -c bioconda openssl=1.0
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Run tests
