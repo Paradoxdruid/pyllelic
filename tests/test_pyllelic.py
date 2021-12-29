@@ -86,7 +86,7 @@ def setup_config(my_path):
     TEST_START = "1293200"
     TEST_END = "1296000"
     TEST_CHR = "5"
-    TEST_OFFSET = 1298163
+    TEST_OFFSET = 1293000
     config = pyllelic.configure(
         base_path=my_path,
         prom_file=prom_file,
@@ -184,17 +184,8 @@ class Test_BamOutput:
 
     def test_write_bam_output(self, set_up_bam_output):
         bam_output = set_up_bam_output
-        # print(f"Initial bam values:\n{bam_output.values}")
         bam_output._write_bam_output(bam_output.positions, EXPECTED_STACKED_BAM)
-        # print(f"Revised bam values:\n{bam_output.values}")
         assert bam_output.values == EXPECTED_WRITE_DF_OUTPUT
-
-    # @mock.patch("pyllelic.pyllelic.pysam")
-    # def test_pysam_index(self, mock_pysam, set_up_bam_output):
-    #     bam_output = set_up_bam_output
-    #     TEST_PATH = Path().cwd()
-    #     bam_output._pysam_index(TEST_PATH)
-    #     mock_pysam.index.assert_called_once_with(os.fspath(TEST_PATH))
 
     def test__genome_range(self, set_up_bam_output):
         bam_output = set_up_bam_output
@@ -424,26 +415,13 @@ class Test_GenomicPositionData:
         _, genomic_position_data = set_up_genomic_position_data
         EXPECTED = pd.DataFrame(
             {
-                "cellLine": {0: "test.bam", 1: "test.bam"},
-                "position": {0: "1294316", 1: "1295770"},
-                "ad_stat": {0: 10.532004907486929, 1: 6.782800511425162},
-                "p_crit": {0: 0.944, 1: 0.957},
-                "diff": {0: 5.551115123125783e-17, 1: -0.052631578947368474},
+                "cellLine": {0: "test.bam"},
+                "position": {0: "1295321"},
+                "ad_stat": {0: 15.372825521573787},
+                "p_crit": {0: 1.009},
+                "diff": {0: -0.024390243902439046},
                 "raw": {
                     0: [
-                        0.3333333333333333,
-                        0.3333333333333333,
-                        0.3333333333333333,
-                        0.3333333333333333,
-                        0.3333333333333333,
-                        0.3333333333333333,
-                        0.3333333333333333,
-                        0.3333333333333333,
-                        0.3333333333333333,
-                        0.3333333333333333,
-                        0.3333333333333333,
-                    ],
-                    1: [
                         0.0,
                         1.0,
                         1.0,
@@ -463,7 +441,29 @@ class Test_GenomicPositionData:
                         1.0,
                         1.0,
                         1.0,
-                    ],
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                    ]
                 },
             }
         )
