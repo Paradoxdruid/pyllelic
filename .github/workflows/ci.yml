@@ -1,13 +1,13 @@
 name: ci
 
 on:
-  push:
-    branches:
-      - '*'
+  # push:
+  #   branches:
+  #     - '*'
 
-  pull_request:
-    branches:
-      - '*'
+  # pull_request:
+  #   branches:
+  #     - '*'
 
   # schedule:
   #   - cron: '0 0 * * *'

@@ -11,4 +11,3 @@ dependencies:
   - ipywidgets
   - notebook
   - numpy=1.20.3
-  - openssl=1.0
