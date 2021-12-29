@@ -1,13 +1,13 @@
 name: ci
 
 on:
-  # push:
-  #   branches:
-  #     - '*'
+  push:
+    branches:
+      - '*'
 
-  # pull_request:
-  #   branches:
-  #     - '*'
+  pull_request:
+    branches:
+      - '*'
 
   # schedule:
   #   - cron: '0 0 * * *'
@@ -56,7 +56,7 @@ jobs:
         id: cache
 
       - name: Update environment
-        run: mamba env update -n my-env -f environment.yml && mamba install -n my-env pytest pytest-mock requests-mock
+        run: mamba env update -n my-env -f environment.yml && mamba install -n my-env pytest pytest-mock requests-mock && mamba install -n my-env -c bioconda "samtools>=1.11" "bcftools>=1.11" "htslib>=1.11"
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Run tests
