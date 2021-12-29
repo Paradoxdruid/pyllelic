@@ -1,6 +1,6 @@
 # pyllelic
 
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Paradoxdruid/pyllelic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Paradoxdruid/pyllelic/context:python)  [![CodeFactor](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic/badge)](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic)  [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c8c86fe25a644cb69b8b6e789ca1c18f)](https://www.codacy.com/gh/Paradoxdruid/pyllelic/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Paradoxdruid/pyllelic&amp;utm_campaign=Badge_Grade)  [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/c8c86fe25a644cb69b8b6e789ca1c18f)](https://www.codacy.com/gh/Paradoxdruid/pyllelic/dashboard)  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)  
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Paradoxdruid/pyllelic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Paradoxdruid/pyllelic/context:python)  [![CodeFactor](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic/badge)](https://www.codefactor.io/repository/github/paradoxdruid/pyllelic)  [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c8c86fe25a644cb69b8b6e789ca1c18f)](https://www.codacy.com/gh/Paradoxdruid/pyllelic/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Paradoxdruid/pyllelic&amp;utm_campaign=Badge_Grade)  [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/c8c86fe25a644cb69b8b6e789ca1c18f)](https://www.codacy.com/gh/Paradoxdruid/pyllelic/dashboard)  ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Paradoxdruid/pyllelic/ci)  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)  
 
 [![PyPI](https://img.shields.io/pypi/v/pyllelic?color=success)](https://pypi.org/project/pyllelic/) [![Anaconda-Server Badge](https://anaconda.org/paradoxdruid/pyllelic/badges/version.svg)](https://anaconda.org/paradoxdruid/pyllelic) ![GitHub](https://img.shields.io/github/license/Paradoxdruid/fealden)
 
@@ -80,6 +80,33 @@ python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
 
 ## Example exploratory use in jupyter notebook
 
+Set up files:
+
+```python
+  from pyllelic import process
+  from pathlib import Path
+
+  # Retrieve promoter genomic sequence of region to analyze
+  process.retrieve_promoter_seq("tert_genome.txt", chrom: "chr5", start: 1293000, end: 1296000)
+
+  # Download a reference genome and bisulfite sequencing data
+  # Genome data from, e.g. http://hgdownload.soe.ucsc.edu/goldenPath/hg19
+  # Fastq data from, e.g. http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeHaibMethylRrbs/
+  genome = Path("/{your_directory}/{genome_file_directory}")
+  fastq = Path("/{your_directory}/{your_fastq_file.fastq.gz}")
+
+  # Use bismark tool to prepare bisulfite genome and align fastq to bam file
+  process.prepare_genome(genome) # can optionally give path to bowtie2 if not in PATH
+  process.bismark(genome, fastq)
+
+  # Sort and index the resultant bam file
+  bamfile = Path("/{your_directory}/{bam_filename}.bam")
+  process.pysam_sort(bamfile)
+  process.pysam_index(bamfile / parent / bamfile.stem / "_sorted.bam")
+```
+
+Run pyllelic:
+
 ```python
     from pyllelic import pyllelic
 
@@ -89,7 +116,7 @@ python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
         prom_start="1293200",
         prom_end="1296000",
         chrom="5",
-        offset=1293000, # start position of retrieved promoter sequence
+        offset=1293000,  # start position of retrieved promoter sequence
     )
 
     files_set = pyllelic.make_list_of_bam_files(config)  # finds bam files
@@ -118,6 +145,8 @@ python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
     data.histogram("CELL_LINE", "POSITION")  # visualize data for a point
 
     data.heatmap(min_values=1)  # methylation level heatmap
+
+    data.reads_graph()  # individual methylated / unmethylated reads graph
 
     data.quma_results["CELL_LINE"]  # see summary data for a cell line
 ```

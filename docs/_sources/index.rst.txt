@@ -129,6 +129,34 @@ Quickstart
 ==========
 
 Example exploratory use in jupyter notebook
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Set up files:
+
+.. code:: python
+
+       from pyllelic import process
+       from pathlib import Path
+
+       # Retrieve promoter genomic sequence of region to analyze
+       process.retrieve_promoter_seq("tert_genome.txt", chrom: "chr5", start: 1293000, end: 1296000)
+
+       # Download a reference genome and bisulfite sequencing data
+       # Genome data from, e.g. http://hgdownload.soe.ucsc.edu/goldenPath/hg19
+       # Fastq data from, e.g. http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeHaibMethylRrbs/
+       genome = Path("/{your_directory}/{genome_file_directory}")
+       fastq = Path("/{your_directory}/{your_fastq_file.fastq.gz}")
+
+       # Use bismark tool to prepare bisulfite genome and align fastq to bam file
+       process.prepare_genome(genome) # can optionally give path to bowtie2 if not in PATH
+       process.bismark(genome, fastq)
+
+       # Sort and index the resultant bam file
+       bamfile = Path("/{your_directory}/{bam_filename}.bam")
+       process.pysam_sort(bamfile)
+       process.pysam_index(bamfile / parent / bamfile.stem / "_sorted.bam")
+
+Run pyllelic:
 
 .. code:: python
 
@@ -140,7 +168,7 @@ Example exploratory use in jupyter notebook
            prom_start="1293200",
            prom_end="1296000",
            chrom="5",
-           offset=1293000,
+           offset=1293000,  # start position of retrieved promoter sequence
        )
 
        files_set = pyllelic.make_list_of_bam_files(config)  # finds bam files
@@ -169,6 +197,8 @@ Example exploratory use in jupyter notebook
        data.histogram("CELL_LINE", "POSITION")  # visualize data for a point
 
        data.heatmap(min_values=1)  # methylation level heatmap
+
+       data.reads_graph()  # individual methylated / unmethylated reads graph
 
        data.quma_results["CELL_LINE"]  # see summary data for a cell line
 
