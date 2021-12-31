@@ -195,7 +195,7 @@ data.individual_data.loc[data.means.index[0], data.means.columns[0]]
 ### Save entire object as pickle
 
 ```python
-# data.save_pickle("test_data.pickle")
+# data.save_pickle("test_data_20211229.pickle")
 ```
 
 ### Save Quma Results to excel
@@ -261,19 +261,26 @@ data.individual_data.head()
 ### Histograms of reads at a cell line and genomic position
 
 ```python
-# CELL = data.means.index[13]
+CELL = data.means.index[13]
 # POS = data.means.columns[15]
-# data.histogram(CELL, POS)
+POS = "1294946"
+data.histogram(CELL, POS)
 ```
 
+<!-- #region heading_collapsed=true -->
 ### Heatmap of mean methylation values
+<!-- #endregion -->
 
-```python
-data.heatmap(min_values=1, width=800, height=200, data_type="diffs")
+```python hidden=true
+data.heatmap(min_values=70, width=800, height=2000, data_type="means")
 ```
 
-```python
-data.reads_graph()
+```python hidden=true
+lines = data.means.index[:10].to_list()
+```
+
+```python hidden=true
+data.reads_graph(cell_lines=lines)
 ```
 
 ### Bar chart of significant methylation differences
@@ -283,6 +290,58 @@ data.sig_methylation_differences()
 ```
 
 ### Find values with a methylation difference above a threshold
+
+```python
+import plotly.express as px
+```
+
+```python
+data.diffs
+```
+
+```python
+data.means[:10].mean()
+```
+
+```python
+px.density_heatmap(data.diffs[120:140].T) 
+```
+
+```python
+px.violin(data.diffs[120:130].T, points=False)
+```
+
+```python
+px.box(data.diffs[120:140].T)
+```
+
+```python
+px.scatter_matrix(data.diffs[120:125].T)
+```
+
+```python
+data.diffs.mean(axis=1)
+```
+
+```python
+
+```
+
+```python
+
+```
+
+```python
+
+```
+
+```python
+
+```
+
+```python
+
+```
 
 ```python
 # import plotly.express as px
