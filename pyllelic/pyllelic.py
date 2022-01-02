@@ -11,11 +11,11 @@ from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, TypeVar, Tuple, Union
 
 import numpy as np
-import numpy.typing as npt
 import pandas as pd
 import plotly.graph_objects as go
 import pysam
 
+from numpy.typing import ArrayLike
 from scipy import stats
 from tqdm.auto import tqdm
 
@@ -37,8 +37,8 @@ class AD_stats(NamedTuple):
     """Helper class for NamedTuple results from anderson_darling_test"""
 
     sig: bool
-    stat: npt.ArrayLike
-    crits: List[npt.ArrayLike]
+    stat: ArrayLike
+    crits: List[ArrayLike]
 
 
 class BamOutput:
@@ -723,7 +723,7 @@ class GenomicPositionData:
             data = self.individual_data
 
         np.seterr(divide="ignore", invalid="ignore")  # ignore divide-by-zero errors
-        sig_dict: Dict[str, List[npt.ArrayLike]] = {
+        sig_dict: Dict[str, List[ArrayLike]] = {
             "cellLine": [],
             "position": [],
             "ad_stat": [],
@@ -759,8 +759,8 @@ class GenomicPositionData:
         """
 
         if np.all(pd.notnull(raw_list)):
-            stat: npt.ArrayLike
-            crits: List[npt.ArrayLike]
+            stat: ArrayLike
+            crits: List[ArrayLike]
             stat, crits, _ = stats.anderson(raw_list)
             is_sig: bool = bool(stat > crits[4])  # type: ignore
             return AD_stats(is_sig, stat, crits)
@@ -821,3 +821,16 @@ def make_list_of_bam_files(config: Config) -> List[str]:
         list[str]: list of files
     """
     return [f.name for f in config.analysis_directory.iterdir() if f.suffix == ".bam"]
+
+
+def pyllelic(config: Config, files_set: List[str]) -> GPD:
+    """Wrapper to call pyllelic routines.
+
+    Args:
+        config (Config): pyllelic config object.
+        files_set (List[str]): list of bam files to analyze.
+
+    Returns:
+        GPD: GenomicPositionData pyllelic object.
+    """
+    return GenomicPositionData(config=config, files_set=files_set)

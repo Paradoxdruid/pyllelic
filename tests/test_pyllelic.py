@@ -151,6 +151,22 @@ def test_make_list_of_bam_files(tmp_path):
     assert EXPECTED == actual
 
 
+def test_pyllelic(tmp_path_factory):
+    tmp_path = tmp_path_factory.mktemp("data")
+    p, _ = setup_bam_files(tmp_path)
+    config = setup_config(p)
+    INPUT_BAM_LIST = ["fh_test.bam"]
+    genomic_position_data = pyllelic.pyllelic(config=config, files_set=INPUT_BAM_LIST)
+    positions = []
+    for each in EXPECTED_BAM_OUTPUT_POSITIONS:
+        positions.append(each)
+
+    EXPECTED_POSITIONS = sorted(set(positions))
+
+    assert genomic_position_data.positions == EXPECTED_POSITIONS
+    assert genomic_position_data.cell_types == [str(p / "test" / "fh_test.bam")]
+
+
 # Tests of main classes
 
 
