@@ -8,8 +8,9 @@ import signal
 from multiprocessing import Pool, cpu_count
 from multiprocessing.pool import AsyncResult
 from pathlib import Path
-from typing import Dict, List, NamedTuple, Optional, TypeVar, Tuple, Union
+from typing import Dict, List, NamedTuple, Optional, Tuple, Union
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -22,8 +23,6 @@ from tqdm.auto import tqdm
 from . import quma
 from . import visualization as viz
 from .config import Config
-
-GPD = TypeVar("GPD", bound="GenomicPositionData")
 
 # Initialized multiprocessing limits
 NUM_THREADS = cpu_count() - 1
@@ -411,14 +410,14 @@ class GenomicPositionData:
             pickle.dump(self, output_file)
 
     @staticmethod
-    def from_pickle(filename: str) -> GPD:
+    def from_pickle(filename: str) -> "GenomicPositionData":
         """Read pickled GenomicPositionData back to an object.
 
         Args:
             filename (str): filename to read pickle
 
         Returns:
-            GPD: GenomicPositionData object
+            GenomicPositionData: GenomicPositionData object
         """
 
         with open(filename, "rb") as input_file:
@@ -611,11 +610,22 @@ class GenomicPositionData:
         Args:
             cell_line (str): name of cell line
             position (str): genomic position
+
+        Raises:
+            ValueError: invalid plotting backend
         """
         data = self.individual_data
+        backend = self.config.viz_backend
 
-        fig: go.Figure = viz._create_histogram(data, cell_line, position)
-        fig.show()
+        if backend == "plotly":
+            fig: go.Figure = viz._create_histogram(data, cell_line, position, backend)
+            fig.show()
+            return
+        if backend == "matplotlib":
+            _: plt.Figure = viz._create_histogram(data, cell_line, position, backend)
+            plt.show()
+            return
+        raise ValueError("Invalid plotting backend")
 
     def reads_graph(self, cell_lines: Optional[List[str]] = None) -> None:
         """Display a graph figure showing methylation of reads across cell lines.
@@ -654,6 +664,7 @@ class GenomicPositionData:
 
         Raises:
             ValueError: invalid data type
+            ValueError: invalid plotting backend
         """
 
         title_type: str
@@ -673,10 +684,23 @@ class GenomicPositionData:
         if cell_lines:
             data = data[data.index.isin(cell_lines)]
 
-        fig: go.Figure = viz._create_heatmap(
-            data, min_values, width, height, title_type
-        )
-        fig.show()
+        backend = self.config.viz_backend
+
+        if backend == "plotly":
+            fig: go.Figure = viz._create_heatmap(
+                data, min_values, width, height, title_type, backend
+            )
+            fig.show()
+            return
+
+        if backend == "matplotlib":
+            _: plt.Figure = viz._create_heatmap(
+                data, min_values, width, height, title_type, backend
+            )
+            plt.show()
+            return
+
+        raise ValueError("Invalid plotting backend")
 
     def sig_methylation_differences(
         self, cell_lines: Optional[List[str]] = None
@@ -780,6 +804,7 @@ def configure(
     prom_end: str,
     chrom: str,
     offset: int,
+    viz_backend: str = "plotly",
 ) -> Config:
     """Helper method to set up all our environmental variables, such as for testing.
 
@@ -791,6 +816,7 @@ def configure(
         prom_end (str): final position to analyze in promoter region
         chrom (str): chromosome promoter is located on
         offset (int): genomic position of promoter to offset reads
+        viz_backend (str): which plotting backend to use, default plotly
 
     Returns:
         Config: configuration dataclass instance.
@@ -806,6 +832,7 @@ def configure(
         promoter_end=prom_end,
         chromosome=chrom,
         offset=offset,
+        viz_backend=viz_backend,
     )
 
     return config
@@ -823,7 +850,7 @@ def make_list_of_bam_files(config: Config) -> List[str]:
     return [f.name for f in config.analysis_directory.iterdir() if f.suffix == ".bam"]
 
 
-def pyllelic(config: Config, files_set: List[str]) -> GPD:
+def pyllelic(config: Config, files_set: List[str]) -> GenomicPositionData:
     """Wrapper to call pyllelic routines.
 
     Args:
@@ -831,6 +858,6 @@ def pyllelic(config: Config, files_set: List[str]) -> GPD:
         files_set (List[str]): list of bam files to analyze.
 
     Returns:
-        GPD: GenomicPositionData pyllelic object.
+        GenomicPositionData: GenomicPositionData pyllelic object.
     """
     return GenomicPositionData(config=config, files_set=files_set)
