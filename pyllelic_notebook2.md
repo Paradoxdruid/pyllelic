@@ -137,6 +137,7 @@ config = pyllelic.configure(
     prom_end="1296000",
     chrom="5",
     offset=1293000,
+    viz_backend="matplotlib"
 )
 ```
 
@@ -269,7 +270,7 @@ data.individual_data.head()
 ### Histograms of reads at a cell line and genomic position
 
 ```python
-CELL = data.means.index[13]
+CELL = data.means.index[1]
 # POS = data.means.columns[15]
 POS = "1294946"
 data.histogram(CELL, POS)
@@ -297,6 +298,10 @@ import pandas as pd
 ```
 
 ### Heatmap
+
+```python
+data.heatmap(min_values=1, height=400)
+```
 
 ```python
 df = data.means.apply(pd.to_numeric)

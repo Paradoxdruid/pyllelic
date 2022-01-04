@@ -363,6 +363,28 @@ class Test_GenomicPositionData:
         mocked_go.Figure.assert_called_once()
         mocked_go.Histogram.assert_called_once()
 
+    def test_histogram_mpl(self, set_up_genomic_position_data, mocker):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_mpl = mocker.patch("pyllelic.visualization.sns")
+        TEST_POSITION = genomic_position_data.positions[0]
+        TEST_CELL_LINE = genomic_position_data.means.index[0]
+
+        genomic_position_data.config.viz_backend = "matplotlib"
+        genomic_position_data.histogram(TEST_CELL_LINE, TEST_POSITION)
+
+        mocked_mpl.histplot.assert_called_once()
+        genomic_position_data.config.viz_backend = "plotly"
+
+    def test_histogram_error(self, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+        TEST_POSITION = genomic_position_data.positions[0]
+        TEST_CELL_LINE = genomic_position_data.means.index[0]
+
+        with pytest.raises(ValueError):
+            genomic_position_data.config.viz_backend = "other"
+            genomic_position_data.histogram(TEST_CELL_LINE, TEST_POSITION)
+        genomic_position_data.config.viz_backend = "plotly"
+
     def test_heatmap(self, set_up_genomic_position_data, mocker):
         _, genomic_position_data = set_up_genomic_position_data
         mocked_go = mocker.patch("pyllelic.visualization.go")
@@ -371,6 +393,24 @@ class Test_GenomicPositionData:
 
         mocked_go.Figure.assert_called_once()
         mocked_go.Heatmap.assert_called_once()
+
+    def test_heatmap_mpl(self, set_up_genomic_position_data, mocker):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_mpl = mocker.patch("pyllelic.visualization.sns")
+
+        genomic_position_data.config.viz_backend = "matplotlib"
+        genomic_position_data.heatmap(min_values=1)
+
+        mocked_mpl.heatmap.assert_called_once()
+        genomic_position_data.config.viz_backend = "plotly"
+
+    def test_heatmap_error(self, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+
+        with pytest.raises(ValueError):
+            genomic_position_data.config.viz_backend = "other"
+            genomic_position_data.heatmap(min_values=1)
+        genomic_position_data.config.viz_backend = "plotly"
 
     def test_heatmap_cell_lines(self, set_up_genomic_position_data, mocker):
         _, genomic_position_data = set_up_genomic_position_data
