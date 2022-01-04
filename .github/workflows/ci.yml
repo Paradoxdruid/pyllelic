@@ -62,14 +62,10 @@ jobs:
           mamba install -n my-env -c bioconda "samtools>=1.11" "bcftools>=1.11" "htslib>=1.11"
         if: steps.cache.outputs.cache-hit != 'true'
 
-      - name: Run tests
-        shell: bash -l {0}
-        run: pytest ./tests
-
-      - name: Code coverage
+      - name: Coverage and tests
         shell: bash -l {0}
         run: coverage run -m pytest && coverage xml
-      
+
       - name: Run codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
