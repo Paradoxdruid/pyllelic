@@ -603,19 +603,23 @@ class GenomicPositionData:
             index=True,
         )
 
-    def histogram(self, cell_line: str, position: str) -> None:
+    def histogram(
+        self, cell_line: str, position: str, backend: Optional[str] = None
+    ) -> None:
         """Display a graph figure showing fractional methylation in
         a given cell line at a given site.
 
         Args:
             cell_line (str): name of cell line
             position (str): genomic position
+            backend (Optional[str]): plotting backend to override default
 
         Raises:
             ValueError: invalid plotting backend
         """
         data = self.individual_data
-        backend = self.config.viz_backend
+        if not backend:
+            backend = self.config.viz_backend
 
         if backend == "plotly":
             fig: go.Figure = viz._create_histogram(data, cell_line, position, backend)
@@ -627,21 +631,36 @@ class GenomicPositionData:
             return
         raise ValueError("Invalid plotting backend")
 
-    def reads_graph(self, cell_lines: Optional[List[str]] = None) -> None:
+    def reads_graph(
+        self, cell_lines: Optional[List[str]] = None, backend: Optional[str] = None
+    ) -> None:
         """Display a graph figure showing methylation of reads across cell lines.
 
         Args:
             cell_lines (Optional[List[str]]): set of cell lines to analyze,
-            defaults to all cell lines.
+                                            defaults to all cell lines.
+            backend (Optional[str]): plotting backend to override default
+
+        Raises:
+            ValueError: invalid plotting backend
         """
 
         data = self.individual_data
+        if not backend:
+            backend = self.config.viz_backend
 
         if cell_lines:
             data = data[data.index.isin(cell_lines)]
 
-        fig: go.Figure = viz._make_stacked_fig(data)
-        fig.show()
+        if backend == "plotly":
+            fig: go.Figure = viz._make_stacked_fig(data, backend)
+            fig.show()
+            return
+        if backend == "matplotlib":
+            _: plt.Figure = viz._make_stacked_fig(data, backend)
+            plt.show()
+            return
+        raise ValueError("Invalid plotting backend")
 
     def heatmap(
         self,
@@ -650,6 +669,7 @@ class GenomicPositionData:
         height: int = 2000,
         cell_lines: Optional[List[str]] = None,
         data_type: str = "means",
+        backend: Optional[str] = None,
     ) -> None:
         """Display a graph figure showing heatmap of mean methylation across
         cell lines.
@@ -661,6 +681,7 @@ class GenomicPositionData:
             cell_lines (Optional[List[str]]): set of cell lines to analyze,
             defaults to all cell lines.
             data_type (str): type of data to plot. Can to 'means', 'modes', or 'diffs'
+            backend (Optional[str]): plotting backend to override default
 
         Raises:
             ValueError: invalid data type
@@ -684,7 +705,8 @@ class GenomicPositionData:
         if cell_lines:
             data = data[data.index.isin(cell_lines)]
 
-        backend = self.config.viz_backend
+        if not backend:
+            backend = self.config.viz_backend
 
         if backend == "plotly":
             fig: go.Figure = viz._create_heatmap(
@@ -703,19 +725,35 @@ class GenomicPositionData:
         raise ValueError("Invalid plotting backend")
 
     def sig_methylation_differences(
-        self, cell_lines: Optional[List[str]] = None
+        self,
+        cell_lines: Optional[List[str]] = None,
+        backend: Optional[str] = None,
     ) -> None:
         """Display a graph figure showing a bar chart of significantly different
         mean / mode methylation across all or a subset of cell lines.
 
         Args:
             cell_lines (Optional[List[str]]): set of cell lines to analyze,
-            defaults to all cell lines.
+                                            defaults to all cell lines.
+            backend (Optional[str]): plotting backend to override default
+
+        Raises:
+            ValueError: invalid plotting backend
         """
         data = self.summarize_allelic_data(cell_lines)
 
-        fig: go.Figure = viz._create_methylation_diffs_bar_graph(data)
-        fig.show()
+        if not backend:
+            backend = self.config.viz_backend
+
+        if backend == "plotly":
+            fig: go.Figure = viz._create_methylation_diffs_bar_graph(data, backend)
+            fig.show()
+            return
+        if backend == "matplotlib":
+            _: plt.Figure = viz._create_methylation_diffs_bar_graph(data, backend)
+            plt.show()
+            return
+        raise ValueError("Invalid plotting backend")
 
     def generate_ad_stats(self) -> pd.DataFrame:
         """Generate Anderson-Darling normality statistics for an individual data df.

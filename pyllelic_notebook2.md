@@ -184,7 +184,11 @@ data.diffs.head()
 ```
 
 ```python
-data.histogram("JHOM1", "1295089")
+data.histogram("NCIH2171", "1293589")
+```
+
+```python
+data.reads_graph()
 ```
 
 ```python
@@ -421,6 +425,83 @@ fig.show()
 
 ```python
 lines = data.means.index[:20].to_list()
+```
+
+### Methylation bar graph
+
+```python
+data.sig_methylation_differences(backend="plotly")
+```
+
+```python
+
+```
+
+```python
+
+```
+
+```python
+sumn = data.summarize_allelic_data()
+```
+
+```python
+sumn
+```
+
+```python
+mine = sumn.pivot(index="position", columns="cellLine", values="ad_stat")
+mine = mine.dropna(axis=1, how="all").count(axis=1).to_frame()
+```
+
+```python
+mine
+```
+
+```python
+mine = mine.set_index(pd.to_numeric(mine.index, errors="coerce"))
+```
+
+```python
+
+```
+
+```python
+mine.plot(
+    kind="bar",
+    legend=False,
+    #             width=1,
+    #             stacked=True,
+    #             color=["white", "black"],
+    #             xticks=[],
+    #             title="",
+    #             yticks=[],
+    #             xlabel="",
+    #             ylabel="",
+    figsize=(12, 8),
+    xlim=(mine.index.min(), mine.index.max()),
+    #             ax=ax[i],
+)
+```
+
+```python
+
+```
+
+```python
+
+```
+
+```python
+
+```
+
+```python
+data.sig_methylation_differences()
+```
+
+```python
+
 ```
 
 ```python
