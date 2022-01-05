@@ -441,7 +441,7 @@ class GenomicPositionData:
                 values_list: List[float] = self._return_read_values(pos, key)
                 if values_list:
                     pos_means: float = float(np.mean(values_list))
-                else:  # No data or data doesn't meet minimums for analysis
+                else:  # pragma: no cover
                     pos_means = np.nan
 
                 working_df.at[key, pos] = pos_means
@@ -467,7 +467,7 @@ class GenomicPositionData:
 
                 if values_list:
                     pos_modes: float = stats.mode(values_list)[0][0]
-                else:  # No data or data doesn't meet minimums for analysis
+                else:  # pragma: no cover
                     pos_modes = np.nan
 
                 working_df.at[key, pos] = pos_modes
@@ -491,7 +491,7 @@ class GenomicPositionData:
                 values_list: List[float] = self._return_read_values(pos, key)
                 if values_list:
                     data_for_df: Union[List[float], float] = values_list
-                else:  # No data or data doesn't meet minimums for analysis
+                else:  # pragma: no cover
                     data_for_df = np.nan
 
                 working_df.at[key, pos] = data_for_df

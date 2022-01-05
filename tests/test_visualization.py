@@ -118,10 +118,27 @@ def test__create_histogram_backend_error():
 def test__create_methylation_diffs_bar_graph(mocker):
     mocked_go = mocker.patch("pyllelic.visualization.go")
 
-    _ = viz._create_methylation_diffs_bar_graph(TEST_INDIVIDUAL_DATA)
+    _ = viz._create_methylation_diffs_bar_graph(TEST_INDIVIDUAL_DATA, backend="plotly")
 
     mocked_go.Figure.assert_called_once()
     mocked_go.Bar.assert_called_once()
+
+
+def test__create_methylation_diffs_bar_graph_mpl(mocker):
+    mocked_mpl = mocker.patch("pyllelic.visualization.pd.DataFrame.plot")
+
+    _ = viz._create_methylation_diffs_bar_graph(
+        TEST_INDIVIDUAL_DATA, backend="matplotlib"
+    )
+
+    mocked_mpl.assert_called_once()
+
+
+def test__create_methylation_diffs_bar_graph_invalid():
+    with pytest.raises(ValueError):
+        _ = viz._create_methylation_diffs_bar_graph(
+            TEST_INDIVIDUAL_DATA, backend="FAKE"
+        )
 
 
 def test__make_stacked_fig(mocker):
@@ -131,7 +148,28 @@ def test__make_stacked_fig(mocker):
     intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
     TEST_DATA = intermediate.astype("object")
 
-    _ = viz._make_stacked_fig(TEST_DATA)
+    _ = viz._make_stacked_fig(TEST_DATA, backend="plotly")
 
     mocked_px.bar.assert_called()
     mocked_sp.make_subplots.assert_called_once()
+
+
+def test__make_stacked_fig_mpl(mocker):
+    mocked_df_plot = mocker.patch("pyllelic.visualization.pd.DataFrame.plot")
+    mocked_mpl = mocker.patch("pyllelic.visualization.plt")
+    mocked_mpl.subplots.return_value = (mocker.MagicMock(), mocker.MagicMock())
+
+    intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
+    TEST_DATA = intermediate.astype("object")
+
+    _ = viz._make_stacked_fig(TEST_DATA, backend="matplotlib")
+
+    mocked_df_plot.assert_called()
+    mocked_mpl.subplots.assert_called()
+
+
+def test__make_stacked_fig_invalid():
+    intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
+    TEST_DATA = intermediate.astype("object")
+    with pytest.raises(ValueError):
+        _ = viz._make_stacked_fig(TEST_DATA, backend="FAKE")

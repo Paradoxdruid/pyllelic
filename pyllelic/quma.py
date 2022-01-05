@@ -397,7 +397,7 @@ class Quma:
         if right_end_index == 0:
             q_substring = q_matches[left_start_index:max_index]
             g_substring = g_matches[left_start_index:max_index]
-        else:
+        else:  # pragma: no cover
             q_substring = q_matches[left_start_index:-right_end_index]
             g_substring = g_matches[left_start_index:-right_end_index]
 
