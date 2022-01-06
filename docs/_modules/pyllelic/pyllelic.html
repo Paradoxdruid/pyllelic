@@ -172,22 +172,21 @@
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span><span class="p">,</span> <span class="n">cpu_count</span>
 <span class="kn">from</span> <span class="nn">multiprocessing.pool</span> <span class="kn">import</span> <span class="n">AsyncResult</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">numpy.typing</span> <span class="k">as</span> <span class="nn">npt</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
 <span class="kn">import</span> <span class="nn">pysam</span>
 
+<span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">ArrayLike</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
 <span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">quma</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">visualization</span> <span class="k">as</span> <span class="n">viz</span>
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">Config</span>
-
-<span class="n">GPD</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;GPD&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s2">&quot;GenomicPositionData&quot;</span><span class="p">)</span>
 
 <span class="c1"># Initialized multiprocessing limits</span>
 <span class="n">NUM_THREADS</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
@@ -201,8 +200,8 @@
     <span class="sd">&quot;&quot;&quot;Helper class for NamedTuple results from anderson_darling_test&quot;&quot;&quot;</span>
 
     <span class="n">sig</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="n">stat</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span>
-    <span class="n">crits</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">]</span></div>
+    <span class="n">stat</span><span class="p">:</span> <span class="n">ArrayLike</span>
+    <span class="n">crits</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="BamOutput"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.BamOutput">[docs]</a><span class="k">class</span> <span class="nc">BamOutput</span><span class="p">:</span>
@@ -575,14 +574,14 @@
             <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GenomicPositionData.from_pickle"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.from_pickle">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">from_pickle</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GPD</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">from_pickle</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;GenomicPositionData&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Read pickled GenomicPositionData back to an object.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            filename (str): filename to read pickle</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            GPD: GenomicPositionData object</span>
+<span class="sd">            GenomicPositionData: GenomicPositionData object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
@@ -606,7 +605,7 @@
                 <span class="n">values_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_read_values</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">values_list</span><span class="p">:</span>
                     <span class="n">pos_means</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">values_list</span><span class="p">))</span>
-                <span class="k">else</span><span class="p">:</span>  <span class="c1"># No data or data doesn&#39;t meet minimums for analysis</span>
+                <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
                     <span class="n">pos_means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
                 <span class="n">working_df</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos_means</span>
@@ -632,7 +631,7 @@
 
                 <span class="k">if</span> <span class="n">values_list</span><span class="p">:</span>
                     <span class="n">pos_modes</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">values_list</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>  <span class="c1"># No data or data doesn&#39;t meet minimums for analysis</span>
+                <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
                     <span class="n">pos_modes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
                 <span class="n">working_df</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos_modes</span>
@@ -656,7 +655,7 @@
                 <span class="n">values_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_read_values</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">values_list</span><span class="p">:</span>
                     <span class="n">data_for_df</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">values_list</span>
-                <span class="k">else</span><span class="p">:</span>  <span class="c1"># No data or data doesn&#39;t meet minimums for analysis</span>
+                <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
                     <span class="n">data_for_df</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
                 <span class="n">working_df</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_for_df</span>
@@ -768,34 +767,64 @@
             <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="GenomicPositionData.histogram"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.histogram">[docs]</a>    <span class="k">def</span> <span class="nf">histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="GenomicPositionData.histogram"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.histogram">[docs]</a>    <span class="k">def</span> <span class="nf">histogram</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">cell_line</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">backend</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Display a graph figure showing fractional methylation in</span>
 <span class="sd">        a given cell line at a given site.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            cell_line (str): name of cell line</span>
 <span class="sd">            position (str): genomic position</span>
+<span class="sd">            backend (Optional[str]): plotting backend to override default</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: invalid plotting backend</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">individual_data</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">backend</span><span class="p">:</span>
+            <span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">viz_backend</span>
 
-        <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_create_histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cell_line</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;plotly&quot;</span><span class="p">:</span>
+            <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_create_histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cell_line</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">backend</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;matplotlib&quot;</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_create_histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cell_line</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">backend</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid plotting backend&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GenomicPositionData.reads_graph"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.reads_graph">[docs]</a>    <span class="k">def</span> <span class="nf">reads_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_lines</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="GenomicPositionData.reads_graph"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.reads_graph">[docs]</a>    <span class="k">def</span> <span class="nf">reads_graph</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">cell_lines</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">backend</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Display a graph figure showing methylation of reads across cell lines.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            cell_lines (Optional[List[str]]): set of cell lines to analyze,</span>
-<span class="sd">            defaults to all cell lines.</span>
+<span class="sd">                                            defaults to all cell lines.</span>
+<span class="sd">            backend (Optional[str]): plotting backend to override default</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: invalid plotting backend</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">individual_data</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">backend</span><span class="p">:</span>
+            <span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">viz_backend</span>
 
         <span class="k">if</span> <span class="n">cell_lines</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">cell_lines</span><span class="p">)]</span>
 
-        <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_make_stacked_fig</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;plotly&quot;</span><span class="p">:</span>
+            <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_make_stacked_fig</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">backend</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;matplotlib&quot;</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_make_stacked_fig</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">backend</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid plotting backend&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GenomicPositionData.heatmap"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.heatmap">[docs]</a>    <span class="k">def</span> <span class="nf">heatmap</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -804,6 +833,7 @@
         <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span>
         <span class="n">cell_lines</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;means&quot;</span><span class="p">,</span>
+        <span class="n">backend</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Display a graph figure showing heatmap of mean methylation across</span>
 <span class="sd">        cell lines.</span>
@@ -815,9 +845,11 @@
 <span class="sd">            cell_lines (Optional[List[str]]): set of cell lines to analyze,</span>
 <span class="sd">            defaults to all cell lines.</span>
 <span class="sd">            data_type (str): type of data to plot. Can to &#39;means&#39;, &#39;modes&#39;, or &#39;diffs&#39;</span>
+<span class="sd">            backend (Optional[str]): plotting backend to override default</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: invalid data type</span>
+<span class="sd">            ValueError: invalid plotting backend</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">title_type</span><span class="p">:</span> <span class="nb">str</span>
@@ -837,25 +869,55 @@
         <span class="k">if</span> <span class="n">cell_lines</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">cell_lines</span><span class="p">)]</span>
 
-        <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_create_heatmap</span><span class="p">(</span>
-            <span class="n">data</span><span class="p">,</span> <span class="n">min_values</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">title_type</span>
-        <span class="p">)</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">backend</span><span class="p">:</span>
+            <span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">viz_backend</span>
+
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;plotly&quot;</span><span class="p">:</span>
+            <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_create_heatmap</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span> <span class="n">min_values</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">title_type</span><span class="p">,</span> <span class="n">backend</span>
+            <span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;matplotlib&quot;</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_create_heatmap</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span> <span class="n">min_values</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">title_type</span><span class="p">,</span> <span class="n">backend</span>
+            <span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid plotting backend&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GenomicPositionData.sig_methylation_differences"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.sig_methylation_differences">[docs]</a>    <span class="k">def</span> <span class="nf">sig_methylation_differences</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">cell_lines</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">cell_lines</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">backend</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Display a graph figure showing a bar chart of significantly different</span>
 <span class="sd">        mean / mode methylation across all or a subset of cell lines.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            cell_lines (Optional[List[str]]): set of cell lines to analyze,</span>
-<span class="sd">            defaults to all cell lines.</span>
+<span class="sd">                                            defaults to all cell lines.</span>
+<span class="sd">            backend (Optional[str]): plotting backend to override default</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: invalid plotting backend</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summarize_allelic_data</span><span class="p">(</span><span class="n">cell_lines</span><span class="p">)</span>
 
-        <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_create_methylation_diffs_bar_graph</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">backend</span><span class="p">:</span>
+            <span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">viz_backend</span>
+
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;plotly&quot;</span><span class="p">:</span>
+            <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_create_methylation_diffs_bar_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">backend</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;matplotlib&quot;</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_create_methylation_diffs_bar_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">backend</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid plotting backend&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GenomicPositionData.generate_ad_stats"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.generate_ad_stats">[docs]</a>    <span class="k">def</span> <span class="nf">generate_ad_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Generate Anderson-Darling normality statistics for an individual data df.</span>
@@ -887,7 +949,7 @@
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">individual_data</span>
 
         <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>  <span class="c1"># ignore divide-by-zero errors</span>
-        <span class="n">sig_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">sig_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;cellLine&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;ad_stat&quot;</span><span class="p">:</span> <span class="p">[],</span>
@@ -923,8 +985,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">notnull</span><span class="p">(</span><span class="n">raw_list</span><span class="p">)):</span>
-            <span class="n">stat</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span>
-            <span class="n">crits</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">]</span>
+            <span class="n">stat</span><span class="p">:</span> <span class="n">ArrayLike</span>
+            <span class="n">crits</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ArrayLike</span><span class="p">]</span>
             <span class="n">stat</span><span class="p">,</span> <span class="n">crits</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">anderson</span><span class="p">(</span><span class="n">raw_list</span><span class="p">)</span>
             <span class="n">is_sig</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">stat</span> <span class="o">&gt;</span> <span class="n">crits</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
             <span class="k">return</span> <span class="n">AD_stats</span><span class="p">(</span><span class="n">is_sig</span><span class="p">,</span> <span class="n">stat</span><span class="p">,</span> <span class="n">crits</span><span class="p">)</span>
@@ -944,6 +1006,7 @@
     <span class="n">prom_end</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">chrom</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">viz_backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;plotly&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Config</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Helper method to set up all our environmental variables, such as for testing.</span>
 
@@ -955,6 +1018,7 @@
 <span class="sd">        prom_end (str): final position to analyze in promoter region</span>
 <span class="sd">        chrom (str): chromosome promoter is located on</span>
 <span class="sd">        offset (int): genomic position of promoter to offset reads</span>
+<span class="sd">        viz_backend (str): which plotting backend to use, default plotly</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Config: configuration dataclass instance.</span>
@@ -970,6 +1034,7 @@
         <span class="n">promoter_end</span><span class="o">=</span><span class="n">prom_end</span><span class="p">,</span>
         <span class="n">chromosome</span><span class="o">=</span><span class="n">chrom</span><span class="p">,</span>
         <span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">,</span>
+        <span class="n">viz_backend</span><span class="o">=</span><span class="n">viz_backend</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">config</span></div>
@@ -985,6 +1050,19 @@
 <span class="sd">        list[str]: list of files</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">analysis_directory</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.bam&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="pyllelic"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.pyllelic">[docs]</a><span class="k">def</span> <span class="nf">pyllelic</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">files_set</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">GenomicPositionData</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Wrapper to call pyllelic routines.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (Config): pyllelic config object.</span>
+<span class="sd">        files_set (List[str]): list of bam files to analyze.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        GenomicPositionData: GenomicPositionData pyllelic object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">GenomicPositionData</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">files_set</span><span class="o">=</span><span class="n">files_set</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

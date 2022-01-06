@@ -331,6 +331,7 @@ def _make_stacked_mpl_fig(df: pd.DataFrame) -> plt.Figure:
         1,
         sharex="all",
         sharey="all",
+        squeeze=False,
     )
     for i, each in enumerate(new_df["cell"].unique()):
         tmp_df = new_df[new_df["cell"] == each].loc[

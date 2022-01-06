@@ -290,7 +290,7 @@ python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
 <span class="n">files_set</span> <span class="o">=</span> <span class="n">pyllelic</span><span class="o">.</span><span class="n">make_list_of_bam_files</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>  <span class="c1"># finds bam files</span>
 
 <span class="c1"># Run pyllelic; make take some time depending on number of bam files</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">pyllelic</span><span class="o">.</span><span class="n">GenomicPositionData</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">files_set</span><span class="o">=</span><span class="n">files_set</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pyllelic</span><span class="o">.</span><span class="n">pyllelic</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">files_set</span><span class="o">=</span><span class="n">files_set</span><span class="p">)</span>
 
 <span class="n">positions</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">positions</span>
 

@@ -122,7 +122,7 @@ Run pyllelic:
     files_set = pyllelic.make_list_of_bam_files(config)  # finds bam files
 
     # Run pyllelic; make take some time depending on number of bam files
-    data = pyllelic.GenomicPositionData(config=config, files_set=files_set)
+    data = pyllelic.pyllelic(config=config, files_set=files_set)
 
     positions = data.positions
 
