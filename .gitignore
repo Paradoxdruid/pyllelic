@@ -134,8 +134,6 @@ _build/
 *.pickle
 
 # Ignore in-progress testing
-pyllelic_playground.ipynb
-pyllelic_playground.md
-pyllelic_notebook.ipynb
 pyllelic_notebook2.ipynb
+pyllelic_playground.ipynb
 Untitled.ipynb
