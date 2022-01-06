@@ -8,22 +8,21 @@ import signal
 from multiprocessing import Pool, cpu_count
 from multiprocessing.pool import AsyncResult
 from pathlib import Path
-from typing import Dict, List, NamedTuple, Optional, TypeVar, Tuple, Union
+from typing import Dict, List, NamedTuple, Optional, Tuple, Union
 
+import matplotlib.pyplot as plt
 import numpy as np
-import numpy.typing as npt
 import pandas as pd
 import plotly.graph_objects as go
 import pysam
 
+from numpy.typing import ArrayLike
 from scipy import stats
 from tqdm.auto import tqdm
 
 from . import quma
 from . import visualization as viz
 from .config import Config
-
-GPD = TypeVar("GPD", bound="GenomicPositionData")
 
 # Initialized multiprocessing limits
 NUM_THREADS = cpu_count() - 1
@@ -37,8 +36,8 @@ class AD_stats(NamedTuple):
     """Helper class for NamedTuple results from anderson_darling_test"""
 
     sig: bool
-    stat: npt.ArrayLike
-    crits: List[npt.ArrayLike]
+    stat: ArrayLike
+    crits: List[ArrayLike]
 
 
 class BamOutput:
@@ -411,14 +410,14 @@ class GenomicPositionData:
             pickle.dump(self, output_file)
 
     @staticmethod
-    def from_pickle(filename: str) -> GPD:
+    def from_pickle(filename: str) -> "GenomicPositionData":
         """Read pickled GenomicPositionData back to an object.
 
         Args:
             filename (str): filename to read pickle
 
         Returns:
-            GPD: GenomicPositionData object
+            GenomicPositionData: GenomicPositionData object
         """
 
         with open(filename, "rb") as input_file:
@@ -442,7 +441,7 @@ class GenomicPositionData:
                 values_list: List[float] = self._return_read_values(pos, key)
                 if values_list:
                     pos_means: float = float(np.mean(values_list))
-                else:  # No data or data doesn't meet minimums for analysis
+                else:  # pragma: no cover
                     pos_means = np.nan
 
                 working_df.at[key, pos] = pos_means
@@ -468,7 +467,7 @@ class GenomicPositionData:
 
                 if values_list:
                     pos_modes: float = stats.mode(values_list)[0][0]
-                else:  # No data or data doesn't meet minimums for analysis
+                else:  # pragma: no cover
                     pos_modes = np.nan
 
                 working_df.at[key, pos] = pos_modes
@@ -492,7 +491,7 @@ class GenomicPositionData:
                 values_list: List[float] = self._return_read_values(pos, key)
                 if values_list:
                     data_for_df: Union[List[float], float] = values_list
-                else:  # No data or data doesn't meet minimums for analysis
+                else:  # pragma: no cover
                     data_for_df = np.nan
 
                 working_df.at[key, pos] = data_for_df
@@ -604,34 +603,64 @@ class GenomicPositionData:
             index=True,
         )
 
-    def histogram(self, cell_line: str, position: str) -> None:
+    def histogram(
+        self, cell_line: str, position: str, backend: Optional[str] = None
+    ) -> None:
         """Display a graph figure showing fractional methylation in
         a given cell line at a given site.
 
         Args:
             cell_line (str): name of cell line
             position (str): genomic position
+            backend (Optional[str]): plotting backend to override default
+
+        Raises:
+            ValueError: invalid plotting backend
         """
         data = self.individual_data
+        if not backend:
+            backend = self.config.viz_backend
 
-        fig: go.Figure = viz._create_histogram(data, cell_line, position)
-        fig.show()
+        if backend == "plotly":
+            fig: go.Figure = viz._create_histogram(data, cell_line, position, backend)
+            fig.show()
+            return
+        if backend == "matplotlib":
+            _: plt.Figure = viz._create_histogram(data, cell_line, position, backend)
+            plt.show()
+            return
+        raise ValueError("Invalid plotting backend")
 
-    def reads_graph(self, cell_lines: Optional[List[str]] = None) -> None:
+    def reads_graph(
+        self, cell_lines: Optional[List[str]] = None, backend: Optional[str] = None
+    ) -> None:
         """Display a graph figure showing methylation of reads across cell lines.
 
         Args:
             cell_lines (Optional[List[str]]): set of cell lines to analyze,
-            defaults to all cell lines.
+                                            defaults to all cell lines.
+            backend (Optional[str]): plotting backend to override default
+
+        Raises:
+            ValueError: invalid plotting backend
         """
 
         data = self.individual_data
+        if not backend:
+            backend = self.config.viz_backend
 
         if cell_lines:
             data = data[data.index.isin(cell_lines)]
 
-        fig: go.Figure = viz._make_stacked_fig(data)
-        fig.show()
+        if backend == "plotly":
+            fig: go.Figure = viz._make_stacked_fig(data, backend)
+            fig.show()
+            return
+        if backend == "matplotlib":
+            _: plt.Figure = viz._make_stacked_fig(data, backend)
+            plt.show()
+            return
+        raise ValueError("Invalid plotting backend")
 
     def heatmap(
         self,
@@ -640,6 +669,7 @@ class GenomicPositionData:
         height: int = 2000,
         cell_lines: Optional[List[str]] = None,
         data_type: str = "means",
+        backend: Optional[str] = None,
     ) -> None:
         """Display a graph figure showing heatmap of mean methylation across
         cell lines.
@@ -651,9 +681,11 @@ class GenomicPositionData:
             cell_lines (Optional[List[str]]): set of cell lines to analyze,
             defaults to all cell lines.
             data_type (str): type of data to plot. Can to 'means', 'modes', or 'diffs'
+            backend (Optional[str]): plotting backend to override default
 
         Raises:
             ValueError: invalid data type
+            ValueError: invalid plotting backend
         """
 
         title_type: str
@@ -673,25 +705,55 @@ class GenomicPositionData:
         if cell_lines:
             data = data[data.index.isin(cell_lines)]
 
-        fig: go.Figure = viz._create_heatmap(
-            data, min_values, width, height, title_type
-        )
-        fig.show()
+        if not backend:
+            backend = self.config.viz_backend
+
+        if backend == "plotly":
+            fig: go.Figure = viz._create_heatmap(
+                data, min_values, width, height, title_type, backend
+            )
+            fig.show()
+            return
+
+        if backend == "matplotlib":
+            _: plt.Figure = viz._create_heatmap(
+                data, min_values, width, height, title_type, backend
+            )
+            plt.show()
+            return
+
+        raise ValueError("Invalid plotting backend")
 
     def sig_methylation_differences(
-        self, cell_lines: Optional[List[str]] = None
+        self,
+        cell_lines: Optional[List[str]] = None,
+        backend: Optional[str] = None,
     ) -> None:
         """Display a graph figure showing a bar chart of significantly different
         mean / mode methylation across all or a subset of cell lines.
 
         Args:
             cell_lines (Optional[List[str]]): set of cell lines to analyze,
-            defaults to all cell lines.
+                                            defaults to all cell lines.
+            backend (Optional[str]): plotting backend to override default
+
+        Raises:
+            ValueError: invalid plotting backend
         """
         data = self.summarize_allelic_data(cell_lines)
 
-        fig: go.Figure = viz._create_methylation_diffs_bar_graph(data)
-        fig.show()
+        if not backend:
+            backend = self.config.viz_backend
+
+        if backend == "plotly":
+            fig: go.Figure = viz._create_methylation_diffs_bar_graph(data, backend)
+            fig.show()
+            return
+        if backend == "matplotlib":
+            _: plt.Figure = viz._create_methylation_diffs_bar_graph(data, backend)
+            plt.show()
+            return
+        raise ValueError("Invalid plotting backend")
 
     def generate_ad_stats(self) -> pd.DataFrame:
         """Generate Anderson-Darling normality statistics for an individual data df.
@@ -723,7 +785,7 @@ class GenomicPositionData:
             data = self.individual_data
 
         np.seterr(divide="ignore", invalid="ignore")  # ignore divide-by-zero errors
-        sig_dict: Dict[str, List[npt.ArrayLike]] = {
+        sig_dict: Dict[str, List[ArrayLike]] = {
             "cellLine": [],
             "position": [],
             "ad_stat": [],
@@ -759,8 +821,8 @@ class GenomicPositionData:
         """
 
         if np.all(pd.notnull(raw_list)):
-            stat: npt.ArrayLike
-            crits: List[npt.ArrayLike]
+            stat: ArrayLike
+            crits: List[ArrayLike]
             stat, crits, _ = stats.anderson(raw_list)
             is_sig: bool = bool(stat > crits[4])  # type: ignore
             return AD_stats(is_sig, stat, crits)
@@ -780,6 +842,7 @@ def configure(
     prom_end: str,
     chrom: str,
     offset: int,
+    viz_backend: str = "plotly",
 ) -> Config:
     """Helper method to set up all our environmental variables, such as for testing.
 
@@ -791,6 +854,7 @@ def configure(
         prom_end (str): final position to analyze in promoter region
         chrom (str): chromosome promoter is located on
         offset (int): genomic position of promoter to offset reads
+        viz_backend (str): which plotting backend to use, default plotly
 
     Returns:
         Config: configuration dataclass instance.
@@ -806,6 +870,7 @@ def configure(
         promoter_end=prom_end,
         chromosome=chrom,
         offset=offset,
+        viz_backend=viz_backend,
     )
 
     return config
@@ -821,3 +886,16 @@ def make_list_of_bam_files(config: Config) -> List[str]:
         list[str]: list of files
     """
     return [f.name for f in config.analysis_directory.iterdir() if f.suffix == ".bam"]
+
+
+def pyllelic(config: Config, files_set: List[str]) -> GenomicPositionData:
+    """Wrapper to call pyllelic routines.
+
+    Args:
+        config (Config): pyllelic config object.
+        files_set (List[str]): list of bam files to analyze.
+
+    Returns:
+        GenomicPositionData: GenomicPositionData pyllelic object.
+    """
+    return GenomicPositionData(config=config, files_set=files_set)

@@ -33,10 +33,38 @@ def test__create_heatmap(mocker):
         height=600,
         width=600,
         title_type="means",
+        backend="plotly",
     )
 
     mocked_go.Figure.assert_called_once()
     mocked_go.Heatmap.assert_called_once()
+
+
+def test__create_heatmap_mpl(mocker):
+    mocked_mpl = mocker.patch("pyllelic.visualization.sns")
+
+    _ = viz._create_heatmap(
+        TEST_INDIVIDUAL_DATA,
+        min_values=1,
+        height=600,
+        width=600,
+        title_type="means",
+        backend="matplotlib",
+    )
+
+    mocked_mpl.heatmap.assert_called_once()
+
+
+def test__create_heatmap_backend_error():
+    with pytest.raises(ValueError):
+        _ = viz._create_heatmap(
+            TEST_INDIVIDUAL_DATA,
+            min_values=1,
+            height=600,
+            width=600,
+            title_type="means",
+            backend="other",
+        )
 
 
 def test__create_histogram(mocker):
@@ -46,7 +74,9 @@ def test__create_histogram(mocker):
     intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
     TEST_DATA = intermediate.astype("object")
 
-    _ = viz._create_histogram(TEST_DATA, TEST_CELL_LINE, TEST_POSITION)
+    _ = viz._create_histogram(
+        TEST_DATA, TEST_CELL_LINE, TEST_POSITION, backend="plotly"
+    )
 
     mocked_go.Figure.assert_called_once()
     mocked_go.Histogram.assert_called_once_with(
@@ -59,13 +89,56 @@ def test__create_histogram(mocker):
     )
 
 
+def test__create_histogram_mpl(mocker):
+    mocked_mpl = mocker.patch("pyllelic.visualization.sns")
+    TEST_CELL_LINE = "TEST1"
+    TEST_POSITION = "1"
+    intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
+    TEST_DATA = intermediate.astype("object")
+
+    _ = viz._create_histogram(
+        TEST_DATA, TEST_CELL_LINE, TEST_POSITION, backend="matplotlib"
+    )
+
+    mocked_mpl.histplot.assert_called_once()
+
+
+def test__create_histogram_backend_error():
+    TEST_CELL_LINE = "TEST1"
+    TEST_POSITION = "1"
+    intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
+    TEST_DATA = intermediate.astype("object")
+
+    with pytest.raises(ValueError):
+        _ = viz._create_histogram(
+            TEST_DATA, TEST_CELL_LINE, TEST_POSITION, backend="other"
+        )
+
+
 def test__create_methylation_diffs_bar_graph(mocker):
     mocked_go = mocker.patch("pyllelic.visualization.go")
 
-    _ = viz._create_methylation_diffs_bar_graph(TEST_INDIVIDUAL_DATA)
+    _ = viz._create_methylation_diffs_bar_graph(TEST_INDIVIDUAL_DATA, backend="plotly")
 
     mocked_go.Figure.assert_called_once()
     mocked_go.Bar.assert_called_once()
+
+
+def test__create_methylation_diffs_bar_graph_mpl(mocker):
+    mocked_mpl = mocker.patch("pyllelic.visualization.pd.DataFrame.plot")
+
+    _ = viz._create_methylation_diffs_bar_graph(
+        TEST_INDIVIDUAL_DATA, backend="matplotlib"
+    )
+
+    mocked_mpl.assert_called_once()
+
+
+def test__create_methylation_diffs_bar_graph_invalid():
+    with pytest.raises(ValueError):
+        _ = viz._create_methylation_diffs_bar_graph(
+            TEST_INDIVIDUAL_DATA, backend="FAKE"
+        )
 
 
 def test__make_stacked_fig(mocker):
@@ -75,7 +148,28 @@ def test__make_stacked_fig(mocker):
     intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
     TEST_DATA = intermediate.astype("object")
 
-    _ = viz._make_stacked_fig(TEST_DATA)
+    _ = viz._make_stacked_fig(TEST_DATA, backend="plotly")
 
     mocked_px.bar.assert_called()
     mocked_sp.make_subplots.assert_called_once()
+
+
+def test__make_stacked_fig_mpl(mocker):
+    mocked_df_plot = mocker.patch("pyllelic.visualization.pd.DataFrame.plot")
+    mocked_mpl = mocker.patch("pyllelic.visualization.plt")
+    mocked_mpl.subplots.return_value = (mocker.MagicMock(), mocker.MagicMock())
+
+    intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
+    TEST_DATA = intermediate.astype("object")
+
+    _ = viz._make_stacked_fig(TEST_DATA, backend="matplotlib")
+
+    mocked_df_plot.assert_called()
+    mocked_mpl.subplots.assert_called()
+
+
+def test__make_stacked_fig_invalid():
+    intermediate = EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
+    TEST_DATA = intermediate.astype("object")
+    with pytest.raises(ValueError):
+        _ = viz._make_stacked_fig(TEST_DATA, backend="FAKE")

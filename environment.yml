@@ -11,3 +11,4 @@ dependencies:
   - ipywidgets
   - notebook
   - numpy=1.20.3
+  - seaborn

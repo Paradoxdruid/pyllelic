@@ -46,13 +46,15 @@ process.retrieve_promoter_seq("{prom_filename}.txt", chrom: "chr5", start: 12932
 ```
 <!-- #endregion -->
 
+<!-- #region heading_collapsed=true -->
 ### Preparing bisultife-converted genome
 
 To prepare the genome and align reads, we'll use [bismark](https://github.com/FelixKrueger/Bismark), bowtie2, and samtools (through its pysam wrapper).
 
 First, we need to download a genomic index sequence: <http://hgdownload.soe.ucsc.edu/goldenPath/hg19>
+<!-- #endregion -->
 
-<!-- #region -->
+<!-- #region hidden=true -->
 ```python
 # Processing imports
 from pathlib import Path
@@ -63,20 +65,24 @@ fastq = Path("/{your_directory}/{your_fastq_file.fastq.gz}")
 ```
 <!-- #endregion -->
 
+<!-- #region hidden=true -->
 **WARNING:** The next command is processor, RAM, and time intensive, and only needs to be run once!
+<!-- #endregion -->
 
-<!-- #region -->
+<!-- #region hidden=true -->
 ```python
 # Prepare genome via bismark
 process.prepare_genome(genome) # can optionally give path to bowtie2 if not in PATH
 ```
 <!-- #endregion -->
 
+<!-- #region heading_collapsed=true -->
 ### Aligning reads
 
 **WARNING:** The next command is processor, RAM, and time intensive, and only needs to be run once!
+<!-- #endregion -->
 
-<!-- #region -->
+<!-- #region hidden=true -->
 ```python
 # Convert fastq to bismark-aligned bam
 from pyllelic import process
@@ -84,13 +90,15 @@ process.bismark(genome, fastq)
 ```
 <!-- #endregion -->
 
+<!-- #region hidden=true -->
 Notes:
 
 * We recommend renaming your `.bam` file to encode cell-line and tissue.  Our convention is: `fh_CELLLINE_TISSUE.REGION.bam`
 
 Next, we need to sort and index the bam file using samtools functions.
+<!-- #endregion -->
 
-<!-- #region -->
+<!-- #region hidden=true -->
 ```python
 # Sort the bamfile
 bamfile = Path("/{your_directory}/{bam_filename}.bam")
@@ -98,7 +106,7 @@ process.pysam_sort(bamfile)
 ```
 <!-- #endregion -->
 
-<!-- #region -->
+<!-- #region hidden=true -->
 ```python
 # Create an index of the sorted bamfile
 sorted_bam = Path("/{your_directory}/{bam_filename}_sorted.bam")
@@ -129,6 +137,7 @@ config = pyllelic.configure(
     prom_end="1296000",
     chrom="5",
     offset=1293000,
+    viz_backend="matplotlib"
 )
 ```
 
@@ -175,7 +184,11 @@ data.diffs.head()
 ```
 
 ```python
-data.histogram("JHOM1", "1295089")
+data.histogram("NCIH2171", "1293589")
+```
+
+```python
+data.reads_graph()
 ```
 
 ```python
@@ -213,7 +226,7 @@ data.individual_data.loc[data.means.index[0], data.means.columns[0]]
 ### Reopen saved object
 
 ```python
-# data = pyllelic.GenomicPositionData.from_pickle("test_data2.pickle")
+data = pyllelic.GenomicPositionData.from_pickle("test_data_20211229.pickle")
 ```
 
 ## Data Analysis
@@ -261,26 +274,238 @@ data.individual_data.head()
 ### Histograms of reads at a cell line and genomic position
 
 ```python
-CELL = data.means.index[13]
+CELL = data.means.index[1]
 # POS = data.means.columns[15]
 POS = "1294946"
 data.histogram(CELL, POS)
 ```
 
-<!-- #region heading_collapsed=true -->
 ### Heatmap of mean methylation values
-<!-- #endregion -->
 
-```python hidden=true
+```python
 data.heatmap(min_values=70, width=800, height=2000, data_type="means")
 ```
 
-```python hidden=true
-lines = data.means.index[:10].to_list()
+## Seaborn trials
+
+```python
+%load_ext nb_black
 ```
 
-```python hidden=true
-data.reads_graph(cell_lines=lines)
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+```
+
+```python
+import pandas as pd
+```
+
+### Heatmap
+
+```python
+data.heatmap(min_values=1, height=400)
+```
+
+```python
+df = data.means.apply(pd.to_numeric)
+```
+
+```python
+# df.dtypes
+```
+
+```python
+# df.dropna(thresh=70, axis=1)
+```
+
+```python
+sns.set_theme(style="white", rc={"figure.figsize": (12, 16)})
+ax = sns.heatmap(df.dropna(thresh=70, axis=1), cmap="vlag", cbar=False)
+ax.set(xlabel="Position", ylabel="Cell Line")
+plt.show()
+```
+
+### Histogram
+
+```python
+df2 = data.individual_data.loc["HEC265", "1294873"]
+```
+
+```python
+# df2
+```
+
+```python
+sns.set_theme(style="white", rc={"figure.figsize": (6, 4)})
+ax2 = sns.histplot(df2, color="black", discrete=True, shrink=0.2)
+# sns.despine()
+ax2.set(xlabel="Methylation", ylabel="Count")
+plt.show()
+```
+
+### Reads Graph
+
+```python
+def make_binary(data):
+    if isinstance(data, list):
+        new = [data.count(0), data.count(1)]
+    else:
+        new = [0, 0]
+    return new
+
+
+def make_methyl_df(df, row):
+    new_df = pd.DataFrame(
+        {each[0]: each[1].values[0] for each in df.loc[row].to_frame().iterrows()}
+    )
+    new_df = new_df.rename(index={0: "unmethylated", 1: "methylated"})
+    return new_df
+```
+
+```python
+df3 = data.individual_data[:20].applymap(make_binary)
+```
+
+```python
+df_dict = {}
+for each in df3.index:
+    methyl_df = make_methyl_df(df3, each)
+    df_dict[each] = methyl_df
+```
+
+```python
+# df_dict.keys()
+```
+
+```python
+df = pd.DataFrame()
+for k, v in df_dict.items():
+    int_df = v.T.reset_index()
+    int_df["cell"] = k
+    df = pd.concat([df, int_df])
+```
+
+```python
+# df
+```
+
+```python
+sns.set_theme(style="dark")
+fig, ax = plt.subplots(
+    len(df["cell"].unique()),
+    1,
+    sharex="all",
+    sharey="all",
+)
+for i, each in enumerate(df["cell"].unique()):
+    tmp_df = df[df["cell"] == each].loc[:, ["index", "unmethylated", "methylated"]]
+    ax[i] = tmp_df.plot(
+        kind="bar",
+        legend=False,
+        width=1,
+        stacked=True,
+        color=["white", "black"],
+        xticks=[],
+        title="",
+        yticks=[],
+        xlabel="",
+        ylabel="",
+        figsize=(12, 0.5),
+        ax=ax[i],
+    )
+    ax[i].set_ylabel(each, rotation=0)
+    ax[i].yaxis.set_label_coords(-0.05, 0.3)
+fig.set_size_inches(12, 0.6 * len(df["cell"].unique()))
+plt.subplots_adjust(wspace=0, hspace=0)
+fig.suptitle("Methylation of reads per cell line", y=1.02)
+plt.tight_layout(pad=0)
+fig.show()
+```
+
+```python
+lines = data.means.index[:20].to_list()
+```
+
+### Methylation bar graph
+
+```python
+data.sig_methylation_differences(backend="plotly")
+```
+
+```python
+
+```
+
+```python
+
+```
+
+```python
+sumn = data.summarize_allelic_data()
+```
+
+```python
+sumn
+```
+
+```python
+mine = sumn.pivot(index="position", columns="cellLine", values="ad_stat")
+mine = mine.dropna(axis=1, how="all").count(axis=1).to_frame()
+```
+
+```python
+mine
+```
+
+```python
+mine = mine.set_index(pd.to_numeric(mine.index, errors="coerce"))
+```
+
+```python
+
+```
+
+```python
+mine.plot(
+    kind="bar",
+    legend=False,
+    #             width=1,
+    #             stacked=True,
+    #             color=["white", "black"],
+    #             xticks=[],
+    #             title="",
+    #             yticks=[],
+    #             xlabel="",
+    #             ylabel="",
+    figsize=(12, 8),
+    xlim=(mine.index.min(), mine.index.max()),
+    #             ax=ax[i],
+)
+```
+
+```python
+
+```
+
+```python
+
+```
+
+```python
+
+```
+
+```python
+data.sig_methylation_differences()
+```
+
+```python
+
+```
+
+```python
+# data.reads_graph(cell_lines=lines)
 ```
 
 ### Bar chart of significant methylation differences

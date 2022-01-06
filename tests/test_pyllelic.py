@@ -151,6 +151,22 @@ def test_make_list_of_bam_files(tmp_path):
     assert EXPECTED == actual
 
 
+def test_pyllelic(tmp_path_factory):
+    tmp_path = tmp_path_factory.mktemp("data")
+    p, _ = setup_bam_files(tmp_path)
+    config = setup_config(p)
+    INPUT_BAM_LIST = ["fh_test.bam"]
+    genomic_position_data = pyllelic.pyllelic(config=config, files_set=INPUT_BAM_LIST)
+    positions = []
+    for each in EXPECTED_BAM_OUTPUT_POSITIONS:
+        positions.append(each)
+
+    EXPECTED_POSITIONS = sorted(set(positions))
+
+    assert genomic_position_data.positions == EXPECTED_POSITIONS
+    assert genomic_position_data.cell_types == [str(p / "test" / "fh_test.bam")]
+
+
 # Tests of main classes
 
 
@@ -343,18 +359,60 @@ class Test_GenomicPositionData:
         TEST_CELL_LINE = genomic_position_data.means.index[0]
 
         genomic_position_data.histogram(TEST_CELL_LINE, TEST_POSITION)
+        genomic_position_data.histogram(TEST_CELL_LINE, TEST_POSITION, backend="plotly")
 
-        mocked_go.Figure.assert_called_once()
-        mocked_go.Histogram.assert_called_once()
+        mocked_go.Figure.assert_called()
+        mocked_go.Histogram.assert_called()
+
+    def test_histogram_mpl(self, set_up_genomic_position_data, mocker):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_mpl = mocker.patch("pyllelic.visualization.sns")
+        TEST_POSITION = genomic_position_data.positions[0]
+        TEST_CELL_LINE = genomic_position_data.means.index[0]
+
+        genomic_position_data.config.viz_backend = "matplotlib"
+        genomic_position_data.histogram(TEST_CELL_LINE, TEST_POSITION)
+
+        mocked_mpl.histplot.assert_called_once()
+        genomic_position_data.config.viz_backend = "plotly"
+
+    def test_histogram_error(self, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+        TEST_POSITION = genomic_position_data.positions[0]
+        TEST_CELL_LINE = genomic_position_data.means.index[0]
+
+        with pytest.raises(ValueError):
+            genomic_position_data.config.viz_backend = "other"
+            genomic_position_data.histogram(TEST_CELL_LINE, TEST_POSITION)
+        genomic_position_data.config.viz_backend = "plotly"
 
     def test_heatmap(self, set_up_genomic_position_data, mocker):
         _, genomic_position_data = set_up_genomic_position_data
         mocked_go = mocker.patch("pyllelic.visualization.go")
 
         genomic_position_data.heatmap(min_values=1)
+        genomic_position_data.heatmap(min_values=1, backend="plotly")
 
-        mocked_go.Figure.assert_called_once()
-        mocked_go.Heatmap.assert_called_once()
+        mocked_go.Figure.assert_called()
+        mocked_go.Heatmap.assert_called()
+
+    def test_heatmap_mpl(self, set_up_genomic_position_data, mocker):
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_mpl = mocker.patch("pyllelic.visualization.sns")
+
+        genomic_position_data.config.viz_backend = "matplotlib"
+        genomic_position_data.heatmap(min_values=1)
+
+        mocked_mpl.heatmap.assert_called_once()
+        genomic_position_data.config.viz_backend = "plotly"
+
+    def test_heatmap_error(self, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+
+        with pytest.raises(ValueError):
+            genomic_position_data.config.viz_backend = "other"
+            genomic_position_data.heatmap(min_values=1)
+        genomic_position_data.config.viz_backend = "plotly"
 
     def test_heatmap_cell_lines(self, set_up_genomic_position_data, mocker):
         _, genomic_position_data = set_up_genomic_position_data
@@ -384,7 +442,7 @@ class Test_GenomicPositionData:
         mocked_go.Figure.assert_called_once()
         mocked_go.Heatmap.assert_called_once()
 
-    def test_heatmap_invalid(self, set_up_genomic_position_data, mocker):
+    def test_heatmap_invalid(self, set_up_genomic_position_data):
         _, genomic_position_data = set_up_genomic_position_data
 
         with pytest.raises(ValueError):
@@ -394,11 +452,18 @@ class Test_GenomicPositionData:
         _, genomic_position_data = set_up_genomic_position_data
         mocked_px = mocker.patch("pyllelic.visualization.px")
         mocked_sp = mocker.patch("pyllelic.visualization.sp")
+        mocked_df_plot = mocker.patch("pyllelic.visualization.pd.DataFrame.plot")
+        mocked_mpl = mocker.patch("pyllelic.visualization.plt")
+        mocked_mpl.subplots.return_value = (mocker.MagicMock(), mocker.MagicMock())
 
         genomic_position_data.reads_graph()
+        genomic_position_data.reads_graph(backend="plotly")
+        genomic_position_data.reads_graph(backend="matplotlib")
 
         mocked_px.bar.assert_called()
-        mocked_sp.make_subplots.assert_called_once()
+        mocked_sp.make_subplots.assert_called()
+        mocked_df_plot.assert_called()
+        mocked_mpl.subplots.assert_called()
 
     def test_reads_graph_cell_lines(self, set_up_genomic_position_data, mocker):
         _, genomic_position_data = set_up_genomic_position_data
@@ -410,6 +475,12 @@ class Test_GenomicPositionData:
 
         mocked_px.bar.assert_called()
         mocked_sp.make_subplots.assert_called_once()
+
+    def test_reads_graph_invalid(self, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+
+        with pytest.raises(ValueError):
+            genomic_position_data.reads_graph(backend="FAKE")
 
     def test_summarize_allelelic_data(self, set_up_genomic_position_data):
         _, genomic_position_data = set_up_genomic_position_data
@@ -483,14 +554,27 @@ class Test_GenomicPositionData:
     def test_sig_methylation_differences(self, set_up_genomic_position_data, mocker):
         _, genomic_position_data = set_up_genomic_position_data
         mocked_go = mocker.patch("pyllelic.visualization.go")
+        mocked_mpl = mocker.patch("pyllelic.visualization.pd.DataFrame.plot")
 
         with np.testing.suppress_warnings() as sup:  # ignore degrees of freedom warning
             sup.filter(RuntimeWarning, "Degrees of freedom")
             sup.filter(module=np.ma.core)
             genomic_position_data.sig_methylation_differences()
+            genomic_position_data.sig_methylation_differences(backend="plotly")
+            genomic_position_data.sig_methylation_differences(backend="matplotlib")
 
-            mocked_go.Figure.assert_called_once()
-            mocked_go.Bar.assert_called_once()
+            mocked_go.Figure.assert_called()
+            mocked_go.Bar.assert_called()
+            mocked_mpl.assert_called_once()
+
+    def test_sig_methylation_differences_invalid(self, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+
+        with np.testing.suppress_warnings() as sup:  # ignore degrees of freedom warning
+            sup.filter(RuntimeWarning, "Degrees of freedom")
+            sup.filter(module=np.ma.core)
+            with pytest.raises(ValueError):
+                genomic_position_data.sig_methylation_differences(backend="FAKE")
 
     def test_anderson_darling_test_with_values(self, set_up_genomic_position_data):
         _, genomic_position_data = set_up_genomic_position_data
