@@ -163,7 +163,11 @@ def test_prepare_genome(mock_subp):
     _ = process.prepare_genome(TEST_INDEX, TEST_ALIGNER)
 
     mock_subp.run.assert_called_once_with(
-        TEST_COMMAND, capture_output=True, text=True, check=True
+        TEST_COMMAND,
+        capture_output=True,
+        text=True,
+        check=True,
+        cwd=TEST_INDEX.parent,
     )
 
 
@@ -177,7 +181,11 @@ def test_prepare_genome_no_aligner(mock_subp):
     _ = process.prepare_genome(TEST_INDEX)
 
     mock_subp.run.assert_called_once_with(
-        TEST_COMMAND, capture_output=True, text=True, check=True
+        TEST_COMMAND,
+        capture_output=True,
+        text=True,
+        check=True,
+        cwd=TEST_INDEX.parent,
     )
 
 
@@ -194,7 +202,11 @@ def test_bismark(mock_subp):
     _ = process.bismark(TEST_GENOME, TEST_FASTQ)
 
     mock_subp.run.assert_called_once_with(
-        TEST_COMMAND, capture_output=True, text=True, check=True
+        TEST_COMMAND,
+        capture_output=True,
+        text=True,
+        check=True,
+        cwd=TEST_FASTQ.parent,
     )
 
 
