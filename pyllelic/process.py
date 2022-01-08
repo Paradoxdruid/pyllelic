@@ -198,7 +198,11 @@ def prepare_genome(index: Path, aligner: Optional[Path] = None) -> bytes:
         ]
 
     output: subprocess.CompletedProcess = subprocess.run(
-        command, capture_output=True, text=True, check=True
+        command,
+        capture_output=True,
+        text=True,
+        check=True,
+        cwd=index.parent,
     )
     out: bytes = output.stdout
 
@@ -227,7 +231,11 @@ def bismark(genome: Path, fastq: Path) -> bytes:
     ]
 
     output: subprocess.CompletedProcess = subprocess.run(
-        command, capture_output=True, text=True, check=True
+        command,
+        capture_output=True,
+        text=True,
+        check=True,
+        cwd=fastq.parent,
     )
     out: bytes = output.stdout
 
