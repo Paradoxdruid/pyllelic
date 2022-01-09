@@ -4,6 +4,7 @@
 """
 
 import pickle  # nosec
+import re
 import signal
 from multiprocessing import Pool, cpu_count
 from multiprocessing.pool import AsyncResult
@@ -74,8 +75,8 @@ class BamOutput:
         samm: pysam.AlignmentFile = pysam.AlignmentFile(str(sams), "rb")
         itern = samm.fetch(
             self._config.chromosome,
-            int(self._config.promoter_start),
-            int(self._config.promoter_end),
+            self._config.promoter_start,
+            self._config.promoter_end,
         )
 
         position: List[str] = []
@@ -369,7 +370,10 @@ class GenomicPositionData:
         for name, bam_result in tqdm(
             self._bam_output.items(), desc="Process methylation"
         ):
-            cell_line_name: str = Path(name).name.split("_")[1]
+            # cell_line_name: str = Path(name).name.split("_")[1]
+            cell_line_name: str = re.match(
+                self.config.fname_pattern, Path(name).name
+            ).group(1)
 
             read_files: List[str] = [each for each in bam_result.values.values()]
             genomic_files: List[str] = [
@@ -838,11 +842,14 @@ class GenomicPositionData:
 def configure(
     base_path: str,
     prom_file: str,
-    prom_start: str,
-    prom_end: str,
+    prom_start: int,
+    prom_end: int,
     chrom: str,
     offset: int,
-    viz_backend: str = "plotly",
+    test_dir: Optional[str] = None,
+    fname_pattern: Optional[str] = None,
+    viz_backend: Optional[str] = None,
+    results_dir: Optional[str] = None,
 ) -> Config:
     """Helper method to set up all our environmental variables, such as for testing.
 
@@ -850,27 +857,42 @@ def configure(
         base_path (str): directory where all processing will occur, put .bam files
                          in "test" sub-directory in this folder
         prom_file (str): filename of genmic sequence of promoter region of interest
-        prom_start (str): start position to analyze in promoter region
-        prom_end (str): final position to analyze in promoter region
+        prom_start (int): start position to analyze in promoter region
+        prom_end (int): final position to analyze in promoter region
         chrom (str): chromosome promoter is located on
         offset (int): genomic position of promoter to offset reads
-        viz_backend (str): which plotting backend to use, default plotly
+        test_dir(Optional[str]): name of test directory where bam files are located
+        fname_pattern(Optional[str]): regex pattern for processing filenames
+        viz_backend (Optional[str]): which plotting backend to use
+        results_dir (Optional[str]): name of results directory
 
     Returns:
         Config: configuration dataclass instance.
     """
 
+    if not test_dir:
+        test_dir = "test"
+
+    if not fname_pattern:
+        fname_pattern = r"^[a-zA-Z]+_([a-zA-Z0-9]+)_.+bam$"
+
+    if not viz_backend:
+        viz_backend = "plotly"
+
+    if not results_dir:
+        results_dir = "results"
+
     config = Config(
         base_directory=Path(base_path),
         promoter_file=Path(base_path) / prom_file,
-        results_directory=Path(base_path) / "results",
-        bam_directory=Path(base_path) / "bam_output",
-        analysis_directory=Path(base_path) / "test",
+        results_directory=Path(base_path) / results_dir,
+        analysis_directory=Path(base_path) / test_dir,
         promoter_start=prom_start,
         promoter_end=prom_end,
         chromosome=chrom,
         offset=offset,
         viz_backend=viz_backend,
+        fname_pattern=fname_pattern,
     )
 
     return config

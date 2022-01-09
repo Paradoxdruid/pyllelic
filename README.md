@@ -113,10 +113,14 @@ Run pyllelic:
     config = pyllelic.configure(  # Specify file and directory locations
         base_path="/home/jovyan/assets/",
         prom_file="tert_genome.txt",
-        prom_start="1293200",
-        prom_end="1296000",
+        prom_start=1293200,
+        prom_end=1296000,
         chrom="5",
         offset=1293000,  # start position of retrieved promoter sequence
+        # viz_backend="plotly",
+        # fname_pattern=r"^[a-zA-Z]+_([a-zA-Z0-9]+)_.+bam$",
+        # test_dir="test",
+        # results_dir="results",
     )
 
     files_set = pyllelic.make_list_of_bam_files(config)  # finds bam files
