@@ -40,7 +40,7 @@ def set_up_genomic_position_data(tmp_path_factory):
     tmp_path = tmp_path_factory.mktemp("data")
     p, _ = setup_bam_files(tmp_path)
     config = setup_config(p)
-    INPUT_BAM_LIST = ["fh_test.bam"]
+    INPUT_BAM_LIST = ["fh_test_tissue.bam"]
     return (
         p,
         pyllelic.GenomicPositionData(config=config, files_set=INPUT_BAM_LIST),
@@ -70,10 +70,10 @@ class MockPoolApplyResult:
 def setup_bam_files(tmp_path):
     d = tmp_path / "test"
     d.mkdir()
-    fn_bam = "fh_test.bam"
+    fn_bam = "fh_test_tissue.bam"
     filepath_bam = d / fn_bam
     filepath_bam.write_bytes(base64.decodebytes(SAMPLE_BAM))
-    fn_bai = "fh_test.bam.bai"
+    fn_bai = "fh_test_tissue.bam.bai"
     filepath_bai = d / fn_bai
     filepath_bai.write_bytes(base64.decodebytes(SAMPLE_BAI))
     return tmp_path, filepath_bam
@@ -83,8 +83,8 @@ def setup_config(my_path):
     d = my_path
     prom_file = d / "test.txt"
     prom_file.write_text(TEST_PROM_FILE)
-    TEST_START = "1293200"
-    TEST_END = "1296000"
+    TEST_START = 1293200
+    TEST_END = 1296000
     TEST_CHR = "5"
     TEST_OFFSET = 1293000
     config = pyllelic.configure(
@@ -140,10 +140,10 @@ def test_make_list_of_bam_files(tmp_path):
     TEST_LIST = [
         Path("bad1.txt"),
         Path("bad2.bai"),
-        Path("good1.bam"),
-        Path("good2.bam"),
+        Path("fh_good1_tissue.bam"),
+        Path("fh_good2_tissue.bam"),
     ]
-    EXPECTED = ["good1.bam", "good2.bam"]
+    EXPECTED = ["fh_good1_tissue.bam", "fh_good2_tissue.bam"]
     with mock.patch.object(pyllelic.Path, "iterdir") as mock_iterdir:
         mock_iterdir.return_value = TEST_LIST
         actual = pyllelic.make_list_of_bam_files(config)
@@ -155,7 +155,7 @@ def test_pyllelic(tmp_path_factory):
     tmp_path = tmp_path_factory.mktemp("data")
     p, _ = setup_bam_files(tmp_path)
     config = setup_config(p)
-    INPUT_BAM_LIST = ["fh_test.bam"]
+    INPUT_BAM_LIST = ["fh_test_tissue.bam"]
     genomic_position_data = pyllelic.pyllelic(config=config, files_set=INPUT_BAM_LIST)
     positions = []
     for each in EXPECTED_BAM_OUTPUT_POSITIONS:
@@ -164,7 +164,7 @@ def test_pyllelic(tmp_path_factory):
     EXPECTED_POSITIONS = sorted(set(positions))
 
     assert genomic_position_data.positions == EXPECTED_POSITIONS
-    assert genomic_position_data.cell_types == [str(p / "test" / "fh_test.bam")]
+    assert genomic_position_data.cell_types == [str(p / "test" / "fh_test_tissue.bam")]
 
 
 # Tests of main classes
@@ -188,7 +188,7 @@ class Test_BamOutput:
     def test_init(self, tmp_path, set_up_bam_output):
         bam_output = set_up_bam_output
 
-        assert bam_output.name == str(tmp_path / "test" / "fh_test.bam")
+        assert bam_output.name == str(tmp_path / "test" / "fh_test_tissue.bam")
         assert bam_output.values == EXPECTED_BAM_OUTPUT_VALUES
         assert bam_output.positions == EXPECTED_BAM_OUTPUT_POSITIONS
         assert bam_output.genome_values == EXPECTED_BAM_OUTPUT_GENOME_VALUES
@@ -334,7 +334,9 @@ class Test_GenomicPositionData:
         EXPECTED_POSITIONS = sorted(set(positions))
 
         assert genomic_position_data.positions == EXPECTED_POSITIONS
-        assert genomic_position_data.cell_types == [str(p / "test" / "fh_test.bam")]
+        assert genomic_position_data.cell_types == [
+            str(p / "test" / "fh_test_tissue.bam")
+        ]
 
     # def test_save(self, set_up_genomic_position_data, mocker):
     #     _, genomic_position_data = set_up_genomic_position_data
@@ -469,7 +471,7 @@ class Test_GenomicPositionData:
         _, genomic_position_data = set_up_genomic_position_data
         mocked_px = mocker.patch("pyllelic.visualization.px")
         mocked_sp = mocker.patch("pyllelic.visualization.sp")
-        CELL_LINES = ["test.bam"]
+        CELL_LINES = ["test"]
 
         genomic_position_data.reads_graph(cell_lines=CELL_LINES)
 
@@ -486,7 +488,7 @@ class Test_GenomicPositionData:
         _, genomic_position_data = set_up_genomic_position_data
         EXPECTED = pd.DataFrame(
             {
-                "cellLine": {0: "test.bam"},
+                "cellLine": {0: "test"},
                 "position": {0: "1295321"},
                 "ad_stat": {0: 15.372825521573787},
                 "p_crit": {0: 1.009},
@@ -542,7 +544,7 @@ class Test_GenomicPositionData:
         with np.testing.suppress_warnings() as sup:  # ignore degrees of freedom warning
             sup.filter(RuntimeWarning, "Degrees of freedom")
             sup.filter(module=np.ma.core)
-            CELL_LINES = ["test.bam"]
+            CELL_LINES = ["test"]
             actual1 = genomic_position_data.summarize_allelic_data(
                 cell_lines=CELL_LINES
             )
