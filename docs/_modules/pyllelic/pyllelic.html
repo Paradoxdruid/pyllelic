@@ -168,6 +168,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">pickle</span>  <span class="c1"># nosec</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">signal</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span><span class="p">,</span> <span class="n">cpu_count</span>
 <span class="kn">from</span> <span class="nn">multiprocessing.pool</span> <span class="kn">import</span> <span class="n">AsyncResult</span>
@@ -238,8 +239,8 @@
         <span class="n">samm</span><span class="p">:</span> <span class="n">pysam</span><span class="o">.</span><span class="n">AlignmentFile</span> <span class="o">=</span> <span class="n">pysam</span><span class="o">.</span><span class="n">AlignmentFile</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">sams</span><span class="p">),</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
         <span class="n">itern</span> <span class="o">=</span> <span class="n">samm</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">chromosome</span><span class="p">,</span>
-            <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">promoter_start</span><span class="p">),</span>
-            <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">promoter_end</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">promoter_start</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">promoter_end</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">position</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -533,7 +534,10 @@
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">bam_result</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bam_output</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Process methylation&quot;</span>
         <span class="p">):</span>
-            <span class="n">cell_line_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># cell_line_name: str = Path(name).name.split(&quot;_&quot;)[1]</span>
+            <span class="n">cell_line_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">fname_pattern</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
             <span class="n">read_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">each</span> <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">bam_result</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
             <span class="n">genomic_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
@@ -1002,11 +1006,14 @@
 <div class="viewcode-block" id="configure"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.configure">[docs]</a><span class="k">def</span> <span class="nf">configure</span><span class="p">(</span>
     <span class="n">base_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">prom_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">prom_start</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">prom_end</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">prom_start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">prom_end</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">chrom</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">viz_backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;plotly&quot;</span><span class="p">,</span>
+    <span class="n">test_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">fname_pattern</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">viz_backend</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">results_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Config</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Helper method to set up all our environmental variables, such as for testing.</span>
 
@@ -1014,27 +1021,42 @@
 <span class="sd">        base_path (str): directory where all processing will occur, put .bam files</span>
 <span class="sd">                         in &quot;test&quot; sub-directory in this folder</span>
 <span class="sd">        prom_file (str): filename of genmic sequence of promoter region of interest</span>
-<span class="sd">        prom_start (str): start position to analyze in promoter region</span>
-<span class="sd">        prom_end (str): final position to analyze in promoter region</span>
+<span class="sd">        prom_start (int): start position to analyze in promoter region</span>
+<span class="sd">        prom_end (int): final position to analyze in promoter region</span>
 <span class="sd">        chrom (str): chromosome promoter is located on</span>
 <span class="sd">        offset (int): genomic position of promoter to offset reads</span>
-<span class="sd">        viz_backend (str): which plotting backend to use, default plotly</span>
+<span class="sd">        test_dir(Optional[str]): name of test directory where bam files are located</span>
+<span class="sd">        fname_pattern(Optional[str]): regex pattern for processing filenames</span>
+<span class="sd">        viz_backend (Optional[str]): which plotting backend to use</span>
+<span class="sd">        results_dir (Optional[str]): name of results directory</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Config: configuration dataclass instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">test_dir</span><span class="p">:</span>
+        <span class="n">test_dir</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fname_pattern</span><span class="p">:</span>
+        <span class="n">fname_pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^[a-zA-Z]+_([a-zA-Z0-9]+)_.+bam$&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">viz_backend</span><span class="p">:</span>
+        <span class="n">viz_backend</span> <span class="o">=</span> <span class="s2">&quot;plotly&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">results_dir</span><span class="p">:</span>
+        <span class="n">results_dir</span> <span class="o">=</span> <span class="s2">&quot;results&quot;</span>
+
     <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
         <span class="n">base_directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">base_path</span><span class="p">),</span>
         <span class="n">promoter_file</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">base_path</span><span class="p">)</span> <span class="o">/</span> <span class="n">prom_file</span><span class="p">,</span>
-        <span class="n">results_directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">base_path</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;results&quot;</span><span class="p">,</span>
-        <span class="n">bam_directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">base_path</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;bam_output&quot;</span><span class="p">,</span>
-        <span class="n">analysis_directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">base_path</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span>
+        <span class="n">results_directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">base_path</span><span class="p">)</span> <span class="o">/</span> <span class="n">results_dir</span><span class="p">,</span>
+        <span class="n">analysis_directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">base_path</span><span class="p">)</span> <span class="o">/</span> <span class="n">test_dir</span><span class="p">,</span>
         <span class="n">promoter_start</span><span class="o">=</span><span class="n">prom_start</span><span class="p">,</span>
         <span class="n">promoter_end</span><span class="o">=</span><span class="n">prom_end</span><span class="p">,</span>
         <span class="n">chromosome</span><span class="o">=</span><span class="n">chrom</span><span class="p">,</span>
         <span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">,</span>
         <span class="n">viz_backend</span><span class="o">=</span><span class="n">viz_backend</span><span class="p">,</span>
+        <span class="n">fname_pattern</span><span class="o">=</span><span class="n">fname_pattern</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">config</span></div>

@@ -272,7 +272,7 @@ python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
 <span class="c1"># Sort and index the resultant bam file</span>
 <span class="n">bamfile</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;/</span><span class="si">{your_directory}</span><span class="s2">/</span><span class="si">{bam_filename}</span><span class="s2">.bam&quot;</span><span class="p">)</span>
 <span class="n">process</span><span class="o">.</span><span class="n">pysam_sort</span><span class="p">(</span><span class="n">bamfile</span><span class="p">)</span>
-<span class="n">process</span><span class="o">.</span><span class="n">pysam_index</span><span class="p">(</span><span class="n">bamfile</span> <span class="o">/</span> <span class="n">parent</span> <span class="o">/</span> <span class="n">bamfile</span><span class="o">.</span><span class="n">stem</span> <span class="o">/</span> <span class="s2">&quot;_sorted.bam&quot;</span><span class="p">)</span>
+<span class="n">process</span><span class="o">.</span><span class="n">pysam_index</span><span class="p">(</span><span class="n">bamfile</span> <span class="o">/</span> <span class="n">parent</span> <span class="o">/</span> <span class="p">(</span><span class="n">bamfile</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s2">&quot;_sorted.bam&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>Run pyllelic:</p>
@@ -285,6 +285,10 @@ python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
     <span class="n">prom_end</span><span class="o">=</span><span class="s2">&quot;1296000&quot;</span><span class="p">,</span>
     <span class="n">chrom</span><span class="o">=</span><span class="s2">&quot;5&quot;</span><span class="p">,</span>
     <span class="n">offset</span><span class="o">=</span><span class="mi">1293000</span><span class="p">,</span>  <span class="c1"># start position of retrieved promoter sequence</span>
+    <span class="c1"># viz_backend=&quot;plotly&quot;,</span>
+    <span class="c1"># fname_pattern=r&quot;^[a-zA-Z]+_([a-zA-Z0-9]+)_.+bam$&quot;,</span>
+    <span class="c1"># test_dir=&quot;test&quot;,</span>
+    <span class="c1"># results_dir=&quot;results&quot;,</span>
 <span class="p">)</span>
 
 <span class="n">files_set</span> <span class="o">=</span> <span class="n">pyllelic</span><span class="o">.</span><span class="n">make_list_of_bam_files</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>  <span class="c1"># finds bam files</span>

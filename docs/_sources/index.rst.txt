@@ -154,7 +154,7 @@ Set up files:
        # Sort and index the resultant bam file
        bamfile = Path("/{your_directory}/{bam_filename}.bam")
        process.pysam_sort(bamfile)
-       process.pysam_index(bamfile / parent / bamfile.stem / "_sorted.bam")
+       process.pysam_index(bamfile / parent / (bamfile.stem + "_sorted.bam"))
 
 Run pyllelic:
 
@@ -169,6 +169,10 @@ Run pyllelic:
            prom_end="1296000",
            chrom="5",
            offset=1293000,  # start position of retrieved promoter sequence
+           # viz_backend="plotly",
+           # fname_pattern=r"^[a-zA-Z]+_([a-zA-Z0-9]+)_.+bam$",
+           # test_dir="test",
+           # results_dir="results",
        )
 
        files_set = pyllelic.make_list_of_bam_files(config)  # finds bam files
