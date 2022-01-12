@@ -4,7 +4,7 @@ Information about the current version of the pyllelic package.
 
 __title__ = "pyllelic"
 __description__ = "Analysis of allele-specific methylation in bisulfite DNA sequencing."
-__version__ = "0.3.2"
+__version__ = "0.3.3"
 __author__ = "Andrew J. Bonham"
 __author_email__ = "abonham@msudenver.edu"
 __license__ = "GPLv3"
