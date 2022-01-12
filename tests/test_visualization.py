@@ -6,7 +6,7 @@ import pytest  # noqa  # pylint: disable=unused-import
 
 # Required libraries for test data
 import pandas as pd
-from inputs import EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
+from .inputs import EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA
 
 # Module to test
 import pyllelic.visualization as viz  # noqa  # pylint: disable=unused-import

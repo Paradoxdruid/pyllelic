@@ -8,7 +8,7 @@ import unittest.mock as mock
 
 # import os
 
-from inputs import (
+from .inputs import (
     EXPECTED_INTERMEDIATE_DIFFS,
     SAMPLE_BAM,
     SAMPLE_BAI,
