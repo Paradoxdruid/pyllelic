@@ -13,8 +13,10 @@ indicated.
 
 from . import pyllelic
 from . import process
+from .config import Config
 from pathlib import Path
 import argparse
+from typing import List
 
 
 def _parsing() -> argparse.Namespace:
@@ -24,7 +26,7 @@ def _parsing() -> argparse.Namespace:
         argparse.Namespace: parsed arguments.
     """
 
-    parser = argparse.ArgumentParser(
+    parser: argparse.ArgumentParser = argparse.ArgumentParser(
         description="run pyllelic on bisulfite sequencing fastq files",
         prog="python -m pyllelic",
     )
@@ -41,7 +43,7 @@ def _parsing() -> argparse.Namespace:
     )
     parser.add_argument("--testdir", type=str, default="test")
 
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
     return args
 
 
@@ -55,14 +57,14 @@ def _process_files(args: argparse.Namespace) -> None:
     process.retrieve_promoter_seq(
         "genome.txt", chrom=args.chrom, start=args.start, end=args.end
     )
-    genome = Path.cwd() / args.genome
-    fastq = Path.cwd() / args.fastq
+    genome: Path = Path.cwd() / args.genome
+    fastq: Path = Path.cwd() / args.fastq
     process.prepare_genome(genome)
     process.bismark(genome, fastq)
 
-    bamfile = Path.cwd() / (Path(args.fastq.stem) + ".bam")
+    bamfile: Path = Path.cwd() / (Path(args.fastq).stem + ".bam")
     process.pysam_sort(bamfile)
-    process.pysam_index(Path(bamfile.parent) / bamfile.stem / "_sorted.bam")
+    process.pysam_index(Path(bamfile.parent) / (bamfile.stem + "_sorted.bam"))
 
 
 def _call_pyllelic(args: argparse.Namespace) -> pyllelic.GenomicPositionData:
@@ -75,9 +77,9 @@ def _call_pyllelic(args: argparse.Namespace) -> pyllelic.GenomicPositionData:
         GenomicPositionData: pyllelic data object
     """
 
-    fname_pattern = fr"{args.fname_pattern}"
+    fname_pattern: str = fr"{args.fname_pattern}"
 
-    config = pyllelic.configure(
+    config: Config = pyllelic.configure(
         base_path=str(Path.cwd()),
         prom_file="genome.txt",
         prom_start=args.start,
@@ -89,20 +91,22 @@ def _call_pyllelic(args: argparse.Namespace) -> pyllelic.GenomicPositionData:
         test_dir=args.testdir,
     )
 
-    files_set = pyllelic.make_list_of_bam_files(config)
+    files_set: List[str] = pyllelic.make_list_of_bam_files(config)
 
-    data = pyllelic.pyllelic(config=config, files_set=files_set)
+    data: pyllelic.GenomicPositionData = pyllelic.pyllelic(
+        config=config, files_set=files_set
+    )
     return data
 
 
 def run_pyllelic() -> None:
     """Run all processing and analysis steps of pyllelic."""
 
-    args = _parsing()
+    args: argparse.Namespace = _parsing()
     print("Preparing genome and processing fastq file... this will take a while.")
     _process_files(args)
     print("Running pyllelic...")
-    data = _call_pyllelic(args)
+    data: pyllelic.GenomicPositionData = _call_pyllelic(args)
     print("Data processed, saving output files...")
     data.save_pickle(args.output_fname + ".pickle")
     data.save(args.output_fname + ".xlsx")
@@ -110,4 +114,5 @@ def run_pyllelic() -> None:
 
 
 # Run the whole process
-run_pyllelic()
+if __name__ == "__main__":  # pragma: no cover
+    run_pyllelic()
