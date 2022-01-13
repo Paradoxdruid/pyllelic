@@ -6,12 +6,11 @@
 Welcome to Pyllelic's documentation!
 ====================================
 
-
 .. raw:: html
 
    <img src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_logo.png?raw=true" width="50" height="50" style="float: left; margin-right: 10px;">
 
-**pyllelic**: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.
+`pyllelic <https://github.com/Paradoxdruid/pyllelic>`__: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.
 
 .. toctree::
    :maxdepth: 2
@@ -20,16 +19,19 @@ Welcome to Pyllelic's documentation!
 
    index
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Function Reference
 
-   pyllelic
+Quickstart
+~~~~~~~~~~
 
-Pyllelic documention is available at
-`<https://paradoxdruid.github.io/pyllelic/>`_ and see
-`pyllelic_notebook.ipynb <https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.md>`_
-for an interactive demonstration.
+Run an interactive sample pyllelic environment in your web browser using `mybinder.org <https://mybinder.org>`__:
+
+.. raw:: html
+
+   <a href="https://mybinder.org/v2/gh/Paradoxdruid/pyllelic/HEAD?filepath=pyllelic_binder_example.ipynb"><img src="https://mybinder.org/badge_logo.svg"></a>
+
+
+Demo gif
+~~~~~~~~
 
 .. raw:: html
 
@@ -39,6 +41,8 @@ for an interactive demonstration.
 
 Dependencies and Installation
 =============================
+
+Source code for pyllelic is available on `Github <https://github.com/Paradoxdruid/pyllelic>`__
 
 Using Conda (preferred)
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -208,20 +212,21 @@ Run pyllelic:
 
 --------------
 
+Function Reference
+==================
+
+.. toctree::
+   :maxdepth: 2
+
+   pyllelic
+
 Authors
 =======
 
-This software is developed as academic software by `Dr. Andrew J.
+This software is developed as academic software by `Dr. Andrew J.
 Bonham <https://github.com/Paradoxdruid>`__ at the `Metropolitan State
 University of Denver <https://www.msudenver.edu>`__. It is licensed
 under the GPL v3.0.
 
 This software incorporates implementation from
 `QUMA <http://quma.cdb.riken.jp>`__, licensed under the GPL v3.0.
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
