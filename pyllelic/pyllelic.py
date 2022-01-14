@@ -9,7 +9,7 @@ import signal
 from multiprocessing import Pool, cpu_count
 from multiprocessing.pool import AsyncResult
 from pathlib import Path
-from typing import Dict, List, NamedTuple, Optional, Tuple, Union
+from typing import Dict, List, NamedTuple, Optional, Tuple, Union, Match, Pattern
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -370,10 +370,14 @@ class GenomicPositionData:
         for name, bam_result in tqdm(
             self._bam_output.items(), desc="Process methylation"
         ):
-            # cell_line_name: str = Path(name).name.split("_")[1]
-            cell_line_name: str = re.match(
+            match: Optional[Match[str]] = re.match(
                 self.config.fname_pattern, Path(name).name
-            ).group(1)
+            )
+            cell_line_name: str
+            if isinstance(match, Match):
+                cell_line_name = match.group(1)
+            else:
+                cell_line_name = Path(name).name
 
             read_files: List[str] = [each for each in bam_result.values.values()]
             genomic_files: List[str] = [
@@ -873,8 +877,11 @@ def configure(
     if not test_dir:
         test_dir = "test"
 
+    fname_pattern_compiled: Pattern
     if not fname_pattern:
-        fname_pattern = r"^[a-zA-Z]+_([a-zA-Z0-9]+)_.+bam$"
+        fname_pattern_compiled = re.compile(r"^[a-zA-Z]+_([a-zA-Z0-9]+)_.+bam$")
+    else:
+        fname_pattern_compiled = re.compile(fname_pattern)
 
     if not viz_backend:
         viz_backend = "plotly"
@@ -892,7 +899,7 @@ def configure(
         chromosome=chrom,
         offset=offset,
         viz_backend=viz_backend,
-        fname_pattern=fname_pattern,
+        fname_pattern=fname_pattern_compiled,
     )
 
     return config

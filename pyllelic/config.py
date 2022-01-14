@@ -3,6 +3,7 @@
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Pattern
 import re
 
 
@@ -17,4 +18,4 @@ class Config:
     chromosome: str = "5"
     offset: int = 1298163
     viz_backend: str = "plotly"
-    fname_pattern: str = re.compile(r"^[a-zA-Z]+_([a-zA-Z0-9]+)_.+bam$")
+    fname_pattern: Pattern[str] = re.compile(r"^[a-zA-Z]+_([a-zA-Z0-9]+)_.+bam$")
