@@ -74,7 +74,7 @@ def build_bowtie2_index(fasta: Path) -> str:
 
     command: List[str] = ["bowtie2-build", "index", os.fspath(fasta)]
 
-    output: subprocess.CompletedProcess = subprocess.run(
+    output: subprocess.CompletedProcess[str] = subprocess.run(
         command, capture_output=True, text=True, check=True
     )
     out: str = output.stdout
@@ -82,7 +82,7 @@ def build_bowtie2_index(fasta: Path) -> str:
     return out
 
 
-def bowtie2_fastq_to_bam(index: Path, fastq: Path, cores: int) -> bytes:
+def bowtie2_fastq_to_bam(index: Path, fastq: Path, cores: int) -> str:
     """Helper function to run external bowtie2-build tool.
 
     Args:
@@ -91,7 +91,7 @@ def bowtie2_fastq_to_bam(index: Path, fastq: Path, cores: int) -> bytes:
         cores (int): number of cores to use for processing
 
     Returns:
-        bytes: output from bowtie2 and samtools shell command, usually discarded
+        str: output from bowtie2 and samtools shell command, usually discarded
     """
 
     command: List[str] = [
@@ -111,10 +111,10 @@ def bowtie2_fastq_to_bam(index: Path, fastq: Path, cores: int) -> bytes:
         str(fastq.parent) + "/" + str(fastq.stem) + ".bam",
     ]
 
-    output: subprocess.CompletedProcess = subprocess.run(
+    output: subprocess.CompletedProcess[str] = subprocess.run(
         command, capture_output=True, text=True, check=True
     )
-    out: bytes = output.stdout
+    out: str = output.stdout
 
     return out
 
@@ -168,7 +168,7 @@ def retrieve_promoter_seq(filename: str, chrom: str, start: int, end: int) -> No
     Path(filename).write_text(seq)
 
 
-def prepare_genome(index: Path, aligner: Optional[Path] = None) -> bytes:
+def prepare_genome(index: Path, aligner: Optional[Path] = None) -> str:
     """Helper function to run external bismark genome preparation tool.
 
     Uses genomes from, e.g.: http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/
@@ -181,7 +181,7 @@ def prepare_genome(index: Path, aligner: Optional[Path] = None) -> bytes:
         aligner (Optional[Path]): filepath to bowtie2 alignment program.
 
     Returns:
-        bytes: output from genome preparation shell command, usually discarded
+        str: output from genome preparation shell command, usually discarded
     """
     command: List[str]
     if aligner:
@@ -197,19 +197,19 @@ def prepare_genome(index: Path, aligner: Optional[Path] = None) -> bytes:
             str(index),
         ]
 
-    output: subprocess.CompletedProcess = subprocess.run(
+    output: subprocess.CompletedProcess[str] = subprocess.run(
         command,
         capture_output=True,
         text=True,
         check=True,
         cwd=index.parent,
     )
-    out: bytes = output.stdout
+    out: str = output.stdout
 
     return out
 
 
-def bismark(genome: Path, fastq: Path) -> bytes:
+def bismark(genome: Path, fastq: Path) -> str:
     """Helper function to run external bismark tool.
 
     Bismark documentation at:
@@ -220,7 +220,7 @@ def bismark(genome: Path, fastq: Path) -> bytes:
         fastq (Path): filepath to fastq file to process.
 
     Returns:
-        bytes: output from bismark shell command, usually discarded
+        str: output from bismark shell command, usually discarded
     """
 
     command: List[str] = [
@@ -230,13 +230,13 @@ def bismark(genome: Path, fastq: Path) -> bytes:
         str(fastq),
     ]
 
-    output: subprocess.CompletedProcess = subprocess.run(
+    output: subprocess.CompletedProcess[str] = subprocess.run(
         command,
         capture_output=True,
         text=True,
         check=True,
         cwd=fastq.parent,
     )
-    out: bytes = output.stdout
+    out: str = output.stdout
 
     return out

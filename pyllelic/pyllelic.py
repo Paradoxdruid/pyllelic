@@ -52,7 +52,7 @@ class BamOutput:
         self.values: Dict[str, str] = {}
         """Dict[str, str]: dictionary of reads at a given position"""
 
-        self.positions: pd.Index = self._run_sam_and_extract_df(sam_directory)
+        self.positions: List[str] = self._run_sam_and_extract_df(sam_directory)
         """"pd.Index: index of genomic positions in the bam file."""
 
         self.genome_values: Dict[str, str] = {}
@@ -60,7 +60,7 @@ class BamOutput:
 
         self._genome_parsing(genome_string)
 
-    def _run_sam_and_extract_df(self, sams: Path) -> pd.Index:
+    def _run_sam_and_extract_df(self, sams: Path) -> List[str]:
         """Process samfiles, pulling out sequence and position data
         and writing to folders/files.
 
@@ -68,7 +68,7 @@ class BamOutput:
             sams (Path): path to a samfile
 
         Returns:
-            pd.Index: list of unique positions in the samfile
+            List[str]: list of unique positions in the samfile
         """
 
         # Grab the promoter region of interest
@@ -96,7 +96,7 @@ class BamOutput:
 
         self._write_bam_output(df2.index.unique(), df3)
 
-        return df2.index.unique().tolist()
+        return df2.index.unique().astype(str).tolist()  # type: ignore
 
     def _write_bam_output(self, positions: pd.Index, df: pd.Series) -> None:
         """Extract alignments from sequencing reads and output text strings
@@ -210,7 +210,7 @@ class QumaResult:
         # Set up a holding data frame from all the data
         holding_df: pd.DataFrame = pd.DataFrame()
 
-        returns: List[AsyncResult] = []
+        returns: List[AsyncResult[Tuple[pd.DataFrame, str]]] = []
         with Pool(NUM_THREADS, self._init_worker) as pool:
 
             for position, read, genomic in zip(
@@ -429,7 +429,7 @@ class GenomicPositionData:
         """
 
         with open(filename, "rb") as input_file:
-            data = pickle.load(input_file)  # nosec
+            data: GenomicPositionData = pickle.load(input_file)  # nosec
 
         return data
 
@@ -532,7 +532,7 @@ class GenomicPositionData:
         values_list: List[float] = []
         # Check if this cell line has that position
         df: pd.DataFrame = self.quma_results[key].values
-        if pos in df.columns:  # type: ignore[union-attr]
+        if pos in df.columns:
 
             values_to_check: List[str] = self._get_str_values(df, pos)
             for value in values_to_check:
@@ -556,7 +556,7 @@ class GenomicPositionData:
         Returns:
             List[str]: list of values
         """
-        return df.loc[:, pos].dropna().astype(str)  # type: ignore[union-attr]
+        return df.loc[:, pos].dropna().astype(str).tolist()  # type: ignore
 
     @staticmethod
     def _find_diffs(means_df: pd.DataFrame, modes_df: pd.DataFrame) -> pd.DataFrame:
@@ -877,7 +877,7 @@ def configure(
     if not test_dir:
         test_dir = "test"
 
-    fname_pattern_compiled: Pattern
+    fname_pattern_compiled: Pattern[str]
     if not fname_pattern:
         fname_pattern_compiled = re.compile(r"^[a-zA-Z]+_([a-zA-Z0-9]+)_.+bam$")
     else:

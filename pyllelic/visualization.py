@@ -8,7 +8,7 @@ import plotly.subplots as sp
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from typing import Union, Optional, List
+from typing import Union, Optional, List, Dict
 
 
 def _create_histogram(
@@ -219,7 +219,7 @@ def _make_binary(data: Optional[List[int]]) -> List[int]:
     return new
 
 
-def _make_methyl_df(df: pd.DataFrame, row: str):
+def _make_methyl_df(df: pd.DataFrame, row: str) -> pd.DataFrame:
     new_df = pd.DataFrame(
         {each[0]: each[1].values[0] for each in df.loc[row].to_frame().iterrows()}
     )
@@ -238,8 +238,8 @@ def _make_stacked_plotly_fig(df: pd.DataFrame) -> go.Figure:
         go.Figure: plotly figure
     """
 
-    def make_it_all(df):
-        def make_methyl_bar(df):
+    def make_it_all(df: pd.DataFrame) -> Dict[str, go.Figure]:
+        def make_methyl_bar(df: pd.DataFrame) -> go.Figure:
             fig = px.bar(
                 df.T,
                 height=20,
