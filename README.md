@@ -8,13 +8,13 @@
 
 **pyllelic**: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.
 
-Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/>** and see [`pyllelic_notebook.ipynb`](https://github.com/Paradoxdruid/pyllelic/blob/master/pyllelic_notebook.ipynb) for an interactive demonstration.
+Pyllelic documention is available at **<https://paradoxdruid.github.io/pyllelic/>** and see [`pyllelic_notebook.ipynb`](https://github.com/Paradoxdruid/pyllelic/blob/master/notebooks/pyllelic_notebook.ipynb) for a fully explored demonstration.
 
 ## Quickstart
 
 Run an interactive sample pyllelic environment in your web browser using [`mybinder.org`](https://mybinder.org):
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Paradoxdruid/pyllelic/HEAD?filepath=pyllelic_binder_example.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Paradoxdruid/pyllelic/HEAD?filepath=notebooks/pyllelic_binder_example.ipynb)
 
 ## pyllelic in action
 

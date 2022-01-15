@@ -27,7 +27,7 @@ Run an interactive sample pyllelic environment in your web browser using `mybind
 
 .. raw:: html
 
-   <a href="https://mybinder.org/v2/gh/Paradoxdruid/pyllelic/HEAD?filepath=pyllelic_binder_example.ipynb"><img src="https://mybinder.org/badge_logo.svg"></a>
+   <a href="https://mybinder.org/v2/gh/Paradoxdruid/pyllelic/HEAD?filepath=notebooks/pyllelic_binder_example.ipynb"><img src="https://mybinder.org/badge_logo.svg"></a>
 
 
 Demo gif
