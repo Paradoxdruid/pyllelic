@@ -10,9 +10,10 @@
 import re
 from dataclasses import dataclass
 from io import StringIO
-from typing import Dict, List, Tuple, Optional
-from Bio.Align import substitution_matrices
+from typing import Dict, List, Optional, Tuple
+
 from Bio import Align
+from Bio.Align import substitution_matrices
 
 # import logging
 

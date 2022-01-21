@@ -11,12 +11,12 @@ the specified fastq file using the specified reference genome, in the genomic re
 indicated.
 """
 
-from . import pyllelic
-from . import process
-from .config import Config
-from pathlib import Path
 import argparse
+from pathlib import Path
 from typing import List
+
+from . import process, pyllelic
+from .config import Config
 
 
 def _parsing() -> argparse.Namespace:

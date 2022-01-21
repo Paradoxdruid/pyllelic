@@ -9,14 +9,13 @@ import signal
 from multiprocessing import Pool, cpu_count
 from multiprocessing.pool import AsyncResult
 from pathlib import Path
-from typing import Dict, List, NamedTuple, Optional, Tuple, Union, Match, Pattern
+from typing import Dict, List, Match, NamedTuple, Optional, Pattern, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import pysam
-
 from numpy.typing import ArrayLike
 from scipy import stats
 from tqdm.auto import tqdm

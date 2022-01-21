@@ -4,12 +4,12 @@
 import gzip
 import os
 import re
-import requests
 import subprocess
 from pathlib import Path
 from typing import Dict, List, Optional
 
 import pysam
+import requests
 from Bio import SeqIO
 
 

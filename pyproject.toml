@@ -5,3 +5,6 @@ filterwarnings = ["ignore::DeprecationWarning"]
 ignore_missing_imports = true
 strict = true
 files = "pyllelic/*.py"
+
+[tool.isort]
+profile = "black"

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """Utilities to visualize data for use in pyllelic."""
 
-import pandas as pd
-import plotly.graph_objects as go
-import plotly.express as px
-import plotly.subplots as sp
-import matplotlib.pyplot as plt
-import seaborn as sns
+from typing import Dict, List, Optional, Union
 
-from typing import Union, Optional, List, Dict
+import matplotlib.pyplot as plt
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import plotly.subplots as sp
+import seaborn as sns
 
 
 def _create_histogram(

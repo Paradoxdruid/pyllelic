@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Configuration options for pyllelic."""
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Pattern
-import re
 
 
 @dataclass
