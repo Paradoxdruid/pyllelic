@@ -173,7 +173,9 @@ class QumaResult:
         self._read_files: List[str] = read_files
         self._genomic_files: List[str] = genomic_files
         self._positions: List[str] = positions
-        self._raw_quma: List[str] = []
+        self.quma_output: List[quma.Quma] = []
+        """List[quma.Quma]: list of Quma result objects."""
+
         self.values: pd.DataFrame = self._pool_processing()
         """pd.DataFrame: dataframe of quma methylation analysis values."""
 
@@ -209,7 +211,7 @@ class QumaResult:
         # Set up a holding data frame from all the data
         holding_df: pd.DataFrame = pd.DataFrame()
 
-        returns: List[AsyncResult[Tuple[pd.DataFrame, str]]] = []
+        returns: List[AsyncResult[Tuple[pd.DataFrame, quma.Quma]]] = []
         with Pool(NUM_THREADS, self._init_worker) as pool:
 
             for position, read, genomic in zip(
@@ -225,10 +227,10 @@ class QumaResult:
             results = [result.get() for result in returns]
 
         # Add to excel file
-        for each in results:
+        for int_df, quma_obj in results:
             try:
-                holding_df = pd.concat([holding_df, each[0]], axis=1)
-                self._raw_quma.append(each[1])
+                holding_df = pd.concat([holding_df, int_df], axis=1)
+                self.quma_output.append(quma_obj)
             except (AttributeError, KeyError):  # pragma: no cover
                 pass
 
@@ -243,7 +245,7 @@ class QumaResult:
 
     def _thread_worker(
         self, genomic_contents: str, read_contents: str, position: str
-    ) -> Tuple[pd.DataFrame, str]:
+    ) -> Tuple[pd.DataFrame, quma.Quma]:
         """Queue worker for quma functions.
 
         Args:
@@ -252,18 +254,18 @@ class QumaResult:
             position(str): position of reads
 
         Returns:
-            Tuple[pd.DataFrame, str]: dataframe of quma results and raw quma results
+            Tuple[pd.DataFrame, quma.Quma]: dataframe of quma results and raw quma objs
         """
 
-        quma_result: str = self._access_quma(genomic_contents, read_contents)
+        quma_obj: quma.Quma = self._access_quma(genomic_contents, read_contents)
 
-        processed_quma: List[str] = self._process_raw_quma(quma_result)
+        processed_quma: List[str] = self._process_raw_quma(quma_obj.values)
         # Next, add this readname to the holding data frame
         int_df: pd.DataFrame = pd.DataFrame({position: processed_quma})
-        return int_df, quma_result
+        return int_df, quma_obj
 
     @staticmethod
-    def _access_quma(genomic_contents: str, read_contents: str) -> str:
+    def _access_quma(genomic_contents: str, read_contents: str) -> quma.Quma:
         """Helper function to run internal QUMA tool.
 
         Args:
@@ -271,12 +273,10 @@ class QumaResult:
             read_contents (str): query sequence
 
         Returns:
-            str: output from quma command
+            quma.Quma: quma object
         """
 
-        result = quma.Quma(genomic_contents, read_contents).values
-
-        return result
+        return quma.Quma(genomic_contents, read_contents)
 
 
 ##################################################################################

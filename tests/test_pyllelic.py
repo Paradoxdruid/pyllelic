@@ -3,35 +3,35 @@
 
 # Testing
 import base64
-import pytest
 import unittest.mock as mock
+from pathlib import Path
 
-# import os
-
-from .inputs import (
-    EXPECTED_INTERMEDIATE_DIFFS,
-    SAMPLE_BAM,
-    SAMPLE_BAI,
-    TEST_PROM_FILE,
-    EXPECTED_BAM_OUTPUT_POSITIONS,
-    EXPECTED_BAM_OUTPUT_VALUES,
-    EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA,
-    EXPECTED_BAM_OUTPUT_GENOME_VALUES,
-    EXPECTED_STACKED_BAM,
-    EXPECTED_WRITE_DF_OUTPUT,
-    INPUT_READ_FILE,
-    EXPECTED_MEANS,
-    EXPECTED_RAW_QUMA,
-)
+import numpy as np
 
 # Required libraries for test data
 import pandas as pd
-
-import numpy as np
-from pathlib import Path
+import pytest
 
 # Module to test
 from pyllelic import pyllelic
+
+from .inputs import (
+    EXPECTED_BAM_OUTPUT_GENOME_VALUES,
+    EXPECTED_BAM_OUTPUT_POSITIONS,
+    EXPECTED_BAM_OUTPUT_VALUES,
+    EXPECTED_INTERMEDIATE_DIFFS,
+    EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA,
+    EXPECTED_MEANS,
+    EXPECTED_QUMA_VALUES,
+    EXPECTED_STACKED_BAM,
+    EXPECTED_WRITE_DF_OUTPUT,
+    INPUT_READ_FILE,
+    SAMPLE_BAI,
+    SAMPLE_BAM,
+    TEST_PROM_FILE,
+)
+
+# import os
 
 
 # Helper methods
@@ -309,7 +309,7 @@ class Test_QumaOutput:
         actual = quma_output._thread_worker(TEST_GSEQ, TEST_QSEQ, TEST_READ_NAME)
 
         pd.testing.assert_frame_equal(actual[0], EXPECTED)
-        assert actual[1] == EXPECTED_RAW_QUMA
+        assert actual[1].values == EXPECTED_QUMA_VALUES
 
     def test_access_quma(self, set_up_quma_output):
         quma_output = set_up_quma_output
@@ -317,7 +317,7 @@ class Test_QumaOutput:
         TEST_QSEQ = ">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
 
         actual = quma_output._access_quma(TEST_GSEQ, TEST_QSEQ)
-        assert EXPECTED_RAW_QUMA == actual
+        assert actual.values == EXPECTED_QUMA_VALUES
 
 
 class Test_GenomicPositionData:

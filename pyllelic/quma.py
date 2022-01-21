@@ -103,11 +103,12 @@ class Quma:
 
         _gfilepF: str = self._fasta_make(self._gseq, "genomeF")
 
-        self._raw_data: List[Reference] = self._process_fasta_output(
+        self.data: List[Reference] = self._process_fasta_output(
             self._qseq, "queryF", "queryR", _gfilepF
         )
+        """QUMA Output in object form."""
 
-        self.values: str = self._format_output(self._gseq, self._raw_data)
+        self.values: str = self._format_output(self._gseq, self.data)
         """QUMA output values in tabular form."""
 
     def _parse_genome(self) -> str:
@@ -492,7 +493,7 @@ class Quma:
                     result.val += qAli[ni]
 
                 i = ni + 1
-            else:
+            else:  # pragma: no cover
                 break
 
         # kludge:
