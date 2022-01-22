@@ -190,7 +190,10 @@ class QumaResult:
             pd.DataFrame: intermediate dataframe to append
         """
 
-        dots = [res.res.val for res in quma_data]
+        dots = [
+            res.res.val if res.res.perc > MIN_PERCENT_ALIGNMENT else "FAIL"
+            for res in quma_data
+        ]
 
         return sorted(dots, key=lambda t: t.count("1"))
 
