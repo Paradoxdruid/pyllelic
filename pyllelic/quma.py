@@ -403,7 +403,7 @@ class Quma:
             q_substring = q_matches[left_start_index:-right_end_index]
             g_substring = g_matches[left_start_index:-right_end_index]
 
-        return (q_substring, g_substring)
+        return (g_substring, q_substring)  # was flipped!
 
     def _align_seq_and_generate_stats(self, gfile: str, qfile: str) -> Result:
         """Run pairwise sequence alignment.
