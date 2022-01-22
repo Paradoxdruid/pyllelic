@@ -19,6 +19,7 @@ from .inputs import (
     EXPECTED_BAM_OUTPUT_GENOME_VALUES,
     EXPECTED_BAM_OUTPUT_POSITIONS,
     EXPECTED_BAM_OUTPUT_VALUES,
+    EXPECTED_INDIVIDUAL_POSITIONS,
     EXPECTED_INTERMEDIATE_DIFFS,
     EXPECTED_INTERMEDIATE_INDIVIDUAL_DATA,
     EXPECTED_MEANS,
@@ -261,15 +262,20 @@ class Test_QumaOutput:
     def test_process_raw_quma(self, set_up_quma_output):
         quma_output = set_up_quma_output
 
-        EXPECTED = ["1A", "11"]
-        actual = quma_output._process_raw_quma(TEST_QUMA_RESULT)
+        quma_reference = quma_output.quma_output[0].data
+
+        EXPECTED = ["111", "111", "111", "111", "111", "1111"]
+        actual = quma_output._process_raw_quma(quma_reference)
         assert EXPECTED == actual
 
     def test_process_raw_quma_below_min_alignment(self, set_up_quma_output):
         quma_output = set_up_quma_output
-        TEST_QUMA_RESULT_FAIL = TEST_QUMA_RESULT[:157] + "4" + TEST_QUMA_RESULT[158:]
-        EXPECTED = ["FAIL", "11"]
-        actual = quma_output._process_raw_quma(TEST_QUMA_RESULT_FAIL)
+
+        quma_reference = quma_output.quma_output[0].data
+        quma_reference[0].res.perc = 10
+
+        EXPECTED = ["FAIL", "111", "111", "111", "111", "1111"]
+        actual = quma_output._process_raw_quma(quma_reference)
         assert EXPECTED == actual
 
     def test__pool_processing(self, set_up_quma_output):
@@ -685,3 +691,10 @@ class Test_GenomicPositionData:
         EXPECTED_TRUNCATED_DIFF = TEST_DIFFS.dropna(how="all")
         actual = pyllelic.GenomicPositionData._truncate_diffs(TEST_DIFFS)
         pd.testing.assert_frame_equal(actual, EXPECTED_TRUNCATED_DIFF)
+
+    def test_return_individual_positions(self, set_up_genomic_position_data):
+        _, genomic_position_data = set_up_genomic_position_data
+
+        actual = genomic_position_data.return_individual_positions("test")
+
+        pd.testing.assert_frame_equal(actual, EXPECTED_INDIVIDUAL_POSITIONS)
