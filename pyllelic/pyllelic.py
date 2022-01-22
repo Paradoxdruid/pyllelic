@@ -828,6 +828,118 @@ class GenomicPositionData:
             return AD_stats(is_sig, stat, crits)
         return AD_stats(False, np.nan, [np.nan])
 
+    def return_individual_positions(self, cell_line: str) -> pd.DataFrame:
+        """Return a dataframe of methylation at genomic position resolution.
+
+        Args:
+            cell_line (str): Cell line to analyze.
+
+        Returns:
+            pd.DataFrame: dataframe of methylation at genomic position resolution.
+        """
+
+        class PointData(NamedTuple):
+            """Named tuple to cointain individual Quma point data."""
+
+            cell: str
+            read_position: int
+            read: str
+            positions: List[int]
+            values: List[str]
+
+        def _find_positions(
+            cell: str, pos: str, data_list: List[quma.Reference], gseq: str
+        ) -> List[PointData]:
+            """Find individual resolution positions and data in quma results.
+
+            Args:
+                cell (str): cell line.
+                pos (str): position of read.
+                data_list (List[quma.Reference]): list of quma read data
+                gseq (str): reference genomic sequence of read position
+
+            Returns:
+                List[PointData]: list of data points from quma results.
+            """
+            output: List[PointData] = []
+            for each in data_list:
+                read: str = each.fasta.com
+                offset: List[int] = [
+                    m.start() for m in re.finditer(each.res.gAli, gseq)
+                ]
+                real_off_set: int
+                if offset:
+                    real_off_set = offset[0]
+                else:
+                    real_off_set = 0
+                init_pos_list: List[int] = [
+                    m.start() for m in re.finditer("CG", each.res.gAli)
+                ]
+                pos_list: List[int] = [
+                    (this + int(pos) + real_off_set) for this in init_pos_list
+                ]
+
+                my_point: PointData = PointData(
+                    cell=cell,
+                    read_position=int(pos),
+                    read=read,
+                    positions=pos_list,
+                    values=list(each.res.val),
+                )
+                output.append(my_point)
+
+            return output
+
+        def _collate_positions(output: List[PointData]) -> Dict[int, List[str]]:
+            """Collect together list of quma data points into position-indexed dict.
+
+            Args:
+                output (List[PointData]): list of quma read data points
+
+            Returns:
+                Dict[int, str]: position-indexed genomic resolution methylation dict.
+            """
+            result_dict: Dict[int, List[str]] = {}
+            for each in output:
+                for idx, val in enumerate(each.positions):
+                    try:
+                        my_val: str = each.values[idx]
+                    except IndexError:
+                        pass
+                    if my_val in ["1", "0"]:
+                        if result_dict.get(val):
+                            result_dict[val].append(my_val)
+                        else:
+                            result_dict[val] = [my_val]
+            return result_dict
+
+        def _make_pos_df(data: Dict[int, List[str]]) -> pd.DataFrame:
+            """Convert dictionary of genomic resolution data into dataframe.
+
+            Args:
+                data (Dict[int, List[str]]): pos-indexed high res. methylation dict.
+
+            Returns:
+                pd.DataFrame: dataframe of pos-indexed high resolution methylation.
+            """
+            int_df: pd.DataFrame = pd.DataFrame()
+            for k, v in data.items():
+                int_df = pd.concat([int_df, pd.DataFrame({k: sorted(v)})], axis=1)
+            return int_df
+
+        query: QumaResult = self.quma_results[cell_line]
+        positions: List[str] = query._positions
+        data: List[quma.Quma] = query.quma_output
+        big_list: List[List[PointData]] = []
+        for pos, dat in zip(positions, data):
+            big_list.append(_find_positions("NCIH2171", pos, dat.data, dat._gseq))
+
+        final_list: List[PointData] = [item for sublist in big_list for item in sublist]
+        full_data: Dict[int, List[str]] = _collate_positions(final_list)
+
+        final_df: pd.DataFrame = _make_pos_df(full_data)
+        return final_df
+
 
 ##################################################################################
 ##################################################################################
