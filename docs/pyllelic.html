@@ -707,6 +707,17 @@ defaults to all cell lines.</p></li>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Storage container to process and store quma-style methylation results.</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.QumaResult.quma_output">
+<span class="sig-name descname"><span class="pre">quma_output</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyllelic.quma.Quma" title="pyllelic.quma.Quma"><span class="pre">pyllelic.quma.Quma</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.QumaResult.quma_output" title="Permalink to this definition"></a></dt>
+<dd><p>list of Quma result objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="#pyllelic.quma.Quma" title="pyllelic.quma.Quma">quma.Quma</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.QumaResult.values">
 <span class="sig-name descname"><span class="pre">values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.QumaResult.values" title="Permalink to this definition"></a></dt>
 <dd><p>dataframe of quma methylation analysis values.</p>
@@ -817,6 +828,12 @@ bisulfite sequencing reads.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyllelic.quma.</span></span><span class="sig-name descname"><span class="pre">Quma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gfile_contents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qfile_contents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyllelic/quma.html#Quma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.quma.Quma" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Quma methylation analysis parser for bisulfite conversion DNA sequencing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.quma.Quma.data">
+<span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyllelic.quma.Reference" title="pyllelic.quma.Reference"><span class="pre">pyllelic.quma.Reference</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.quma.Quma.data" title="Permalink to this definition"></a></dt>
+<dd><p>QUMA Output in object form.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.quma.Quma.values">
 <span class="sig-name descname"><span class="pre">values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyllelic.quma.Quma.values" title="Permalink to this definition"></a></dt>
