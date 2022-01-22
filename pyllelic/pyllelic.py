@@ -180,25 +180,18 @@ class QumaResult:
         """pd.DataFrame: dataframe of quma methylation analysis values."""
 
     @staticmethod
-    def _process_raw_quma(quma_result: str) -> List[str]:
+    def _process_raw_quma(quma_data: List[quma.Reference]) -> List[str]:
         """Spit and process raw quma results into a pandas dataframe.
 
         Args:
-            quma_result (str): console output from quma program.
+            quma_data (List[quma.Reference]): list of quma References.
 
         Returns:
             pd.DataFrame: intermediate dataframe to append
         """
 
-        dots: List[str] = []
-        for line in quma_result.splitlines():
-            if not line.lstrip().startswith("g"):
-                fields: List[str] = line.split("\t")
-                if float(fields[7]) < MIN_PERCENT_ALIGNMENT:
-                    dots.append("FAIL")
-                else:
-                    dots.append(fields[13])
-        # Sort dots output by number of "1"
+        dots = [res.res.val for res in quma_data]
+
         return sorted(dots, key=lambda t: t.count("1"))
 
     def _pool_processing(self) -> pd.DataFrame:
@@ -259,7 +252,7 @@ class QumaResult:
 
         quma_obj: quma.Quma = self._access_quma(genomic_contents, read_contents)
 
-        processed_quma: List[str] = self._process_raw_quma(quma_obj.values)
+        processed_quma: List[str] = self._process_raw_quma(quma_obj.data)
         # Next, add this readname to the holding data frame
         int_df: pd.DataFrame = pd.DataFrame({position: processed_quma})
         return int_df, quma_obj
