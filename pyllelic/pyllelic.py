@@ -6,6 +6,7 @@
 import pickle  # nosec
 import re
 import signal
+import warnings
 from multiprocessing import Pool, cpu_count
 from multiprocessing.pool import AsyncResult
 from pathlib import Path
@@ -723,10 +724,14 @@ class GenomicPositionData:
 
         Raises:
             ValueError: invalid plotting backend
+            ValueError: No data available at that position
         """
         data = self.individual_data
         if not backend:
             backend = self.config.viz_backend
+
+        if np.all(np.isnan(data.loc[cell_line, position])):
+            raise ValueError("No data available at that position")
 
         if backend == "plotly":
             fig: go.Figure = viz._create_histogram(data, cell_line, position, backend)
@@ -904,7 +909,9 @@ class GenomicPositionData:
             for column in row.index:
                 value = row[column]
                 if np.all(pd.notnull(value)):
-                    good, stat, crits = self._anderson_darling_test(value)
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore", RuntimeWarning)
+                        good, stat, crits = self._anderson_darling_test(value)
                     if good:
                         sig_dict["diff"].append(self.diffs.loc[index, column])
                         sig_dict["cellLine"].append(index)
