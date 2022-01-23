@@ -887,6 +887,8 @@ class GenomicPositionData:
                             result_dict[val].append(my_val)
                         else:
                             result_dict[val] = [my_val]
+
+            result_dict = {k: sorted(v) for k, v in result_dict.items()}
             return result_dict
 
         def _make_pos_df(data: Dict[int, List[str]]) -> pd.DataFrame:
@@ -899,10 +901,7 @@ class GenomicPositionData:
                 pd.DataFrame: dataframe of pos-indexed high resolution methylation.
             """
 
-            df_list: List[pd.DataFrame] = []
-            for k, v in data.items():
-                df_list.append(pd.DataFrame({k: sorted(v)}))
-            int_df = pd.concat(df_list, axis=1)
+            int_df = pd.DataFrame.from_dict(data, orient="index").transpose()
             return int_df
 
         query: QumaResult = self.quma_results[cell_line]
@@ -910,7 +909,7 @@ class GenomicPositionData:
         data: List[quma.Quma] = query.quma_output
         big_list: List[List[PointData]] = []
         for pos, dat in zip(positions, data):
-            big_list.append(_find_positions("NCIH2171", pos, dat.data, dat._gseq))
+            big_list.append(_find_positions(cell_line, pos, dat.data, dat._gseq))
 
         final_list: List[PointData] = [item for sublist in big_list for item in sublist]
         full_data: Dict[int, List[str]] = _collate_positions(final_list)
