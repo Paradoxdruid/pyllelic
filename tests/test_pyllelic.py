@@ -494,7 +494,6 @@ class Test_GenomicPositionData:
             )
             actual2 = genomic_position_data.summarize_allelic_data()
 
-            print(repr(actual1.to_dict()))
         pd.testing.assert_frame_equal(EXPECTED_ALLELIC_DATA, actual1)
         pd.testing.assert_frame_equal(EXPECTED_ALLELIC_DATA, actual2)
 
