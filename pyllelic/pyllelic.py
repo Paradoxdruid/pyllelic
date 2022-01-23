@@ -458,31 +458,6 @@ class GenomicPositionData:
 
         return data
 
-    # def _process_means(self) -> pd.DataFrame:
-    #     """Process the mean values at each position for each cell line.
-
-    #     Returns:
-    #         pd.DataFrame: df of mean values for each position in each cell line
-    #     """
-
-    #     # Gives the means of each positions-- NOT the mean of the entire dataframe!
-    #     working_df: pd.DataFrame = pd.DataFrame()
-    #     pos_dict: Dict[str, str] = {each: "" for each in self.positions}
-    #     working_df = working_df.assign(**pos_dict)
-    #     for pos in self.positions:
-    #         for key in self.quma_results.keys():
-    #             values_list: List[float] = self._return_read_values(pos, key)
-    #             if values_list:
-    #                 pos_means: float = float(np.mean(values_list))
-    #             else:  # pragma: no cover
-    #                 pos_means = np.nan
-
-    #             working_df.at[key, pos] = pos_means
-
-    #     means_df: pd.DataFrame = working_df
-
-    #     return means_df
-
     def _process_means(self) -> pd.DataFrame:
         """Process the mean values at each individual position for each cell line.
 
@@ -498,32 +473,6 @@ class GenomicPositionData:
         df = pd.DataFrame.from_dict(df_list).T
         df.columns = df.columns.astype(str)
         return df
-
-    # def _process_modes(self) -> pd.DataFrame:
-    #     """Process the mode values at each position for each cell line.
-
-    #     Returns:
-    #         pd.DataFrame: df of mode values for each position in each cell line
-    #     """
-
-    #     # Gives the modes of each positions-- NOT the mode of the entire dataframe!
-    #     working_df: pd.DataFrame = pd.DataFrame()
-    #     pos_dict: Dict[str, str] = {each: "" for each in self.positions}
-    #     working_df = working_df.assign(**pos_dict)
-    #     for pos in self.positions:
-    #         for key in self.quma_results.keys():
-    #             values_list: List[float] = self._return_read_values(pos, key)
-
-    #             if values_list:
-    #                 pos_modes: float = stats.mode(values_list)[0][0]
-    #             else:  # pragma: no cover
-    #                 pos_modes = np.nan
-
-    #             working_df.at[key, pos] = pos_modes
-
-    #     modes_df: pd.DataFrame = working_df
-
-    #     return modes_df
 
     def _process_modes(self) -> pd.DataFrame:
         """Process the mode at each individual position for each cell line.
@@ -543,28 +492,6 @@ class GenomicPositionData:
         df = pd.DataFrame.from_dict(df_list).T
         df.columns = df.columns.astype(str)
         return df
-
-    # def _return_individual_data(self) -> pd.DataFrame:
-    #     """Return a df for methylation values at each position for each cell line.
-
-    #     Returns:
-    #         pd.DataFrame: methylation values for each position in each cell line
-    #     """
-
-    #     working_df: pd.DataFrame = pd.DataFrame(
-    #         index=list(self.quma_results.keys()), columns=self.positions
-    #     )
-    #     for pos in self.positions:
-    #         for key in self.quma_results.keys():
-    #             values_list: List[float] = self._return_read_values(pos, key)
-    #             if values_list:
-    #                 data_for_df: Union[List[float], float] = values_list
-    #             else:  # pragma: no cover
-    #                 data_for_df = np.nan
-
-    #             working_df.at[key, pos] = data_for_df
-
-    #     return working_df
 
     def _return_individual_data(self) -> pd.DataFrame:
         """Return a dataframe for methylation values at each position for each cell line.
@@ -592,58 +519,6 @@ class GenomicPositionData:
         df = pd.concat(df_list)
         df.columns = df.columns.astype(str)
         return df
-
-    # def _return_read_values(
-    #     self,
-    #     pos: str,
-    #     key: str,
-    #     min_sites: int = MIN_NUMBER_READS,
-    # ) -> List[float]:
-    #     """Given a genomic position, cell line, and data, find fractional methylation
-    #     values for each read in the dataset.
-
-    #     Args:
-    #         pos (str): genomic position of read
-    #         key (str): cell line name
-    #         min_sites (int): minimum bound for # methylation sites to consider
-
-    #     Returns:
-    #         List[float]: list of fractional methylation for each read
-    #     """
-
-    #     bad_values: List[str] = ["N", "F"]  # for interpreting quma returns
-    #     min_num_meth_sites: int = (
-    #         min_sites  # Only include if read has minimum methylation sites
-    #     )
-
-    #     values_list: List[float] = []
-    #     # Check if this cell line has that position
-    #     df: pd.DataFrame = self.quma_results[key].values
-    #     if pos in df.columns:
-
-    #         values_to_check: List[str] = self._get_str_values(df, pos)
-    #         for value in values_to_check:
-    #             if not any(substring in value for substring in bad_values):
-    #                 if len(value) >= min_num_meth_sites:
-    #                     fraction_val: float = float(value.count("1")) / float(
-    #                         len(value)
-    #                     )  # number of methylated sites in each read
-    #                     values_list.append(fraction_val)
-
-    #     return values_list
-
-    # @staticmethod
-    # def _get_str_values(df: pd.DataFrame, pos: str) -> List[str]:
-    #     """Return list of values a a position in given dataframe of methylation data.
-
-    #     Args:
-    #         df (pd.DataFrame): cell line dataframe
-    #         pos (str): position being analyzed
-
-    #     Returns:
-    #         List[str]: list of values
-    #     """
-    #     return df.loc[:, pos].dropna().astype(str).tolist()  # type: ignore
 
     @staticmethod
     def _find_diffs(means_df: pd.DataFrame, modes_df: pd.DataFrame) -> pd.DataFrame:
@@ -1023,9 +898,11 @@ class GenomicPositionData:
             Returns:
                 pd.DataFrame: dataframe of pos-indexed high resolution methylation.
             """
-            int_df: pd.DataFrame = pd.DataFrame()
+
+            df_list: List[pd.DataFrame] = []
             for k, v in data.items():
-                int_df = pd.concat([int_df, pd.DataFrame({k: sorted(v)})], axis=1)
+                df_list.append(pd.DataFrame({k: sorted(v)}))
+            int_df = pd.concat(df_list, axis=1)
             return int_df
 
         query: QumaResult = self.quma_results[cell_line]
