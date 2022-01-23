@@ -151,7 +151,7 @@ def _create_methylation_diffs_bar_graph(
     Raises:
         ValueError: invalid plotting backend
     """
-    data = df.pivot(index="position", columns="cellLine", values="ad_stat")
+    data = df.pivot_table(index="position", columns="cellLine", values="ad_stat")
     data = data.dropna(axis=1, how="all").count(axis=1).to_frame()
 
     if backend == "plotly":
