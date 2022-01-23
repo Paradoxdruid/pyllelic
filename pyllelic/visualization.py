@@ -171,7 +171,7 @@ def _create_methylation_diffs_bar_graph(
             range=[int(data.index.min()), int(data.index.max())],
         )
         fig.update_yaxes(title="# of significant differences")
-        fig.update_traces(width=50)
+        fig.update_traces(width=10)
 
         return fig
     if backend == "matplotlib":
