@@ -16,6 +16,8 @@ import pytest
 from pyllelic import pyllelic
 
 from .inputs import (
+    EXPECTED_ALLELIC_DATA,
+    EXPECTED_BAM_INDIVIDUAL_POSITIONS,
     EXPECTED_BAM_OUTPUT_GENOME_VALUES,
     EXPECTED_BAM_OUTPUT_POSITIONS,
     EXPECTED_BAM_OUTPUT_VALUES,
@@ -158,13 +160,8 @@ def test_pyllelic(tmp_path_factory):
     config = setup_config(p)
     INPUT_BAM_LIST = ["fh_test_tissue.bam"]
     genomic_position_data = pyllelic.pyllelic(config=config, files_set=INPUT_BAM_LIST)
-    positions = []
-    for each in EXPECTED_BAM_OUTPUT_POSITIONS:
-        positions.append(each)
 
-    EXPECTED_POSITIONS = sorted(set(positions))
-
-    assert genomic_position_data.positions == EXPECTED_POSITIONS
+    assert genomic_position_data.positions == EXPECTED_BAM_INDIVIDUAL_POSITIONS
     assert genomic_position_data.cell_types == [str(p / "test" / "fh_test_tissue.bam")]
 
 
@@ -333,13 +330,8 @@ class Test_GenomicPositionData:
 
     def test_init(self, set_up_genomic_position_data):
         p, genomic_position_data = set_up_genomic_position_data
-        positions = []
-        for each in EXPECTED_BAM_OUTPUT_POSITIONS:
-            positions.append(each)
 
-        EXPECTED_POSITIONS = sorted(set(positions))
-
-        assert genomic_position_data.positions == EXPECTED_POSITIONS
+        assert genomic_position_data.positions == EXPECTED_BAM_INDIVIDUAL_POSITIONS
         assert genomic_position_data.cell_types == [
             str(p / "test" / "fh_test_tissue.bam")
         ]
@@ -492,60 +484,6 @@ class Test_GenomicPositionData:
 
     def test_summarize_allelelic_data(self, set_up_genomic_position_data):
         _, genomic_position_data = set_up_genomic_position_data
-        EXPECTED = pd.DataFrame(
-            {
-                "cellLine": {0: "test"},
-                "position": {0: "1295321"},
-                "ad_stat": {0: 13.510575364459704},
-                "p_crit": {0: 1.009},
-                "diff": {0: -0.04878048780487809},
-                "raw": {
-                    0: [
-                        0.0,
-                        0.5,
-                        0.5,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                    ]
-                },
-            }
-        )
 
         with np.testing.suppress_warnings() as sup:  # ignore degrees of freedom warning
             sup.filter(RuntimeWarning, "Degrees of freedom")
@@ -556,8 +494,9 @@ class Test_GenomicPositionData:
             )
             actual2 = genomic_position_data.summarize_allelic_data()
 
-        pd.testing.assert_frame_equal(EXPECTED, actual1)
-        pd.testing.assert_frame_equal(EXPECTED, actual2)
+            print(repr(actual1.to_dict()))
+        pd.testing.assert_frame_equal(EXPECTED_ALLELIC_DATA, actual1)
+        pd.testing.assert_frame_equal(EXPECTED_ALLELIC_DATA, actual2)
 
     def test_sig_methylation_differences(self, set_up_genomic_position_data, mocker):
         _, genomic_position_data = set_up_genomic_position_data
