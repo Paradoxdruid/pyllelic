@@ -162,7 +162,7 @@ def test_pyllelic(tmp_path_factory):
     genomic_position_data = pyllelic.pyllelic(config=config, files_set=INPUT_BAM_LIST)
 
     assert genomic_position_data.positions == EXPECTED_BAM_INDIVIDUAL_POSITIONS
-    assert genomic_position_data.cell_types == [str(p / "test" / "fh_test_tissue.bam")]
+    assert genomic_position_data.cell_types == ["test"]
 
 
 # Tests of main classes
@@ -332,9 +332,7 @@ class Test_GenomicPositionData:
         p, genomic_position_data = set_up_genomic_position_data
 
         assert genomic_position_data.positions == EXPECTED_BAM_INDIVIDUAL_POSITIONS
-        assert genomic_position_data.cell_types == [
-            str(p / "test" / "fh_test_tissue.bam")
-        ]
+        assert genomic_position_data.cell_types == ["test"]
 
     # def test_save(self, set_up_genomic_position_data, mocker):
     #     _, genomic_position_data = set_up_genomic_position_data
