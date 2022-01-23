@@ -110,6 +110,7 @@
 <span class="kn">import</span> <span class="nn">pickle</span>  <span class="c1"># nosec</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span><span class="p">,</span> <span class="n">cpu_count</span>
 <span class="kn">from</span> <span class="nn">multiprocessing.pool</span> <span class="kn">import</span> <span class="n">AsyncResult</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -284,25 +285,21 @@
         <span class="sd">&quot;&quot;&quot;pd.DataFrame: dataframe of quma methylation analysis values.&quot;&quot;&quot;</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_process_raw_quma</span><span class="p">(</span><span class="n">quma_result</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_process_raw_quma</span><span class="p">(</span><span class="n">quma_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">quma</span><span class="o">.</span><span class="n">Reference</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Spit and process raw quma results into a pandas dataframe.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            quma_result (str): console output from quma program.</span>
+<span class="sd">            quma_data (List[quma.Reference]): list of quma References.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pd.DataFrame: intermediate dataframe to append</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">dots</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">quma_result</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;g&quot;</span><span class="p">):</span>
-                <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">MIN_PERCENT_ALIGNMENT</span><span class="p">:</span>
-                    <span class="n">dots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FAIL&quot;</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">dots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="mi">13</span><span class="p">])</span>
-        <span class="c1"># Sort dots output by number of &quot;1&quot;</span>
+        <span class="n">dots</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">val</span> <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">perc</span> <span class="o">&gt;</span> <span class="n">MIN_PERCENT_ALIGNMENT</span> <span class="k">else</span> <span class="s2">&quot;FAIL&quot;</span>
+            <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">quma_data</span>
+        <span class="p">]</span>
+
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">dots</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_pool_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
@@ -363,7 +360,7 @@
 
         <span class="n">quma_obj</span><span class="p">:</span> <span class="n">quma</span><span class="o">.</span><span class="n">Quma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_access_quma</span><span class="p">(</span><span class="n">genomic_contents</span><span class="p">,</span> <span class="n">read_contents</span><span class="p">)</span>
 
-        <span class="n">processed_quma</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_raw_quma</span><span class="p">(</span><span class="n">quma_obj</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">processed_quma</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_raw_quma</span><span class="p">(</span><span class="n">quma_obj</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
         <span class="c1"># Next, add this readname to the holding data frame</span>
         <span class="n">int_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">position</span><span class="p">:</span> <span class="n">processed_quma</span><span class="p">})</span>
         <span class="k">return</span> <span class="n">int_df</span><span class="p">,</span> <span class="n">quma_obj</span>
@@ -421,17 +418,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">quma_results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QumaResult</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quma_full_threaded</span><span class="p">()</span>
         <span class="sd">&quot;&quot;&quot;Dict[str, QumaResult]: list of QumaResults.&quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">means</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_means</span><span class="p">()</span>
-        <span class="sd">&quot;&quot;&quot;pd.DataFrame: dataframe of mean methylation values.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Summary Statistics&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">means</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alt_process_means</span><span class="p">()</span>
+            <span class="sd">&quot;&quot;&quot;pd.DataFrame: dataframe of mean methylation values.&quot;&quot;&quot;</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">modes</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_modes</span><span class="p">()</span>
-        <span class="sd">&quot;&quot;&quot;pd.DataFrame: dataframe of modes of methylation values.&quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">modes</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alt_process_modes</span><span class="p">()</span>
+            <span class="sd">&quot;&quot;&quot;pd.DataFrame: dataframe of modes of methylation values.&quot;&quot;&quot;</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">diffs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_diffs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">means</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">modes</span><span class="p">)</span>
-        <span class="sd">&quot;&quot;&quot;pd.DataFrame: dataframe of difference mean minus mode methylation values.&quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diffs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_diffs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">means</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">modes</span><span class="p">)</span>
+            <span class="sd">&quot;&quot;&quot;pd.DataFrame: df of difference mean minus mode methylation values.&quot;&quot;&quot;</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">individual_data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_individual_data</span><span class="p">()</span>
-        <span class="sd">&quot;&quot;&quot;pd.DataFrame: dataframe of individual methylation values.&quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">individual_data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alt_return_individual_data</span><span class="p">()</span>
+            <span class="sd">&quot;&quot;&quot;pd.DataFrame: dataframe of individual methylation values.&quot;&quot;&quot;</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">means</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_index_and_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BamOutput</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Wrapper to call processing of each sam file.</span>
@@ -561,6 +565,33 @@
 
         <span class="k">return</span> <span class="n">means_df</span>
 
+    <span class="k">def</span> <span class="nf">_alt_process_means</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the mean values at each individual position for each cell line.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame: dataframes of mean values for each position in each cell line.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cells</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_types</span><span class="p">:</span>
+            <span class="n">match</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Match</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">fname_pattern</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">each</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">)</span>
+            <span class="n">cell_line_name</span><span class="p">:</span> <span class="nb">str</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="n">Match</span><span class="p">):</span>
+                <span class="n">cell_line_name</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cell_line_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">each</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell_line_name</span><span class="p">)</span>
+        <span class="n">df_list</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">cell</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_individual_positions</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">cells</span>
+        <span class="p">}</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">df_list</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span>
+
     <span class="k">def</span> <span class="nf">_process_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Process the mode values at each position for each cell line.</span>
 
@@ -587,6 +618,37 @@
 
         <span class="k">return</span> <span class="n">modes_df</span>
 
+    <span class="k">def</span> <span class="nf">_alt_process_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Process the mode at each individual position for each cell line.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame: dataframes of mode values for each individual position.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cells</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_types</span><span class="p">:</span>
+            <span class="n">match</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Match</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">fname_pattern</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">each</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">)</span>
+            <span class="n">cell_line_name</span><span class="p">:</span> <span class="nb">str</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="n">Match</span><span class="p">):</span>
+                <span class="n">cell_line_name</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cell_line_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">each</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell_line_name</span><span class="p">)</span>
+
+        <span class="n">df_list</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">cell</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_individual_positions</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">mode</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">cells</span>
+        <span class="p">}</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">df_list</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span>
+
     <span class="k">def</span> <span class="nf">_return_individual_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return a dataframe for methylation values at each position for each cell line.</span>
 
@@ -608,6 +670,45 @@
                 <span class="n">working_df</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">key</span><span class="p">,</span> <span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_for_df</span>
 
         <span class="k">return</span> <span class="n">working_df</span>
+
+    <span class="k">def</span> <span class="nf">_alt_return_individual_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return a dataframe for methylation values at each position for each cell line.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame: methylation values for each position in each cell line</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cells</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_types</span><span class="p">:</span>
+            <span class="n">match</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Match</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">fname_pattern</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">each</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">)</span>
+            <span class="n">cell_line_name</span><span class="p">:</span> <span class="nb">str</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="n">Match</span><span class="p">):</span>
+                <span class="n">cell_line_name</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cell_line_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">each</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell_line_name</span><span class="p">)</span>
+        <span class="n">df_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">cells</span><span class="p">:</span>
+            <span class="n">ind_pos</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_individual_positions</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span>
+            <span class="p">)</span>
+            <span class="n">ind_pos</span> <span class="o">=</span> <span class="n">ind_pos</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">ind_pos</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">ind_pos</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">ind_pos</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">to_frame</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="n">cell</span><span class="p">})</span>
+            <span class="p">)</span>
+
+            <span class="n">df_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind_pos</span><span class="p">)</span>
+
+        <span class="c1"># print(repr(df_dict))</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span>
 
     <span class="k">def</span> <span class="nf">_return_read_values</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -727,10 +828,14 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: invalid plotting backend</span>
+<span class="sd">            ValueError: No data available at that position</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">individual_data</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">backend</span><span class="p">:</span>
             <span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">viz_backend</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cell_line</span><span class="p">,</span> <span class="n">position</span><span class="p">])):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No data available at that position&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;plotly&quot;</span><span class="p">:</span>
             <span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">_create_histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cell_line</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">backend</span><span class="p">)</span>
@@ -908,7 +1013,9 @@
             <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">notnull</span><span class="p">(</span><span class="n">value</span><span class="p">)):</span>
-                    <span class="n">good</span><span class="p">,</span> <span class="n">stat</span><span class="p">,</span> <span class="n">crits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_anderson_darling_test</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
+                        <span class="n">good</span><span class="p">,</span> <span class="n">stat</span><span class="p">,</span> <span class="n">crits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_anderson_darling_test</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">good</span><span class="p">:</span>
                         <span class="n">sig_dict</span><span class="p">[</span><span class="s2">&quot;diff&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diffs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="n">column</span><span class="p">])</span>
                         <span class="n">sig_dict</span><span class="p">[</span><span class="s2">&quot;cellLine&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
@@ -937,7 +1044,119 @@
             <span class="n">stat</span><span class="p">,</span> <span class="n">crits</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">anderson</span><span class="p">(</span><span class="n">raw_list</span><span class="p">)</span>
             <span class="n">is_sig</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">stat</span> <span class="o">&gt;</span> <span class="n">crits</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
             <span class="k">return</span> <span class="n">AD_stats</span><span class="p">(</span><span class="n">is_sig</span><span class="p">,</span> <span class="n">stat</span><span class="p">,</span> <span class="n">crits</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">AD_stats</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">])</span></div>
+        <span class="k">return</span> <span class="n">AD_stats</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">])</span>
+
+<div class="viewcode-block" id="GenomicPositionData.return_individual_positions"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.return_individual_positions">[docs]</a>    <span class="k">def</span> <span class="nf">return_individual_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return a dataframe of methylation at genomic position resolution.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cell_line (str): Cell line to analyze.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame: dataframe of methylation at genomic position resolution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">class</span> <span class="nc">PointData</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Named tuple to cointain individual Quma point data.&quot;&quot;&quot;</span>
+
+            <span class="n">cell</span><span class="p">:</span> <span class="nb">str</span>
+            <span class="n">read_position</span><span class="p">:</span> <span class="nb">int</span>
+            <span class="n">read</span><span class="p">:</span> <span class="nb">str</span>
+            <span class="n">positions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+            <span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">_find_positions</span><span class="p">(</span>
+            <span class="n">cell</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">quma</span><span class="o">.</span><span class="n">Reference</span><span class="p">],</span> <span class="n">gseq</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">PointData</span><span class="p">]:</span>
+            <span class="sd">&quot;&quot;&quot;Find individual resolution positions and data in quma results.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                cell (str): cell line.</span>
+<span class="sd">                pos (str): position of read.</span>
+<span class="sd">                data_list (List[quma.Reference]): list of quma read data</span>
+<span class="sd">                gseq (str): reference genomic sequence of read position</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                List[PointData]: list of data points from quma results.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">output</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PointData</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">:</span>
+                <span class="n">read</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">each</span><span class="o">.</span><span class="n">fasta</span><span class="o">.</span><span class="n">com</span>
+                <span class="n">offset</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">m</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">each</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">gAli</span><span class="p">,</span> <span class="n">gseq</span><span class="p">)</span>
+                <span class="p">]</span>
+                <span class="n">real_off_set</span><span class="p">:</span> <span class="nb">int</span>
+                <span class="k">if</span> <span class="n">offset</span><span class="p">:</span>
+                    <span class="n">real_off_set</span> <span class="o">=</span> <span class="n">offset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">real_off_set</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">init_pos_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">m</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span> <span class="n">each</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">gAli</span><span class="p">)</span>
+                <span class="p">]</span>
+                <span class="n">pos_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="p">(</span><span class="n">this</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span> <span class="o">+</span> <span class="n">real_off_set</span><span class="p">)</span> <span class="k">for</span> <span class="n">this</span> <span class="ow">in</span> <span class="n">init_pos_list</span>
+                <span class="p">]</span>
+
+                <span class="n">my_point</span><span class="p">:</span> <span class="n">PointData</span> <span class="o">=</span> <span class="n">PointData</span><span class="p">(</span>
+                    <span class="n">cell</span><span class="o">=</span><span class="n">cell</span><span class="p">,</span>
+                    <span class="n">read_position</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">pos</span><span class="p">),</span>
+                    <span class="n">read</span><span class="o">=</span><span class="n">read</span><span class="p">,</span>
+                    <span class="n">positions</span><span class="o">=</span><span class="n">pos_list</span><span class="p">,</span>
+                    <span class="n">values</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">each</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">val</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">my_point</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">output</span>
+
+        <span class="k">def</span> <span class="nf">_collate_positions</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PointData</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+            <span class="sd">&quot;&quot;&quot;Collect together list of quma data points into position-indexed dict.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                output (List[PointData]): list of quma read data points</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                Dict[int, str]: position-indexed genomic resolution methylation dict.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">result_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">each</span><span class="o">.</span><span class="n">positions</span><span class="p">):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">my_val</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">each</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="k">if</span> <span class="n">my_val</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">result_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                            <span class="n">result_dict</span><span class="p">[</span><span class="n">val</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">my_val</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">result_dict</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">my_val</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">result_dict</span>
+
+        <span class="k">def</span> <span class="nf">_make_pos_df</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Convert dictionary of genomic resolution data into dataframe.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                data (Dict[int, List[str]]): pos-indexed high res. methylation dict.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                pd.DataFrame: dataframe of pos-indexed high resolution methylation.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">int_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">int_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">int_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">v</span><span class="p">)})],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">int_df</span>
+
+        <span class="n">query</span><span class="p">:</span> <span class="n">QumaResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">quma_results</span><span class="p">[</span><span class="n">cell_line</span><span class="p">]</span>
+        <span class="n">positions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">_positions</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">quma</span><span class="o">.</span><span class="n">Quma</span><span class="p">]</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">quma_output</span>
+        <span class="n">big_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">PointData</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">dat</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+            <span class="n">big_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_find_positions</span><span class="p">(</span><span class="s2">&quot;NCIH2171&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">dat</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">dat</span><span class="o">.</span><span class="n">_gseq</span><span class="p">))</span>
+
+        <span class="n">final_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PointData</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">big_list</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+        <span class="n">full_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_collate_positions</span><span class="p">(</span><span class="n">final_list</span><span class="p">)</span>
+
+        <span class="n">final_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">_make_pos_df</span><span class="p">(</span><span class="n">full_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">final_df</span></div></div>
 
 
 <span class="c1">##################################################################################</span>
