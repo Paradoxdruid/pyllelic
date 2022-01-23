@@ -313,17 +313,24 @@ class GenomicPositionData:
         self.quma_results: Dict[str, QumaResult] = self._quma_full_threaded()
         """Dict[str, QumaResult]: list of QumaResults."""
 
-        self.means: pd.DataFrame = self._process_means()
-        """pd.DataFrame: dataframe of mean methylation values."""
+        with tqdm(total=4, desc="Summary Statistics") as pbar:
+            self.means: pd.DataFrame = self._alt_process_means()
+            """pd.DataFrame: dataframe of mean methylation values."""
+            pbar.update(1)
 
-        self.modes: pd.DataFrame = self._process_modes()
-        """pd.DataFrame: dataframe of modes of methylation values."""
+            self.modes: pd.DataFrame = self._alt_process_modes()
+            """pd.DataFrame: dataframe of modes of methylation values."""
+            pbar.update(1)
 
-        self.diffs: pd.DataFrame = self._find_diffs(self.means, self.modes)
-        """pd.DataFrame: dataframe of difference mean minus mode methylation values."""
+            self.diffs: pd.DataFrame = self._find_diffs(self.means, self.modes)
+            """pd.DataFrame: df of difference mean minus mode methylation values."""
+            pbar.update(1)
 
-        self.individual_data: pd.DataFrame = self._return_individual_data()
-        """pd.DataFrame: dataframe of individual methylation values."""
+            self.individual_data: pd.DataFrame = self._alt_return_individual_data()
+            """pd.DataFrame: dataframe of individual methylation values."""
+
+            self.positions = self.means.columns.tolist()
+            pbar.update(1)
 
     def _index_and_fetch(self) -> Dict[str, BamOutput]:
         """Wrapper to call processing of each sam file.
@@ -453,6 +460,33 @@ class GenomicPositionData:
 
         return means_df
 
+    def _alt_process_means(self) -> pd.DataFrame:
+        """Process the mean values at each individual position for each cell line.
+
+        Returns:
+            pd.DataFrame: dataframes of mean values for each position in each cell line.
+        """
+
+        cells: List[str] = []
+        for each in self.cell_types:
+            match: Optional[Match[str]] = re.match(
+                self.config.fname_pattern, Path(each).name
+            )
+            cell_line_name: str
+            if isinstance(match, Match):
+                cell_line_name = match.group(1)
+            else:
+                cell_line_name = Path(each).name
+            cells.append(cell_line_name)
+        df_list = {
+            cell: self.return_individual_positions(cell).apply(pd.to_numeric).mean()
+            for cell in cells
+        }
+
+        df = pd.DataFrame.from_dict(df_list).T
+        df.columns = df.columns.astype(str)
+        return df
+
     def _process_modes(self) -> pd.DataFrame:
         """Process the mode values at each position for each cell line.
 
@@ -479,6 +513,37 @@ class GenomicPositionData:
 
         return modes_df
 
+    def _alt_process_modes(self) -> pd.DataFrame:
+        """Process the mode at each individual position for each cell line.
+
+        Returns:
+            pd.DataFrame: dataframes of mode values for each individual position.
+        """
+
+        cells: List[str] = []
+        for each in self.cell_types:
+            match: Optional[Match[str]] = re.match(
+                self.config.fname_pattern, Path(each).name
+            )
+            cell_line_name: str
+            if isinstance(match, Match):
+                cell_line_name = match.group(1)
+            else:
+                cell_line_name = Path(each).name
+            cells.append(cell_line_name)
+
+        df_list = {
+            cell: self.return_individual_positions(cell)
+            .apply(pd.to_numeric)
+            .mode()
+            .iloc[0]
+            for cell in cells
+        }
+
+        df = pd.DataFrame.from_dict(df_list).T
+        df.columns = df.columns.astype(str)
+        return df
+
     def _return_individual_data(self) -> pd.DataFrame:
         """Return a dataframe for methylation values at each position for each cell line.
 
@@ -500,6 +565,45 @@ class GenomicPositionData:
                 working_df.at[key, pos] = data_for_df
 
         return working_df
+
+    def _alt_return_individual_data(self) -> pd.DataFrame:
+        """Return a dataframe for methylation values at each position for each cell line.
+
+        Returns:
+            pd.DataFrame: methylation values for each position in each cell line
+        """
+
+        cells: List[str] = []
+        for each in self.cell_types:
+            match: Optional[Match[str]] = re.match(
+                self.config.fname_pattern, Path(each).name
+            )
+            cell_line_name: str
+            if isinstance(match, Match):
+                cell_line_name = match.group(1)
+            else:
+                cell_line_name = Path(each).name
+            cells.append(cell_line_name)
+        df_list: List[pd.DataFrame] = []
+        for cell in cells:
+            ind_pos: pd.DataFrame = self.return_individual_positions(cell).apply(
+                pd.to_numeric
+            )
+            ind_pos = ind_pos.stack().reset_index(level=0, drop=True)
+            ind_pos = (
+                ind_pos.groupby(ind_pos.index)
+                .apply(list)
+                .to_frame()
+                .transpose()
+                .rename(index={0: cell})
+            )
+
+            df_list.append(ind_pos)
+
+        # print(repr(df_dict))
+        df = pd.concat(df_list)
+        df.columns = df.columns.astype(str)
+        return df
 
     def _return_read_values(
         self,
