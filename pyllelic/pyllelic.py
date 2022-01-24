@@ -3,6 +3,7 @@
    in reduced representation bisulfate DNA sequencing.
 """
 
+import copy
 import pickle  # nosec
 import re
 import signal
@@ -317,7 +318,12 @@ class GenomicPositionData:
         self.quma_results: Dict[str, QumaResult] = self._quma_full_threaded()
         """Dict[str, QumaResult]: list of QumaResults."""
 
-        with tqdm(total=4, desc="Summary Statistics") as pbar:
+        with tqdm(total=5, desc="Summary Statistics") as pbar:
+            self._individual_position_data: Dict[
+                str, pd.DataFrame
+            ] = self._create_individual_position_df_dict()
+            pbar.update(1)
+
             self.means: pd.DataFrame = self._process_means()
             """pd.DataFrame: dataframe of mean methylation values."""
             pbar.update(1)
@@ -458,6 +464,18 @@ class GenomicPositionData:
 
         return data
 
+    def _create_individual_position_df_dict(self) -> Dict[str, pd.DataFrame]:
+        """Create a dictionary of invidual position data for use in aggregate dfs.
+
+        Returns:
+            Dict[str, pd.DataFrame]: dictionary of invidual position data dfs
+        """
+        df_dict: Dict[str, pd.DataFrame] = {
+            cell: self.return_individual_positions(cell).apply(pd.to_numeric)
+            for cell in self.cell_types
+        }
+        return df_dict
+
     def _process_means(self) -> pd.DataFrame:
         """Process the mean values at each individual position for each cell line.
 
@@ -465,12 +483,11 @@ class GenomicPositionData:
             pd.DataFrame: dataframes of mean values for each position in each cell line.
         """
 
-        df_list = {
-            cell: self.return_individual_positions(cell).apply(pd.to_numeric).mean()
-            for cell in self.cell_types
-        }
+        df_dict: Dict[str, pd.DataFrame] = copy.deepcopy(self._individual_position_data)
+        for k, v in df_dict.items():
+            df_dict[k] = v.mean()
 
-        df = pd.DataFrame.from_dict(df_list).T
+        df: pd.DataFrame = pd.DataFrame.from_dict(df_dict).transpose()
         df.columns = df.columns.astype(str)
         return df
 
@@ -481,15 +498,11 @@ class GenomicPositionData:
             pd.DataFrame: dataframes of mode values for each individual position.
         """
 
-        df_list = {
-            cell: self.return_individual_positions(cell)
-            .apply(pd.to_numeric)
-            .mode()
-            .iloc[0]
-            for cell in self.cell_types
-        }
+        df_dict: Dict[str, pd.DataFrame] = copy.deepcopy(self._individual_position_data)
+        for k, v in df_dict.items():
+            df_dict[k] = v.mode().iloc[0]
 
-        df = pd.DataFrame.from_dict(df_list).T
+        df: pd.DataFrame = pd.DataFrame.from_dict(df_dict).transpose()
         df.columns = df.columns.astype(str)
         return df
 
@@ -500,24 +513,19 @@ class GenomicPositionData:
             pd.DataFrame: methylation values for each position in each cell line
         """
 
-        df_list: List[pd.DataFrame] = []
-        for cell in self.cell_types:
-            ind_pos: pd.DataFrame = self.return_individual_positions(cell).apply(
-                pd.to_numeric
-            )
-            ind_pos = ind_pos.stack().reset_index(level=0, drop=True)
-            ind_pos = (
-                ind_pos.groupby(ind_pos.index)
+        df_dict: Dict[str, pd.DataFrame] = copy.deepcopy(self._individual_position_data)
+        for k, v in df_dict.items():
+            df_dict[k] = (
+                (v.stack().reset_index(level=0, drop=True))
+                .groupby(level=0)
                 .apply(list)
                 .to_frame()
                 .transpose()
-                .rename(index={0: cell})
             )
 
-            df_list.append(ind_pos)
-
-        df = pd.concat(df_list)
+        df: pd.DataFrame = pd.concat(df_dict)
         df.columns = df.columns.astype(str)
+        df = df.droplevel(1)
         return df
 
     @staticmethod
@@ -617,7 +625,10 @@ class GenomicPositionData:
 
         Raises:
             ValueError: invalid plotting backend
+            ValueError: Unable to plot more than 20 cell lines at once.
         """
+
+        MAX_GRAPHS = 20  # Sanity limit
 
         data = self.individual_data
         if not backend:
@@ -625,6 +636,9 @@ class GenomicPositionData:
 
         if cell_lines:
             data = data[data.index.isin(cell_lines)]
+
+        if len(data) > MAX_GRAPHS:
+            raise ValueError("Unable to plot more than 20 cell lines at once.")
 
         if backend == "plotly":
             fig: go.Figure = viz._make_stacked_fig(data, backend)
@@ -907,12 +921,11 @@ class GenomicPositionData:
         query: QumaResult = self.quma_results[cell_line]
         positions: List[str] = query._positions
         data: List[quma.Quma] = query.quma_output
-        big_list: List[List[PointData]] = []
+        big_list: List[PointData] = []
         for pos, dat in zip(positions, data):
-            big_list.append(_find_positions(cell_line, pos, dat.data, dat._gseq))
+            big_list.extend(_find_positions(cell_line, pos, dat.data, dat._gseq))
 
-        final_list: List[PointData] = [item for sublist in big_list for item in sublist]
-        full_data: Dict[int, List[str]] = _collate_positions(final_list)
+        full_data: Dict[int, List[str]] = _collate_positions(big_list)
 
         final_df: pd.DataFrame = _make_pos_df(full_data)
         return final_df
