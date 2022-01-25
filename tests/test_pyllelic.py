@@ -160,6 +160,7 @@ def test_pyllelic(tmp_path_factory):
     config = setup_config(p)
     INPUT_BAM_LIST = ["fh_test_tissue.bam"]
     genomic_position_data = pyllelic.pyllelic(config=config, files_set=INPUT_BAM_LIST)
+    print(repr(genomic_position_data.positions))
 
     assert genomic_position_data.positions == EXPECTED_BAM_INDIVIDUAL_POSITIONS
     assert genomic_position_data.cell_types == ["test"]
@@ -631,6 +632,6 @@ class Test_GenomicPositionData:
     def test_return_individual_positions(self, set_up_genomic_position_data):
         _, genomic_position_data = set_up_genomic_position_data
 
-        actual = genomic_position_data.return_individual_positions("test")
+        actual = genomic_position_data._return_individual_positions("test")
 
         pd.testing.assert_frame_equal(actual, EXPECTED_INDIVIDUAL_POSITIONS)
