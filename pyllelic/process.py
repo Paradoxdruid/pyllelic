@@ -4,6 +4,7 @@
 import gzip
 import os
 import re
+import shutil
 import subprocess
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -11,6 +12,10 @@ from typing import Dict, List, Optional
 import pysam
 import requests
 from Bio import SeqIO
+
+
+class ShellCommandError(Exception):
+    """Error for shell utilities that aren't installed."""
 
 
 def fastq_to_list(filepath: Path) -> Optional[List[SeqIO.SeqRecord]]:
@@ -70,9 +75,15 @@ def build_bowtie2_index(fasta: Path) -> str:
 
     Returns:
         str: output from bowtie2-build shell command, usually discarded
+
+    Raises:
+        ShellCommandError: bowtie2-build is not installed.
     """
 
     command: List[str] = ["bowtie2-build", "index", os.fspath(fasta)]
+
+    if shutil.which(command[0]) is None:
+        raise ShellCommandError("bowtie2-build is not installed.")
 
     output: subprocess.CompletedProcess[str] = subprocess.run(
         command, capture_output=True, text=True, check=True
@@ -92,6 +103,9 @@ def bowtie2_fastq_to_bam(index: Path, fastq: Path, cores: int) -> str:
 
     Returns:
         str: output from bowtie2 and samtools shell command, usually discarded
+
+    Raises:
+        ShellCommandError: bowtie2 is not installed.
     """
 
     command: List[str] = [
@@ -110,6 +124,9 @@ def bowtie2_fastq_to_bam(index: Path, fastq: Path, cores: int) -> str:
         ">",
         str(fastq.parent) + "/" + str(fastq.stem) + ".bam",
     ]
+
+    if shutil.which(command[0]) is None:
+        raise ShellCommandError("bowtie2 is not installed.")
 
     output: subprocess.CompletedProcess[str] = subprocess.run(
         command, capture_output=True, text=True, check=True
@@ -182,6 +199,9 @@ def prepare_genome(index: Path, aligner: Optional[Path] = None) -> str:
 
     Returns:
         str: output from genome preparation shell command, usually discarded
+
+    Raises:
+        ShellCommandError: bismark_genome_preparation is not installed.
     """
     command: List[str]
     if aligner:
@@ -196,6 +216,9 @@ def prepare_genome(index: Path, aligner: Optional[Path] = None) -> str:
             "bismark_genome_preparation",
             str(index),
         ]
+
+    if shutil.which(command[0]) is None:
+        raise ShellCommandError("bismark_genome_preparation is not installed.")
 
     output: subprocess.CompletedProcess[str] = subprocess.run(
         command,
@@ -221,6 +244,9 @@ def bismark(genome: Path, fastq: Path) -> str:
 
     Returns:
         str: output from bismark shell command, usually discarded
+
+    Raises:
+        ShellCommandError: bismark is not installed.
     """
 
     command: List[str] = [
@@ -229,6 +255,9 @@ def bismark(genome: Path, fastq: Path) -> str:
         str(genome),
         str(fastq),
     ]
+
+    if shutil.which(command[0]) is None:
+        raise ShellCommandError("bismark is not installed.")
 
     output: subprocess.CompletedProcess[str] = subprocess.run(
         command,

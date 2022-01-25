@@ -1,21 +1,20 @@
 #!/usr/bin/env python3
 """pytest unit tests for process."""
 
-# Testing
-import pytest  # noqa  # pylint: disable=unused-import
-import unittest.mock as mock
+import gzip
 import os
 import tempfile
 
 # Required libraries for test data
 from pathlib import Path
+
+# Testing
+import pytest
 from Bio import SeqIO
 from Bio.Seq import Seq
-import gzip
 
 # Module to test
-import pyllelic.process as process  # noqa  # pylint: disable=unused-import
-
+import pyllelic.process as process
 
 # Constants
 EXPECTED_SEQ_RECORD = SeqIO.SeqRecord(
@@ -94,8 +93,10 @@ def test_make_records_to_dictionary():
     assert EXPECTED == actual
 
 
-@mock.patch("pyllelic.process.subprocess")
-def test_build_bowtie2_index(mock_subp):
+def test_build_bowtie2_index(mocker):
+    mock_subp = mocker.patch("pyllelic.process.subprocess")
+    mock_shutil = mocker.patch("pyllelic.process.shutil")
+    mock_shutil.which.return_value = True
     TEST_FASTQ = Path("/Users/user/test.fastq")
     TEST_COMMAND = ["bowtie2-build", "index", os.fspath(TEST_FASTQ)]
 
@@ -106,8 +107,19 @@ def test_build_bowtie2_index(mock_subp):
     )
 
 
-@mock.patch("pyllelic.process.subprocess")
-def test_bowtie2_fastq_to_bam(mock_subp):
+def test_build_bowtie2_index_not_installed(mocker):
+    mock_shutil = mocker.patch("pyllelic.process.shutil")
+    mock_shutil.which.return_value = None
+    TEST_FASTQ = Path("/Users/user/test.fastq")
+
+    with pytest.raises(process.ShellCommandError):
+        _ = process.build_bowtie2_index(TEST_FASTQ)
+
+
+def test_bowtie2_fastq_to_bam(mocker):
+    mock_subp = mocker.patch("pyllelic.process.subprocess")
+    mock_shutil = mocker.patch("pyllelic.process.shutil")
+    mock_shutil.which.return_value = True
     TEST_CORES = 4
     TEST_INDEX = Path("/Users/user/bowtie_index")
     TEST_FASTQ = Path("/Users/user/test.fastq")
@@ -134,8 +146,19 @@ def test_bowtie2_fastq_to_bam(mock_subp):
     )
 
 
-@mock.patch("pyllelic.process.pysam")
-def test_process_pysam_sort(mock_pysam):
+def test_bowtie2_fastq_to_bam_not_installed(mocker):
+    mock_shutil = mocker.patch("pyllelic.process.shutil")
+    mock_shutil.which.return_value = None
+    TEST_CORES = 4
+    TEST_INDEX = Path("/Users/user/bowtie_index")
+    TEST_FASTQ = Path("/Users/user/test.fastq")
+
+    with pytest.raises(process.ShellCommandError):
+        _ = process.bowtie2_fastq_to_bam(TEST_INDEX, TEST_FASTQ, TEST_CORES)
+
+
+def test_process_pysam_sort(mocker):
+    mock_pysam = mocker.patch("pyllelic.process.pysam")
     TEST_PATH = Path().cwd()
     _ = process.pysam_sort(TEST_PATH)
     mock_pysam.sort.assert_called_once_with(
@@ -143,15 +166,17 @@ def test_process_pysam_sort(mock_pysam):
     )
 
 
-@mock.patch("pyllelic.process.pysam")
-def test_pysam_index(mock_pysam):
+def test_pysam_index(mocker):
+    mock_pysam = mocker.patch("pyllelic.process.pysam")
     TEST_PATH = Path().cwd()
     _ = process.pysam_index(TEST_PATH)
     mock_pysam.index.assert_called_once_with(os.fspath(TEST_PATH))
 
 
-@mock.patch("pyllelic.process.subprocess")
-def test_prepare_genome(mock_subp):
+def test_prepare_genome(mocker):
+    mock_subp = mocker.patch("pyllelic.process.subprocess")
+    mock_shutil = mocker.patch("pyllelic.process.shutil")
+    mock_shutil.which.return_value = True
     TEST_INDEX = Path("/Users/user/bowtie_index")
     TEST_ALIGNER = Path("/usr/bin/bowtie2/")
     TEST_COMMAND = [
@@ -171,8 +196,10 @@ def test_prepare_genome(mock_subp):
     )
 
 
-@mock.patch("pyllelic.process.subprocess")
-def test_prepare_genome_no_aligner(mock_subp):
+def test_prepare_genome_no_aligner(mocker):
+    mock_subp = mocker.patch("pyllelic.process.subprocess")
+    mock_shutil = mocker.patch("pyllelic.process.shutil")
+    mock_shutil.which.return_value = True
     TEST_INDEX = Path("/Users/user/bowtie_index")
     TEST_COMMAND = [
         "bismark_genome_preparation",
@@ -189,8 +216,20 @@ def test_prepare_genome_no_aligner(mock_subp):
     )
 
 
-@mock.patch("pyllelic.process.subprocess")
-def test_bismark(mock_subp):
+def test_prepare_genome_not_installed(mocker):
+    mock_shutil = mocker.patch("pyllelic.process.shutil")
+    mock_shutil.which.return_value = None
+    TEST_INDEX = Path("/Users/user/bowtie_index")
+    TEST_ALIGNER = Path("/usr/bin/bowtie2/")
+
+    with pytest.raises(process.ShellCommandError):
+        _ = process.prepare_genome(TEST_INDEX, TEST_ALIGNER)
+
+
+def test_bismark(mocker):
+    mock_subp = mocker.patch("pyllelic.process.subprocess")
+    mock_shutil = mocker.patch("pyllelic.process.shutil")
+    mock_shutil.which.return_value = True
     TEST_GENOME = Path("/Users/user/bowtie_index")
     TEST_FASTQ = Path("/Users/user/test.fastq")
     TEST_COMMAND = [
@@ -208,6 +247,16 @@ def test_bismark(mock_subp):
         check=True,
         cwd=TEST_FASTQ.parent,
     )
+
+
+def test_bismark_not_installed(mocker):
+    mock_shutil = mocker.patch("pyllelic.process.shutil")
+    mock_shutil.which.return_value = None
+
+    TEST_GENOME = Path("/Users/user/bowtie_index")
+    TEST_FASTQ = Path("/Users/user/test.fastq")
+    with pytest.raises(process.ShellCommandError):
+        _ = process.bismark(TEST_GENOME, TEST_FASTQ)
 
 
 def test_retrieve_promoter_seq(requests_mock):
