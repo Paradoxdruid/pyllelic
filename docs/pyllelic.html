@@ -171,6 +171,13 @@
 <section id="module-pyllelic.process">
 <span id="pyllelic-process-module"></span><h2>pyllelic.process module<a class="headerlink" href="#module-pyllelic.process" title="Permalink to this headline"></a></h2>
 <p>Utilities to pre-process and prepare data for use in pyllelic.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="pyllelic.process.ShellCommandError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">ShellCommandError</span></span><a class="reference internal" href="_modules/pyllelic/process.html#ShellCommandError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.ShellCommandError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error for shell utilities that aren’t installed.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.process.bismark">
 <span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">bismark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fastq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#bismark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.bismark" title="Permalink to this definition"></a></dt>
@@ -189,6 +196,9 @@
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pyllelic.process.ShellCommandError" title="pyllelic.process.ShellCommandError"><strong>ShellCommandError</strong></a> – bismark is not installed.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -211,6 +221,9 @@
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pyllelic.process.ShellCommandError" title="pyllelic.process.ShellCommandError"><strong>ShellCommandError</strong></a> – bowtie2 is not installed.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -227,6 +240,9 @@
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pyllelic.process.ShellCommandError" title="pyllelic.process.ShellCommandError"><strong>ShellCommandError</strong></a> – bowtie2-build is not installed.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -288,6 +304,9 @@
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pyllelic.process.ShellCommandError" title="pyllelic.process.ShellCommandError"><strong>ShellCommandError</strong></a> – bismark_genome_preparation is not installed.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -435,8 +454,19 @@ and then performs methylation analysis, storing the results as QumaResults.</p>
 means, modes, and differences (diffs), as well as expose methods for plotting
 and statistical analysis.</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.allelic_data">
+<span class="sig-name descname"><span class="pre">allelic_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.allelic_data" title="Permalink to this definition"></a></dt>
+<dd><p>dataframe of Barnard exact test p-values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.cell_types">
-<span class="sig-name descname"><span class="pre">cell_types</span></span><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.cell_types" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">cell_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.cell_types" title="Permalink to this definition"></a></dt>
 <dd><p>list of cell types in the data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -463,6 +493,17 @@ and statistical analysis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.file_names">
+<span class="sig-name descname"><span class="pre">file_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.file_names" title="Permalink to this definition"></a></dt>
+<dd><p>list of bam filenames in the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[str]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -522,7 +563,8 @@ cell lines.</p>
 <li><p><strong>height</strong> (<em>int</em>) – figure height, defaults to 2000</p></li>
 <li><p><strong>cell_lines</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – set of cell lines to analyze,</p></li>
 <li><p><strong>lines.</strong> (<em>defaults to all cell</em>) – </p></li>
-<li><p><strong>data_type</strong> (<em>str</em>) – type of data to plot. Can to ‘means’, ‘modes’, or ‘diffs’</p></li>
+<li><p><strong>data_type</strong> (<em>str</em>) – type of data to plot.
+Can be ‘means’, ‘modes’, ‘diffs’, or ‘pvalue’.</p></li>
 <li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – plotting backend to override default</p></li>
 </ul>
 </dd>
@@ -625,24 +667,10 @@ defaults to all cell lines.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – invalid plotting backend</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.return_individual_positions">
-<span class="sig-name descname"><span class="pre">return_individual_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell_line</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#GenomicPositionData.return_individual_positions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.return_individual_positions" title="Permalink to this definition"></a></dt>
-<dd><p>Return a dataframe of methylation at genomic position resolution.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>cell_line</strong> (<em>str</em>) – Cell line to analyze.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>dataframe of methylation at genomic position resolution.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pd.DataFrame</p>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – invalid plotting backend</p></li>
+<li><p><strong>ValueError</strong> – Unable to plot more than 20 cell lines at once.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
