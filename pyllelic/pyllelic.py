@@ -7,7 +7,6 @@ import copy
 import pickle  # nosec
 import re
 import signal
-import warnings
 from multiprocessing import Pool, cpu_count
 from multiprocessing.pool import AsyncResult
 from pathlib import Path
@@ -18,7 +17,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import pysam
-from numpy.typing import ArrayLike
+from numpy.typing import ArrayLike, NDArray
 from scipy import stats
 from tqdm.auto import tqdm
 
@@ -318,7 +317,7 @@ class GenomicPositionData:
         self.quma_results: Dict[str, QumaResult] = self._quma_full_threaded()
         """Dict[str, QumaResult]: list of QumaResults."""
 
-        with tqdm(total=5, desc="Summary Statistics") as pbar:
+        with tqdm(total=6, desc="Summary Statistics") as pbar:
             self._individual_position_data: Dict[
                 str, pd.DataFrame
             ] = self._create_individual_position_df_dict()
@@ -338,6 +337,10 @@ class GenomicPositionData:
 
             self.individual_data: pd.DataFrame = self._return_individual_data()
             """pd.DataFrame: dataframe of individual methylation values."""
+            pbar.update(1)
+
+            self.allelic_data: pd.DataFrame = self._generate_fisher_test_df()
+            """pd.DataFrame: dataframe of Barnard exact test p-values."""
 
             self.positions = self.means.columns.tolist()
             pbar.update(1)
@@ -528,6 +531,14 @@ class GenomicPositionData:
         df = df.droplevel(1)
         return df
 
+    def _generate_fisher_test_df(self) -> pd.DataFrame:
+        """Return a dataframe for p-values values at each position for each cell line.
+
+        Returns:
+            pd.DataFrame: Fisher's test p-values for each position in each cell line
+        """
+        return self.individual_data.applymap(self._fisher_test)
+
     @staticmethod
     def _find_diffs(means_df: pd.DataFrame, modes_df: pd.DataFrame) -> pd.DataFrame:
         """Find the differences between means and modes for each cell line at each pos
@@ -668,7 +679,8 @@ class GenomicPositionData:
             height (int): figure height, defaults to 2000
             cell_lines (Optional[List[str]]): set of cell lines to analyze,
             defaults to all cell lines.
-            data_type (str): type of data to plot. Can to 'means', 'modes', or 'diffs'
+            data_type (str): type of data to plot.
+                            Can be 'means', 'modes', 'diffs', or 'pvalue'.
             backend (Optional[str]): plotting backend to override default
 
         Raises:
@@ -687,6 +699,9 @@ class GenomicPositionData:
         elif data_type == "diffs":
             data = self.diffs
             title_type = "Difference"
+        elif data_type == "pvalue":
+            data = self.allelic_data
+            title_type = "p-value"
         else:
             raise ValueError("Invalid data type")
 
@@ -768,9 +783,9 @@ class GenomicPositionData:
         """
 
         if cell_lines:
-            data = self.individual_data[self.individual_data.index.isin(cell_lines)]
+            data = self.allelic_data[self.allelic_data.index.isin(cell_lines)]
         else:
-            data = self.individual_data
+            data = self.allelic_data
 
         np.seterr(divide="ignore", invalid="ignore")  # ignore divide-by-zero errors
         sig_dict: Dict[str, List[ArrayLike]] = {
@@ -778,23 +793,18 @@ class GenomicPositionData:
             "position": [],
             "ad_stat": [],
             "p_crit": [],
-            "diff": [],
             "raw": [],
         }
+
         for index, row in data.iterrows():
             for column in row.index:
                 value = row[column]
-                if np.all(pd.notnull(value)):
-                    with warnings.catch_warnings():
-                        warnings.simplefilter("ignore", RuntimeWarning)
-                        good, stat, crits = self._anderson_darling_test(value)
-                    if good:
-                        sig_dict["diff"].append(self.diffs.loc[index, column])
-                        sig_dict["cellLine"].append(index)
-                        sig_dict["position"].append(column)
-                        sig_dict["raw"].append(value)
-                        sig_dict["ad_stat"].append(stat)
-                        sig_dict["p_crit"].append(crits[4])
+                if value and not np.isnan(value):
+                    sig_dict["cellLine"].append(index)
+                    sig_dict["position"].append(column)
+                    sig_dict["raw"].append(value)
+                    sig_dict["ad_stat"].append(value)
+                    sig_dict["p_crit"].append(1)
         sig_df = pd.DataFrame(sig_dict)
         return sig_df
 
@@ -817,6 +827,36 @@ class GenomicPositionData:
             is_sig: bool = bool(stat > crits[4])  # type: ignore
             return AD_stats(is_sig, stat, crits)
         return AD_stats(False, np.nan, [np.nan])
+
+    @staticmethod
+    def _fisher_test(data_list: List[int], cutoff: float = 0.001) -> Optional[float]:
+        """Perform Fisher's exact test of a set of methylation calls.
+
+        Args:
+            data_list (List[int]): list of methylated (1)
+                                    and unmethylated (0) values for a read.
+            cutoff (float): pvalue cuttoff, defaults to 0.001
+
+        Returns:
+            Optional[float]: Fisher's exact two-sided p-value if below cutoff, or None
+        """
+
+        if not np.all(np.isnan(data_list)):
+            my_data: NDArray[np.int_] = np.array(
+                [data_list.count(1), data_list.count(0)]
+            )
+            KNOWN_METH: NDArray[np.int_]
+            if my_data[0] > my_data[1]:
+                KNOWN_METH = np.array([len(data_list), 0])
+            else:
+                KNOWN_METH = np.array([0, len(data_list)])
+            table: NDArray[np.int_] = np.array([my_data, KNOWN_METH]).T
+
+            # pvalue: float = stats.barnard_exact(table).pvalue
+            pvalue: float = stats.fisher_exact(table)[1]
+            if pvalue <= cutoff:
+                return pvalue
+        return None
 
     def _return_individual_positions(self, cell_line: str) -> pd.DataFrame:
         """Return a dataframe of methylation at genomic position resolution.
