@@ -266,6 +266,23 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyllelic.process.index_bam">
+<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">index_bam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bamfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#index_bam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.index_bam" title="Permalink to this definition"></a></dt>
+<dd><p>Helper function to run external samtools index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>bamfile</strong> (<em>Path</em>) – filepath to bam file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>verification of samtools command, usually discarded</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.process.make_records_to_dictionary">
 <span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">make_records_to_dictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Bio.SeqRecord.SeqRecord</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Bio.SeqRecord.SeqRecord</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#make_records_to_dictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.make_records_to_dictionary" title="Permalink to this definition"></a></dt>
 <dd><dl class="simple">
@@ -312,25 +329,24 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyllelic.process.pysam_index">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">pysam_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bamfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#pysam_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.pysam_index" title="Permalink to this definition"></a></dt>
-<dd><p>Helper function to run external samtools index.</p>
+<dt class="sig sig-object py" id="pyllelic.process.retrieve_seq">
+<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">retrieve_seq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#retrieve_seq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.retrieve_seq" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieve the genomic sequence of interest from UCSC Genome Browser.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>bamfile</strong> (<em>Path</em>) – filepath to bam file</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>verification of samtools command, usually discarded</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>bool</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – path to store genomic sequence</p></li>
+<li><p><strong>chrom</strong> (<em>str</em>) – chromosome of interest, e.g. “chr5”</p></li>
+<li><p><strong>start</strong> (<em>int</em>) – start position for region of interest</p></li>
+<li><p><strong>end</strong> (<em>int</em>) – end position for region of interest</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyllelic.process.pysam_sort">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">pysam_sort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bamfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#pysam_sort"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.pysam_sort" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pyllelic.process.sort_bam">
+<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">sort_bam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bamfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#sort_bam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.sort_bam" title="Permalink to this definition"></a></dt>
 <dd><p>Helper function to run pysam samtools sort.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -341,22 +357,6 @@
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyllelic.process.retrieve_promoter_seq">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">retrieve_promoter_seq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#retrieve_promoter_seq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.retrieve_promoter_seq" title="Permalink to this definition"></a></dt>
-<dd><p>Retrieve the genomic sequence of interest from UCSC Genome Browser.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<em>str</em>) – path to store genomic sequence</p></li>
-<li><p><strong>chrom</strong> (<em>str</em>) – chromosome of interest, e.g. “chr5”</p></li>
-<li><p><strong>start</strong> (<em>int</em>) – start position for region of interest</p></li>
-<li><p><strong>end</strong> (<em>int</em>) – end position for region of interest</p></li>
-</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -456,7 +456,7 @@ and statistical analysis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.allelic_data">
 <span class="sig-name descname"><span class="pre">allelic_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.allelic_data" title="Permalink to this definition"></a></dt>
-<dd><p>dataframe of Barnard exact test p-values.</p>
+<dd><p>dataframe of Chi-squared p-values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>pd.DataFrame</p>

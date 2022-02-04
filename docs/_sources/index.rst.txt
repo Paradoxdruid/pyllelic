@@ -143,7 +143,7 @@ Set up files:
        from pathlib import Path
 
        # Retrieve promoter genomic sequence of region to analyze
-       process.retrieve_promoter_seq("tert_genome.txt", chrom: "chr5", start: 1293000, end: 1296000)
+       process.retrieve_seq("tert_genome.txt", chrom="chr5", start=1293000, end=1296000)
 
        # Download a reference genome and bisulfite sequencing data
        # Genome data from, e.g. http://hgdownload.soe.ucsc.edu/goldenPath/hg19
@@ -157,8 +157,8 @@ Set up files:
 
        # Sort and index the resultant bam file
        bamfile = Path("/{your_directory}/{bam_filename}.bam")
-       process.pysam_sort(bamfile)
-       process.pysam_index(bamfile / parent / (bamfile.stem + "_sorted.bam"))
+       process.sort_bam(bamfile)
+       process.index_bam(bamfile.parent / f"{bamfile.stem}_sorted.bam")
 
 Run pyllelic:
 

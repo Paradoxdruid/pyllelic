@@ -443,8 +443,8 @@
             <span class="sd">&quot;&quot;&quot;pd.DataFrame: dataframe of individual methylation values.&quot;&quot;&quot;</span>
             <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">allelic_data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_fisher_test_df</span><span class="p">()</span>
-            <span class="sd">&quot;&quot;&quot;pd.DataFrame: dataframe of Barnard exact test p-values.&quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">allelic_data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_chisquared_test_df</span><span class="p">()</span>
+            <span class="sd">&quot;&quot;&quot;pd.DataFrame: dataframe of Chi-squared p-values.&quot;&quot;&quot;</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">means</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
             <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -635,13 +635,13 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
-    <span class="k">def</span> <span class="nf">_generate_fisher_test_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_generate_chisquared_test_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return a dataframe for p-values values at each position for each cell line.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pd.DataFrame: Fisher&#39;s test p-values for each position in each cell line</span>
+<span class="sd">            pd.DataFrame: Chi-squared p-values for each position in each cell line</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">individual_data</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fisher_test</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">individual_data</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chisquared_test</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_find_diffs</span><span class="p">(</span><span class="n">means_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">modes_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
@@ -751,6 +751,8 @@
 
         <span class="k">if</span> <span class="n">cell_lines</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">cell_lines</span><span class="p">)]</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">MAX_GRAPHS</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unable to plot more than 20 cell lines at once.&quot;</span><span class="p">)</span>
@@ -933,8 +935,10 @@
         <span class="k">return</span> <span class="n">AD_stats</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">])</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_fisher_test</span><span class="p">(</span><span class="n">data_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Perform Fisher&#39;s exact test of a set of methylation calls.</span>
+    <span class="k">def</span> <span class="nf">_chisquared_test</span><span class="p">(</span>
+        <span class="n">data_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.001</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Perform Chi-squared analysis of a set of methylation calls.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data_list (List[int]): list of methylated (1)</span>
@@ -942,22 +946,14 @@
 <span class="sd">            cutoff (float): pvalue cuttoff, defaults to 0.001</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            Optional[float]: Fisher&#39;s exact two-sided p-value if below cutoff, or None</span>
+<span class="sd">            Optional[float]: Chi-squared p-value if below cutoff, or None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data_list</span><span class="p">)):</span>
             <span class="n">my_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
                 <span class="p">[</span><span class="n">data_list</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">data_list</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">0</span><span class="p">)]</span>
             <span class="p">)</span>
-            <span class="n">KNOWN_METH</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">my_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">my_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-                <span class="n">KNOWN_METH</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">data_list</span><span class="p">),</span> <span class="mi">0</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">KNOWN_METH</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_list</span><span class="p">)])</span>
-            <span class="n">table</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">my_data</span><span class="p">,</span> <span class="n">KNOWN_METH</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
-
-            <span class="c1"># pvalue: float = stats.barnard_exact(table).pvalue</span>
-            <span class="n">pvalue</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">fisher_exact</span><span class="p">(</span><span class="n">table</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">pvalue</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">chisquare</span><span class="p">(</span><span class="n">my_data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">pvalue</span> <span class="o">&lt;=</span> <span class="n">cutoff</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">pvalue</span>
         <span class="k">return</span> <span class="kc">None</span>

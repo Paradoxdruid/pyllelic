@@ -240,7 +240,7 @@
     <span class="k">return</span> <span class="n">out</span></div>
 
 
-<div class="viewcode-block" id="pysam_sort"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.pysam_sort">[docs]</a><span class="k">def</span> <span class="nf">pysam_sort</span><span class="p">(</span><span class="n">bamfile</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="sort_bam"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.sort_bam">[docs]</a><span class="k">def</span> <span class="nf">sort_bam</span><span class="p">(</span><span class="n">bamfile</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Helper function to run pysam samtools sort.</span>
 
 <span class="sd">    Args:</span>
@@ -255,7 +255,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="pysam_index"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.pysam_index">[docs]</a><span class="k">def</span> <span class="nf">pysam_index</span><span class="p">(</span><span class="n">bamfile</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="index_bam"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.index_bam">[docs]</a><span class="k">def</span> <span class="nf">index_bam</span><span class="p">(</span><span class="n">bamfile</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Helper function to run external samtools index.</span>
 
 <span class="sd">    Args:</span>
@@ -270,7 +270,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="retrieve_promoter_seq"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.retrieve_promoter_seq">[docs]</a><span class="k">def</span> <span class="nf">retrieve_promoter_seq</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chrom</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="retrieve_seq"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.retrieve_seq">[docs]</a><span class="k">def</span> <span class="nf">retrieve_seq</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chrom</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Retrieve the genomic sequence of interest from UCSC Genome Browser.</span>
 
 <span class="sd">    Args:</span>
