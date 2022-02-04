@@ -339,8 +339,8 @@ class GenomicPositionData:
             """pd.DataFrame: dataframe of individual methylation values."""
             pbar.update(1)
 
-            self.allelic_data: pd.DataFrame = self._generate_fisher_test_df()
-            """pd.DataFrame: dataframe of Barnard exact test p-values."""
+            self.allelic_data: pd.DataFrame = self._generate_chisquared_test_df()
+            """pd.DataFrame: dataframe of Chi-squared p-values."""
 
             self.positions = self.means.columns.tolist()
             pbar.update(1)
@@ -531,13 +531,13 @@ class GenomicPositionData:
         df = df.droplevel(1)
         return df
 
-    def _generate_fisher_test_df(self) -> pd.DataFrame:
+    def _generate_chisquared_test_df(self) -> pd.DataFrame:
         """Return a dataframe for p-values values at each position for each cell line.
 
         Returns:
-            pd.DataFrame: Fisher's test p-values for each position in each cell line
+            pd.DataFrame: Chi-squared p-values for each position in each cell line
         """
-        return self.individual_data.applymap(self._fisher_test)
+        return self.individual_data.applymap(self._chisquared_test)
 
     @staticmethod
     def _find_diffs(means_df: pd.DataFrame, modes_df: pd.DataFrame) -> pd.DataFrame:
@@ -647,6 +647,8 @@ class GenomicPositionData:
 
         if cell_lines:
             data = data[data.index.isin(cell_lines)]
+
+        data = data.dropna(how="all", axis=1)
 
         if len(data) > MAX_GRAPHS:
             raise ValueError("Unable to plot more than 20 cell lines at once.")
@@ -829,8 +831,10 @@ class GenomicPositionData:
         return AD_stats(False, np.nan, [np.nan])
 
     @staticmethod
-    def _fisher_test(data_list: List[int], cutoff: float = 0.001) -> Optional[float]:
-        """Perform Fisher's exact test of a set of methylation calls.
+    def _chisquared_test(
+        data_list: List[int], cutoff: float = 0.001
+    ) -> Optional[float]:
+        """Perform Chi-squared analysis of a set of methylation calls.
 
         Args:
             data_list (List[int]): list of methylated (1)
@@ -838,22 +842,14 @@ class GenomicPositionData:
             cutoff (float): pvalue cuttoff, defaults to 0.001
 
         Returns:
-            Optional[float]: Fisher's exact two-sided p-value if below cutoff, or None
+            Optional[float]: Chi-squared p-value if below cutoff, or None
         """
 
         if not np.all(np.isnan(data_list)):
             my_data: NDArray[np.int_] = np.array(
                 [data_list.count(1), data_list.count(0)]
             )
-            KNOWN_METH: NDArray[np.int_]
-            if my_data[0] > my_data[1]:
-                KNOWN_METH = np.array([len(data_list), 0])
-            else:
-                KNOWN_METH = np.array([0, len(data_list)])
-            table: NDArray[np.int_] = np.array([my_data, KNOWN_METH]).T
-
-            # pvalue: float = stats.barnard_exact(table).pvalue
-            pvalue: float = stats.fisher_exact(table)[1]
+            pvalue: float = stats.chisquare(my_data, axis=None)[1]
             if pvalue <= cutoff:
                 return pvalue
         return None
