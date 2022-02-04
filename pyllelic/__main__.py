@@ -54,17 +54,15 @@ def _process_files(args: argparse.Namespace) -> None:
         args (argparse.Namespace): parsed args
     """
 
-    process.retrieve_promoter_seq(
-        "genome.txt", chrom=args.chrom, start=args.start, end=args.end
-    )
+    process.retrieve_seq("genome.txt", chrom=args.chrom, start=args.start, end=args.end)
     genome: Path = Path.cwd() / args.genome
     fastq: Path = Path.cwd() / args.fastq
     process.prepare_genome(genome)
     process.bismark(genome, fastq)
 
     bamfile: Path = Path.cwd() / (Path(args.fastq).stem + ".bam")
-    process.pysam_sort(bamfile)
-    process.pysam_index(Path(bamfile.parent) / (bamfile.stem + "_sorted.bam"))
+    process.sort_bam(bamfile)
+    process.index_bam(Path(bamfile.parent) / (bamfile.stem + "_sorted.bam"))
 
 
 def _call_pyllelic(args: argparse.Namespace) -> pyllelic.GenomicPositionData:

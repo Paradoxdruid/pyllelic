@@ -136,7 +136,7 @@ def bowtie2_fastq_to_bam(index: Path, fastq: Path, cores: int) -> str:
     return out
 
 
-def pysam_sort(bamfile: Path) -> bool:
+def sort_bam(bamfile: Path) -> bool:
     """Helper function to run pysam samtools sort.
 
     Args:
@@ -151,7 +151,7 @@ def pysam_sort(bamfile: Path) -> bool:
     return True
 
 
-def pysam_index(bamfile: Path) -> bool:
+def index_bam(bamfile: Path) -> bool:
     """Helper function to run external samtools index.
 
     Args:
@@ -166,7 +166,7 @@ def pysam_index(bamfile: Path) -> bool:
     return True
 
 
-def retrieve_promoter_seq(filename: str, chrom: str, start: int, end: int) -> None:
+def retrieve_seq(filename: str, chrom: str, start: int, end: int) -> None:
     """Retrieve the genomic sequence of interest from UCSC Genome Browser.
 
     Args:
