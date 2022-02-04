@@ -160,7 +160,7 @@ def test_bowtie2_fastq_to_bam_not_installed(mocker):
 def test_process_pysam_sort(mocker):
     mock_pysam = mocker.patch("pyllelic.process.pysam")
     TEST_PATH = Path().cwd()
-    _ = process.pysam_sort(TEST_PATH)
+    _ = process.sort_bam(TEST_PATH)
     mock_pysam.sort.assert_called_once_with(
         "-o", f"{TEST_PATH.parent}/{TEST_PATH.stem}_sorted.bam", os.fspath(TEST_PATH)
     )
@@ -169,7 +169,7 @@ def test_process_pysam_sort(mocker):
 def test_pysam_index(mocker):
     mock_pysam = mocker.patch("pyllelic.process.pysam")
     TEST_PATH = Path().cwd()
-    _ = process.pysam_index(TEST_PATH)
+    _ = process.index_bam(TEST_PATH)
     mock_pysam.index.assert_called_once_with(os.fspath(TEST_PATH))
 
 
@@ -277,6 +277,6 @@ def test_retrieve_promoter_seq(requests_mock):
     )
 
     with tempfile.NamedTemporaryFile(suffix=".txt", prefix="promoter") as my_file:
-        process.retrieve_promoter_seq(my_file.name, "chr5", 1293200, 1293400)
+        process.retrieve_seq(my_file.name, "chr5", 1293200, 1293400)
         actual = Path(my_file.name).read_text()
         assert actual == EXPECTED

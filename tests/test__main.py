@@ -45,10 +45,10 @@ def test__process_files(mocker):
     mock_process.bismark.assert_called_with(
         Path.cwd() / "hg19chr5", Path.cwd() / "fh_cellline_tissue.fastq.gz"
     )
-    mock_process.pysam_sort.assert_called_with(
+    mock_process.sort_bam.assert_called_with(
         Path.cwd() / "fh_cellline_tissue.fastq.bam"
     )
-    mock_process.pysam_index.assert_called_with(
+    mock_process.index_bam.assert_called_with(
         Path.cwd() / "fh_cellline_tissue.fastq_sorted.bam"
     )
 
@@ -86,10 +86,10 @@ def test_run_pyllelic(mocker, capsys):
     mock_process.bismark.assert_called_with(
         Path.cwd() / "hg19chr5", Path.cwd() / "fh_cellline_tissue.fastq.gz"
     )
-    mock_process.pysam_sort.assert_called_with(
+    mock_process.sort_bam.assert_called_with(
         Path.cwd() / "fh_cellline_tissue.fastq.bam"
     )
-    mock_process.pysam_index.assert_called_with(
+    mock_process.index_bam.assert_called_with(
         Path.cwd() / "fh_cellline_tissue.fastq_sorted.bam"
     )
 
