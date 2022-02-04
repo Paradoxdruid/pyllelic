@@ -493,7 +493,7 @@ class Test_GenomicPositionData:
             )
             actual2 = genomic_position_data.summarize_allelic_data()
 
-        EXPECTED_ALLELIC_DATA.index = pd.RangeIndex(0, 0, 1)
+        # EXPECTED_ALLELIC_DATA.index = pd.RangeIndex(0, 0, 1)
         pd.testing.assert_frame_equal(EXPECTED_ALLELIC_DATA, actual1)
         pd.testing.assert_frame_equal(EXPECTED_ALLELIC_DATA, actual2)
 
