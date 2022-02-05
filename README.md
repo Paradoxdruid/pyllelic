@@ -40,7 +40,7 @@ conda activate pyllelic
 ```
 
 <details>
-  <summary>or more explictly step by step instructions</summary>
+  <summary>or more explict step by step instructions</summary>
 
 ```bash
 conda create --name pyllelic python=3.8
