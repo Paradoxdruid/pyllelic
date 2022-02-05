@@ -268,6 +268,7 @@ def _make_stacked_plotly_fig(df: pd.DataFrame) -> go.Figure:
         column_widths=[0.1, 0.9],
         horizontal_spacing=0,
         vertical_spacing=0.005,
+        shared_xaxes=True,
     )
 
     for i, (key, each) in enumerate(fig_dict.items()):
@@ -298,7 +299,16 @@ def _make_stacked_plotly_fig(df: pd.DataFrame) -> go.Figure:
         title_text="Methylated and Unmethylated Reads by Cell Line",
         title={"font": {"color": "white"}},
     )
-    this_figure.update_xaxes(visible=False)
+    this_figure.update_xaxes(
+        showgrid=False,
+        nticks=11,
+        tickangle=45,
+        color="white",
+    )
+    this_figure.update_xaxes(showticklabels=False, visible=False)
+    this_figure.update_xaxes(
+        showticklabels=True, tickcolor="white", visible=True, row=len(fig_dict), col=2
+    )
     this_figure.update_yaxes(visible=False)
 
     return this_figure
