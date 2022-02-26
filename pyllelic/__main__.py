@@ -15,8 +15,8 @@ import argparse
 from pathlib import Path
 from typing import List
 
-from . import process, pyllelic
-from .config import Config
+from pyllelic import process, pyllelic
+from pyllelic.config import Config
 
 
 def _parsing() -> argparse.Namespace:

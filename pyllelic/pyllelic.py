@@ -21,9 +21,9 @@ from numpy.typing import ArrayLike, NDArray
 from scipy import stats
 from tqdm.auto import tqdm
 
-from . import quma
-from . import visualization as viz
-from .config import Config
+from pyllelic import quma
+from pyllelic import visualization as viz
+from pyllelic.config import Config
 
 # Initialized multiprocessing limits
 NUM_THREADS = cpu_count() - 1
