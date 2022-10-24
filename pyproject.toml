@@ -1,3 +1,57 @@
+[project]
+name = "pyllelic"
+authors = [{name = "Andrew J. Bonham", email = "bonham@gmail.com"}]
+readme = "README.md"
+description = "Analysis of allele-specific methylation in bisulfite DNA sequencing."
+license = {file = "LICENSE"}
+requires-python = ">=3.7"
+classifiers = [
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3 :: Only",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Operating System :: OS Independent",
+]
+dependencies = [
+        "pandas",
+        "numpy",
+        "scipy",
+        "plotly",
+        "xlsxwriter",
+        "xlrd",
+        "openpyxl",
+        "tqdm",
+        "pysam",
+        "biopython",
+        "seaborn",
+]
+keywords = ["genomics", "methylation", "DNA sequencing"]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/Paradoxdruid/pyllelic"
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "pytest",
+    "pytest-mock",
+    "mypy",
+]
+
+[tool.setuptools]
+packages = ["pyllelic"]
+
+[tool.setuptools.dynamic]
+version = {attr = "pyllelic.__version__.__version__"}
+
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
 [tool.pytest.ini_options]
 filterwarnings = ["ignore::DeprecationWarning"]
 
