@@ -532,7 +532,7 @@ class Test_GenomicPositionData:
             np.array([0.592, 0.675, 0.809, 0.944, 1.123]),
         )
         assert EXPECTED[0] == actual[0]
-        np.testing.assert_equal(EXPECTED[1], actual[1])
+        np.testing.assert_almost_equal(EXPECTED[1], actual[1])
         assert (EXPECTED[2] == actual[2]).all()
 
     def test_anderson_darling_test_with_bad(self, set_up_genomic_position_data):
