@@ -189,19 +189,19 @@ class Quma:
             seq = re.sub(r"^\s*>(.*)?\n", "", seq)
 
         elif re.findall(
-            r"^ORIGIN\s*\n((\s+(\d+(?:\s+\w+)+))+)\s*\n//",  # lgtm [py/redos]
+            r"^ORIGIN\s*(\d+(?:\s+\w+)+)\n\/\/",
             seq,
             re.MULTILINE,
         ):  # pragma: no cover
             seq = re.findall(reg, seq, re.MULTILINE)[0][0]
 
         elif re.findall(
-            r"^SQ\s+SEQUENCE.*\n((\s+(?:\w+\s+)+\d+)+)\n\/\/",  # lgtm [py/redos]
+            r"^SQ\s+Sequence.*\n(\s+(?:\w+\s+)+\d+)\n\/\/",
             seq,
             re.MULTILINE,
         ):  # pragma: no cover
             seq = re.findall(
-                r"^SQ\s+SEQUENCE.*\n((\s+(?:\w+\s+)+\d+)+)\n\/\/",  # lgtm [py/redos]
+                r"^SQ\s+Sequence.*\n(\s+(?:\w+\s+)+\d+)\n\/\/",
                 seq,
                 re.MULTILINE,
             )[0][
