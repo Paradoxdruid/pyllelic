@@ -389,8 +389,8 @@ class Quma:
 
         # FIXME: biopython 1.80 changes str format of alignments
         if bio_minor >= 80:
-            g_substring: str = alignment[0]
-            q_substring: str = alignment[1]
+            g_substring: str = alignment[1]
+            q_substring: str = alignment[0]
 
         else:
             matches: str = str(alignment).splitlines()[1]
