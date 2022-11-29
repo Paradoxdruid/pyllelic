@@ -12,9 +12,11 @@ from dataclasses import dataclass
 from io import StringIO
 from typing import Dict, List, Optional, Tuple
 
-from Bio import Align
+from Bio import Align as Align
+from Bio import __version__ as bio_version
 from Bio.Align import substitution_matrices
 
+bio_minor: int = int(bio_version.split(".")[1])
 # import logging
 
 # logging.basicConfig(filename="quma_test.log", level=logging.DEBUG)
@@ -385,23 +387,27 @@ class Quma:
             Tuple[str, str]: query and genomic aligned substrings
         """
 
-        matches: str = str(alignment).splitlines()[1]
-        q_matches: str = str(alignment).splitlines()[0]
-        g_matches: str = str(alignment).splitlines()[2]
+        # FIXME: biopython 1.80 changes str format of alignments
+        if bio_minor >= 80:
+            g_substring: str = alignment[0]
+            q_substring: str = alignment[1]
 
-        left_start_index: int = len(matches) - len(matches.lstrip())
-        right_end_index: int = len(matches) - len(matches.rstrip())
+        else:
+            matches: str = str(alignment).splitlines()[1]
+            q_matches: str = str(alignment).splitlines()[0]
+            g_matches: str = str(alignment).splitlines()[2]
 
-        max_index: int = min(len(matches), len(g_matches), len(q_matches))
+            left_start_index: int = len(matches) - len(matches.lstrip())
+            right_end_index: int = len(matches) - len(matches.rstrip())
 
-        q_substring: str
-        g_substring: str
-        if right_end_index == 0:
-            q_substring = q_matches[left_start_index:max_index]
-            g_substring = g_matches[left_start_index:max_index]
-        else:  # pragma: no cover
-            q_substring = q_matches[left_start_index:-right_end_index]
-            g_substring = g_matches[left_start_index:-right_end_index]
+            max_index: int = min(len(matches), len(g_matches), len(q_matches))
+
+            if right_end_index == 0:
+                q_substring = q_matches[left_start_index:max_index]
+                g_substring = g_matches[left_start_index:max_index]
+            else:  # pragma: no cover
+                q_substring = q_matches[left_start_index:-right_end_index]
+                g_substring = g_matches[left_start_index:-right_end_index]
 
         return (g_substring, q_substring)  # was flipped!
 
