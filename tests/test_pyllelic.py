@@ -5,7 +5,7 @@
 import base64
 import unittest.mock as mock
 from pathlib import Path
-from typing import Any
+from typing import Any, Tuple
 
 import numpy as np
 
@@ -41,7 +41,7 @@ from .inputs import (
 
 # import os
 
-PositionDataTuple = tuple[Path, pyllelic.GenomicPositionData]
+PositionDataTuple = Tuple[Path, pyllelic.GenomicPositionData]
 
 
 # Helper methods
@@ -84,7 +84,7 @@ def _mock_apply_async(
     return MockPoolApplyResult(func, args)
 
 
-def setup_bam_files(tmp_path: Path) -> tuple[Path, Path]:
+def setup_bam_files(tmp_path: Path) -> Tuple[Path, Path]:
     d = tmp_path / "test"
     d.mkdir()
     fn_bam = "fh_test_tissue.bam"
