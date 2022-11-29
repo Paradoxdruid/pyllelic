@@ -432,14 +432,9 @@ class GenomicPositionData:
             filename (str): Filename to save to. Defaults to "output.xlsx".
         """
 
-        writer: pd.ExcelWriter = pd.ExcelWriter(
-            self.config.base_directory.joinpath(filename)
-        )
-
-        for name, each in self.quma_results.items():
-            each.values.to_excel(writer, sheet_name=name)
-
-        writer.save()
+        with pd.ExcelWriter(self.config.base_directory.joinpath(filename)) as writer:
+            for name, each in self.quma_results.items():
+                each.values.to_excel(writer, sheet_name=name)
 
     def save_pickle(self, filename: str) -> None:
         """Save GenomicPositionData object as a pickled file.
