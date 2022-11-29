@@ -57,7 +57,7 @@ jobs:
       - name: Update environment
         run: |
           mamba env update -n my-env -f environment.yml &&  \
-          mamba install -n my-env pytest pytest-mock requests-mock coverage && \
+          mamba install -n my-env pytest pytest-mock requests-mock types-mock coverage && \
           mamba install -n my-env -c bioconda "samtools>=1.11" "bcftools>=1.11" "htslib>=1.11"
         if: steps.cache.outputs.cache-hit != 'true'
 
