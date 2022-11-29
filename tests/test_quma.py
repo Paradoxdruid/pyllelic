@@ -64,7 +64,7 @@ TEST_FORMAT_DICT = quma.Result(
     unconv=0,
     conv=3,
     pconv=100.0,
-    val=100.0,
+    val="100.0",
 )
 
 TEST_SUMMARY_REF = quma.Result(
@@ -89,10 +89,10 @@ TEST_ALIGN_REF = quma.Result(
     menum=0,
     unconv=0,
     conv=0,
-    pconv="",
+    pconv=0,
     match=0,
     val="",
-    perc="",
+    perc=0,
     aliMis=0,
 )
 
@@ -103,10 +103,10 @@ TEST_ALIGN_REF_MISMATCH = quma.Result(
     menum=0,
     unconv=0,
     conv=0,
-    pconv="",
+    pconv=0,
     match=0,
     val="",
-    perc="",
+    perc=0,
     aliMis=0,
 )
 
@@ -117,12 +117,12 @@ class Test_Quma:
     # pylint: disable=no-self-use
 
     @pytest.fixture()
-    def set_up_quma(self):
+    def set_up_quma(self) -> quma.Quma:
         TEST_GSEQ = ">query\nATCGTAGTCGA"
         TEST_QSEQ = ">query1\nATCGTAGTCGA\n>query2\nATCGATAGCATT"
         return quma.Quma(TEST_GSEQ, TEST_QSEQ)
 
-    def test_init(self, set_up_quma):
+    def test_init(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         actual = quma_result.values
 
@@ -136,13 +136,13 @@ class Test_Quma:
 
         assert EXPECTED == actual
 
-    def test__parse_genome(self, set_up_quma):
+    def test__parse_genome(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         EXPECTED = "ATCGTAGTCGA"
         actual = quma_result._parse_genome()
         assert EXPECTED == actual
 
-    def test__parse_biseq(self, set_up_quma):
+    def test__parse_biseq(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         EXPECTED = [
             quma.Fasta(com="query1", pos=None, seq="ATCGTAGTCGA"),
@@ -152,7 +152,7 @@ class Test_Quma:
         actual = quma_result._parse_biseq()
         assert EXPECTED == actual
 
-    def test__parse_biseq_empty_line(self, set_up_quma):
+    def test__parse_biseq_empty_line(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         EXPECTED = [
             quma.Fasta(com="query1", pos=None, seq=""),
@@ -162,14 +162,14 @@ class Test_Quma:
         actual = quma_result._parse_biseq()
         assert EXPECTED == actual
 
-    def test__parse_seq(self, set_up_quma):
+    def test__parse_seq(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_SEQ = ">query\nATCGTAGTCGA"
         EXPECTED = "ATCGTAGTCGA"
         actual = quma_result._parse_seq(TEST_SEQ)
         assert EXPECTED == actual
 
-    def test__check_char_in_allowed(self, set_up_quma):
+    def test__check_char_in_allowed(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         SEQ = "ABCDEFGHIJ"
         PATTERN = "JABC"
@@ -178,7 +178,7 @@ class Test_Quma:
         actual = quma_result._check_char_in_allowed(SEQ, PATTERN)
         assert EXPECTED == actual
 
-    def test__fasta_make(self, set_up_quma):
+    def test__fasta_make(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_SEQ = "ATCGTAGTCGA"
         TEST_SEQ_NAME = "read1"
@@ -186,7 +186,7 @@ class Test_Quma:
         actual = quma_result._fasta_make(TEST_SEQ, TEST_SEQ_NAME)
         assert EXPECTED == actual
 
-    def test__process_fasta_output(self, set_up_quma):
+    def test__process_fasta_output(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_QSEQ = [
             quma.Fasta(com="read0", seq="ATCGATCCGGCATACG"),
@@ -225,14 +225,14 @@ class Test_Quma:
     #     "TEST_SEQ, EXPECTED",
     #     [("ATCGTAGTCGA", "TCGACTACGAT"), ("ATCGTAGTCGO", "OCGACTACGAT")],
     # )
-    def test_rev_comp(self, set_up_quma):
+    def test_rev_comp(self, set_up_quma: quma.Quma) -> None:
         TEST_SEQ = "ATCGTAGTCGA"
         EXPECTED = "TCGACTACGAT"
         quma_result = set_up_quma
         actual = quma_result._rev_comp(TEST_SEQ)
         assert EXPECTED == actual
 
-    def test__align_seq_and_generate_stats(self, set_up_quma):
+    def test__align_seq_and_generate_stats(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_GFILE = ">genome\nATCGATCCGGCATACG\n"
         TEST_QFILE = ">read1\nATCGATCCGGCATACG\n"
@@ -241,14 +241,14 @@ class Test_Quma:
         actual = quma_result._align_seq_and_generate_stats(TEST_GFILE, TEST_QFILE)
         assert EXPECTED == actual
 
-    def test__process_alignment_matches(self, set_up_quma):
+    def test__process_alignment_matches(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_REF = TEST_ALIGN_REF
         EXPECTED = EXPECTED_ALIGN_MATCH
         actual = quma_result._process_alignment_matches(TEST_REF)
         assert EXPECTED == actual
 
-    def test__process_alignment_matches_mismatch(self, set_up_quma):
+    def test__process_alignment_matches_mismatch(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_REF = TEST_ALIGN_REF_MISMATCH
         EXPECTED = EXPECTED_ALIGN_MISMATCH
@@ -256,14 +256,14 @@ class Test_Quma:
         actual = quma_result._process_alignment_matches(TEST_REF)
         assert EXPECTED == actual
 
-    def test__generate_summary_stats(self, set_up_quma):
+    def test__generate_summary_stats(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_REF = TEST_SUMMARY_REF
         EXPECTED = EXPECTED_ALIGN_MATCH
         actual = quma_result._generate_summary_stats(TEST_REF)
         assert EXPECTED == actual
 
-    def test__generate_summary_stats_bad(self, set_up_quma):
+    def test__generate_summary_stats_bad(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_REF = TEST_SUMMARY_REF
         TEST_REF.conv = 0
@@ -273,7 +273,7 @@ class Test_Quma:
         actual = quma_result._generate_summary_stats(TEST_REF)
         assert EXPECTED == actual
 
-    def test__percentage(self, set_up_quma):
+    def test__percentage(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_SUM_A = 3
         TEST_SUM_B = 7
@@ -289,14 +289,14 @@ class Test_Quma:
         )
         assert EXPECTED_TOTAL == actual_total
 
-    def test__percentage_invalid(self, set_up_quma):
+    def test__percentage_invalid(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_SUM_A = 3
         TEST_SUM_B = 7
         with pytest.raises(ValueError):
             _ = quma_result._percentage(TEST_SUM_A, TEST_SUM_B, calc_type="FAKE")
 
-    def test__find_best_dataset(self, set_up_quma):
+    def test__find_best_dataset(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_FFRES = EXPECTED_ALIGN_MATCH
         TEST_FRRES = EXPECTED_ALIGN_MATCH
@@ -310,7 +310,7 @@ class Test_Quma:
         assert EXPECTED_RES == actual_res
         assert EXPECTED_DIRECTION == actual_dir
 
-    def test__find_best_dataset_rev(self, set_up_quma):
+    def test__find_best_dataset_rev(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_FFRES = EXPECTED_ALIGN_MATCH
         TEST_FRRES = EXPECTED_ALIGN_MATCH
@@ -322,7 +322,7 @@ class Test_Quma:
         assert EXPECTED_RES == actual_res
         assert EXPECTED_DIRECTION == actual_dir
 
-    def test__find_best_dataset_fwd_perc(self, set_up_quma):
+    def test__find_best_dataset_fwd_perc(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_FFRES = EXPECTED_ALIGN_MATCH
         TEST_FRRES = EXPECTED_ALIGN_MATCH
@@ -334,7 +334,7 @@ class Test_Quma:
         assert EXPECTED_RES == actual_res
         assert EXPECTED_DIRECTION == actual_dir
 
-    def test__find_best_dataset_rev_perc(self, set_up_quma):
+    def test__find_best_dataset_rev_perc(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_FFRES = EXPECTED_ALIGN_MATCH
         TEST_FRRES = EXPECTED_ALIGN_MATCH
@@ -346,7 +346,7 @@ class Test_Quma:
         assert EXPECTED_RES == actual_res
         assert EXPECTED_DIRECTION == actual_dir
 
-    def test__find_best_dataset_fwd_unconv(self, set_up_quma):
+    def test__find_best_dataset_fwd_unconv(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_FFRES = EXPECTED_ALIGN_MATCH
         TEST_FRRES = EXPECTED_ALIGN_MATCH
@@ -359,7 +359,7 @@ class Test_Quma:
         assert EXPECTED_RES == actual_res
         assert EXPECTED_DIRECTION == actual_dir
 
-    def test__find_best_dataset_rev_unconv(self, set_up_quma):
+    def test__find_best_dataset_rev_unconv(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_FFRES = EXPECTED_ALIGN_MATCH
         TEST_FRRES = EXPECTED_ALIGN_MATCH
@@ -371,7 +371,7 @@ class Test_Quma:
         assert EXPECTED_RES == actual_res
         assert EXPECTED_DIRECTION == actual_dir
 
-    def test__find_best_dataset_fwd_pconv(self, set_up_quma):
+    def test__find_best_dataset_fwd_pconv(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_FFRES = EXPECTED_ALIGN_MATCH
         TEST_FRRES = EXPECTED_ALIGN_MATCH
@@ -383,7 +383,7 @@ class Test_Quma:
         assert EXPECTED_RES == actual_res
         assert EXPECTED_DIRECTION == actual_dir
 
-    def test__find_best_dataset_rev_pconv(self, set_up_quma):
+    def test__find_best_dataset_rev_pconv(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_FFRES = EXPECTED_ALIGN_MATCH
         TEST_FRRES = EXPECTED_ALIGN_MATCH
@@ -394,7 +394,7 @@ class Test_Quma:
         assert EXPECTED_RES == actual_res
         assert EXPECTED_DIRECTION == actual_dir
 
-    def test__format_output(self, set_up_quma):
+    def test__format_output(self, set_up_quma: quma.Quma) -> None:
         quma_result = set_up_quma
         TEST_SEQ = "ATCGATCCGGCATACG"
         TEST_DATA = [

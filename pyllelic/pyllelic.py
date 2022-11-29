@@ -510,7 +510,7 @@ class GenomicPositionData:
         return df
 
     def _return_individual_data(self) -> pd.DataFrame:
-        """Return a dataframe for methylation values at each position for each cell line.
+        """Return a dataframe for methylation values at each pos for each cell line.
 
         Returns:
             pd.DataFrame: methylation values for each position in each cell line

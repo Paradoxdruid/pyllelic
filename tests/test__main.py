@@ -3,9 +3,12 @@
 
 # Testing
 import argparse
-import pytest  # noqa  # pylint: disable=unused-import
 import sys
 from pathlib import Path
+
+import pytest  # noqa  # pylint: disable=unused-import
+from pytest import CaptureFixture
+from pytest_mock.plugin import MockerFixture
 
 # Module to test
 import pyllelic.__main__ as main
@@ -28,7 +31,7 @@ TEST_ARGS = "__main__.py -o my_data -f fh_cellline_tissue.fastq.gz -g hg19chr5 \
                         -chr chr5 -s 1293000 -e 1296000 --viz plotly".split()
 
 
-def test__parsing(mocker):
+def test__parsing(mocker: MockerFixture) -> None:
     mocker.patch.object(sys, "argv", TEST_ARGS)
     EXPECTED = EXPECTED_ARGS
     actual = main._parsing()
@@ -36,7 +39,7 @@ def test__parsing(mocker):
     assert actual == EXPECTED
 
 
-def test__process_files(mocker):
+def test__process_files(mocker: MockerFixture) -> None:
     mock_process = mocker.patch("pyllelic.__main__.process")
 
     main._process_files(EXPECTED_ARGS)
@@ -53,7 +56,7 @@ def test__process_files(mocker):
     )
 
 
-def test__call_pyllelic(mocker):
+def test__call_pyllelic(mocker: MockerFixture) -> None:
     mock_pyllelic = mocker.patch("pyllelic.__main__.pyllelic")
 
     main._call_pyllelic(EXPECTED_ARGS)
@@ -75,7 +78,7 @@ def test__call_pyllelic(mocker):
     mock_pyllelic.pyllelic.assert_called_once()
 
 
-def test_run_pyllelic(mocker, capsys):
+def test_run_pyllelic(mocker: MockerFixture, capsys: CaptureFixture[str]) -> None:
     mocker.patch.object(sys, "argv", TEST_ARGS)
     mock_process = mocker.patch("pyllelic.__main__.process")
     mock_pyllelic = mocker.patch("pyllelic.__main__.pyllelic")

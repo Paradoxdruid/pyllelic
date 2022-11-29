@@ -18,7 +18,11 @@ class ShellCommandError(Exception):
     """Error for shell utilities that aren't installed."""
 
 
-def fastq_to_list(filepath: Path) -> Optional[List[SeqIO.SeqRecord]]:
+class FileNameError(Exception):
+    """Error for invalid filetypes."""
+
+
+def fastq_to_list(filepath: Path) -> List[SeqIO.SeqRecord]:
     """Read a .fastq or fastq.gz file into an in-memory record_list.
 
     This is a time and memory intensive operation!
@@ -31,8 +35,7 @@ def fastq_to_list(filepath: Path) -> Optional[List[SeqIO.SeqRecord]]:
     """
 
     if ".fastq" not in filepath.suffixes:
-        print("Wrong filetype")
-        return None
+        raise FileNameError("Wrong filetype")
 
     record_list: List[SeqIO.SeqRecord] = []
     if ".gz" in filepath.suffixes[-1]:
@@ -48,8 +51,7 @@ def fastq_to_list(filepath: Path) -> Optional[List[SeqIO.SeqRecord]]:
         return record_list
 
     # If doesn't match readable suffixes
-    print("Wrong filetype")
-    return None
+    raise FileNameError("Wrong filetype")
 
 
 def make_records_to_dictionary(

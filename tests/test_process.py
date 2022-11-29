@@ -12,6 +12,8 @@ from pathlib import Path
 import pytest
 from Bio import SeqIO
 from Bio.Seq import Seq
+from pytest_mock.plugin import MockerFixture
+from requests_mock import Mocker
 
 # Module to test
 import pyllelic.process as process
@@ -31,7 +33,7 @@ GATTTGGGGTTCAAAGCAGTATCGATCAAATAGTAAATCCATTTGTTCAACTCACAGTTT
 !''*((((***+))%%%++)(%%%%).1***-+*''))**55CCF>>>>>>CCCCCCC65"""
 
 
-def test_process_fastq_to_list():
+def test_process_fastq_to_list() -> None:
     EXPECTED = EXPECTED_SEQ_RECORD
     with tempfile.NamedTemporaryFile(suffix=".fastq", prefix="test1") as my_file:
         FASTQ_CONTENTS = TEST_FASTQ_CONTENTS
@@ -43,23 +45,23 @@ def test_process_fastq_to_list():
     assert EXPECTED.seq == actual[0].seq
 
 
-def test_process_fastq_to_list_wrong_filetype():
+def test_process_fastq_to_list_wrong_filetype() -> None:
     with tempfile.NamedTemporaryFile(suffix=".txt", prefix="test1") as my_file:
         TEST_FILEPATH = Path(my_file.name)
-        actual = process.fastq_to_list(TEST_FILEPATH)
 
-    assert actual is None
+        with pytest.raises(process.FileNameError):
+            _ = process.fastq_to_list(TEST_FILEPATH)
 
 
-def test_process_fastq_to_list_wrong_filetype_multi_extension():
+def test_process_fastq_to_list_wrong_filetype_multi_extension() -> None:
     with tempfile.NamedTemporaryFile(suffix=".fastq.txt", prefix="test1") as my_file:
         TEST_FILEPATH = Path(my_file.name)
-        actual = process.fastq_to_list(TEST_FILEPATH)
 
-    assert actual is None
+        with pytest.raises(process.FileNameError):
+            _ = process.fastq_to_list(TEST_FILEPATH)
 
 
-def test_process_fastq_to_list_gz():
+def test_process_fastq_to_list_gz() -> None:
     EXPECTED = EXPECTED_SEQ_RECORD
     with tempfile.NamedTemporaryFile(suffix=".fastq.gz", prefix="test1") as my_file:
         FASTQ_CONTENTS = TEST_FASTQ_CONTENTS
@@ -73,7 +75,7 @@ def test_process_fastq_to_list_gz():
     assert EXPECTED.seq == actual[0].seq
 
 
-def test_make_records_to_dictionary():
+def test_make_records_to_dictionary() -> None:
     TEST_RECORD_LIST = [
         SeqIO.SeqRecord(
             Seq("ATGCTCGTAGCTGATCGA"),
@@ -93,7 +95,7 @@ def test_make_records_to_dictionary():
     assert EXPECTED == actual
 
 
-def test_build_bowtie2_index(mocker):
+def test_build_bowtie2_index(mocker: MockerFixture) -> None:
     mock_subp = mocker.patch("pyllelic.process.subprocess")
     mock_shutil = mocker.patch("pyllelic.process.shutil")
     mock_shutil.which.return_value = True
@@ -107,7 +109,7 @@ def test_build_bowtie2_index(mocker):
     )
 
 
-def test_build_bowtie2_index_not_installed(mocker):
+def test_build_bowtie2_index_not_installed(mocker: MockerFixture) -> None:
     mock_shutil = mocker.patch("pyllelic.process.shutil")
     mock_shutil.which.return_value = None
     TEST_FASTQ = Path("/Users/user/test.fastq")
@@ -116,7 +118,7 @@ def test_build_bowtie2_index_not_installed(mocker):
         _ = process.build_bowtie2_index(TEST_FASTQ)
 
 
-def test_bowtie2_fastq_to_bam(mocker):
+def test_bowtie2_fastq_to_bam(mocker: MockerFixture) -> None:
     mock_subp = mocker.patch("pyllelic.process.subprocess")
     mock_shutil = mocker.patch("pyllelic.process.shutil")
     mock_shutil.which.return_value = True
@@ -146,7 +148,7 @@ def test_bowtie2_fastq_to_bam(mocker):
     )
 
 
-def test_bowtie2_fastq_to_bam_not_installed(mocker):
+def test_bowtie2_fastq_to_bam_not_installed(mocker: MockerFixture) -> None:
     mock_shutil = mocker.patch("pyllelic.process.shutil")
     mock_shutil.which.return_value = None
     TEST_CORES = 4
@@ -157,7 +159,7 @@ def test_bowtie2_fastq_to_bam_not_installed(mocker):
         _ = process.bowtie2_fastq_to_bam(TEST_INDEX, TEST_FASTQ, TEST_CORES)
 
 
-def test_process_pysam_sort(mocker):
+def test_process_pysam_sort(mocker: MockerFixture) -> None:
     mock_pysam = mocker.patch("pyllelic.process.pysam")
     TEST_PATH = Path().cwd()
     _ = process.sort_bam(TEST_PATH)
@@ -166,14 +168,14 @@ def test_process_pysam_sort(mocker):
     )
 
 
-def test_pysam_index(mocker):
+def test_pysam_index(mocker: MockerFixture) -> None:
     mock_pysam = mocker.patch("pyllelic.process.pysam")
     TEST_PATH = Path().cwd()
     _ = process.index_bam(TEST_PATH)
     mock_pysam.index.assert_called_once_with(os.fspath(TEST_PATH))
 
 
-def test_prepare_genome(mocker):
+def test_prepare_genome(mocker: MockerFixture) -> None:
     mock_subp = mocker.patch("pyllelic.process.subprocess")
     mock_shutil = mocker.patch("pyllelic.process.shutil")
     mock_shutil.which.return_value = True
@@ -196,7 +198,7 @@ def test_prepare_genome(mocker):
     )
 
 
-def test_prepare_genome_no_aligner(mocker):
+def test_prepare_genome_no_aligner(mocker: MockerFixture) -> None:
     mock_subp = mocker.patch("pyllelic.process.subprocess")
     mock_shutil = mocker.patch("pyllelic.process.shutil")
     mock_shutil.which.return_value = True
@@ -216,7 +218,7 @@ def test_prepare_genome_no_aligner(mocker):
     )
 
 
-def test_prepare_genome_not_installed(mocker):
+def test_prepare_genome_not_installed(mocker: MockerFixture) -> None:
     mock_shutil = mocker.patch("pyllelic.process.shutil")
     mock_shutil.which.return_value = None
     TEST_INDEX = Path("/Users/user/bowtie_index")
@@ -226,7 +228,7 @@ def test_prepare_genome_not_installed(mocker):
         _ = process.prepare_genome(TEST_INDEX, TEST_ALIGNER)
 
 
-def test_bismark(mocker):
+def test_bismark(mocker: MockerFixture) -> None:
     mock_subp = mocker.patch("pyllelic.process.subprocess")
     mock_shutil = mocker.patch("pyllelic.process.shutil")
     mock_shutil.which.return_value = True
@@ -249,7 +251,7 @@ def test_bismark(mocker):
     )
 
 
-def test_bismark_not_installed(mocker):
+def test_bismark_not_installed(mocker: MockerFixture) -> None:
     mock_shutil = mocker.patch("pyllelic.process.shutil")
     mock_shutil.which.return_value = None
 
@@ -259,7 +261,7 @@ def test_bismark_not_installed(mocker):
         _ = process.bismark(TEST_GENOME, TEST_FASTQ)
 
 
-def test_retrieve_promoter_seq(requests_mock):
+def test_retrieve_promoter_seq(requests_mock: Mocker) -> None:
     EXPECTED = (
         "cgcgtgtccatcaaaacgtgaaggtgaacctcgtaagtttatgcaaactggacaggagggagagcaga"
         + "ggcagagatcaccgtgtccactcgacgtcctgagcgaaaagccacgtgtgcccacgtgacgatggagac"
