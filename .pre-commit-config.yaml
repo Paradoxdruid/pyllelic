@@ -1,0 +1,30 @@
+repos:
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: mypy
+        language: system
+        types: [python]
+        args: [--strict, --ignore-missing-imports]
+        files: ^(pyllelic/|tests/)
+      - id: black
+        name: black
+        entry: black
+        language: system
+        types: [python]
+        files: ^(pyllelic/|tests/)
+      - id: isort
+        name: isort
+        entry: isort
+        language: system
+        types: [python]
+        include: ^(pyllelic/|tests/)
+        args: [--settings-path=pyproject.toml]
+      - id: flake8
+        name: flake8
+        entry: flake8
+        language: system
+        types: [python]
+        files: ^(pyllelic/|tests/)
+        args: [--max-line-length=88]

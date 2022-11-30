@@ -75,7 +75,7 @@ def _call_pyllelic(args: argparse.Namespace) -> pyllelic.GenomicPositionData:
         GenomicPositionData: pyllelic data object
     """
 
-    fname_pattern: str = fr"{args.fname_pattern}"
+    fname_pattern: str = rf"{args.fname_pattern}"
 
     config: Config = pyllelic.configure(
         base_path=str(Path.cwd()),

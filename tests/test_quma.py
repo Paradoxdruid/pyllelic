@@ -89,10 +89,10 @@ TEST_ALIGN_REF = quma.Result(
     menum=0,
     unconv=0,
     conv=0,
-    pconv="",
+    pconv="",  # type:ignore[arg-type]
     match=0,
     val="",
-    perc="",
+    perc="",  # type:ignore[arg-type]
     aliMis=0,
 )
 
@@ -103,10 +103,10 @@ TEST_ALIGN_REF_MISMATCH = quma.Result(
     menum=0,
     unconv=0,
     conv=0,
-    pconv="",
+    pconv="",  # type:ignore[arg-type]
     match=0,
     val="",
-    perc="",
+    perc="",  # type:ignore[arg-type]
     aliMis=0,
 )
 
