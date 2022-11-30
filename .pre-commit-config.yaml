@@ -28,3 +28,10 @@ repos:
         types: [python]
         files: ^(pyllelic/|tests/)
         args: [--max-line-length=88]
+      - id: pyupgrade
+        name: pyupgrade
+        entry: pyupgrade
+        language: system
+        types: [python]
+        args: [--py38-plus]
+        files: ^(pyllelic/|tests/)

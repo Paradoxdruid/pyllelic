@@ -298,7 +298,7 @@ class GenomicPositionData:
         self.files_set: List[str] = files_set
         """List[str]: list of bam files analyzed."""
 
-        with open(self.config.promoter_file, "r") as f:
+        with open(self.config.promoter_file) as f:
             genome_base = f.readlines()
             genome_base_lines: List[str] = [s.rstrip("\n") for s in genome_base]
             self.genome_string: str = "".join(map(str, genome_base_lines))

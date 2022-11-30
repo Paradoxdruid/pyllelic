@@ -45,7 +45,7 @@ def fastq_to_list(filepath: Path) -> List[SeqIO.SeqRecord]:
         return record_list
 
     if ".fastq" in filepath.suffixes[-1]:
-        with open(filepath, "rt") as handle:
+        with open(filepath) as handle:
             for record in SeqIO.parse(handle, "fastq"):
                 record_list.append(record)
         return record_list
