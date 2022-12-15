@@ -19,7 +19,6 @@ repos:
         entry: isort
         language: system
         types: [python]
-        include: ^(pyllelic/|tests/)
         args: [--settings-path=pyproject.toml]
       - id: flake8
         name: flake8
