@@ -27,6 +27,7 @@ dependencies = [
         "pysam",
         "biopython",
         "seaborn",
+        "requests",
 ]
 keywords = ["genomics", "methylation", "DNA sequencing"]
 dynamic = ["version"]
@@ -40,6 +41,7 @@ dev = [
     "pytest",
     "pytest-mock",
     "mypy",
+    "types-requests",
 ]
 
 [tool.setuptools]
