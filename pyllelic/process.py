@@ -9,9 +9,13 @@ import subprocess
 from pathlib import Path
 from typing import Dict, List, Optional
 
+import pandas as pd
 import pysam
 import requests
 from Bio import SeqIO
+
+from pyllelic.config import Config
+from pyllelic.pyllelic import GenomicPositionData
 
 
 class ShellCommandError(Exception):
@@ -148,7 +152,9 @@ def sort_bam(bamfile: Path) -> bool:
         bool: verification of samtools command, usually discarded
     """
 
-    pysam.sort("-o", f"{bamfile.parent}/{bamfile.stem}_sorted.bam", os.fspath(bamfile))
+    pysam.sort(  # type:ignore[attr-defined]
+        "-o", f"{bamfile.parent}/{bamfile.stem}_sorted.bam", os.fspath(bamfile)
+    )
 
     return True
 
@@ -163,7 +169,7 @@ def index_bam(bamfile: Path) -> bool:
         bool: verification of samtools command, usually discarded
     """
 
-    pysam.index(os.fspath(bamfile))
+    pysam.index(os.fspath(bamfile))  # type:ignore[attr-defined]
 
     return True
 
@@ -271,3 +277,55 @@ def bismark(genome: Path, fastq: Path) -> str:
     out: str = output.stdout
 
     return out
+
+
+def methbank_bed_to_indiv_data(
+    path: Path, chrom: str, start: int, stop: int, viz: str = "plotly"
+) -> GenomicPositionData:
+    """Helper function to convert MethBank BED file into individual_data df.
+
+    MethBank: https://ngdc.cncb.ac.cn/methbank/
+
+    Args:
+        path (Path): path to MethBank formatted BED file
+
+    Returns:
+        GenomicPositionData: mostly complete pyllelic object with data from BED.
+    """
+
+    df = pd.read_csv(path, sep="\t")
+    df = df[df["#chr"] == chrom]
+    df = df[(df["start"] > start) & (df["start"] < stop)]
+    df["un_num"] = df["total_num"] - df["methy_num"]
+    df["mean"] = df["percent_num"]
+    df["mode"] = 0
+    df.loc[df["methy_num"] >= df["un_num"], "mode"] = 1.0
+    df["diff"] = abs(df["mode"] - df["mean"])
+    my_ind_dict = {}
+    for _, each in df.iterrows():
+        val = []
+        val.extend([1.0] * each["methy_num"])
+        val.extend([0.0] * each["un_num"])
+        my_ind_dict[each.start] = val
+    ind_df = pd.DataFrame({str(k): [v] for k, v in my_ind_dict.items()})
+
+    empty = GenomicPositionData.__new__(GenomicPositionData)
+    empty.files_set = [path.name]
+    empty.file_names = [path.stem]
+    empty.config = Config(
+        promoter_start=start,
+        promoter_end=stop,
+        chromosome=chrom,
+        offset=start,
+        viz_backend=viz,
+    )
+    empty.individual_data = ind_df
+    empty.allelic_data = empty._generate_chisquared_test_df()
+    empty.positions = empty.individual_data.columns.tolist()
+    empty.means = df[["start", "mean"]].T.rename(columns=df["start"]).drop("start")
+    empty.means.columns = empty.means.columns.astype(str)
+    empty.modes = df[["start", "mode"]].T.rename(columns=df["start"]).drop("start")
+    empty.modes.columns = empty.modes.columns.astype(str)
+    empty.diffs = df[["start", "diff"]].T.rename(columns=df["start"]).drop("start")
+    empty.diffs.columns = empty.diffs.columns.astype(str)
+    return empty
