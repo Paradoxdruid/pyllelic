@@ -13,6 +13,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -59,6 +60,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../pyllelic.html#module-pyllelic.pyllelic">pyllelic.pyllelic module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../pyllelic.html#module-pyllelic.quma">pyllelic.quma module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../pyllelic.html#module-pyllelic.visualization">pyllelic.visualization module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../pyllelic.html#module-pyllelic.__main__">pyllelic.main module</a></li>
 </ul>
 </li>
 </ul>
@@ -73,6 +75,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../pyllelic.html#module-pyllelic.pyllelic">pyllelic.pyllelic module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../pyllelic.html#module-pyllelic.quma">pyllelic.quma module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../pyllelic.html#module-pyllelic.visualization">pyllelic.visualization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../pyllelic.html#module-pyllelic.__main__">pyllelic.main module</a></li>
 </ul>
 </li>
 </ul>
@@ -113,16 +116,24 @@
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">pysam</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">Bio</span> <span class="kn">import</span> <span class="n">SeqIO</span>
+
+<span class="kn">from</span> <span class="nn">pyllelic.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">pyllelic.pyllelic</span> <span class="kn">import</span> <span class="n">GenomicPositionData</span>
 
 
 <div class="viewcode-block" id="ShellCommandError"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.ShellCommandError">[docs]</a><span class="k">class</span> <span class="nc">ShellCommandError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Error for shell utilities that aren&#39;t installed.&quot;&quot;&quot;</span></div>
 
 
-<div class="viewcode-block" id="fastq_to_list"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.fastq_to_list">[docs]</a><span class="k">def</span> <span class="nf">fastq_to_list</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">SeqIO</span><span class="o">.</span><span class="n">SeqRecord</span><span class="p">]]:</span>
+<div class="viewcode-block" id="FileNameError"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.FileNameError">[docs]</a><span class="k">class</span> <span class="nc">FileNameError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Error for invalid filetypes.&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="fastq_to_list"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.fastq_to_list">[docs]</a><span class="k">def</span> <span class="nf">fastq_to_list</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">SeqIO</span><span class="o">.</span><span class="n">SeqRecord</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Read a .fastq or fastq.gz file into an in-memory record_list.</span>
 
 <span class="sd">    This is a time and memory intensive operation!</span>
@@ -135,8 +146,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="s2">&quot;.fastq&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filepath</span><span class="o">.</span><span class="n">suffixes</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Wrong filetype&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">raise</span> <span class="n">FileNameError</span><span class="p">(</span><span class="s2">&quot;Wrong filetype&quot;</span><span class="p">)</span>
 
     <span class="n">record_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SeqIO</span><span class="o">.</span><span class="n">SeqRecord</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="s2">&quot;.gz&quot;</span> <span class="ow">in</span> <span class="n">filepath</span><span class="o">.</span><span class="n">suffixes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
@@ -146,14 +156,13 @@
         <span class="k">return</span> <span class="n">record_list</span>
 
     <span class="k">if</span> <span class="s2">&quot;.fastq&quot;</span> <span class="ow">in</span> <span class="n">filepath</span><span class="o">.</span><span class="n">suffixes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s2">&quot;fastq&quot;</span><span class="p">):</span>
                 <span class="n">record_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">record_list</span>
 
     <span class="c1"># If doesn&#39;t match readable suffixes</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Wrong filetype&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">None</span></div>
+    <span class="k">raise</span> <span class="n">FileNameError</span><span class="p">(</span><span class="s2">&quot;Wrong filetype&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="make_records_to_dictionary"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.make_records_to_dictionary">[docs]</a><span class="k">def</span> <span class="nf">make_records_to_dictionary</span><span class="p">(</span>
@@ -250,7 +259,9 @@
 <span class="sd">        bool: verification of samtools command, usually discarded</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">pysam</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bamfile</span><span class="o">.</span><span class="n">parent</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">bamfile</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">_sorted.bam&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">bamfile</span><span class="p">))</span>
+    <span class="n">pysam</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span>  <span class="c1"># type:ignore[attr-defined]</span>
+        <span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bamfile</span><span class="o">.</span><span class="n">parent</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">bamfile</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">_sorted.bam&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">bamfile</span><span class="p">)</span>
+    <span class="p">)</span>
 
     <span class="k">return</span> <span class="kc">True</span></div>
 
@@ -265,7 +276,7 @@
 <span class="sd">        bool: verification of samtools command, usually discarded</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">pysam</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">bamfile</span><span class="p">))</span>
+    <span class="n">pysam</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">bamfile</span><span class="p">))</span>  <span class="c1"># type:ignore[attr-defined]</span>
 
     <span class="k">return</span> <span class="kc">True</span></div>
 
@@ -373,6 +384,58 @@
     <span class="n">out</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">stdout</span>
 
     <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="methbank_bed_to_indiv_data"><a class="viewcode-back" href="../../pyllelic.html#pyllelic.process.methbank_bed_to_indiv_data">[docs]</a><span class="k">def</span> <span class="nf">methbank_bed_to_indiv_data</span><span class="p">(</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">chrom</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">stop</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">viz</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;plotly&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GenomicPositionData</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Helper function to convert MethBank BED file into individual_data df.</span>
+
+<span class="sd">    MethBank: https://ngdc.cncb.ac.cn/methbank/</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path (Path): path to MethBank formatted BED file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        GenomicPositionData: mostly complete pyllelic object with data from BED.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;#chr&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">chrom</span><span class="p">]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">stop</span><span class="p">)]</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;un_num&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;total_num&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;methy_num&quot;</span><span class="p">]</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;percent_num&quot;</span><span class="p">]</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;methy_num&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;un_num&quot;</span><span class="p">],</span> <span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;diff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">])</span>
+    <span class="n">my_ind_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">val</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">each</span><span class="p">[</span><span class="s2">&quot;methy_num&quot;</span><span class="p">])</span>
+        <span class="n">val</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">each</span><span class="p">[</span><span class="s2">&quot;un_num&quot;</span><span class="p">])</span>
+        <span class="n">my_ind_dict</span><span class="p">[</span><span class="n">each</span><span class="o">.</span><span class="n">start</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="n">ind_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">my_ind_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+
+    <span class="n">empty</span> <span class="o">=</span> <span class="n">GenomicPositionData</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">GenomicPositionData</span><span class="p">)</span>
+    <span class="n">empty</span><span class="o">.</span><span class="n">files_set</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+    <span class="n">empty</span><span class="o">.</span><span class="n">file_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="p">]</span>
+    <span class="n">empty</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+        <span class="n">promoter_start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
+        <span class="n">promoter_end</span><span class="o">=</span><span class="n">stop</span><span class="p">,</span>
+        <span class="n">chromosome</span><span class="o">=</span><span class="n">chrom</span><span class="p">,</span>
+        <span class="n">offset</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
+        <span class="n">viz_backend</span><span class="o">=</span><span class="n">viz</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">empty</span><span class="o">.</span><span class="n">individual_data</span> <span class="o">=</span> <span class="n">ind_df</span>
+    <span class="n">empty</span><span class="o">.</span><span class="n">allelic_data</span> <span class="o">=</span> <span class="n">empty</span><span class="o">.</span><span class="n">_generate_chisquared_test_df</span><span class="p">()</span>
+    <span class="n">empty</span><span class="o">.</span><span class="n">positions</span> <span class="o">=</span> <span class="n">empty</span><span class="o">.</span><span class="n">individual_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">empty</span><span class="o">.</span><span class="n">means</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
+    <span class="n">empty</span><span class="o">.</span><span class="n">means</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">empty</span><span class="o">.</span><span class="n">means</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">empty</span><span class="o">.</span><span class="n">modes</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
+    <span class="n">empty</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">empty</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">empty</span><span class="o">.</span><span class="n">diffs</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;diff&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
+    <span class="n">empty</span><span class="o">.</span><span class="n">diffs</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">empty</span><span class="o">.</span><span class="n">diffs</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">empty</span></div>
 </pre></div>
 
            </div>

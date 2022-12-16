@@ -45,6 +45,16 @@ pyllelic.visualization module
    :private-members:
    :show-inheritance:
 
+
+pyllelic.main module
+------------------------
+
+.. automodule:: pyllelic.__main__
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 .. Module contents
 .. ---------------
 

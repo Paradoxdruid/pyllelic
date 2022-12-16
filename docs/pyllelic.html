@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyllelic package &mdash; Pyllelic 0.2.8 documentation</title>
@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -61,6 +62,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.pyllelic">pyllelic.pyllelic module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.quma">pyllelic.quma module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.visualization">pyllelic.visualization module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.__main__">pyllelic.main module</a></li>
 </ul>
 </li>
 </ul>
@@ -75,6 +77,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.pyllelic">pyllelic.pyllelic module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.quma">pyllelic.quma module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.visualization">pyllelic.visualization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.__main__">pyllelic.main module</a></li>
 </ul>
 </li>
 </ul>
@@ -104,12 +107,12 @@
            <div itemprop="articleBody">
              
   <section id="pyllelic-package">
-<h1>pyllelic package<a class="headerlink" href="#pyllelic-package" title="Permalink to this headline"></a></h1>
+<h1>pyllelic package<a class="headerlink" href="#pyllelic-package" title="Permalink to this heading"></a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-pyllelic.config">
-<span id="pyllelic-config-module"></span><h2>pyllelic.config module<a class="headerlink" href="#module-pyllelic.config" title="Permalink to this headline"></a></h2>
+<span id="pyllelic-config-module"></span><h2>pyllelic.config module<a class="headerlink" href="#module-pyllelic.config" title="Permalink to this heading"></a></h2>
 <p>Configuration options for pyllelic.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyllelic.config.Config">
@@ -117,12 +120,12 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.config.Config.analysis_directory">
-<span class="sig-name descname"><span class="pre">analysis_directory</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pathlib.Path</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/test')</span></em><a class="headerlink" href="#pyllelic.config.Config.analysis_directory" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">analysis_directory</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/test')</span></em><a class="headerlink" href="#pyllelic.config.Config.analysis_directory" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.config.Config.base_directory">
-<span class="sig-name descname"><span class="pre">base_directory</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pathlib.Path</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/')</span></em><a class="headerlink" href="#pyllelic.config.Config.base_directory" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">base_directory</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/')</span></em><a class="headerlink" href="#pyllelic.config.Config.base_directory" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -147,7 +150,7 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.config.Config.promoter_file">
-<span class="sig-name descname"><span class="pre">promoter_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pathlib.Path</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/promoter.txt')</span></em><a class="headerlink" href="#pyllelic.config.Config.promoter_file" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">promoter_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/promoter.txt')</span></em><a class="headerlink" href="#pyllelic.config.Config.promoter_file" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -157,7 +160,7 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.config.Config.results_directory">
-<span class="sig-name descname"><span class="pre">results_directory</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pathlib.Path</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/results')</span></em><a class="headerlink" href="#pyllelic.config.Config.results_directory" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">results_directory</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/results')</span></em><a class="headerlink" href="#pyllelic.config.Config.results_directory" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -169,8 +172,15 @@
 
 </section>
 <section id="module-pyllelic.process">
-<span id="pyllelic-process-module"></span><h2>pyllelic.process module<a class="headerlink" href="#module-pyllelic.process" title="Permalink to this headline"></a></h2>
+<span id="pyllelic-process-module"></span><h2>pyllelic.process module<a class="headerlink" href="#module-pyllelic.process" title="Permalink to this heading"></a></h2>
 <p>Utilities to pre-process and prepare data for use in pyllelic.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="pyllelic.process.FileNameError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">FileNameError</span></span><a class="reference internal" href="_modules/pyllelic/process.html#FileNameError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.FileNameError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error for invalid filetypes.</p>
+</dd></dl>
+
 <dl class="py exception">
 <dt class="sig sig-object py" id="pyllelic.process.ShellCommandError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">ShellCommandError</span></span><a class="reference internal" href="_modules/pyllelic/process.html#ShellCommandError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.ShellCommandError" title="Permalink to this definition"></a></dt>
@@ -180,24 +190,24 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.process.bismark">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">bismark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fastq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#bismark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.bismark" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">bismark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fastq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#bismark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.bismark" title="Permalink to this definition"></a></dt>
 <dd><p>Helper function to run external bismark tool.</p>
 <p>Bismark documentation at:
 <a class="reference external" href="https://github.com/FelixKrueger/Bismark/tree/master/Docs">https://github.com/FelixKrueger/Bismark/tree/master/Docs</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>genome</strong> (<em>Path</em>) – filepath to directory of bismark processed genome files.</p></li>
 <li><p><strong>fastq</strong> (<em>Path</em>) – filepath to fastq file to process.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>output from bismark shell command, usually discarded</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pyllelic.process.ShellCommandError" title="pyllelic.process.ShellCommandError"><strong>ShellCommandError</strong></a> – bismark is not installed.</p>
 </dd>
 </dl>
@@ -205,23 +215,23 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.process.bowtie2_fastq_to_bam">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">bowtie2_fastq_to_bam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fastq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#bowtie2_fastq_to_bam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.bowtie2_fastq_to_bam" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">bowtie2_fastq_to_bam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fastq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#bowtie2_fastq_to_bam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.bowtie2_fastq_to_bam" title="Permalink to this definition"></a></dt>
 <dd><p>Helper function to run external bowtie2-build tool.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<em>Path</em>) – filepath to bowtie index file</p></li>
 <li><p><strong>fastq</strong> (<em>Path</em>) – filepath to fastq file to convert to bam</p></li>
 <li><p><strong>cores</strong> (<em>int</em>) – number of cores to use for processing</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>output from bowtie2 and samtools shell command, usually discarded</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pyllelic.process.ShellCommandError" title="pyllelic.process.ShellCommandError"><strong>ShellCommandError</strong></a> – bowtie2 is not installed.</p>
 </dd>
 </dl>
@@ -229,19 +239,19 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.process.build_bowtie2_index">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">build_bowtie2_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fasta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#build_bowtie2_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.build_bowtie2_index" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">build_bowtie2_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fasta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#build_bowtie2_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.build_bowtie2_index" title="Permalink to this definition"></a></dt>
 <dd><p>Helper function to run external bowtie2-build tool.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fasta</strong> (<em>Path</em>) – filepath to fasta file to build index from</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>output from bowtie2-build shell command, usually discarded</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pyllelic.process.ShellCommandError" title="pyllelic.process.ShellCommandError"><strong>ShellCommandError</strong></a> – bowtie2-build is not installed.</p>
 </dd>
 </dl>
@@ -249,17 +259,17 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.process.fastq_to_list">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">fastq_to_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Bio.SeqRecord.SeqRecord</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#fastq_to_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.fastq_to_list" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">fastq_to_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">SeqRecord</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#fastq_to_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.fastq_to_list" title="Permalink to this definition"></a></dt>
 <dd><p>Read a .fastq or fastq.gz file into an in-memory record_list.</p>
 <p>This is a time and memory intensive operation!</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filepath</strong> (<em>Path</em>) – file path to a fastq.gz file</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of biopython sequence records from the fastq file</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[SeqRecord]</p>
 </dd>
 </dl>
@@ -267,16 +277,16 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.process.index_bam">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">index_bam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bamfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#index_bam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.index_bam" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">index_bam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bamfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#index_bam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.index_bam" title="Permalink to this definition"></a></dt>
 <dd><p>Helper function to run external samtools index.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>bamfile</strong> (<em>Path</em>) – filepath to bam file</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>verification of samtools command, usually discarded</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -284,45 +294,63 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.process.make_records_to_dictionary">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">make_records_to_dictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Bio.SeqRecord.SeqRecord</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Bio.SeqRecord.SeqRecord</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#make_records_to_dictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.make_records_to_dictionary" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">make_records_to_dictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">SeqRecord</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SeqRecord</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#make_records_to_dictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.make_records_to_dictionary" title="Permalink to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Take in list of biopython SeqRecords and output a dictionary</dt><dd><p>with keys of the record name.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>record_list</strong> (<em>List</em><em>[</em><em>SeqRecord</em><em>]</em>) – biopython sequence records from a fastq file</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict of biopython SeqRecords from a fastq file</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dict[str, SeqRecord]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyllelic.process.methbank_bed_to_indiv_data">
+<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">methbank_bed_to_indiv_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'plotly'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData" title="pyllelic.pyllelic.GenomicPositionData"><span class="pre">GenomicPositionData</span></a></span></span><a class="reference internal" href="_modules/pyllelic/process.html#methbank_bed_to_indiv_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.methbank_bed_to_indiv_data" title="Permalink to this definition"></a></dt>
+<dd><p>Helper function to convert MethBank BED file into individual_data df.</p>
+<p>MethBank: <a class="reference external" href="https://ngdc.cncb.ac.cn/methbank/">https://ngdc.cncb.ac.cn/methbank/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>Path</em>) – path to MethBank formatted BED file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>mostly complete pyllelic object with data from BED.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData" title="pyllelic.pyllelic.GenomicPositionData">GenomicPositionData</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.process.prepare_genome">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">prepare_genome</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aligner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#prepare_genome"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.prepare_genome" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">prepare_genome</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aligner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#prepare_genome"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.prepare_genome" title="Permalink to this definition"></a></dt>
 <dd><p>Helper function to run external bismark genome preparation tool.</p>
 <p>Uses genomes from, e.g.: <a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/">http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/</a></p>
 <p>Bismark documentation at:
 <a class="reference external" href="https://github.com/FelixKrueger/Bismark/tree/master/Docs">https://github.com/FelixKrueger/Bismark/tree/master/Docs</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<em>Path</em>) – filepath to unprocessed genome file.</p></li>
 <li><p><strong>aligner</strong> (<em>Optional</em><em>[</em><em>Path</em><em>]</em>) – filepath to bowtie2 alignment program.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>output from genome preparation shell command, usually discarded</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pyllelic.process.ShellCommandError" title="pyllelic.process.ShellCommandError"><strong>ShellCommandError</strong></a> – bismark_genome_preparation is not installed.</p>
 </dd>
 </dl>
@@ -333,7 +361,7 @@
 <span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">retrieve_seq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#retrieve_seq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.retrieve_seq" title="Permalink to this definition"></a></dt>
 <dd><p>Retrieve the genomic sequence of interest from UCSC Genome Browser.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<em>str</em>) – path to store genomic sequence</p></li>
 <li><p><strong>chrom</strong> (<em>str</em>) – chromosome of interest, e.g. “chr5”</p></li>
@@ -346,16 +374,16 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.process.sort_bam">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">sort_bam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bamfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#sort_bam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.sort_bam" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">sort_bam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bamfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#sort_bam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.sort_bam" title="Permalink to this definition"></a></dt>
 <dd><p>Helper function to run pysam samtools sort.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>bamfile</strong> (<em>Path</em>) – filepath to bam file</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>verification of samtools command, usually discarded</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -363,17 +391,17 @@
 
 </section>
 <section id="module-pyllelic.pyllelic">
-<span id="pyllelic-pyllelic-module"></span><h2>pyllelic.pyllelic module<a class="headerlink" href="#module-pyllelic.pyllelic" title="Permalink to this headline"></a></h2>
+<span id="pyllelic-pyllelic-module"></span><h2>pyllelic.pyllelic module<a class="headerlink" href="#module-pyllelic.pyllelic" title="Permalink to this heading"></a></h2>
 <p>pyllelic: a tool for detection of allelic-specific variation
 in reduced representation bisulfate DNA sequencing.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.AD_stats">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">AD_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#AD_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.AD_stats" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">AD_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#AD_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.AD_stats" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
 <p>Helper class for NamedTuple results from anderson_darling_test</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.AD_stats.crits">
-<span class="sig-name descname"><span class="pre">crits</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.AD_stats.crits" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">crits</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.AD_stats.crits" title="Permalink to this definition"></a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
@@ -385,7 +413,7 @@ in reduced representation bisulfate DNA sequencing.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.AD_stats.stat">
-<span class="sig-name descname"><span class="pre">stat</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing._array_like._SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing._nested_sequence._NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.AD_stats.stat" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">stat</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">_SupportsArray</span><span class="p"><span class="pre">[</span></span><span class="pre">dtype</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_NestedSequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.AD_stats.stat" title="Permalink to this definition"></a></dt>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
@@ -393,7 +421,7 @@ in reduced representation bisulfate DNA sequencing.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.BamOutput">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">BamOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sam_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genome_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><span class="pre">pyllelic.config.Config</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#BamOutput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.BamOutput" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">BamOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sam_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genome_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><span class="pre">Config</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#BamOutput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.BamOutput" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Storage container to process BAM sequencing files and store processed results.</p>
 <dl class="py attribute">
@@ -401,7 +429,7 @@ in reduced representation bisulfate DNA sequencing.</p>
 <span class="sig-name descname"><span class="pre">genome_values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.BamOutput.genome_values" title="Permalink to this definition"></a></dt>
 <dd><p>dictionary of read files and contents.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dict[str, str]</p>
 </dd>
 </dl>
@@ -412,7 +440,7 @@ in reduced representation bisulfate DNA sequencing.</p>
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyllelic.pyllelic.BamOutput.name" title="Permalink to this definition"></a></dt>
 <dd><p>path to bam file analyzed.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -423,7 +451,7 @@ in reduced representation bisulfate DNA sequencing.</p>
 <span class="sig-name descname"><span class="pre">positions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.BamOutput.positions" title="Permalink to this definition"></a></dt>
 <dd><p>index of genomic positions in the bam file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>“pd.Index</p>
 </dd>
 </dl>
@@ -434,7 +462,7 @@ in reduced representation bisulfate DNA sequencing.</p>
 <span class="sig-name descname"><span class="pre">values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.BamOutput.values" title="Permalink to this definition"></a></dt>
 <dd><p>dictionary of reads at a given position</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dict[str, str]</p>
 </dd>
 </dl>
@@ -444,7 +472,7 @@ in reduced representation bisulfate DNA sequencing.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">GenomicPositionData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><span class="pre">pyllelic.config.Config</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">files_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#GenomicPositionData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">GenomicPositionData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><span class="pre">Config</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">files_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#GenomicPositionData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class to process reduced representation bisulfite methylation sequencing data.</p>
 <p>When initialized, GenomicPositionData reads sequencing file (.bam) locations from
@@ -455,10 +483,10 @@ means, modes, and differences (diffs), as well as expose methods for plotting
 and statistical analysis.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.allelic_data">
-<span class="sig-name descname"><span class="pre">allelic_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.allelic_data" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">allelic_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.allelic_data" title="Permalink to this definition"></a></dt>
 <dd><p>dataframe of Chi-squared p-values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
@@ -469,7 +497,7 @@ and statistical analysis.</p>
 <span class="sig-name descname"><span class="pre">cell_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.cell_types" title="Permalink to this definition"></a></dt>
 <dd><p>list of cell types in the data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[str]</p>
 </dd>
 </dl>
@@ -477,10 +505,10 @@ and statistical analysis.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.config">
-<span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><span class="pre">pyllelic.config.Config</span></a></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.config" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><span class="pre">Config</span></a></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.config" title="Permalink to this definition"></a></dt>
 <dd><p>pyllelic config object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config">Config</a></p>
 </dd>
 </dl>
@@ -488,10 +516,10 @@ and statistical analysis.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.diffs">
-<span class="sig-name descname"><span class="pre">diffs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.diffs" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">diffs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.diffs" title="Permalink to this definition"></a></dt>
 <dd><p>df of difference mean minus mode methylation values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
@@ -502,7 +530,7 @@ and statistical analysis.</p>
 <span class="sig-name descname"><span class="pre">file_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.file_names" title="Permalink to this definition"></a></dt>
 <dd><p>list of bam filenames in the data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[str]</p>
 </dd>
 </dl>
@@ -513,7 +541,7 @@ and statistical analysis.</p>
 <span class="sig-name descname"><span class="pre">files_set</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.files_set" title="Permalink to this definition"></a></dt>
 <dd><p>list of bam files analyzed.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[str]</p>
 </dd>
 </dl>
@@ -521,16 +549,16 @@ and statistical analysis.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.from_pickle">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_pickle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData" title="pyllelic.pyllelic.GenomicPositionData"><span class="pre">pyllelic.pyllelic.GenomicPositionData</span></a></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#GenomicPositionData.from_pickle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.from_pickle" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_pickle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData" title="pyllelic.pyllelic.GenomicPositionData"><span class="pre">GenomicPositionData</span></a></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#GenomicPositionData.from_pickle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.from_pickle" title="Permalink to this definition"></a></dt>
 <dd><p>Read pickled GenomicPositionData back to an object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – filename to read pickle</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>GenomicPositionData object</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData" title="pyllelic.pyllelic.GenomicPositionData">GenomicPositionData</a></p>
 </dd>
 </dl>
@@ -538,13 +566,13 @@ and statistical analysis.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.generate_ad_stats">
-<span class="sig-name descname"><span class="pre">generate_ad_stats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#GenomicPositionData.generate_ad_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.generate_ad_stats" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">generate_ad_stats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#GenomicPositionData.generate_ad_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.generate_ad_stats" title="Permalink to this definition"></a></dt>
 <dd><p>Generate Anderson-Darling normality statistics for an individual data df.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>df of a-d test statistics</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>pd.DataFrame</p>
 </dd>
 </dl>
@@ -556,7 +584,7 @@ and statistical analysis.</p>
 <dd><p>Display a graph figure showing heatmap of mean methylation across
 cell lines.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>min_values</strong> (<em>int</em>) – minimum number of points data must exist at a position</p></li>
 <li><p><strong>width</strong> (<em>int</em>) – figure width, defaults to 800</p></li>
@@ -568,7 +596,7 @@ Can be ‘means’, ‘modes’, ‘diffs’, or ‘pvalue’.</p></li>
 <li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – plotting backend to override default</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>ValueError</strong> – invalid data type</p></li>
 <li><p><strong>ValueError</strong> – invalid plotting backend</p></li>
@@ -583,14 +611,14 @@ Can be ‘means’, ‘modes’, ‘diffs’, or ‘pvalue’.</p></li>
 <dd><p>Display a graph figure showing fractional methylation in
 a given cell line at a given site.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cell_line</strong> (<em>str</em>) – name of cell line</p></li>
 <li><p><strong>position</strong> (<em>str</em>) – genomic position</p></li>
 <li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – plotting backend to override default</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>ValueError</strong> – invalid plotting backend</p></li>
 <li><p><strong>ValueError</strong> – No data available at that position</p></li>
@@ -601,10 +629,10 @@ a given cell line at a given site.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.individual_data">
-<span class="sig-name descname"><span class="pre">individual_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.individual_data" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">individual_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.individual_data" title="Permalink to this definition"></a></dt>
 <dd><p>dataframe of individual methylation values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
@@ -612,10 +640,10 @@ a given cell line at a given site.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.means">
-<span class="sig-name descname"><span class="pre">means</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.means" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">means</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.means" title="Permalink to this definition"></a></dt>
 <dd><p>dataframe of mean methylation values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
@@ -623,10 +651,10 @@ a given cell line at a given site.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.modes">
-<span class="sig-name descname"><span class="pre">modes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.modes" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">modes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.modes" title="Permalink to this definition"></a></dt>
 <dd><p>dataframe of modes of methylation values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
@@ -637,7 +665,7 @@ a given cell line at a given site.</p>
 <span class="sig-name descname"><span class="pre">positions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.positions" title="Permalink to this definition"></a></dt>
 <dd><p>list of genomic positions in the data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[str]</p>
 </dd>
 </dl>
@@ -645,10 +673,10 @@ a given cell line at a given site.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.quma_results">
-<span class="sig-name descname"><span class="pre">quma_results</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#pyllelic.pyllelic.QumaResult" title="pyllelic.pyllelic.QumaResult"><span class="pre">pyllelic.pyllelic.QumaResult</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.quma_results" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">quma_results</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#pyllelic.pyllelic.QumaResult" title="pyllelic.pyllelic.QumaResult"><span class="pre">QumaResult</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.quma_results" title="Permalink to this definition"></a></dt>
 <dd><p>list of QumaResults.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dict[str, <a class="reference internal" href="#pyllelic.pyllelic.QumaResult" title="pyllelic.pyllelic.QumaResult">QumaResult</a>]</p>
 </dd>
 </dl>
@@ -659,14 +687,14 @@ a given cell line at a given site.</p>
 <span class="sig-name descname"><span class="pre">reads_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell_lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#GenomicPositionData.reads_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.reads_graph" title="Permalink to this definition"></a></dt>
 <dd><p>Display a graph figure showing methylation of reads across cell lines.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cell_lines</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – set of cell lines to analyze,
 defaults to all cell lines.</p></li>
 <li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – plotting backend to override default</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>ValueError</strong> – invalid plotting backend</p></li>
 <li><p><strong>ValueError</strong> – Unable to plot more than 20 cell lines at once.</p></li>
@@ -680,7 +708,7 @@ defaults to all cell lines.</p></li>
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'output.xlsx'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#GenomicPositionData.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.save" title="Permalink to this definition"></a></dt>
 <dd><p>Save quma results to an excel file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Filename to save to. Defaults to “output.xlsx”.</p>
 </dd>
 </dl>
@@ -691,7 +719,7 @@ defaults to all cell lines.</p></li>
 <span class="sig-name descname"><span class="pre">save_pickle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#GenomicPositionData.save_pickle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.save_pickle" title="Permalink to this definition"></a></dt>
 <dd><p>Save GenomicPositionData object as a pickled file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – filename to save pickle</p>
 </dd>
 </dl>
@@ -703,14 +731,14 @@ defaults to all cell lines.</p></li>
 <dd><p>Display a graph figure showing a bar chart of significantly different
 mean / mode methylation across all or a subset of cell lines.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cell_lines</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – set of cell lines to analyze,
 defaults to all cell lines.</p></li>
 <li><p><strong>backend</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – plotting backend to override default</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> – invalid plotting backend</p>
 </dd>
 </dl>
@@ -718,19 +746,19 @@ defaults to all cell lines.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.summarize_allelic_data">
-<span class="sig-name descname"><span class="pre">summarize_allelic_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell_lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#GenomicPositionData.summarize_allelic_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.summarize_allelic_data" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">summarize_allelic_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell_lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#GenomicPositionData.summarize_allelic_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.summarize_allelic_data" title="Permalink to this definition"></a></dt>
 <dd><p>Create a dataframe only of likely allelic methylation positions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cell_lines</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – set of cell lines to analyze,</p></li>
 <li><p><strong>lines.</strong> (<em>defaults to all cell</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>dataframe of cell lines with likely allelic positions</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
@@ -741,7 +769,7 @@ defaults to all cell lines.</p></li>
 <span class="sig-name descname"><span class="pre">write_means_modes_diffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#GenomicPositionData.write_means_modes_diffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.write_means_modes_diffs" title="Permalink to this definition"></a></dt>
 <dd><p>Wite out files of means, modes, and diffs for future analysis.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – desired root filename</p>
 </dd>
 </dl>
@@ -756,10 +784,10 @@ defaults to all cell lines.</p></li>
 <p>Storage container to process and store quma-style methylation results.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.QumaResult.quma_output">
-<span class="sig-name descname"><span class="pre">quma_output</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyllelic.quma.Quma" title="pyllelic.quma.Quma"><span class="pre">pyllelic.quma.Quma</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.QumaResult.quma_output" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">quma_output</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyllelic.quma.Quma" title="pyllelic.quma.Quma"><span class="pre">Quma</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.pyllelic.QumaResult.quma_output" title="Permalink to this definition"></a></dt>
 <dd><p>list of Quma result objects.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference internal" href="#pyllelic.quma.Quma" title="pyllelic.quma.Quma">quma.Quma</a>]</p>
 </dd>
 </dl>
@@ -767,10 +795,10 @@ defaults to all cell lines.</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.QumaResult.values">
-<span class="sig-name descname"><span class="pre">values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.QumaResult.values" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#pyllelic.pyllelic.QumaResult.values" title="Permalink to this definition"></a></dt>
 <dd><p>dataframe of quma methylation analysis values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
@@ -780,10 +808,10 @@ defaults to all cell lines.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.configure">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">configure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prom_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prom_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prom_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viz_backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><span class="pre">pyllelic.config.Config</span></a></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#configure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.configure" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">configure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prom_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prom_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prom_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viz_backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><span class="pre">Config</span></a></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#configure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.configure" title="Permalink to this definition"></a></dt>
 <dd><p>Helper method to set up all our environmental variables, such as for testing.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>base_path</strong> (<em>str</em>) – directory where all processing will occur, put .bam files
 in “test” sub-directory in this folder</p></li>
@@ -798,10 +826,10 @@ in “test” sub-directory in this folder</p></li>
 <li><p><strong>results_dir</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – name of results directory</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>configuration dataclass instance.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config">Config</a></p>
 </dd>
 </dl>
@@ -809,16 +837,16 @@ in “test” sub-directory in this folder</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.make_list_of_bam_files">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">make_list_of_bam_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><span class="pre">pyllelic.config.Config</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#make_list_of_bam_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.make_list_of_bam_files" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">make_list_of_bam_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><span class="pre">Config</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#make_list_of_bam_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.make_list_of_bam_files" title="Permalink to this definition"></a></dt>
 <dd><p>Check analysis directory for all valid .bam files.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><em>Config</em></a>) – pyllelic configuration options.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of files</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list[str]</p>
 </dd>
 </dl>
@@ -826,19 +854,19 @@ in “test” sub-directory in this folder</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.pyllelic">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">pyllelic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><span class="pre">pyllelic.config.Config</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">files_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData" title="pyllelic.pyllelic.GenomicPositionData"><span class="pre">pyllelic.pyllelic.GenomicPositionData</span></a></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#pyllelic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.pyllelic" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.pyllelic.</span></span><span class="sig-name descname"><span class="pre">pyllelic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><span class="pre">Config</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">files_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData" title="pyllelic.pyllelic.GenomicPositionData"><span class="pre">GenomicPositionData</span></a></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#pyllelic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.pyllelic" title="Permalink to this definition"></a></dt>
 <dd><p>Wrapper to call pyllelic routines.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>config</strong> (<a class="reference internal" href="#pyllelic.config.Config" title="pyllelic.config.Config"><em>Config</em></a>) – pyllelic config object.</p></li>
 <li><p><strong>files_set</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of bam files to analyze.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>GenomicPositionData pyllelic object.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData" title="pyllelic.pyllelic.GenomicPositionData">GenomicPositionData</a></p>
 </dd>
 </dl>
@@ -846,7 +874,7 @@ in “test” sub-directory in this folder</p></li>
 
 </section>
 <section id="module-pyllelic.quma">
-<span id="pyllelic-quma-module"></span><h2>pyllelic.quma module<a class="headerlink" href="#module-pyllelic.quma" title="Permalink to this headline"></a></h2>
+<span id="pyllelic-quma-module"></span><h2>pyllelic.quma module<a class="headerlink" href="#module-pyllelic.quma" title="Permalink to this heading"></a></h2>
 <p>Tools to quantify methylation in reduced representation
 bisulfite sequencing reads.</p>
 <dl class="py class">
@@ -878,7 +906,7 @@ bisulfite sequencing reads.</p>
 <p>Quma methylation analysis parser for bisulfite conversion DNA sequencing.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.quma.Quma.data">
-<span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyllelic.quma.Reference" title="pyllelic.quma.Reference"><span class="pre">pyllelic.quma.Reference</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.quma.Quma.data" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyllelic.quma.Reference" title="pyllelic.quma.Reference"><span class="pre">Reference</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyllelic.quma.Quma.data" title="Permalink to this definition"></a></dt>
 <dd><p>QUMA Output in object form.</p>
 </dd></dl>
 
@@ -892,7 +920,7 @@ bisulfite sequencing reads.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pyllelic.quma.Reference">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyllelic.quma.</span></span><span class="sig-name descname"><span class="pre">Reference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fasta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyllelic.quma.Fasta" title="pyllelic.quma.Fasta"><span class="pre">pyllelic.quma.Fasta</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyllelic.quma.Result" title="pyllelic.quma.Result"><span class="pre">pyllelic.quma.Result</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyllelic/quma.html#Reference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.quma.Reference" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyllelic.quma.</span></span><span class="sig-name descname"><span class="pre">Reference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fasta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyllelic.quma.Fasta" title="pyllelic.quma.Fasta"><span class="pre">Fasta</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pyllelic.quma.Result" title="pyllelic.quma.Result"><span class="pre">Result</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyllelic/quma.html#Reference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.quma.Reference" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Dataclass of quma analysis intermediates.</p>
 <p>Includes fasta sequence, quma results, directon of read, genomic direction,
@@ -909,7 +937,7 @@ and whether result meets exclusion criteria.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.quma.Reference.fasta">
-<span class="sig-name descname"><span class="pre">fasta</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pyllelic.quma.Fasta" title="pyllelic.quma.Fasta"><span class="pre">pyllelic.quma.Fasta</span></a></em><a class="headerlink" href="#pyllelic.quma.Reference.fasta" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">fasta</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pyllelic.quma.Fasta" title="pyllelic.quma.Fasta"><span class="pre">Fasta</span></a></em><a class="headerlink" href="#pyllelic.quma.Reference.fasta" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -919,7 +947,7 @@ and whether result meets exclusion criteria.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.quma.Reference.res">
-<span class="sig-name descname"><span class="pre">res</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pyllelic.quma.Result" title="pyllelic.quma.Result"><span class="pre">pyllelic.quma.Result</span></a></em><a class="headerlink" href="#pyllelic.quma.Reference.res" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">res</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pyllelic.quma.Result" title="pyllelic.quma.Result"><span class="pre">Result</span></a></em><a class="headerlink" href="#pyllelic.quma.Reference.res" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -993,15 +1021,15 @@ and whether result meets exclusion criteria.</p>
 
 </section>
 <section id="module-pyllelic.visualization">
-<span id="pyllelic-visualization-module"></span><h2>pyllelic.visualization module<a class="headerlink" href="#module-pyllelic.visualization" title="Permalink to this headline"></a></h2>
+<span id="pyllelic-visualization-module"></span><h2>pyllelic.visualization module<a class="headerlink" href="#module-pyllelic.visualization" title="Permalink to this heading"></a></h2>
 <p>Utilities to visualize data for use in pyllelic.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.visualization._create_heatmap">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.visualization.</span></span><span class="sig-name descname"><span class="pre">_create_heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">plotly.graph_objs._figure.Figure</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">matplotlib.figure.Figure</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/visualization.html#_create_heatmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.visualization._create_heatmap" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.visualization.</span></span><span class="sig-name descname"><span class="pre">_create_heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Figure</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Figure</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/visualization.html#_create_heatmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.visualization._create_heatmap" title="Permalink to this definition"></a></dt>
 <dd><p>Generate a graph figure showing heatmap of mean methylation across
 cell lines.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>df</strong> (<em>pd.DataFrame</em>) – dataframe of mean methylation</p></li>
 <li><p><strong>min_values</strong> (<em>int</em>) – minimum number of points data must exist at a position</p></li>
@@ -1011,13 +1039,13 @@ cell lines.</p>
 <li><p><strong>backend</strong> (<em>str</em>) – which plotting backend to use</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>plotly or matplotlib figure object</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Union[go.Figure, plt.Figure]</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> – invalid plotting backend</p>
 </dd>
 </dl>
@@ -1025,11 +1053,11 @@ cell lines.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.visualization._create_histogram">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.visualization.</span></span><span class="sig-name descname"><span class="pre">_create_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_line</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">plotly.graph_objs._figure.Figure</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">matplotlib.figure.Figure</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/visualization.html#_create_histogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.visualization._create_histogram" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.visualization.</span></span><span class="sig-name descname"><span class="pre">_create_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_line</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Figure</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Figure</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/visualization.html#_create_histogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.visualization._create_histogram" title="Permalink to this definition"></a></dt>
 <dd><p>Generate a graph figure showing fractional methylation in
 a given cell line at a given site.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<em>pd.DataFrame</em>) – dataframe of individual data</p></li>
 <li><p><strong>cell_line</strong> (<em>str</em>) – name of cell line</p></li>
@@ -1037,13 +1065,13 @@ a given cell line at a given site.</p>
 <li><p><strong>backend</strong> (<em>str</em>) – which plotting backend to use</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>plotly or matplotlib figure object</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Union[go.Figure, plt.Figure]</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> – invalid plotting backend provided</p>
 </dd>
 </dl>
@@ -1051,23 +1079,23 @@ a given cell line at a given site.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.visualization._create_methylation_diffs_bar_graph">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.visualization.</span></span><span class="sig-name descname"><span class="pre">_create_methylation_diffs_bar_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">plotly.graph_objs._figure.Figure</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">matplotlib.figure.Figure</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/visualization.html#_create_methylation_diffs_bar_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.visualization._create_methylation_diffs_bar_graph" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.visualization.</span></span><span class="sig-name descname"><span class="pre">_create_methylation_diffs_bar_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Figure</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Figure</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/visualization.html#_create_methylation_diffs_bar_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.visualization._create_methylation_diffs_bar_graph" title="Permalink to this definition"></a></dt>
 <dd><p>Generate a graph figure showing bar graph of significant methylation across
 cell lines.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>df</strong> (<em>pd.DataFrame</em>) – dataframe of significant methylation positions</p></li>
 <li><p><strong>backend</strong> (<em>str</em>) – which plotting backend to use</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>plotly or matplotlib figure object</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Union[go.Figure, plt.Figure]</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> – invalid plotting backend</p>
 </dd>
 </dl>
@@ -1080,28 +1108,28 @@ cell lines.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.visualization._make_methyl_df">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.visualization.</span></span><span class="sig-name descname"><span class="pre">_make_methyl_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="reference internal" href="_modules/pyllelic/visualization.html#_make_methyl_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.visualization._make_methyl_df" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.visualization.</span></span><span class="sig-name descname"><span class="pre">_make_methyl_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/pyllelic/visualization.html#_make_methyl_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.visualization._make_methyl_df" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.visualization._make_stacked_fig">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.visualization.</span></span><span class="sig-name descname"><span class="pre">_make_stacked_fig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">plotly.graph_objs._figure.Figure</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">matplotlib.figure.Figure</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/visualization.html#_make_stacked_fig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.visualization._make_stacked_fig" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.visualization.</span></span><span class="sig-name descname"><span class="pre">_make_stacked_fig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Figure</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Figure</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/visualization.html#_make_stacked_fig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.visualization._make_stacked_fig" title="Permalink to this definition"></a></dt>
 <dd><p>Generate a graph figure showing methylated and unmethylated reads across
 cell lines.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>df</strong> (<em>pd.DataFrame</em>) – dataframe of individual read data</p></li>
 <li><p><strong>backend</strong> (<em>str</em>) – plotting backend to use</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>plotly or matplotlib figure</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Union[go.Figure, plt.Figure]</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> – invalid plotting backend</p>
 </dd>
 </dl>
@@ -1109,17 +1137,17 @@ cell lines.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.visualization._make_stacked_mpl_fig">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.visualization.</span></span><span class="sig-name descname"><span class="pre">_make_stacked_mpl_fig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">matplotlib.figure.Figure</span></span></span><a class="reference internal" href="_modules/pyllelic/visualization.html#_make_stacked_mpl_fig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.visualization._make_stacked_mpl_fig" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.visualization.</span></span><span class="sig-name descname"><span class="pre">_make_stacked_mpl_fig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="_modules/pyllelic/visualization.html#_make_stacked_mpl_fig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.visualization._make_stacked_mpl_fig" title="Permalink to this definition"></a></dt>
 <dd><p>Generate a graph figure showing methylated and unmethylated reads across
 cell lines.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>df</strong> (<em>pd.DataFrame</em>) – dataframe of individual read data</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib figure</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>plt.Figure</p>
 </dd>
 </dl>
@@ -1127,20 +1155,37 @@ cell lines.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.visualization._make_stacked_plotly_fig">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.visualization.</span></span><span class="sig-name descname"><span class="pre">_make_stacked_plotly_fig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">plotly.graph_objs._figure.Figure</span></span></span><a class="reference internal" href="_modules/pyllelic/visualization.html#_make_stacked_plotly_fig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.visualization._make_stacked_plotly_fig" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyllelic.visualization.</span></span><span class="sig-name descname"><span class="pre">_make_stacked_plotly_fig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="_modules/pyllelic/visualization.html#_make_stacked_plotly_fig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.visualization._make_stacked_plotly_fig" title="Permalink to this definition"></a></dt>
 <dd><p>Generate a graph figure showing methylated and unmethylated reads across
 cell lines.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>df</strong> (<em>pd.DataFrame</em>) – dataframe of individual read data</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>plotly figure</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>go.Figure</p>
 </dd>
 </dl>
+</dd></dl>
+
+</section>
+<section id="module-pyllelic.__main__">
+<span id="pyllelic-main-module"></span><h2>pyllelic.main module<a class="headerlink" href="#module-pyllelic.__main__" title="Permalink to this heading"></a></h2>
+<p>pyllelic: module level interface to run pyllelic from the command line.</p>
+<p>Example usage:</p>
+<blockquote>
+<div><p>python -m pyllelic -o my_data -f fh_cellline_tissue.fastq.gz -g hg19chr5                         -chr chr5 -s 1293000 -e 1296000 –viz plotly</p>
+</div></blockquote>
+<p>This command would save pyllelic results in files with the prefix <cite>my_data</cite>, analyzing
+the specified fastq file using the specified reference genome, in the genomic region
+indicated.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyllelic.__main__.run_pyllelic">
+<span class="sig-prename descclassname"><span class="pre">pyllelic.__main__.</span></span><span class="sig-name descname"><span class="pre">run_pyllelic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pyllelic/__main__.html#run_pyllelic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.__main__.run_pyllelic" title="Permalink to this definition"></a></dt>
+<dd><p>Run all processing and analysis steps of pyllelic.</p>
 </dd></dl>
 
 </section>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Welcome to Pyllelic’s documentation! &mdash; Pyllelic 0.2.8 documentation</title>
@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -61,6 +62,7 @@
 <li class="toctree-l3"><a class="reference internal" href="pyllelic.html#module-pyllelic.pyllelic">pyllelic.pyllelic module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyllelic.html#module-pyllelic.quma">pyllelic.quma module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyllelic.html#module-pyllelic.visualization">pyllelic.visualization module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyllelic.html#module-pyllelic.__main__">pyllelic.main module</a></li>
 </ul>
 </li>
 </ul>
@@ -75,6 +77,7 @@
 <li class="toctree-l2"><a class="reference internal" href="pyllelic.html#module-pyllelic.pyllelic">pyllelic.pyllelic module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyllelic.html#module-pyllelic.quma">pyllelic.quma module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyllelic.html#module-pyllelic.visualization">pyllelic.visualization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyllelic.html#module-pyllelic.__main__">pyllelic.main module</a></li>
 </ul>
 </li>
 </ul>
@@ -104,25 +107,25 @@
            <div itemprop="articleBody">
              
   <section id="welcome-to-pyllelic-s-documentation">
-<h1>Welcome to Pyllelic’s documentation!<a class="headerlink" href="#welcome-to-pyllelic-s-documentation" title="Permalink to this headline"></a></h1>
+<h1>Welcome to Pyllelic’s documentation!<a class="headerlink" href="#welcome-to-pyllelic-s-documentation" title="Permalink to this heading"></a></h1>
 <img src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_logo.png?raw=true" width="50" height="50" style="float: left; margin-right: 10px;"><p><a class="reference external" href="https://github.com/Paradoxdruid/pyllelic">pyllelic</a>: a tool for detection of allelic-specific methylation variation in bisulfite DNA sequencing files.</p>
 <div class="toctree-wrapper compound">
 </div>
 <section id="quickstart">
-<h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline"></a></h2>
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this heading"></a></h2>
 <p>Run an interactive sample pyllelic environment in your web browser using <a class="reference external" href="https://mybinder.org">mybinder.org</a>:</p>
 <a href="https://mybinder.org/v2/gh/Paradoxdruid/pyllelic/HEAD?filepath=notebooks/pyllelic_binder_example.ipynb"><img src="https://mybinder.org/badge_logo.svg"></a></section>
 <section id="demo-gif">
-<h2>Demo gif<a class="headerlink" href="#demo-gif" title="Permalink to this headline"></a></h2>
+<h2>Demo gif<a class="headerlink" href="#demo-gif" title="Permalink to this heading"></a></h2>
 <p align="center">
 <img src="https://github.com/Paradoxdruid/pyllelic/blob/master/assets/pyllelic_demo.gif?raw=true" alt="pyllelic demo gif">
 </p></section>
 </section>
 <section id="dependencies-and-installation">
-<h1>Dependencies and Installation<a class="headerlink" href="#dependencies-and-installation" title="Permalink to this headline"></a></h1>
+<h1>Dependencies and Installation<a class="headerlink" href="#dependencies-and-installation" title="Permalink to this heading"></a></h1>
 <p>Source code for pyllelic is available on <a class="reference external" href="https://github.com/Paradoxdruid/pyllelic">Github</a></p>
 <section id="using-conda-preferred">
-<h2>Using Conda (preferred)<a class="headerlink" href="#using-conda-preferred" title="Permalink to this headline"></a></h2>
+<h2>Using Conda (preferred)<a class="headerlink" href="#using-conda-preferred" title="Permalink to this heading"></a></h2>
 <p>Create a new conda environment using python 3.8:</p>
 <p>Easiest:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get environment.yml file from this repo</span>
@@ -147,13 +150,13 @@ conda install notebook jupyter_contrib_nbextensions ipywidgets
 </div>
 </details></section>
 <section id="docker-container">
-<h2>Docker container<a class="headerlink" href="#docker-container" title="Permalink to this headline"></a></h2>
+<h2>Docker container<a class="headerlink" href="#docker-container" title="Permalink to this heading"></a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker pull ghcr.io/paradoxdruid/pyllelic:latest
 </pre></div>
 </div>
 </section>
 <section id="pypi-installation">
-<h2>PyPi installation<a class="headerlink" href="#pypi-installation" title="Permalink to this headline"></a></h2>
+<h2>PyPi installation<a class="headerlink" href="#pypi-installation" title="Permalink to this heading"></a></h2>
 <details><summary><p>PyPi instructions</p>
 </summary><p>This will require independent installation of samtools, bowtie2, and
 bismark packages.</p>
@@ -166,9 +169,9 @@ python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
 </details></section>
 </section>
 <section id="id1">
-<h1>Quickstart<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h1>
+<h1>Quickstart<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h1>
 <section id="example-exploratory-use-in-jupyter-notebook">
-<h2>Example exploratory use in jupyter notebook<a class="headerlink" href="#example-exploratory-use-in-jupyter-notebook" title="Permalink to this headline"></a></h2>
+<h2>Example exploratory use in jupyter notebook<a class="headerlink" href="#example-exploratory-use-in-jupyter-notebook" title="Permalink to this heading"></a></h2>
 <p>Set up files:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyllelic</span> <span class="kn">import</span> <span class="n">process</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -244,7 +247,7 @@ python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
 </section>
 <hr class="docutils" />
 <section id="function-reference">
-<h1>Function Reference<a class="headerlink" href="#function-reference" title="Permalink to this headline"></a></h1>
+<h1>Function Reference<a class="headerlink" href="#function-reference" title="Permalink to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="pyllelic.html">pyllelic package</a><ul>
@@ -254,13 +257,14 @@ python3 -m pip install git+https://github.com/Paradoxdruid/pyllelic.git
 <li class="toctree-l2"><a class="reference internal" href="pyllelic.html#module-pyllelic.pyllelic">pyllelic.pyllelic module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyllelic.html#module-pyllelic.quma">pyllelic.quma module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyllelic.html#module-pyllelic.visualization">pyllelic.visualization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyllelic.html#module-pyllelic.__main__">pyllelic.main module</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </section>
 <section id="authors">
-<h1>Authors<a class="headerlink" href="#authors" title="Permalink to this headline"></a></h1>
+<h1>Authors<a class="headerlink" href="#authors" title="Permalink to this heading"></a></h1>
 <p>This software is developed as academic software by <a class="reference external" href="https://github.com/Paradoxdruid">Dr. Andrew J.
 Bonham</a> at the <a class="reference external" href="https://www.msudenver.edu">Metropolitan State
 University of Denver</a>. It is licensed
