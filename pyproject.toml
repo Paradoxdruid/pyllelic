@@ -28,6 +28,7 @@ dependencies = [
         "biopython",
         "seaborn",
         "requests",
+        "dask",
 ]
 keywords = ["genomics", "methylation", "DNA sequencing"]
 dynamic = ["version"]

@@ -13,3 +13,4 @@ dependencies:
   - notebook
   - numpy>=1.21.1
   - seaborn
+  - dask

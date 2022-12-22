@@ -660,7 +660,7 @@ class GenomicPositionData:
 
     def heatmap(
         self,
-        min_values: int,
+        min_values: int = 1,
         width: int = 800,
         height: int = 2000,
         cell_lines: Optional[List[str]] = None,

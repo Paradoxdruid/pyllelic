@@ -9,10 +9,12 @@ import subprocess
 from pathlib import Path
 from typing import Dict, List, Optional
 
+import dask.dataframe as dd
 import pandas as pd
 import pysam
 import requests
 from Bio import SeqIO
+from tqdm.auto import tqdm
 
 from pyllelic.config import Config
 from pyllelic.pyllelic import GenomicPositionData
@@ -293,39 +295,57 @@ def methbank_bed_to_indiv_data(
         GenomicPositionData: mostly complete pyllelic object with data from BED.
     """
 
-    df = pd.read_csv(path, sep="\t")
-    df = df[df["#chr"] == chrom]
-    df = df[(df["start"] > start) & (df["start"] < stop)]
-    df["un_num"] = df["total_num"] - df["methy_num"]
-    df["mean"] = df["percent_num"]
-    df["mode"] = 0
-    df.loc[df["methy_num"] >= df["un_num"], "mode"] = 1.0
-    df["diff"] = abs(df["mode"] - df["mean"])
-    my_ind_dict = {}
-    for _, each in df.iterrows():
-        val = []
-        val.extend([1.0] * each["methy_num"])
-        val.extend([0.0] * each["un_num"])
-        my_ind_dict[each.start] = val
-    ind_df = pd.DataFrame({str(k): [v] for k, v in my_ind_dict.items()})
+    # FIXME: progress bar doesn't work with Dask
+    with tqdm(total=8, desc="Processing .BED file") as pbar:
+        df = dd.read_csv(path, sep="\t")  # type:ignore[attr-defined]
+        pbar.update(1)
 
-    empty = GenomicPositionData.__new__(GenomicPositionData)
-    empty.files_set = [path.name]
-    empty.file_names = [path.stem]
-    empty.config = Config(
-        promoter_start=start,
-        promoter_end=stop,
-        chromosome=chrom,
-        offset=start,
-        viz_backend=viz,
-    )
-    empty.individual_data = ind_df
-    empty.allelic_data = empty._generate_chisquared_test_df()
-    empty.positions = empty.individual_data.columns.tolist()
-    empty.means = df[["start", "mean"]].T.rename(columns=df["start"]).drop("start")
-    empty.means.columns = empty.means.columns.astype(str)
-    empty.modes = df[["start", "mode"]].T.rename(columns=df["start"]).drop("start")
-    empty.modes.columns = empty.modes.columns.astype(str)
-    empty.diffs = df[["start", "diff"]].T.rename(columns=df["start"]).drop("start")
-    empty.diffs.columns = empty.diffs.columns.astype(str)
+        df = df[(df["#chr"] == chrom) & (df["start"] > start) & (df["start"] < stop)]
+
+        pbar.update(1)
+        df = df.compute()  # Convert to pandas dataframe
+
+        pbar.update(1)
+        df["un_num"] = df["total_num"] - df["methy_num"]
+        df["mean"] = df["percent_num"]
+        pbar.update(1)
+
+        df["mode"] = 0
+        # df["mode"] = df["mode"].where(df.methy_num >= df.un_num, 1)  # dask-ism
+        df.loc[df["methy_num"] >= df["un_num"], "mode"] = 1.0  # pandas
+        df["diff"] = abs(df["mode"] - df["mean"])
+        pbar.update(1)
+
+        my_ind_dict = {}
+        for _, each in df.iterrows():
+            val = []
+            val.extend([1.0] * each["methy_num"])
+            val.extend([0.0] * each["un_num"])
+            my_ind_dict[each.start] = val
+        ind_df = pd.DataFrame({str(k): [v] for k, v in my_ind_dict.items()})
+        pbar.update(1)
+
+        empty = GenomicPositionData.__new__(GenomicPositionData)
+        empty.files_set = [path.name]
+        empty.file_names = [path.stem]
+        empty.config = Config(
+            promoter_start=start,
+            promoter_end=stop,
+            chromosome=chrom,
+            offset=start,
+            viz_backend=viz,
+        )
+        empty.individual_data = ind_df
+        pbar.update(1)
+
+        empty.allelic_data = empty._generate_chisquared_test_df()
+        empty.positions = empty.individual_data.columns.tolist()
+        empty.means = df[["start", "mean"]].T.rename(columns=df["start"]).drop("start")
+        empty.means.columns = empty.means.columns.astype(str)
+        empty.modes = df[["start", "mode"]].T.rename(columns=df["start"]).drop("start")
+        empty.modes.columns = empty.modes.columns.astype(str)
+        empty.diffs = df[["start", "diff"]].T.rename(columns=df["start"]).drop("start")
+        empty.diffs.columns = empty.diffs.columns.astype(str)
+        pbar.update(1)
+
     return empty
