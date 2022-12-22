@@ -38,6 +38,9 @@ def fastq_to_list(filepath: Path) -> List[SeqIO.SeqRecord]:
 
     Returns:
         List[SeqRecord]: list of biopython sequence records from the fastq file
+
+    Raises:
+        FileNameError: "Wrong filetype"
     """
 
     if ".fastq" not in filepath.suffixes:
@@ -290,6 +293,10 @@ def methbank_bed_to_indiv_data(
 
     Args:
         path (Path): path to MethBank formatted BED file
+        chrom (str): chromosome identifier
+        start (int): genomic start position
+        stop (int): genomic stop position
+        viz (str): Plotting backend to use, defaults to plotly
 
     Returns:
         GenomicPositionData: mostly complete pyllelic object with data from BED.

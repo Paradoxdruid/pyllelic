@@ -9,6 +9,12 @@ from typing import Pattern
 
 @dataclass
 class Config:
+    """pyllelic configuration dataclass with TERT promoter defaults.
+
+    Pyllelic expects .bam files to be analyzed to be in analysis_directory, under
+    a base_directory, with the promoter reference sequence in the base_directory.
+    """
+
     base_directory: Path = Path("/")
     promoter_file: Path = base_directory / "promoter.txt"
     results_directory: Path = base_directory / "results"
