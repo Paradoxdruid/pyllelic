@@ -284,10 +284,10 @@ def bismark(genome: Path, fastq: Path) -> str:
     return out
 
 
-def methbank_bed_to_indiv_data(
+def convert_methbank_bed(
     path: Path, chrom: str, start: int, stop: int, viz: str = "plotly"
 ) -> GenomicPositionData:
-    """Helper function to convert MethBank BED file into individual_data df.
+    """Helper function to convert MethBank BED file into GenomicPositionData obj.
 
     MethBank: https://ngdc.cncb.ac.cn/methbank/
 
