@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyllelic package &mdash; Pyllelic 0.2.8 documentation</title>
@@ -16,6 +16,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -57,12 +58,57 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html#function-reference">Function Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">pyllelic package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.config">pyllelic.config module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.process">pyllelic.process module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.pyllelic">pyllelic.pyllelic module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.quma">pyllelic.quma module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.visualization">pyllelic.visualization module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.__main__">pyllelic.main module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.config">pyllelic.config module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.process">pyllelic.process module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.process.FileNameError"><code class="docutils literal notranslate"><span class="pre">FileNameError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.process.ShellCommandError"><code class="docutils literal notranslate"><span class="pre">ShellCommandError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.process.bismark"><code class="docutils literal notranslate"><span class="pre">bismark()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.process.bowtie2_fastq_to_bam"><code class="docutils literal notranslate"><span class="pre">bowtie2_fastq_to_bam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.process.build_bowtie2_index"><code class="docutils literal notranslate"><span class="pre">build_bowtie2_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.process.convert_methbank_bed"><code class="docutils literal notranslate"><span class="pre">convert_methbank_bed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.process.fastq_to_list"><code class="docutils literal notranslate"><span class="pre">fastq_to_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.process.index_bam"><code class="docutils literal notranslate"><span class="pre">index_bam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.process.make_records_to_dictionary"><code class="docutils literal notranslate"><span class="pre">make_records_to_dictionary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.process.prepare_genome"><code class="docutils literal notranslate"><span class="pre">prepare_genome()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.process.retrieve_seq"><code class="docutils literal notranslate"><span class="pre">retrieve_seq()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.process.sort_bam"><code class="docutils literal notranslate"><span class="pre">sort_bam()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.pyllelic">pyllelic.pyllelic module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.AD_stats"><code class="docutils literal notranslate"><span class="pre">AD_stats</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.BamOutput"><code class="docutils literal notranslate"><span class="pre">BamOutput</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.QumaResult"><code class="docutils literal notranslate"><span class="pre">QumaResult</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.configure"><code class="docutils literal notranslate"><span class="pre">configure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.make_list_of_bam_files"><code class="docutils literal notranslate"><span class="pre">make_list_of_bam_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.pyllelic"><code class="docutils literal notranslate"><span class="pre">pyllelic()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.quma">pyllelic.quma module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Fasta"><code class="docutils literal notranslate"><span class="pre">Fasta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Quma"><code class="docutils literal notranslate"><span class="pre">Quma</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Reference"><code class="docutils literal notranslate"><span class="pre">Reference</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Result"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.visualization">pyllelic.visualization module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.visualization._create_heatmap"><code class="docutils literal notranslate"><span class="pre">_create_heatmap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.visualization._create_histogram"><code class="docutils literal notranslate"><span class="pre">_create_histogram()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.visualization._create_methylation_diffs_bar_graph"><code class="docutils literal notranslate"><span class="pre">_create_methylation_diffs_bar_graph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.visualization._make_binary"><code class="docutils literal notranslate"><span class="pre">_make_binary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.visualization._make_methyl_df"><code class="docutils literal notranslate"><span class="pre">_make_methyl_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.visualization._make_stacked_fig"><code class="docutils literal notranslate"><span class="pre">_make_stacked_fig()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.visualization._make_stacked_mpl_fig"><code class="docutils literal notranslate"><span class="pre">_make_stacked_mpl_fig()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.visualization._make_stacked_plotly_fig"><code class="docutils literal notranslate"><span class="pre">_make_stacked_plotly_fig()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyllelic.__main__">pyllelic.main module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.__main__.run_pyllelic"><code class="docutils literal notranslate"><span class="pre">run_pyllelic()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -72,12 +118,137 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">pyllelic package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.config">pyllelic.config module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.process">pyllelic.process module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.pyllelic">pyllelic.pyllelic module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.quma">pyllelic.quma module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.visualization">pyllelic.visualization module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.__main__">pyllelic.main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.config">pyllelic.config module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.config.Config.analysis_directory"><code class="docutils literal notranslate"><span class="pre">Config.analysis_directory</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.config.Config.base_directory"><code class="docutils literal notranslate"><span class="pre">Config.base_directory</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.config.Config.chromosome"><code class="docutils literal notranslate"><span class="pre">Config.chromosome</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.config.Config.fname_pattern"><code class="docutils literal notranslate"><span class="pre">Config.fname_pattern</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.config.Config.offset"><code class="docutils literal notranslate"><span class="pre">Config.offset</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.config.Config.promoter_end"><code class="docutils literal notranslate"><span class="pre">Config.promoter_end</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.config.Config.promoter_file"><code class="docutils literal notranslate"><span class="pre">Config.promoter_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.config.Config.promoter_start"><code class="docutils literal notranslate"><span class="pre">Config.promoter_start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.config.Config.results_directory"><code class="docutils literal notranslate"><span class="pre">Config.results_directory</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.config.Config.viz_backend"><code class="docutils literal notranslate"><span class="pre">Config.viz_backend</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.process">pyllelic.process module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.process.FileNameError"><code class="docutils literal notranslate"><span class="pre">FileNameError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.process.ShellCommandError"><code class="docutils literal notranslate"><span class="pre">ShellCommandError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.process.bismark"><code class="docutils literal notranslate"><span class="pre">bismark()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.process.bowtie2_fastq_to_bam"><code class="docutils literal notranslate"><span class="pre">bowtie2_fastq_to_bam()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.process.build_bowtie2_index"><code class="docutils literal notranslate"><span class="pre">build_bowtie2_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.process.convert_methbank_bed"><code class="docutils literal notranslate"><span class="pre">convert_methbank_bed()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.process.fastq_to_list"><code class="docutils literal notranslate"><span class="pre">fastq_to_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.process.index_bam"><code class="docutils literal notranslate"><span class="pre">index_bam()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.process.make_records_to_dictionary"><code class="docutils literal notranslate"><span class="pre">make_records_to_dictionary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.process.prepare_genome"><code class="docutils literal notranslate"><span class="pre">prepare_genome()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.process.retrieve_seq"><code class="docutils literal notranslate"><span class="pre">retrieve_seq()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.process.sort_bam"><code class="docutils literal notranslate"><span class="pre">sort_bam()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.pyllelic">pyllelic.pyllelic module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.pyllelic.AD_stats"><code class="docutils literal notranslate"><span class="pre">AD_stats</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.AD_stats.crits"><code class="docutils literal notranslate"><span class="pre">AD_stats.crits</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.AD_stats.sig"><code class="docutils literal notranslate"><span class="pre">AD_stats.sig</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.AD_stats.stat"><code class="docutils literal notranslate"><span class="pre">AD_stats.stat</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.pyllelic.BamOutput"><code class="docutils literal notranslate"><span class="pre">BamOutput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.BamOutput.genome_values"><code class="docutils literal notranslate"><span class="pre">BamOutput.genome_values</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.BamOutput.name"><code class="docutils literal notranslate"><span class="pre">BamOutput.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.BamOutput.positions"><code class="docutils literal notranslate"><span class="pre">BamOutput.positions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.BamOutput.values"><code class="docutils literal notranslate"><span class="pre">BamOutput.values</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.allelic_data"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.allelic_data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.cell_types"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.cell_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.config"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.diffs"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.diffs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.file_names"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.file_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.files_set"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.files_set</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.from_pickle"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.from_pickle()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.generate_ad_stats"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.generate_ad_stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.heatmap"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.heatmap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.histogram"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.histogram()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.individual_data"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.individual_data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.means"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.means</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.modes"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.modes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.positions"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.positions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.quma_results"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.quma_results</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.reads_graph"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.reads_graph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.save"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.save_pickle"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.save_pickle()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.sig_methylation_differences"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.sig_methylation_differences()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.summarize_allelic_data"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.summarize_allelic_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData.write_means_modes_diffs"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.write_means_modes_diffs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.pyllelic.QumaResult"><code class="docutils literal notranslate"><span class="pre">QumaResult</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.QumaResult.quma_output"><code class="docutils literal notranslate"><span class="pre">QumaResult.quma_output</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.pyllelic.QumaResult.values"><code class="docutils literal notranslate"><span class="pre">QumaResult.values</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.pyllelic.configure"><code class="docutils literal notranslate"><span class="pre">configure()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.pyllelic.make_list_of_bam_files"><code class="docutils literal notranslate"><span class="pre">make_list_of_bam_files()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.pyllelic.pyllelic"><code class="docutils literal notranslate"><span class="pre">pyllelic()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.quma">pyllelic.quma module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.quma.Fasta"><code class="docutils literal notranslate"><span class="pre">Fasta</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Fasta.com"><code class="docutils literal notranslate"><span class="pre">Fasta.com</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Fasta.pos"><code class="docutils literal notranslate"><span class="pre">Fasta.pos</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Fasta.seq"><code class="docutils literal notranslate"><span class="pre">Fasta.seq</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.quma.Quma"><code class="docutils literal notranslate"><span class="pre">Quma</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Quma.data"><code class="docutils literal notranslate"><span class="pre">Quma.data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Quma.values"><code class="docutils literal notranslate"><span class="pre">Quma.values</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.quma.Reference"><code class="docutils literal notranslate"><span class="pre">Reference</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Reference.dir"><code class="docutils literal notranslate"><span class="pre">Reference.dir</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Reference.exc"><code class="docutils literal notranslate"><span class="pre">Reference.exc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Reference.fasta"><code class="docutils literal notranslate"><span class="pre">Reference.fasta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Reference.gdir"><code class="docutils literal notranslate"><span class="pre">Reference.gdir</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Reference.res"><code class="docutils literal notranslate"><span class="pre">Reference.res</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.quma.Result"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Result.aliLen"><code class="docutils literal notranslate"><span class="pre">Result.aliLen</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Result.aliMis"><code class="docutils literal notranslate"><span class="pre">Result.aliMis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Result.conv"><code class="docutils literal notranslate"><span class="pre">Result.conv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Result.gAli"><code class="docutils literal notranslate"><span class="pre">Result.gAli</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Result.gap"><code class="docutils literal notranslate"><span class="pre">Result.gap</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Result.match"><code class="docutils literal notranslate"><span class="pre">Result.match</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Result.menum"><code class="docutils literal notranslate"><span class="pre">Result.menum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Result.pconv"><code class="docutils literal notranslate"><span class="pre">Result.pconv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Result.perc"><code class="docutils literal notranslate"><span class="pre">Result.perc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Result.qAli"><code class="docutils literal notranslate"><span class="pre">Result.qAli</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Result.unconv"><code class="docutils literal notranslate"><span class="pre">Result.unconv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyllelic.quma.Result.val"><code class="docutils literal notranslate"><span class="pre">Result.val</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.visualization">pyllelic.visualization module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.visualization._create_heatmap"><code class="docutils literal notranslate"><span class="pre">_create_heatmap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.visualization._create_histogram"><code class="docutils literal notranslate"><span class="pre">_create_histogram()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.visualization._create_methylation_diffs_bar_graph"><code class="docutils literal notranslate"><span class="pre">_create_methylation_diffs_bar_graph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.visualization._make_binary"><code class="docutils literal notranslate"><span class="pre">_make_binary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.visualization._make_methyl_df"><code class="docutils literal notranslate"><span class="pre">_make_methyl_df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.visualization._make_stacked_fig"><code class="docutils literal notranslate"><span class="pre">_make_stacked_fig()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.visualization._make_stacked_mpl_fig"><code class="docutils literal notranslate"><span class="pre">_make_stacked_mpl_fig()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.visualization._make_stacked_plotly_fig"><code class="docutils literal notranslate"><span class="pre">_make_stacked_plotly_fig()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyllelic.__main__">pyllelic.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyllelic.__main__.run_pyllelic"><code class="docutils literal notranslate"><span class="pre">run_pyllelic()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -116,8 +287,11 @@
 <p>Configuration options for pyllelic.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyllelic.config.Config">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyllelic.config.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">promoter_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/promoter.txt')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/results')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/test')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">promoter_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1293200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">promoter_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1296000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chromosome</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'5'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1298163</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viz_backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'plotly'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Pattern</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">re.compile('^[a-zA-Z]+_([a-zA-Z0-9]+)_.+bam$')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyllelic/config.html#Config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.config.Config" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyllelic.config.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">promoter_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/promoter.txt')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/results')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/test')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">promoter_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1293200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">promoter_end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1296000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chromosome</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'5'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1298163</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viz_backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'plotly'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Pattern</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">re.compile('^[a-zA-Z]+_([a-zA-Z0-9]+)_.+bam$')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyllelic/config.html#Config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.config.Config" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>pyllelic configuration dataclass with TERT promoter defaults.</p>
+<p>Pyllelic expects .bam files to be analyzed to be in analysis_directory, under
+a base_directory, with the promoter reference sequence in the base_directory.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyllelic.config.Config.analysis_directory">
 <span class="sig-name descname"><span class="pre">analysis_directory</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/test')</span></em><a class="headerlink" href="#pyllelic.config.Config.analysis_directory" title="Permalink to this definition"></a></dt>
@@ -258,6 +432,30 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyllelic.process.convert_methbank_bed">
+<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">convert_methbank_bed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'plotly'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData" title="pyllelic.pyllelic.GenomicPositionData"><span class="pre">GenomicPositionData</span></a></span></span><a class="reference internal" href="_modules/pyllelic/process.html#convert_methbank_bed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.convert_methbank_bed" title="Permalink to this definition"></a></dt>
+<dd><p>Helper function to convert MethBank BED file into GenomicPositionData obj.</p>
+<p>MethBank: <a class="reference external" href="https://ngdc.cncb.ac.cn/methbank/">https://ngdc.cncb.ac.cn/methbank/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>Path</em>) – path to MethBank formatted BED file</p></li>
+<li><p><strong>chrom</strong> (<em>str</em>) – chromosome identifier</p></li>
+<li><p><strong>start</strong> (<em>int</em>) – genomic start position</p></li>
+<li><p><strong>stop</strong> (<em>int</em>) – genomic stop position</p></li>
+<li><p><strong>viz</strong> (<em>str</em>) – Plotting backend to use, defaults to plotly</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>mostly complete pyllelic object with data from BED.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData" title="pyllelic.pyllelic.GenomicPositionData">GenomicPositionData</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyllelic.process.fastq_to_list">
 <span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">fastq_to_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">SeqRecord</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyllelic/process.html#fastq_to_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.fastq_to_list" title="Permalink to this definition"></a></dt>
 <dd><p>Read a .fastq or fastq.gz file into an in-memory record_list.</p>
@@ -271,6 +469,9 @@
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[SeqRecord]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pyllelic.process.FileNameError" title="pyllelic.process.FileNameError"><strong>FileNameError</strong></a> – “Wrong filetype”</p>
 </dd>
 </dl>
 </dd></dl>
@@ -308,24 +509,6 @@
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dict[str, SeqRecord]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyllelic.process.methbank_bed_to_indiv_data">
-<span class="sig-prename descclassname"><span class="pre">pyllelic.process.</span></span><span class="sig-name descname"><span class="pre">methbank_bed_to_indiv_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chrom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'plotly'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData" title="pyllelic.pyllelic.GenomicPositionData"><span class="pre">GenomicPositionData</span></a></span></span><a class="reference internal" href="_modules/pyllelic/process.html#methbank_bed_to_indiv_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.process.methbank_bed_to_indiv_data" title="Permalink to this definition"></a></dt>
-<dd><p>Helper function to convert MethBank BED file into individual_data df.</p>
-<p>MethBank: <a class="reference external" href="https://ngdc.cncb.ac.cn/methbank/">https://ngdc.cncb.ac.cn/methbank/</a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>path</strong> (<em>Path</em>) – path to MethBank formatted BED file</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>mostly complete pyllelic object with data from BED.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#pyllelic.pyllelic.GenomicPositionData" title="pyllelic.pyllelic.GenomicPositionData">GenomicPositionData</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -580,7 +763,7 @@ and statistical analysis.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyllelic.pyllelic.GenomicPositionData.heatmap">
-<span class="sig-name descname"><span class="pre">heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'means'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#GenomicPositionData.heatmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.heatmap" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'means'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/pyllelic/pyllelic.html#GenomicPositionData.heatmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyllelic.pyllelic.GenomicPositionData.heatmap" title="Permalink to this definition"></a></dt>
 <dd><p>Display a graph figure showing heatmap of mean methylation across
 cell lines.</p>
 <dl class="field-list simple">

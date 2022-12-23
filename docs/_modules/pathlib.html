@@ -1,71 +1,33 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>pathlib &mdash; Pyllelic 0.2.0 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+  <title>pathlib &mdash; Pyllelic 0.2.8 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> Pyllelic
-          
-
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -73,86 +35,246 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">pyllelic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Welcome to Pyllelic’s documentation!</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#quickstart">Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#demo-gif">Demo gif</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html#dependencies-and-installation">Dependencies and Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#using-conda-preferred">Using Conda (preferred)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#docker-container">Docker container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#pypi-installation">PyPi installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html#id1">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#example-exploratory-use-in-jupyter-notebook">Example exploratory use in jupyter notebook</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html#function-reference">Function Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../pyllelic.html">pyllelic package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#module-pyllelic.config">pyllelic.config module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#module-pyllelic.process">pyllelic.process module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.process.FileNameError"><code class="docutils literal notranslate"><span class="pre">FileNameError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.process.ShellCommandError"><code class="docutils literal notranslate"><span class="pre">ShellCommandError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.process.bismark"><code class="docutils literal notranslate"><span class="pre">bismark()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.process.bowtie2_fastq_to_bam"><code class="docutils literal notranslate"><span class="pre">bowtie2_fastq_to_bam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.process.build_bowtie2_index"><code class="docutils literal notranslate"><span class="pre">build_bowtie2_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.process.convert_methbank_bed"><code class="docutils literal notranslate"><span class="pre">convert_methbank_bed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.process.fastq_to_list"><code class="docutils literal notranslate"><span class="pre">fastq_to_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.process.index_bam"><code class="docutils literal notranslate"><span class="pre">index_bam()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.process.make_records_to_dictionary"><code class="docutils literal notranslate"><span class="pre">make_records_to_dictionary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.process.prepare_genome"><code class="docutils literal notranslate"><span class="pre">prepare_genome()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.process.retrieve_seq"><code class="docutils literal notranslate"><span class="pre">retrieve_seq()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.process.sort_bam"><code class="docutils literal notranslate"><span class="pre">sort_bam()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#module-pyllelic.pyllelic">pyllelic.pyllelic module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.AD_stats"><code class="docutils literal notranslate"><span class="pre">AD_stats</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.BamOutput"><code class="docutils literal notranslate"><span class="pre">BamOutput</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.QumaResult"><code class="docutils literal notranslate"><span class="pre">QumaResult</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.configure"><code class="docutils literal notranslate"><span class="pre">configure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.make_list_of_bam_files"><code class="docutils literal notranslate"><span class="pre">make_list_of_bam_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.pyllelic"><code class="docutils literal notranslate"><span class="pre">pyllelic()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#module-pyllelic.quma">pyllelic.quma module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Fasta"><code class="docutils literal notranslate"><span class="pre">Fasta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Quma"><code class="docutils literal notranslate"><span class="pre">Quma</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Reference"><code class="docutils literal notranslate"><span class="pre">Reference</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Result"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#module-pyllelic.visualization">pyllelic.visualization module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._create_heatmap"><code class="docutils literal notranslate"><span class="pre">_create_heatmap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._create_histogram"><code class="docutils literal notranslate"><span class="pre">_create_histogram()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._create_methylation_diffs_bar_graph"><code class="docutils literal notranslate"><span class="pre">_create_methylation_diffs_bar_graph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._make_binary"><code class="docutils literal notranslate"><span class="pre">_make_binary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._make_methyl_df"><code class="docutils literal notranslate"><span class="pre">_make_methyl_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._make_stacked_fig"><code class="docutils literal notranslate"><span class="pre">_make_stacked_fig()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._make_stacked_mpl_fig"><code class="docutils literal notranslate"><span class="pre">_make_stacked_mpl_fig()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._make_stacked_plotly_fig"><code class="docutils literal notranslate"><span class="pre">_make_stacked_plotly_fig()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#module-pyllelic.__main__">pyllelic.main module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.__main__.run_pyllelic"><code class="docutils literal notranslate"><span class="pre">run_pyllelic()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html#authors">Authors</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pyllelic.html">pyllelic package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../pyllelic.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pyllelic.html#module-pyllelic.config">pyllelic.config module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.config.Config.analysis_directory"><code class="docutils literal notranslate"><span class="pre">Config.analysis_directory</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.config.Config.base_directory"><code class="docutils literal notranslate"><span class="pre">Config.base_directory</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.config.Config.chromosome"><code class="docutils literal notranslate"><span class="pre">Config.chromosome</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.config.Config.fname_pattern"><code class="docutils literal notranslate"><span class="pre">Config.fname_pattern</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.config.Config.offset"><code class="docutils literal notranslate"><span class="pre">Config.offset</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.config.Config.promoter_end"><code class="docutils literal notranslate"><span class="pre">Config.promoter_end</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.config.Config.promoter_file"><code class="docutils literal notranslate"><span class="pre">Config.promoter_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.config.Config.promoter_start"><code class="docutils literal notranslate"><span class="pre">Config.promoter_start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.config.Config.results_directory"><code class="docutils literal notranslate"><span class="pre">Config.results_directory</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.config.Config.viz_backend"><code class="docutils literal notranslate"><span class="pre">Config.viz_backend</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../pyllelic.html#module-pyllelic.process">pyllelic.process module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.process.FileNameError"><code class="docutils literal notranslate"><span class="pre">FileNameError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.process.ShellCommandError"><code class="docutils literal notranslate"><span class="pre">ShellCommandError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.process.bismark"><code class="docutils literal notranslate"><span class="pre">bismark()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.process.bowtie2_fastq_to_bam"><code class="docutils literal notranslate"><span class="pre">bowtie2_fastq_to_bam()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.process.build_bowtie2_index"><code class="docutils literal notranslate"><span class="pre">build_bowtie2_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.process.convert_methbank_bed"><code class="docutils literal notranslate"><span class="pre">convert_methbank_bed()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.process.fastq_to_list"><code class="docutils literal notranslate"><span class="pre">fastq_to_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.process.index_bam"><code class="docutils literal notranslate"><span class="pre">index_bam()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.process.make_records_to_dictionary"><code class="docutils literal notranslate"><span class="pre">make_records_to_dictionary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.process.prepare_genome"><code class="docutils literal notranslate"><span class="pre">prepare_genome()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.process.retrieve_seq"><code class="docutils literal notranslate"><span class="pre">retrieve_seq()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.process.sort_bam"><code class="docutils literal notranslate"><span class="pre">sort_bam()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../pyllelic.html#module-pyllelic.pyllelic">pyllelic.pyllelic module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.AD_stats"><code class="docutils literal notranslate"><span class="pre">AD_stats</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.AD_stats.crits"><code class="docutils literal notranslate"><span class="pre">AD_stats.crits</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.AD_stats.sig"><code class="docutils literal notranslate"><span class="pre">AD_stats.sig</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.AD_stats.stat"><code class="docutils literal notranslate"><span class="pre">AD_stats.stat</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.BamOutput"><code class="docutils literal notranslate"><span class="pre">BamOutput</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.BamOutput.genome_values"><code class="docutils literal notranslate"><span class="pre">BamOutput.genome_values</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.BamOutput.name"><code class="docutils literal notranslate"><span class="pre">BamOutput.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.BamOutput.positions"><code class="docutils literal notranslate"><span class="pre">BamOutput.positions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.BamOutput.values"><code class="docutils literal notranslate"><span class="pre">BamOutput.values</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.allelic_data"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.allelic_data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.cell_types"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.cell_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.config"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.diffs"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.diffs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.file_names"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.file_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.files_set"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.files_set</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.from_pickle"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.from_pickle()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.generate_ad_stats"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.generate_ad_stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.heatmap"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.heatmap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.histogram"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.histogram()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.individual_data"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.individual_data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.means"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.means</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.modes"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.modes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.positions"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.positions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.quma_results"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.quma_results</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.reads_graph"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.reads_graph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.save"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.save_pickle"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.save_pickle()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.sig_methylation_differences"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.sig_methylation_differences()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.summarize_allelic_data"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.summarize_allelic_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.GenomicPositionData.write_means_modes_diffs"><code class="docutils literal notranslate"><span class="pre">GenomicPositionData.write_means_modes_diffs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.QumaResult"><code class="docutils literal notranslate"><span class="pre">QumaResult</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.QumaResult.quma_output"><code class="docutils literal notranslate"><span class="pre">QumaResult.quma_output</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.QumaResult.values"><code class="docutils literal notranslate"><span class="pre">QumaResult.values</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.configure"><code class="docutils literal notranslate"><span class="pre">configure()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.make_list_of_bam_files"><code class="docutils literal notranslate"><span class="pre">make_list_of_bam_files()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.pyllelic.pyllelic"><code class="docutils literal notranslate"><span class="pre">pyllelic()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../pyllelic.html#module-pyllelic.quma">pyllelic.quma module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Fasta"><code class="docutils literal notranslate"><span class="pre">Fasta</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Fasta.com"><code class="docutils literal notranslate"><span class="pre">Fasta.com</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Fasta.pos"><code class="docutils literal notranslate"><span class="pre">Fasta.pos</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Fasta.seq"><code class="docutils literal notranslate"><span class="pre">Fasta.seq</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Quma"><code class="docutils literal notranslate"><span class="pre">Quma</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Quma.data"><code class="docutils literal notranslate"><span class="pre">Quma.data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Quma.values"><code class="docutils literal notranslate"><span class="pre">Quma.values</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Reference"><code class="docutils literal notranslate"><span class="pre">Reference</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Reference.dir"><code class="docutils literal notranslate"><span class="pre">Reference.dir</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Reference.exc"><code class="docutils literal notranslate"><span class="pre">Reference.exc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Reference.fasta"><code class="docutils literal notranslate"><span class="pre">Reference.fasta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Reference.gdir"><code class="docutils literal notranslate"><span class="pre">Reference.gdir</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Reference.res"><code class="docutils literal notranslate"><span class="pre">Reference.res</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Result"><code class="docutils literal notranslate"><span class="pre">Result</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Result.aliLen"><code class="docutils literal notranslate"><span class="pre">Result.aliLen</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Result.aliMis"><code class="docutils literal notranslate"><span class="pre">Result.aliMis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Result.conv"><code class="docutils literal notranslate"><span class="pre">Result.conv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Result.gAli"><code class="docutils literal notranslate"><span class="pre">Result.gAli</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Result.gap"><code class="docutils literal notranslate"><span class="pre">Result.gap</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Result.match"><code class="docutils literal notranslate"><span class="pre">Result.match</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Result.menum"><code class="docutils literal notranslate"><span class="pre">Result.menum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Result.pconv"><code class="docutils literal notranslate"><span class="pre">Result.pconv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Result.perc"><code class="docutils literal notranslate"><span class="pre">Result.perc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Result.qAli"><code class="docutils literal notranslate"><span class="pre">Result.qAli</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Result.unconv"><code class="docutils literal notranslate"><span class="pre">Result.unconv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pyllelic.html#pyllelic.quma.Result.val"><code class="docutils literal notranslate"><span class="pre">Result.val</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../pyllelic.html#module-pyllelic.visualization">pyllelic.visualization module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._create_heatmap"><code class="docutils literal notranslate"><span class="pre">_create_heatmap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._create_histogram"><code class="docutils literal notranslate"><span class="pre">_create_histogram()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._create_methylation_diffs_bar_graph"><code class="docutils literal notranslate"><span class="pre">_create_methylation_diffs_bar_graph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._make_binary"><code class="docutils literal notranslate"><span class="pre">_make_binary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._make_methyl_df"><code class="docutils literal notranslate"><span class="pre">_make_methyl_df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._make_stacked_fig"><code class="docutils literal notranslate"><span class="pre">_make_stacked_fig()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._make_stacked_mpl_fig"><code class="docutils literal notranslate"><span class="pre">_make_stacked_mpl_fig()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.visualization._make_stacked_plotly_fig"><code class="docutils literal notranslate"><span class="pre">_make_stacked_plotly_fig()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../pyllelic.html#module-pyllelic.__main__">pyllelic.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../pyllelic.html#pyllelic.__main__.run_pyllelic"><code class="docutils literal notranslate"><span class="pre">run_pyllelic()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">Pyllelic</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="index.html">Module code</a> &raquo;</li>
-        
       <li>pathlib</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for pathlib</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">fnmatch</span>
 <span class="kn">import</span> <span class="nn">functools</span>
@@ -195,6 +317,7 @@
 
 <span class="n">_IGNORED_WINERRORS</span> <span class="o">=</span> <span class="p">(</span>
     <span class="mi">21</span><span class="p">,</span>  <span class="c1"># ERROR_NOT_READY - drive exists but is not accessible</span>
+    <span class="mi">123</span><span class="p">,</span> <span class="c1"># ERROR_INVALID_NAME - fix for bpo-35306</span>
     <span class="mi">1921</span><span class="p">,</span>  <span class="c1"># ERROR_CANT_RESOLVE_FILENAME - fix for broken symlink pointing to itself</span>
 <span class="p">)</span>
 
@@ -287,16 +410,25 @@
     <span class="n">ext_namespace_prefix</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\\\\</span><span class="s1">?</span><span class="se">\\</span><span class="s1">&#39;</span>
 
     <span class="n">reserved_names</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">{</span><span class="s1">&#39;CON&#39;</span><span class="p">,</span> <span class="s1">&#39;PRN&#39;</span><span class="p">,</span> <span class="s1">&#39;AUX&#39;</span><span class="p">,</span> <span class="s1">&#39;NUL&#39;</span><span class="p">}</span> <span class="o">|</span>
-        <span class="p">{</span><span class="s1">&#39;COM</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)}</span> <span class="o">|</span>
-        <span class="p">{</span><span class="s1">&#39;LPT</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)}</span>
+        <span class="p">{</span><span class="s1">&#39;CON&#39;</span><span class="p">,</span> <span class="s1">&#39;PRN&#39;</span><span class="p">,</span> <span class="s1">&#39;AUX&#39;</span><span class="p">,</span> <span class="s1">&#39;NUL&#39;</span><span class="p">,</span> <span class="s1">&#39;CONIN$&#39;</span><span class="p">,</span> <span class="s1">&#39;CONOUT$&#39;</span><span class="p">}</span> <span class="o">|</span>
+        <span class="p">{</span><span class="s1">&#39;COM</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="s1">&#39;123456789</span><span class="se">\xb9\xb2\xb3</span><span class="s1">&#39;</span><span class="p">}</span> <span class="o">|</span>
+        <span class="p">{</span><span class="s1">&#39;LPT</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="s1">&#39;123456789</span><span class="se">\xb9\xb2\xb3</span><span class="s1">&#39;</span><span class="p">}</span>
         <span class="p">)</span>
 
     <span class="c1"># Interesting findings about extended paths:</span>
-    <span class="c1"># - &#39;\\?\c:\a&#39;, &#39;//?/c:\a&#39; and &#39;//?/c:/a&#39; are all supported</span>
-    <span class="c1">#   but &#39;\\?\c:/a&#39; is not</span>
-    <span class="c1"># - extended paths are always absolute; &quot;relative&quot; extended paths will</span>
-    <span class="c1">#   fail.</span>
+    <span class="c1"># * &#39;\\?\c:\a&#39; is an extended path, which bypasses normal Windows API</span>
+    <span class="c1">#   path processing. Thus relative paths are not resolved and slash is not</span>
+    <span class="c1">#   translated to backslash. It has the native NT path limit of 32767</span>
+    <span class="c1">#   characters, but a bit less after resolving device symbolic links,</span>
+    <span class="c1">#   such as &#39;\??\C:&#39; =&gt; &#39;\Device\HarddiskVolume2&#39;.</span>
+    <span class="c1"># * &#39;\\?\c:/a&#39; looks for a device named &#39;C:/a&#39; because slash is a</span>
+    <span class="c1">#   regular name character in the object namespace.</span>
+    <span class="c1"># * &#39;\\?\c:\foo/bar&#39; is invalid because &#39;/&#39; is illegal in NT filesystems.</span>
+    <span class="c1">#   The only path separator at the filesystem level is backslash.</span>
+    <span class="c1"># * &#39;//?/c:\a&#39; and &#39;//?/c:/a&#39; are effectively equivalent to &#39;\\.\c:\a&#39; and</span>
+    <span class="c1">#   thus limited to MAX_PATH.</span>
+    <span class="c1"># * Prior to Windows 8, ANSI API bytes paths are limited to MAX_PATH,</span>
+    <span class="c1">#   even with the &#39;\\?\&#39; prefix.</span>
 
     <span class="k">def</span> <span class="nf">splitroot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">):</span>
         <span class="n">first</span> <span class="o">=</span> <span class="n">part</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
@@ -386,15 +518,16 @@
 
     <span class="k">def</span> <span class="nf">is_reserved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parts</span><span class="p">):</span>
         <span class="c1"># NOTE: the rules for reserved names seem somewhat complicated</span>
-        <span class="c1"># (e.g. r&quot;..\NUL&quot; is reserved but not r&quot;foo\NUL&quot;).</span>
-        <span class="c1"># We err on the side of caution and return True for paths which are</span>
-        <span class="c1"># not considered reserved by Windows.</span>
+        <span class="c1"># (e.g. r&quot;..\NUL&quot; is reserved but not r&quot;foo\NUL&quot; if &quot;foo&quot; does not</span>
+        <span class="c1"># exist). We err on the side of caution and return True for paths</span>
+        <span class="c1"># which are not considered reserved by Windows.</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">parts</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\\\</span><span class="s1">&#39;</span><span class="p">):</span>
             <span class="c1"># UNC paths are never reserved</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reserved_names</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reserved_names</span>
 
     <span class="k">def</span> <span class="nf">make_uri</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="c1"># Under Windows, file URIs use the UTF-8 encoding.</span>
@@ -409,9 +542,7 @@
             <span class="k">return</span> <span class="s1">&#39;file:&#39;</span> <span class="o">+</span> <span class="n">urlquote_from_bytes</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">gethomedir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s1">&#39;HOME&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
-            <span class="n">userhome</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;HOME&#39;</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="s1">&#39;USERPROFILE&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;USERPROFILE&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
             <span class="n">userhome</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;USERPROFILE&#39;</span><span class="p">]</span>
         <span class="k">elif</span> <span class="s1">&#39;HOMEPATH&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -487,7 +618,10 @@
                     <span class="c1"># parent dir</span>
                     <span class="n">path</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">rpartition</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span>
                     <span class="k">continue</span>
-                <span class="n">newpath</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="n">name</span>
+                <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">sep</span><span class="p">):</span>
+                    <span class="n">newpath</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="n">name</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">newpath</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="n">name</span>
                 <span class="k">if</span> <span class="n">newpath</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
                     <span class="c1"># Already seen this path</span>
                     <span class="n">path</span> <span class="o">=</span> <span class="n">seen</span><span class="p">[</span><span class="n">newpath</span><span class="p">]</span>
@@ -574,6 +708,13 @@
 
     <span class="n">unlink</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">unlink</span>
 
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">&quot;link&quot;</span><span class="p">):</span>
+        <span class="n">link_to</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">link</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span> <span class="nf">link_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;os.link() not available on this system&quot;</span><span class="p">)</span>
+
     <span class="n">rmdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">rmdir</span>
 
     <span class="n">rename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">rename</span>
@@ -597,6 +738,20 @@
     <span class="c1"># Helper for resolve()</span>
     <span class="k">def</span> <span class="nf">readlink</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">readlink</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">owner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">pwd</span>
+            <span class="k">return</span> <span class="n">pwd</span><span class="o">.</span><span class="n">getpwuid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">st_uid</span><span class="p">)</span><span class="o">.</span><span class="n">pw_name</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Path.owner() is unsupported on this system&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">grp</span>
+            <span class="k">return</span> <span class="n">grp</span><span class="o">.</span><span class="n">getgrgid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">st_gid</span><span class="p">)</span><span class="o">.</span><span class="n">gr_name</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Path.group() is unsupported on this system&quot;</span><span class="p">)</span>
 
 
 <span class="n">_normal_accessor</span> <span class="o">=</span> <span class="n">_NormalAccessor</span><span class="p">()</span>
@@ -678,23 +833,27 @@
 
     <span class="k">def</span> <span class="nf">_select_from</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent_path</span><span class="p">,</span> <span class="n">is_dir</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">scandir</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">entries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">scandir</span><span class="p">(</span><span class="n">parent_path</span><span class="p">))</span>
+            <span class="k">with</span> <span class="n">scandir</span><span class="p">(</span><span class="n">parent_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">scandir_it</span><span class="p">:</span>
+                <span class="n">entries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">scandir_it</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
-                <span class="n">entry_is_dir</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">entry_is_dir</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span>
-                <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">_ignore_error</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
-                        <span class="k">raise</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dironly</span> <span class="ow">or</span> <span class="n">entry_is_dir</span><span class="p">:</span>
-                    <span class="n">name</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-                        <span class="n">path</span> <span class="o">=</span> <span class="n">parent_path</span><span class="o">.</span><span class="n">_make_child_relpath</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-                        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">successor</span><span class="o">.</span><span class="n">_select_from</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">is_dir</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">scandir</span><span class="p">):</span>
-                            <span class="k">yield</span> <span class="n">p</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dironly</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="c1"># &quot;entry.is_dir()&quot; can raise PermissionError</span>
+                        <span class="c1"># in some cases (see bpo-38894), which is not</span>
+                        <span class="c1"># among the errors ignored by _ignore_error()</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+                            <span class="k">continue</span>
+                    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">_ignore_error</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                            <span class="k">raise</span>
+                        <span class="k">continue</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+                    <span class="n">path</span> <span class="o">=</span> <span class="n">parent_path</span><span class="o">.</span><span class="n">_make_child_relpath</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">successor</span><span class="o">.</span><span class="n">_select_from</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">is_dir</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">scandir</span><span class="p">):</span>
+                        <span class="k">yield</span> <span class="n">p</span>
         <span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span>
             <span class="k">return</span>
-
 
 
 <span class="k">class</span> <span class="nc">_RecursiveWildcardSelector</span><span class="p">(</span><span class="n">_Selector</span><span class="p">):</span>
@@ -705,7 +864,8 @@
     <span class="k">def</span> <span class="nf">_iterate_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent_path</span><span class="p">,</span> <span class="n">is_dir</span><span class="p">,</span> <span class="n">scandir</span><span class="p">):</span>
         <span class="k">yield</span> <span class="n">parent_path</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">entries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">scandir</span><span class="p">(</span><span class="n">parent_path</span><span class="p">))</span>
+            <span class="k">with</span> <span class="n">scandir</span><span class="p">(</span><span class="n">parent_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">scandir_it</span><span class="p">:</span>
+                <span class="n">entries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">scandir_it</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
                 <span class="n">entry_is_dir</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">try</span><span class="p">:</span>
@@ -931,6 +1091,9 @@
             <span class="k">return</span> <span class="bp">NotImplemented</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cparts</span> <span class="o">&gt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">_cparts</span>
 
+    <span class="k">def</span> <span class="nf">__class_getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span>
+
     <span class="n">drive</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">attrgetter</span><span class="p">(</span><span class="s1">&#39;_drv&#39;</span><span class="p">),</span>
                      <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;The drive prefix (letter or UNC path), if any.&quot;&quot;&quot;</span><span class="p">)</span>
 
@@ -999,6 +1162,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_parsed_parts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_drv</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="p">,</span>
                                        <span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">name</span><span class="p">])</span>
 
+    <span class="k">def</span> <span class="nf">with_stem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stem</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a new path with the stem changed.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="n">stem</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">with_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suffix</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a new path with the file suffix changed.  If the path</span>
 <span class="sd">        has no suffix, add given suffix.  If the given suffix is an empty</span>
@@ -1047,10 +1214,20 @@
         <span class="n">cf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flavour</span><span class="o">.</span><span class="n">casefold_parts</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">root</span> <span class="ow">or</span> <span class="n">drv</span><span class="p">)</span> <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">cf</span><span class="p">(</span><span class="n">abs_parts</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span> <span class="o">!=</span> <span class="n">cf</span><span class="p">(</span><span class="n">to_abs_parts</span><span class="p">):</span>
             <span class="n">formatted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_parsed_parts</span><span class="p">(</span><span class="n">to_drv</span><span class="p">,</span> <span class="n">to_root</span><span class="p">,</span> <span class="n">to_parts</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{!r}</span><span class="s2"> does not start with </span><span class="si">{!r}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{!r}</span><span class="s2"> is not in the subpath of </span><span class="si">{!r}</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot; OR one path is relative and the other is absolute.&quot;</span>
                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">formatted</span><span class="p">)))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_parsed_parts</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">root</span> <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
                                        <span class="n">abs_parts</span><span class="p">[</span><span class="n">n</span><span class="p">:])</span>
+
+    <span class="k">def</span> <span class="nf">is_relative_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True if the path is relative to another path or False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="o">*</span><span class="n">other</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">parts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1073,10 +1250,16 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_child</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_child</span><span class="p">((</span><span class="n">key</span><span class="p">,))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_child</span><span class="p">((</span><span class="n">key</span><span class="p">,))</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
 
     <span class="k">def</span> <span class="fm">__rtruediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_parts</span><span class="p">([</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_parts</span><span class="p">([</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1169,7 +1352,6 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s1">&#39;_accessor&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;_closed&#39;</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1186,7 +1368,6 @@
               <span class="c1"># Private non-constructor arguments</span>
               <span class="n">template</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
               <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">template</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">_accessor</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1199,15 +1380,18 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_parsed_parts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_drv</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="p">,</span> <span class="n">parts</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="k">def</span> <span class="nf">_raise_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;I/O operation on closed path&quot;</span><span class="p">)</span>
+        <span class="c1"># https://bugs.python.org/issue39682</span>
+        <span class="c1"># In previous versions of pathlib, this method marked this path as</span>
+        <span class="c1"># closed; subsequent attempts to perform I/O would raise an IOError.</span>
+        <span class="c1"># This functionality was never documented, and had the effect of</span>
+        <span class="c1"># making Path objects mutable, contrary to PEP 428. In Python 3.9 the</span>
+        <span class="c1"># _closed attribute was removed, and this method made a no-op.</span>
+        <span class="c1"># This method and __enter__()/__exit__() should be deprecated and</span>
+        <span class="c1"># removed in the future.</span>
+        <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">_opener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mo">0o666</span><span class="p">):</span>
         <span class="c1"># A stub for the opener argument to built-in open()</span>
@@ -1218,8 +1402,6 @@
 <span class="sd">        Open the file pointed by this path and return a file descriptor,</span>
 <span class="sd">        as os.open() does.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 
     <span class="c1"># Public API</span>
@@ -1246,27 +1428,24 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">other_st</span> <span class="o">=</span> <span class="n">other_path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="n">other_st</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">other_path</span><span class="p">)</span>
+            <span class="n">other_st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">other_path</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">samestat</span><span class="p">(</span><span class="n">st</span><span class="p">,</span> <span class="n">other_st</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">iterdir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Iterate over the files in this directory.  Does not yield any</span>
 <span class="sd">        result for the special paths &#39;.&#39; and &#39;..&#39;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">}:</span>
                 <span class="c1"># Yielding a path object for these makes little sense</span>
                 <span class="k">continue</span>
             <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_child_relpath</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">glob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Iterate over this subtree and yield all existing files (of any</span>
 <span class="sd">        kind, including directories) matching the given relative pattern.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">audit</span><span class="p">(</span><span class="s2">&quot;pathlib.Path.glob&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">pattern</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unacceptable pattern: </span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pattern</span><span class="p">))</span>
         <span class="n">drv</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">pattern_parts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flavour</span><span class="o">.</span><span class="n">parse_parts</span><span class="p">((</span><span class="n">pattern</span><span class="p">,))</span>
@@ -1281,6 +1460,7 @@
 <span class="sd">        directories) matching the given relative pattern, anywhere in</span>
 <span class="sd">        this subtree.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">audit</span><span class="p">(</span><span class="s2">&quot;pathlib.Path.rglob&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
         <span class="n">drv</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">pattern_parts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flavour</span><span class="o">.</span><span class="n">parse_parts</span><span class="p">((</span><span class="n">pattern</span><span class="p">,))</span>
         <span class="k">if</span> <span class="n">drv</span> <span class="ow">or</span> <span class="n">root</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Non-relative patterns are unsupported&quot;</span><span class="p">)</span>
@@ -1296,8 +1476,6 @@
 <span class="sd">        Use resolve() to get the canonical path to a file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># XXX untested yet!</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">():</span>
             <span class="k">return</span> <span class="bp">self</span>
         <span class="c1"># FIXME this must defer to the specific flavour (and, under Windows,</span>
@@ -1312,8 +1490,6 @@
 <span class="sd">        normalizing it (for example turning slashes into backslashes under</span>
 <span class="sd">        Windows).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
         <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flavour</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># No symlink resolution =&gt; for consistency, raise an error if</span>
@@ -1337,15 +1513,13 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the login name of the file owner.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">pwd</span>
-        <span class="k">return</span> <span class="n">pwd</span><span class="o">.</span><span class="n">getpwuid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_uid</span><span class="p">)</span><span class="o">.</span><span class="n">pw_name</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">owner</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">group</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the group name of the file gid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">grp</span>
-        <span class="k">return</span> <span class="n">grp</span><span class="o">.</span><span class="n">getgrgid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_gid</span><span class="p">)</span><span class="o">.</span><span class="n">gr_name</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">buffering</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1353,8 +1527,6 @@
 <span class="sd">        Open the file pointed by this path and return a file object, as</span>
 <span class="sd">        the built-in open() function does.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">buffering</span><span class="p">,</span> <span class="n">encoding</span><span class="p">,</span> <span class="n">errors</span><span class="p">,</span> <span class="n">newline</span><span class="p">,</span>
                        <span class="n">opener</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_opener</span><span class="p">)</span>
 
@@ -1391,12 +1563,19 @@
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">readlink</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the path to which the symbolic link points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">readlink</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_parts</span><span class="p">((</span><span class="n">path</span><span class="p">,),</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="n">template</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
     <span class="k">def</span> <span class="nf">touch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mo">0o666</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create this file with the given access mode, if it doesn&#39;t exist.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">exist_ok</span><span class="p">:</span>
             <span class="c1"># First try to bump modification time</span>
             <span class="c1"># Implementation note: GNU touch uses the UTIME_NOW option of</span>
@@ -1418,8 +1597,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a new directory at this given path.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
@@ -1437,8 +1614,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Change the permissions of the path, like os.chmod().</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">lchmod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
@@ -1446,25 +1621,23 @@
 <span class="sd">        Like chmod(), except if the path points to a symlink, the symlink&#39;s</span>
 <span class="sd">        permissions are changed, rather than its target&#39;s.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">lchmod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">unlink</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">unlink</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">missing_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Remove this file or link.</span>
 <span class="sd">        If the path is a directory, use rmdir() instead.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">missing_ok</span><span class="p">:</span>
+                <span class="k">raise</span>
 
     <span class="k">def</span> <span class="nf">rmdir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Remove this directory.  The directory must be empty.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">rmdir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">lstat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1472,35 +1645,52 @@
 <span class="sd">        Like stat(), except if the path points to a symlink, the symlink&#39;s</span>
 <span class="sd">        status information is returned, rather than its target&#39;s.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">lstat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">rename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Rename this path to the given path.</span>
+<span class="sd">        Rename this path to the target path.</span>
+
+<span class="sd">        The target path may be absolute or relative. Relative paths are</span>
+<span class="sd">        interpreted relative to the current working directory, *not* the</span>
+<span class="sd">        directory of the Path object.</span>
+
+<span class="sd">        Returns the new Path instance pointing to the target path.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Rename this path to the given path, clobbering the existing</span>
-<span class="sd">        destination if it exists.</span>
+<span class="sd">        Rename this path to the target path, overwriting if that path exists.</span>
+
+<span class="sd">        The target path may be absolute or relative. Relative paths are</span>
+<span class="sd">        interpreted relative to the current working directory, *not* the</span>
+<span class="sd">        directory of the Path object.</span>
+
+<span class="sd">        Returns the new Path instance pointing to the target path.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">symlink_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">target_is_directory</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Make this path a symlink pointing to the given path.</span>
-<span class="sd">        Note the order of arguments (self, target) is the reverse of os.symlink&#39;s.</span>
+<span class="sd">        Make this path a symlink pointing to the target path.</span>
+<span class="sd">        Note the order of arguments (link, target) is the reverse of os.symlink.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_closed</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">symlink</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">target_is_directory</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">link_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make the target path a hard link pointing to this path.</span>
+
+<span class="sd">        Note this function does not make this path a hard link to *target*,</span>
+<span class="sd">        despite the implication of the function and argument names. The order</span>
+<span class="sd">        of arguments (target, link) is the reverse of Path.symlink_to, but</span>
+<span class="sd">        matches that of os.link.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_accessor</span><span class="o">.</span><span class="n">link_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
 
     <span class="c1"># Convenience functions for querying the stat results</span>
 
@@ -1514,6 +1704,9 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">_ignore_error</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
                 <span class="k">raise</span>
             <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># Non-encodable path</span>
+            <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">is_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1526,7 +1719,10 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">_ignore_error</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
                 <span class="k">raise</span>
             <span class="c1"># Path doesn&#39;t exist or is a broken symlink</span>
-            <span class="c1"># (see https://bitbucket.org/pitrou/pathlib/issue/12/)</span>
+            <span class="c1"># (see http://web.archive.org/web/20200623061726/https://bitbucket.org/pitrou/pathlib/issues/12/ )</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># Non-encodable path</span>
             <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">is_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1540,7 +1736,10 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">_ignore_error</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
                 <span class="k">raise</span>
             <span class="c1"># Path doesn&#39;t exist or is a broken symlink</span>
-            <span class="c1"># (see https://bitbucket.org/pitrou/pathlib/issue/12/)</span>
+            <span class="c1"># (see http://web.archive.org/web/20200623061726/https://bitbucket.org/pitrou/pathlib/issues/12/ )</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># Non-encodable path</span>
             <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">is_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1551,9 +1750,8 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-        <span class="n">parent</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">parent_dev</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_dev</span>
+            <span class="n">parent_dev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_dev</span>
         <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
@@ -1561,7 +1759,7 @@
         <span class="k">if</span> <span class="n">dev</span> <span class="o">!=</span> <span class="n">parent_dev</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="n">ino</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_ino</span>
-        <span class="n">parent_ino</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_ino</span>
+        <span class="n">parent_ino</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_ino</span>
         <span class="k">return</span> <span class="n">ino</span> <span class="o">==</span> <span class="n">parent_ino</span>
 
     <span class="k">def</span> <span class="nf">is_symlink</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1575,6 +1773,9 @@
                 <span class="k">raise</span>
             <span class="c1"># Path doesn&#39;t exist</span>
             <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># Non-encodable path</span>
+            <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">is_block_device</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1586,7 +1787,10 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">_ignore_error</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
                 <span class="k">raise</span>
             <span class="c1"># Path doesn&#39;t exist or is a broken symlink</span>
-            <span class="c1"># (see https://bitbucket.org/pitrou/pathlib/issue/12/)</span>
+            <span class="c1"># (see http://web.archive.org/web/20200623061726/https://bitbucket.org/pitrou/pathlib/issues/12/ )</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># Non-encodable path</span>
             <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">is_char_device</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1599,7 +1803,10 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">_ignore_error</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
                 <span class="k">raise</span>
             <span class="c1"># Path doesn&#39;t exist or is a broken symlink</span>
-            <span class="c1"># (see https://bitbucket.org/pitrou/pathlib/issue/12/)</span>
+            <span class="c1"># (see http://web.archive.org/web/20200623061726/https://bitbucket.org/pitrou/pathlib/issues/12/ )</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># Non-encodable path</span>
             <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">is_fifo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1612,7 +1819,10 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">_ignore_error</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
                 <span class="k">raise</span>
             <span class="c1"># Path doesn&#39;t exist or is a broken symlink</span>
-            <span class="c1"># (see https://bitbucket.org/pitrou/pathlib/issue/12/)</span>
+            <span class="c1"># (see http://web.archive.org/web/20200623061726/https://bitbucket.org/pitrou/pathlib/issues/12/ )</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># Non-encodable path</span>
             <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">is_socket</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1625,7 +1835,10 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">_ignore_error</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
                 <span class="k">raise</span>
             <span class="c1"># Path doesn&#39;t exist or is a broken symlink</span>
-            <span class="c1"># (see https://bitbucket.org/pitrou/pathlib/issue/12/)</span>
+            <span class="c1"># (see http://web.archive.org/web/20200623061726/https://bitbucket.org/pitrou/pathlib/issues/12/ )</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># Non-encodable path</span>
             <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">expanduser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1654,57 +1867,35 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">owner</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Path.owner() is unsupported on this system&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">group</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Path.group() is unsupported on this system&quot;</span><span class="p">)</span>
-
     <span class="k">def</span> <span class="nf">is_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Path.is_mount() is unsupported on this system&quot;</span><span class="p">)</span>
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2021, Andrew J. Bonham.
-
-    </p>
+    <p>&#169; Copyright 2021, Andrew J. Bonham.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
