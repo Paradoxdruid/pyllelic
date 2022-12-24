@@ -8,6 +8,8 @@ import tempfile
 # Required libraries for test data
 from pathlib import Path
 
+import pandas as pd
+
 # Testing
 import pytest
 from Bio import SeqIO
@@ -17,6 +19,8 @@ from requests_mock import Mocker
 
 # Module to test
 import pyllelic.process as process
+
+from .inputs import EXPECTED_METHBANK_DATA_MEANS, SAMPLE_BED
 
 # Constants
 EXPECTED_SEQ_RECORD = SeqIO.SeqRecord(
@@ -282,3 +286,17 @@ def test_retrieve_promoter_seq(requests_mock: Mocker) -> None:
         process.retrieve_seq(my_file.name, "chr5", 1293200, 1293400)
         actual = Path(my_file.name).read_text()
         assert actual == EXPECTED
+
+
+def test_convert_methbank_bed() -> None:
+    with tempfile.NamedTemporaryFile(
+        suffix=".bed", prefix="test", mode="w+"
+    ) as my_file:
+        my_file.write(SAMPLE_BED)
+        my_file.seek(0)
+        my_file_path = Path(my_file.name)
+        actual = process.convert_methbank_bed(
+            my_file_path, chrom="chr1", start=10470, stop=10500
+        )
+
+        pd.testing.assert_frame_equal(actual.means, EXPECTED_METHBANK_DATA_MEANS)
