@@ -10,7 +10,7 @@ import signal
 from multiprocessing import Pool, cpu_count
 from multiprocessing.pool import AsyncResult
 from pathlib import Path
-from typing import Dict, List, Match, NamedTuple, Optional, Pattern, Tuple
+from typing import Dict, List, Match, NamedTuple, Optional, Pattern, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -1037,3 +1037,60 @@ def pyllelic(config: Config, files_set: List[str]) -> GenomicPositionData:
         GenomicPositionData: GenomicPositionData pyllelic object.
     """
     return GenomicPositionData(config=config, files_set=files_set)
+
+
+def compare_lines(
+    data: GenomicPositionData,
+    set_a: Union[List[str], str],
+    set_b: Union[List[str], str, None] = None,
+    data_type: str = "diffs",
+) -> pd.DataFrame:
+    """Helper function to compare cell line(s) to other cell line(s).
+
+    Returns a dataframe of RMSE values.
+
+    Args:
+        data (GenomicPositionData): a pyllelic object with data to analyze
+        set_a (Union[List[str], str]): name of cell line or list of cell lines
+        set_b (Union[List[str], str]): name of cell line or list of cell lines
+        data_type (str): type of data to compare: means, modes, or diffs [default diffs]
+
+    Raises:
+        ValueError: Incorrect data type
+
+    Returns:
+        pd.DataFrame: RMSE values
+    """
+
+    if data_type == "diffs":
+        df = data.diffs
+    elif data_type == "means":
+        df = data.means
+    elif data_type == "modes":
+        df = data.modes
+    else:
+        raise ValueError("Incorrect data type")
+
+    if isinstance(set_a, str):
+        to_test = df.loc[set_a]
+    elif isinstance(set_a, list):
+        _test = df.loc[set_a]
+        to_test = _test.mean()
+    else:
+        raise ValueError("Incorrect data type")
+
+    if set_b:
+        others = df.loc[set_b]
+    else:
+        others = df.drop(set_a)
+
+    results = {}
+
+    if isinstance(others, pd.Series):
+        others = others.to_frame().T
+
+    for name, each in others.iterrows():
+        _df = to_test.compare(each).dropna(how="any")
+        results[name] = (((_df["self"] - _df["other"]) ** 2).mean() ** 0.5) / len(_df)
+
+    return pd.Series(results).to_frame(name="RMSE")
