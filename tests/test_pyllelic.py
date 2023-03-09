@@ -254,7 +254,6 @@ class Test_QumaOutput:
 
     @pytest.fixture()
     def set_up_quma_output(self) -> pyllelic.QumaResult:
-
         INPUT_GENOMIC_FILE = ["CGGCGTAGGTAGGTTCGTACGAAGTCGTA"]
 
         return pyllelic.QumaResult(INPUT_READ_FILE, INPUT_GENOMIC_FILE, ["1293588"])

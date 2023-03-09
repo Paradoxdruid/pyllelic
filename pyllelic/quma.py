@@ -159,7 +159,6 @@ class Quma:
         biseq: List[Fasta] = []
 
         for line in multi.splitlines():
-
             if ">" in line:
                 fa: Fasta = Fasta()
                 fa.com = line
@@ -644,7 +643,6 @@ class Quma:
         )
 
         for reference in data:
-
             output += (
                 "\t".join(
                     [

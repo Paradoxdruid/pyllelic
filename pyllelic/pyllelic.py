@@ -210,11 +210,9 @@ class QumaResult:
 
         returns: List[AsyncResult[Tuple[pd.DataFrame, quma.Quma]]] = []
         with Pool(NUM_THREADS, self._init_worker) as pool:
-
             for position, read, genomic in zip(
                 self._positions, self._read_files, self._genomic_files
             ):
-
                 result = pool.apply_async(
                     self._thread_worker,
                     (genomic, read, position),
