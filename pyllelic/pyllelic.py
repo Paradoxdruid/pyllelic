@@ -88,7 +88,7 @@ class BamOutput:
             sequence.append(cols[9])
 
         df: pd.DataFrame = pd.DataFrame(
-            list(zip(position, sequence, strict=True)),
+            list(zip(position, sequence)),
             columns=["positions", "sequence"],
         )
 
@@ -212,7 +212,7 @@ class QumaResult:
         returns: List[AsyncResult[Tuple[pd.DataFrame, quma.Quma]]] = []
         with Pool(NUM_THREADS, self._init_worker) as pool:
             for position, read, genomic in zip(
-                self._positions, self._read_files, self._genomic_files, strict=True
+                self._positions, self._read_files, self._genomic_files
             ):
                 result = pool.apply_async(
                     self._thread_worker,
@@ -934,7 +934,7 @@ class GenomicPositionData:
         positions: List[str] = query._positions
         data: List[quma.Quma] = query.quma_output
         big_list: List[Tuple[List[int], List[str]]] = []
-        for pos, dat in zip(positions, data, strict=True):
+        for pos, dat in zip(positions, data):
             big_list.extend(_find_positions(pos, dat.data, dat._gseq))
 
         full_data: Dict[int, List[str]] = _collate_positions(big_list)

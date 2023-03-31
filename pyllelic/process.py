@@ -75,7 +75,7 @@ def make_records_to_dictionary(
     Returns:
         Dict[str, SeqRecord]: dict of biopython SeqRecords from a fastq file
     """
-    return dict(zip([record.id for record in record_list], record_list, strict=True))
+    return dict(zip([record.id for record in record_list], record_list))
 
 
 def build_bowtie2_index(fasta: Path) -> str:
