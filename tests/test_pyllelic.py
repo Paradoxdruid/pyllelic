@@ -13,7 +13,6 @@ import numpy as np
 import pandas as pd
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
-from pytest import TempPathFactory
 from pytest_mock.plugin import MockerFixture
 
 # Module to test
@@ -47,7 +46,7 @@ PositionDataTuple = Tuple[Path, pyllelic.GenomicPositionData]
 # Helper methods
 @pytest.fixture(scope="session")
 def set_up_genomic_position_data(
-    tmp_path_factory: TempPathFactory,
+    tmp_path_factory: pytest.TempPathFactory,
 ) -> PositionDataTuple:
     tmp_path = tmp_path_factory.mktemp("data")
     p, _ = setup_bam_files(tmp_path)
@@ -60,7 +59,7 @@ def set_up_genomic_position_data(
 
 
 @pytest.fixture(autouse=True)
-def mock_pool_apply_async(monkeypatch: MonkeyPatch) -> None:
+def _mock_pool_apply_async(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr("multiprocessing.pool.Pool.apply_async", _mock_apply_async)
 
 
@@ -170,7 +169,7 @@ def test_make_list_of_bam_files(tmp_path: Path) -> None:
     assert EXPECTED == actual
 
 
-def test_pyllelic(tmp_path_factory: TempPathFactory) -> None:
+def test_pyllelic(tmp_path_factory: pytest.TempPathFactory) -> None:
     tmp_path = tmp_path_factory.mktemp("data")
     p, _ = setup_bam_files(tmp_path)
     config = setup_config(p)
@@ -411,8 +410,8 @@ class Test_GenomicPositionData:
         TEST_POSITION = genomic_position_data.positions[0]
         TEST_CELL_LINE = genomic_position_data.means.index[0]
 
+        genomic_position_data.config.viz_backend = "other"
         with pytest.raises(ValueError):
-            genomic_position_data.config.viz_backend = "other"
             genomic_position_data.histogram(TEST_CELL_LINE, TEST_POSITION)
         genomic_position_data.config.viz_backend = "plotly"
 
@@ -445,8 +444,8 @@ class Test_GenomicPositionData:
     ) -> None:
         _, genomic_position_data = set_up_genomic_position_data
 
+        genomic_position_data.config.viz_backend = "other"
         with pytest.raises(ValueError):
-            genomic_position_data.config.viz_backend = "other"
             genomic_position_data.heatmap(min_values=1)
         genomic_position_data.config.viz_backend = "plotly"
 

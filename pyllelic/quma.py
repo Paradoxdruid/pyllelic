@@ -476,7 +476,7 @@ class Quma:
         result.aliLen = len(qAli)
 
         result.match = sum(
-            (a == b) or (a == "T" and b == "C") for a, b in zip(qAli, gAli)
+            (a == b) or (a == "T" and b == "C") for a, b in zip(qAli, gAli, strict=True)
         )
 
         result.gap = max([gAli.count("-"), qAli.count("-")])

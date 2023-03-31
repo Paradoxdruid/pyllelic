@@ -34,11 +34,11 @@ def _create_histogram(
         fig.add_trace(
             go.Histogram(
                 x=data.loc[cell_line, position],
-                xbins=dict(
-                    start=-0.1,
-                    end=1.1,
-                    size=0.2,
-                ),  # offset bins to center displayed bars
+                xbins={
+                    "start": -0.1,
+                    "end": 1.1,
+                    "size": 0.2,
+                },  # offset bins to center displayed bars
             )
         )
         fig.update_layout(
@@ -105,7 +105,7 @@ def _create_heatmap(
             ),
         )
         fig.update_traces(
-            dict(showscale=False, coloraxis=None, colorscale="RdBu_r"),
+            {"showscale": False, "coloraxis": None, "colorscale": "RdBu_r"},
             selector={"type": "heatmap"},
         )
 
@@ -247,7 +247,7 @@ def _make_stacked_plotly_fig(df: pd.DataFrame) -> go.Figure:
                 color_discrete_sequence=["white", "black"],
                 labels={"value": "reads", "variable": "status"},
             )
-            fig.update_layout(showlegend=False, margin=dict(l=0, r=0, t=0, b=0))
+            fig.update_layout(showlegend=False, margin={"l": 0, "r": 0, "t": 0, "b": 0})
             fig.update_xaxes(visible=False)
             fig.update_yaxes(visible=False)
             return fig
@@ -281,16 +281,14 @@ def _make_stacked_plotly_fig(df: pd.DataFrame) -> go.Figure:
             x=1,
             y=1,
             showarrow=False,
-            font=dict(
-                size=12,
-            ),
+            font={"size": 12},
             row=i + 1,
             col=1,
         )
 
     this_figure.update_layout(
         showlegend=False,
-        margin=dict(l=0, r=0, t=40, b=0),
+        margin={"l": 0, "r": 0, "t": 40, "b": 0},
         barmode="stack",
         width=800,
         height=(len(fig_dict) * 40) + 40,

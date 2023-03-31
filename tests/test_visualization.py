@@ -82,11 +82,7 @@ def test__create_histogram(mocker: MockerFixture) -> None:
     mocked_go.Figure.assert_called_once()
     mocked_go.Histogram.assert_called_once_with(
         x=TEST_DATA.loc[TEST_CELL_LINE, TEST_POSITION],
-        xbins=dict(
-            start=-0.1,
-            end=1.1,
-            size=0.2,
-        ),
+        xbins={"start": -0.1, "end": 1.1, "size": 0.2},
     )
 
 

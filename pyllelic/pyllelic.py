@@ -88,7 +88,8 @@ class BamOutput:
             sequence.append(cols[9])
 
         df: pd.DataFrame = pd.DataFrame(
-            list(zip(position, sequence)), columns=["positions", "sequence"]
+            list(zip(position, sequence, strict=True)),
+            columns=["positions", "sequence"],
         )
 
         df2: pd.DataFrame = df.set_index("positions")
@@ -211,7 +212,7 @@ class QumaResult:
         returns: List[AsyncResult[Tuple[pd.DataFrame, quma.Quma]]] = []
         with Pool(NUM_THREADS, self._init_worker) as pool:
             for position, read, genomic in zip(
-                self._positions, self._read_files, self._genomic_files
+                self._positions, self._read_files, self._genomic_files, strict=True
             ):
                 result = pool.apply_async(
                     self._thread_worker,
@@ -369,7 +370,7 @@ class GenomicPositionData:
             for each in sublist.values.keys():
                 positions.append(each)
 
-        return sorted(list(set(positions)))
+        return sorted(set(positions))
 
     def _retrieve_cell_names(self) -> List[str]:
         """Retrieve shortened cell line names from the list of filenames.
@@ -411,10 +412,8 @@ class GenomicPositionData:
             else:  # pragma: no cover
                 cell_line_name = Path(name).name
 
-            read_files: List[str] = [each for each in bam_result.values.values()]
-            genomic_files: List[str] = [
-                each for each in bam_result.genome_values.values()
-            ]
+            read_files: List[str] = list(bam_result.values.values())
+            genomic_files: List[str] = list(bam_result.genome_values.values())
             positions = bam_result.positions
 
             quma_results[cell_line_name] = QumaResult(
@@ -935,7 +934,7 @@ class GenomicPositionData:
         positions: List[str] = query._positions
         data: List[quma.Quma] = query.quma_output
         big_list: List[Tuple[List[int], List[str]]] = []
-        for pos, dat in zip(positions, data):
+        for pos, dat in zip(positions, data, strict=True):
             big_list.extend(_find_positions(pos, dat.data, dat._gseq))
 
         full_data: Dict[int, List[str]] = _collate_positions(big_list)

@@ -6,8 +6,7 @@ import argparse
 import sys
 from pathlib import Path
 
-import pytest  # noqa  # pylint: disable=unused-import
-from pytest import CaptureFixture
+import pytest
 from pytest_mock.plugin import MockerFixture
 
 # Module to test
@@ -78,7 +77,9 @@ def test__call_pyllelic(mocker: MockerFixture) -> None:
     mock_pyllelic.pyllelic.assert_called_once()
 
 
-def test_run_pyllelic(mocker: MockerFixture, capsys: CaptureFixture[str]) -> None:
+def test_run_pyllelic(
+    mocker: MockerFixture, capsys: pytest.CaptureFixture[str]
+) -> None:
     mocker.patch.object(sys, "argv", TEST_ARGS)
     mock_process = mocker.patch("pyllelic.__main__.process")
     mock_pyllelic = mocker.patch("pyllelic.__main__.pyllelic")
