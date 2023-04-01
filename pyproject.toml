@@ -43,6 +43,7 @@ dev = [
     "pytest-mock",
     "mypy",
     "types-requests",
+    "ruff",
 ]
 
 [tool.setuptools]

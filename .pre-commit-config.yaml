@@ -19,23 +19,3 @@ repos:
         language: system
         types: [python]
         files: ^(pyllelic/|tests/)
-      - id: isort
-        name: isort
-        entry: isort
-        language: system
-        types: [python]
-        args: [--settings-path=pyproject.toml]
-      - id: flake8
-        name: flake8
-        entry: flake8
-        language: system
-        types: [python]
-        files: ^(pyllelic/|tests/)
-        args: [--max-line-length=88]
-      - id: pyupgrade
-        name: pyupgrade
-        entry: pyupgrade
-        language: system
-        types: [python]
-        args: [--py38-plus]
-        files: ^(pyllelic/|tests/)
