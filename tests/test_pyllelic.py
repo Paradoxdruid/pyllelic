@@ -5,7 +5,7 @@
 import base64
 import unittest.mock as mock
 from pathlib import Path
-from typing import Any, Tuple
+from typing import Any, Tuple, Union
 
 import numpy as np
 
@@ -96,7 +96,7 @@ def setup_bam_files(tmp_path: Path) -> Tuple[Path, Path]:
 
 
 def setup_config(
-    my_path: Path, offset: int | None = None, viz_backend: str | None = None
+    my_path: Path, offset: Union[int, None] = None, viz_backend: Union[str, None] = None
 ) -> Config:
     d = my_path
     prom_file = d / "test.txt"
@@ -361,7 +361,7 @@ class Test_GenomicPositionData:
     # pylint: disable=no-self-use
 
     def test_init(self, set_up_genomic_position_data: PositionDataTuple) -> None:
-        p, genomic_position_data = set_up_genomic_position_data
+        _, genomic_position_data = set_up_genomic_position_data
 
         assert genomic_position_data.positions == EXPECTED_BAM_INDIVIDUAL_POSITIONS
         assert genomic_position_data.cell_types == ["test"]
