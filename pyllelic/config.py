@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Pattern
 
 
-@dataclass
+@dataclass(frozen=True)
 class Config:
     """pyllelic configuration dataclass with TERT promoter defaults.
 

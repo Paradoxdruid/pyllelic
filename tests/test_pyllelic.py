@@ -95,7 +95,9 @@ def setup_bam_files(tmp_path: Path) -> Tuple[Path, Path]:
     return tmp_path, filepath_bam
 
 
-def setup_config(my_path: Path) -> Config:
+def setup_config(
+    my_path: Path, offset: int | None = None, viz_backend: str | None = None
+) -> Config:
     d = my_path
     prom_file = d / "test.txt"
     prom_file.write_text(TEST_PROM_FILE)
@@ -103,13 +105,19 @@ def setup_config(my_path: Path) -> Config:
     TEST_END = 1296000
     TEST_CHR = "5"
     TEST_OFFSET = 1293000
+    TEST_BACKEND = "plotly"
+    if not offset:
+        offset = TEST_OFFSET
+    if not viz_backend:
+        viz_backend = TEST_BACKEND
     config = pyllelic.configure(
         base_path=str(my_path),
         prom_file=str(prom_file),
         prom_start=TEST_START,
         prom_end=TEST_END,
         chrom=TEST_CHR,
-        offset=TEST_OFFSET,
+        offset=offset,
+        viz_backend=viz_backend,
     )
 
     return config
@@ -231,7 +239,8 @@ class Test_BamOutput:
     ) -> None:
         bam_output = set_up_bam_output
         gen_str = "ATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGC"
-        bam_output._config.offset = 2
+        new_config = setup_config(bam_output._config.base_directory, 2)
+        bam_output._config = new_config
         result = bam_output._genome_range(position="8", genome_string=gen_str)
         assert result == gen_str[6:36]
         assert isinstance(result, str)
@@ -397,11 +406,17 @@ class Test_GenomicPositionData:
         TEST_POSITION = genomic_position_data.positions[0]
         TEST_CELL_LINE = genomic_position_data.means.index[0]
 
-        genomic_position_data.config.viz_backend = "matplotlib"
+        new_config = setup_config(
+            genomic_position_data.config.base_directory, viz_backend="matplotlib"
+        )
+        genomic_position_data.config = new_config
         genomic_position_data.histogram(TEST_CELL_LINE, TEST_POSITION)
 
         mocked_mpl.histplot.assert_called_once()
-        genomic_position_data.config.viz_backend = "plotly"
+        new_config = setup_config(
+            genomic_position_data.config.base_directory, viz_backend="plotly"
+        )
+        genomic_position_data.config = new_config
 
     def test_histogram_error(
         self, set_up_genomic_position_data: PositionDataTuple
@@ -410,10 +425,16 @@ class Test_GenomicPositionData:
         TEST_POSITION = genomic_position_data.positions[0]
         TEST_CELL_LINE = genomic_position_data.means.index[0]
 
-        genomic_position_data.config.viz_backend = "other"
+        new_config = setup_config(
+            genomic_position_data.config.base_directory, viz_backend="other"
+        )
+        genomic_position_data.config = new_config
         with pytest.raises(ValueError):
             genomic_position_data.histogram(TEST_CELL_LINE, TEST_POSITION)
-        genomic_position_data.config.viz_backend = "plotly"
+        new_config = setup_config(
+            genomic_position_data.config.base_directory, viz_backend="plotly"
+        )
+        genomic_position_data.config = new_config
 
     def test_heatmap(
         self, set_up_genomic_position_data: PositionDataTuple, mocker: MockerFixture
@@ -433,21 +454,33 @@ class Test_GenomicPositionData:
         _, genomic_position_data = set_up_genomic_position_data
         mocked_mpl = mocker.patch("pyllelic.visualization.sns")
 
-        genomic_position_data.config.viz_backend = "matplotlib"
+        new_config = setup_config(
+            genomic_position_data.config.base_directory, viz_backend="matplotlib"
+        )
+        genomic_position_data.config = new_config
         genomic_position_data.heatmap(min_values=1)
 
         mocked_mpl.heatmap.assert_called_once()
-        genomic_position_data.config.viz_backend = "plotly"
+        new_config = setup_config(
+            genomic_position_data.config.base_directory, viz_backend="plotly"
+        )
+        genomic_position_data.config = new_config
 
     def test_heatmap_error(
         self, set_up_genomic_position_data: PositionDataTuple
     ) -> None:
         _, genomic_position_data = set_up_genomic_position_data
 
-        genomic_position_data.config.viz_backend = "other"
+        new_config = setup_config(
+            genomic_position_data.config.base_directory, viz_backend="other"
+        )
+        genomic_position_data.config = new_config
         with pytest.raises(ValueError):
             genomic_position_data.heatmap(min_values=1)
-        genomic_position_data.config.viz_backend = "plotly"
+        new_config = setup_config(
+            genomic_position_data.config.base_directory, viz_backend="plotly"
+        )
+        genomic_position_data.config = new_config
 
     def test_heatmap_cell_lines(
         self, set_up_genomic_position_data: PositionDataTuple, mocker: MockerFixture
