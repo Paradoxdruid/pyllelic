@@ -617,7 +617,10 @@ class GenomicPositionData:
         raise ValueError("Invalid plotting backend")
 
     def reads_graph(
-        self, cell_lines: Optional[List[str]] = None, backend: Optional[str] = None
+        self,
+        cell_lines: Optional[List[str]] = None,
+        backend: Optional[str] = None,
+        max_graphs: int = 20,
     ) -> None:
         """Display a graph figure showing methylation of reads across cell lines.
 
@@ -628,10 +631,8 @@ class GenomicPositionData:
 
         Raises:
             ValueError: invalid plotting backend
-            ValueError: Unable to plot more than 20 cell lines at once.
+            ValueError: Unable to plot more than max cell lines at once.
         """
-
-        MAX_GRAPHS = 20  # Sanity limit
 
         data = self.individual_data
         if not backend:
@@ -642,8 +643,10 @@ class GenomicPositionData:
 
         data = data.dropna(how="all", axis=1)
 
-        if len(data) > MAX_GRAPHS:
-            raise ValueError("Unable to plot more than 20 cell lines at once.")
+        if len(data) > max_graphs:
+            raise ValueError(
+                "Unable to plot more than %i cell lines at once." % max_graphs
+            )
 
         if backend == "plotly":
             fig: go.Figure = viz._make_stacked_fig(data, backend)
@@ -877,7 +880,7 @@ class GenomicPositionData:
                         for m in re.finditer(each.res.gAli.split("-")[0], gseq)
                     ][0]
                     # FIXME: This only matches initial substring in cases of gaps
-                except IndexError:
+                except IndexError:  # pragma: no cover
                     offset = 0
 
                 pos_list: List[int] = [

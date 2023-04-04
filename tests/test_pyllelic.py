@@ -3,6 +3,7 @@
 
 # Testing
 import base64
+import re
 import unittest.mock as mock
 from pathlib import Path
 from typing import Any, Tuple, Union
@@ -159,6 +160,34 @@ def test_configure() -> None:
     assert EXPECTED_RESULTS == config.results_directory
 
 
+def test_configure_fname_pattern() -> None:
+    """Test setting environment variables with mock object."""
+    TEST_BASE_PATH = Path().cwd()
+    TEST_PROM_FILE = TEST_BASE_PATH / "test.txt"
+    TEST_START = "1"
+    TEST_END = "2"
+    TEST_CHR = "5"
+    TEST_OFFSET = 0
+    EXPECTED_RESULTS = TEST_BASE_PATH / "results"
+    TEST_FNAME_PATTERN = r"^[a-zA-Z]+_([a-zA-Z0-9]+)_.+bam$"
+    config = pyllelic.configure(
+        base_path=str(TEST_BASE_PATH),
+        prom_file=str(TEST_PROM_FILE),
+        prom_start=int(TEST_START),
+        prom_end=int(TEST_END),
+        chrom=TEST_CHR,
+        offset=TEST_OFFSET,
+        fname_pattern=TEST_FNAME_PATTERN,
+    )
+
+    assert TEST_BASE_PATH == config.base_directory
+    assert TEST_PROM_FILE == config.promoter_file
+    assert int(TEST_START) == config.promoter_start
+    assert int(TEST_END) == config.promoter_end
+    assert EXPECTED_RESULTS == config.results_directory
+    assert re.compile(TEST_FNAME_PATTERN) == config.fname_pattern
+
+
 def test_make_list_of_bam_files(tmp_path: Path) -> None:
     config = setup_config(tmp_path)
     TEST_LIST = [
@@ -187,6 +216,16 @@ def test_pyllelic(tmp_path_factory: pytest.TempPathFactory) -> None:
 
     assert genomic_position_data.positions == EXPECTED_BAM_INDIVIDUAL_POSITIONS
     assert genomic_position_data.cell_types == ["test"]
+
+
+def test_compare_lines(
+    set_up_genomic_position_data: PositionDataTuple, mocker: MockerFixture
+) -> None:
+    _, genomic_position_data = set_up_genomic_position_data
+
+    actual = pyllelic.compare_lines(genomic_position_data, "test", None, "means")
+
+    assert actual.to_dict() == {"RMSE": {}}
 
 
 # Tests of main classes
@@ -516,6 +555,17 @@ class Test_GenomicPositionData:
         mocked_go.Figure.assert_called_once()
         mocked_go.Heatmap.assert_called_once()
 
+    def test_heatmap_allelic(
+        self, set_up_genomic_position_data: PositionDataTuple, mocker: MockerFixture
+    ) -> None:
+        _, genomic_position_data = set_up_genomic_position_data
+        mocked_go = mocker.patch("pyllelic.visualization.go")
+
+        genomic_position_data.heatmap(min_values=1, data_type="pvalue")
+
+        mocked_go.Figure.assert_called_once()
+        mocked_go.Heatmap.assert_called_once()
+
     def test_heatmap_invalid(
         self, set_up_genomic_position_data: PositionDataTuple
     ) -> None:
@@ -555,6 +605,15 @@ class Test_GenomicPositionData:
 
         mocked_px.bar.assert_called()
         mocked_sp.make_subplots.assert_called_once()
+
+    def test_reads_graph_too_many_cell_lines(
+        self, set_up_genomic_position_data: PositionDataTuple, mocker: MockerFixture
+    ) -> None:
+        _, genomic_position_data = set_up_genomic_position_data
+        CELL_LINES = ["test"]
+
+        with pytest.raises(ValueError):
+            genomic_position_data.reads_graph(cell_lines=CELL_LINES, max_graphs=0)
 
     def test_reads_graph_invalid(
         self, set_up_genomic_position_data: PositionDataTuple
