@@ -16,7 +16,7 @@ from Bio import Align as Align
 from Bio import __version__ as bio_version
 from Bio.Align import substitution_matrices
 
-bio_minor: int = int(bio_version.split(".")[1])
+BIO_MINOR_VERSION: int = int(bio_version.split(".")[1])
 # import logging
 
 # logging.basicConfig(filename="quma_test.log", level=logging.DEBUG)
@@ -387,11 +387,12 @@ class Quma:
         """
 
         # FIXME: biopython 1.80 changes str format of alignments
-        if bio_minor >= 80:
+        if BIO_MINOR_VERSION >= 80:
             g_substring: str = alignment[1]
             q_substring: str = alignment[0]
 
-        else:
+        # Legacy code for biopython < 1.80
+        else:  # pragma: no cover
             matches: str = str(alignment).splitlines()[1]
             q_matches: str = str(alignment).splitlines()[0]
             g_matches: str = str(alignment).splitlines()[2]
@@ -404,11 +405,11 @@ class Quma:
             if right_end_index == 0:
                 q_substring = q_matches[left_start_index:max_index]
                 g_substring = g_matches[left_start_index:max_index]
-            else:  # pragma: no cover
+            else:
                 q_substring = q_matches[left_start_index:-right_end_index]
                 g_substring = g_matches[left_start_index:-right_end_index]
 
-        return (g_substring, q_substring)  # was flipped!
+        return (g_substring, q_substring)
 
     def _align_seq_and_generate_stats(self, gfile: str, qfile: str) -> Result:
         """Run pairwise sequence alignment.
