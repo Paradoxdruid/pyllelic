@@ -744,6 +744,9 @@ class GenomicPositionData:
 
         if not backend:
             backend = self.config.viz_backend
+            dfig: go.Figure = viz._create_methylation_diffs_bar_graph(data, backend)
+            dfig.show()
+            return
 
         if backend == "plotly":
             fig: go.Figure = viz._create_methylation_diffs_bar_graph(data, backend)
