@@ -662,7 +662,7 @@ class GenomicPositionData:
         self,
         min_values: int = 1,
         width: int = 800,
-        height: int = 2000,
+        height: int = 100,
         cell_lines: Optional[List[str]] = None,
         data_type: str = "means",
         backend: Optional[str] = None,
@@ -707,6 +707,10 @@ class GenomicPositionData:
 
         if not backend:
             backend = self.config.viz_backend
+
+        MIN_HEIGHT = 100 + (100 * len(data.index))
+        if height < MIN_HEIGHT:
+            height = MIN_HEIGHT
 
         if backend == "plotly":
             fig: go.Figure = viz._create_heatmap(

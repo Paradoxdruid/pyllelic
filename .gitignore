@@ -137,3 +137,6 @@ _build/
 pyllelic_notebook2.ipynb
 pyllelic_playground.ipynb
 Untitled.ipynb
+report_gen.ipynb
+example.pdf
+polars_test.ipynb
