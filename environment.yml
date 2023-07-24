@@ -6,7 +6,6 @@ channels:
   - defaults
 dependencies:
   - python=3.9
-  - jupyter_contrib_nbextensions
   - biopython
   - pyllelic
   - ipywidgets
