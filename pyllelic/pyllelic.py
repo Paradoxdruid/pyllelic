@@ -453,7 +453,8 @@ class GenomicPositionData:
 
         with pd.ExcelWriter(self.config.base_directory.joinpath(filename)) as writer:
             for name, each in self.quma_results.items():
-                each.values.to_excel(writer, sheet_name=name)
+                each.values.to_excel(writer, sheet_name=name[0:28])
+                # Limit sheet name for Excel 31-character limitation
 
     def save_pickle(self, filename: str) -> None:
         """Save GenomicPositionData object as a pickled file.
