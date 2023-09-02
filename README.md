@@ -51,7 +51,7 @@ conda config --env --add channels paradoxdruid
 conda install pyllelic 
 
 # Optional but usual use case:
-conda install notebook jupyter_contrib_nbextensions ipywidgets
+conda install notebook ipywidgets
 ```
 
 </details>
