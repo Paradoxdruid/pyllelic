@@ -60,6 +60,31 @@ class BamOutput:
 
         self._genome_parsing(genome_string)
 
+    def _get_valid_chromosome(self, samm: pysam.AlignmentFile) -> pysam.IteratorRow:
+        base_chrom = self._config.chromosome
+
+        if base_chrom in samm.references:
+            itern = samm.fetch(
+                base_chrom,
+                self._config.promoter_start,
+                self._config.promoter_end,
+            )
+        elif str(base_chrom) in samm.references:
+            itern = samm.fetch(
+                str(base_chrom),
+                self._config.promoter_start,
+                self._config.promoter_end,
+            )
+        elif f"chr{base_chrom}" in samm.references:
+            itern = samm.fetch(
+                f"chr{base_chrom}",
+                self._config.promoter_start,
+                self._config.promoter_end,
+            )
+        else:
+            raise ValueError("Chromosome not found in reference file")
+        return itern
+
     def _run_sam_and_extract_df(self, sams: Path) -> List[str]:
         """Process samfiles, pulling out sequence and position data
         and writing to folders/files.
@@ -73,11 +98,8 @@ class BamOutput:
 
         # Grab the promoter region of interest
         samm: pysam.AlignmentFile = pysam.AlignmentFile(str(sams), "rb")
-        itern = samm.fetch(
-            self._config.chromosome,
-            self._config.promoter_start,
-            self._config.promoter_end,
-        )
+
+        itern = self._get_valid_chromosome(samm)
 
         position: List[str] = []
         sequence: List[str] = []
