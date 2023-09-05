@@ -1,12 +1,13 @@
 [project]
 name = "pyllelic"
-authors = [{name = "Andrew J. Bonham", email = "bonham@gmail.com"}]
+authors = [{ name = "Andrew J. Bonham", email = "bonham@gmail.com" }]
 readme = "README.md"
 description = "Analysis of allele-specific methylation in bisulfite DNA sequencing."
-license = {file = "LICENSE"}
-requires-python = ">=3.9"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
 classifiers = [
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3 :: Only",
@@ -36,21 +37,21 @@ Homepage = "https://github.com/Paradoxdruid/pyllelic"
 
 [project.optional-dependencies]
 dev = [
-    "black",
-    "pytest",
-    "pytest-mock",
-    "mypy",
-    "types-requests",
-    "ruff",
-    "requests-mock",
-    "pre-commit"
+        "black",
+        "pytest",
+        "pytest-mock",
+        "mypy",
+        "types-requests",
+        "ruff",
+        "requests-mock",
+        "pre-commit",
 ]
 
 [tool.setuptools]
 packages = ["pyllelic"]
 
 [tool.setuptools.dynamic]
-version = {attr = "pyllelic.__version__.__version__"}
+version = { attr = "pyllelic.__version__.__version__" }
 
 [build-system]
 requires = ["setuptools", "setuptools-scm"]
