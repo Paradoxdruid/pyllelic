@@ -9,7 +9,6 @@ import subprocess
 from pathlib import Path
 from typing import Dict, List, Optional
 
-import dask.dataframe as dd
 import pandas as pd
 import pysam
 import requests
@@ -157,9 +156,7 @@ def sort_bam(bamfile: Path) -> bool:
         bool: verification of samtools command, usually discarded
     """
 
-    pysam.sort(  # type:ignore[attr-defined]
-        "-o", f"{bamfile.parent}/{bamfile.stem}_sorted.bam", os.fspath(bamfile)
-    )
+    pysam.sort("-o", f"{bamfile.parent}/{bamfile.stem}_sorted.bam", os.fspath(bamfile))
 
     return True
 
@@ -174,7 +171,7 @@ def index_bam(bamfile: Path) -> bool:
         bool: verification of samtools command, usually discarded
     """
 
-    pysam.index(os.fspath(bamfile))  # type:ignore[attr-defined]
+    pysam.index(os.fspath(bamfile))
 
     return True
 
@@ -304,13 +301,24 @@ def convert_methbank_bed(
 
     # FIXME: progress bar doesn't work with Dask
     with tqdm(total=8, desc="Processing .BED file") as pbar:
-        df = dd.read_csv(path, sep="\t")  # type:ignore[attr-defined]
-        pbar.update(1)
+        try:
+            import dask.dataframe as dd
 
-        df = df[(df["#chr"] == chrom) & (df["start"] > start) & (df["start"] < stop)]
+            df = dd.read_csv(path, sep="\t")
+            pbar.update(1)
 
-        pbar.update(1)
-        df = df.compute()  # Convert to pandas dataframe
+            df = df[
+                (df["#chr"] == chrom) & (df["start"] > start) & (df["start"] < stop)
+            ]
+            pbar.update(1)
+            df = df.compute()  # Convert to pandas dataframe
+        except ImportError:
+            df = pd.read_csv(path, sep="\t")
+            pbar.update(1)
+
+            df = df[df["chrom"] == chrom]
+            df = df[(df["start"] > start) & (df["start"] < stop)]
+            pbar.update(1)
 
         pbar.update(1)
         df["un_num"] = df["total_num"] - df["methy_num"]

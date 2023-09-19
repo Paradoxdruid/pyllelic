@@ -19,6 +19,7 @@ dependencies = [
         "numpy",
         "scipy",
         "plotly",
+        "matplotlib",
         "xlsxwriter",
         "xlrd",
         "openpyxl",
@@ -27,7 +28,6 @@ dependencies = [
         "biopython",
         "seaborn",
         "requests",
-        "dask",
 ]
 keywords = ["genomics", "methylation", "DNA sequencing"]
 dynamic = ["version"]
