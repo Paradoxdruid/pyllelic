@@ -198,7 +198,8 @@ def test_make_list_of_bam_files(tmp_path: Path) -> None:
     ]
     EXPECTED = ["fh_good1_tissue.bam", "fh_good2_tissue.bam"]
     with mock.patch.object(
-        pyllelic.Path, "iterdir"  # type:ignore[attr-defined]
+        pyllelic.Path,  # type:ignore[attr-defined]
+        "iterdir",
     ) as mock_iterdir:
         mock_iterdir.return_value = TEST_LIST
         actual = pyllelic.make_list_of_bam_files(config)
@@ -637,6 +638,10 @@ class Test_GenomicPositionData:
             )
             actual2 = genomic_position_data.summarize_allelic_data()
 
+        print("Actual")
+        print(actual1.to_dict())
+        print("Expected")
+        print(EXPECTED_ALLELIC_DATA)
         # EXPECTED_ALLELIC_DATA.index = pd.RangeIndex(0, 0, 1)
         pd.testing.assert_frame_equal(EXPECTED_ALLELIC_DATA, actual1)
         pd.testing.assert_frame_equal(EXPECTED_ALLELIC_DATA, actual2)

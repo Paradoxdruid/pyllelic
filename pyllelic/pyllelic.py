@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import pysam
+from matplotlib.figure import Figure
 from numpy.typing import ArrayLike, NDArray
 from scipy import stats
 from tqdm.auto import tqdm
@@ -360,7 +361,7 @@ class GenomicPositionData:
             """pd.DataFrame: dataframe of individual methylation values."""
             pbar.update(1)
 
-            self.allelic_data: pd.DataFrame = self._generate_chisquared_test_df()
+            self.allelic_data: pd.DataFrame = self._generate_barnard_test_df()
             """pd.DataFrame: dataframe of Chi-squared p-values."""
 
             self.positions = self.means.columns.tolist()
@@ -546,13 +547,13 @@ class GenomicPositionData:
         df = df.droplevel(1)
         return df
 
-    def _generate_chisquared_test_df(self) -> pd.DataFrame:
+    def _generate_barnard_test_df(self) -> pd.DataFrame:
         """Return a dataframe for p-values values at each position for each cell line.
 
         Returns:
             pd.DataFrame: Chi-squared p-values for each position in each cell line
         """
-        return self.individual_data.applymap(self._chisquared_test)
+        return self.individual_data.applymap(self._barnard_test)
 
     @staticmethod
     def _find_diffs(means_df: pd.DataFrame, modes_df: pd.DataFrame) -> pd.DataFrame:
@@ -634,7 +635,7 @@ class GenomicPositionData:
             fig.show()
             return
         if backend == "matplotlib":
-            _: plt.Figure = viz._create_histogram(data, cell_line, position, backend)
+            _: Figure = viz._create_histogram(data, cell_line, position, backend)
             plt.show()
             return
         raise ValueError("Invalid plotting backend")
@@ -676,7 +677,7 @@ class GenomicPositionData:
             fig.show()
             return
         if backend == "matplotlib":
-            _: plt.Figure = viz._make_stacked_fig(data, backend)
+            _: Figure = viz._make_stacked_fig(data, backend)
             plt.show()
             return
         raise ValueError("Invalid plotting backend")
@@ -731,7 +732,7 @@ class GenomicPositionData:
         if not backend:
             backend = self.config.viz_backend
 
-        MIN_HEIGHT = 100 + (100 * len(data.index))
+        MIN_HEIGHT = 300
         if height < MIN_HEIGHT:
             height = MIN_HEIGHT
 
@@ -743,7 +744,7 @@ class GenomicPositionData:
             return
 
         if backend == "matplotlib":
-            _: plt.Figure = viz._create_heatmap(
+            _: Figure = viz._create_heatmap(
                 data, min_values, width, height, title_type, backend
             )
             plt.show()
@@ -780,7 +781,7 @@ class GenomicPositionData:
             fig.show()
             return
         if backend == "matplotlib":
-            _: plt.Figure = viz._create_methylation_diffs_bar_graph(data, backend)
+            _: Figure = viz._create_methylation_diffs_bar_graph(data, backend)
             plt.show()
             return
         raise ValueError("Invalid plotting backend")
@@ -856,27 +857,28 @@ class GenomicPositionData:
         return AD_stats(False, np.nan, [np.nan])
 
     @staticmethod
-    def _chisquared_test(
-        data_list: List[int], cutoff: float = 0.001
-    ) -> Optional[float]:
-        """Perform Chi-squared analysis of a set of methylation calls.
+    def _barnard_test(data_list: List[int], cutoff: float = 0.6) -> Optional[float]:
+        """Perform Barnard's exact analysis of a set of methylation calls.
 
         Args:
             data_list (List[int]): list of methylated (1)
                                     and unmethylated (0) values for a read.
-            cutoff (float): pvalue cuttoff, defaults to 0.001
+            cutoff (float): pvalue cuttoff, defaults to 0.6
 
         Returns:
-            Optional[float]: Chi-squared p-value if below cutoff, or None
+            Optional[float]: Barnard p-value if below cutoff, or None
         """
 
         if not np.all(np.isnan(data_list)):
             my_data: NDArray[np.int_] = np.array(
                 [data_list.count(1), data_list.count(0)]
             )
-            pvalue: float = stats.chisquare(my_data, axis=None)[1]
-            if pvalue <= cutoff:
-                return pvalue
+            expected_left: NDArray[np.int_] = np.array([len(data_list), 0])
+            pvalue_left: float = stats.barnard_exact([my_data, expected_left]).pvalue
+            expected_right: NDArray[np.int_] = np.array([0, len(data_list)])
+            pvalue_right: float = stats.barnard_exact([my_data, expected_right]).pvalue
+            if (pvalue_left <= cutoff) & (pvalue_right <= cutoff):
+                return max(pvalue_left, pvalue_right)
         return None
 
     def _return_individual_positions(self, cell_line: str) -> pd.DataFrame:

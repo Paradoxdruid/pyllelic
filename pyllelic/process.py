@@ -353,7 +353,7 @@ def convert_methbank_bed(
         empty.individual_data = ind_df
         pbar.update(1)
 
-        empty.allelic_data = empty._generate_chisquared_test_df()
+        empty.allelic_data = empty._generate_barnard_test_df()
         empty.positions = empty.individual_data.columns.tolist()
         empty.means = df[["start", "mean"]].T.rename(columns=df["start"]).drop("start")
         empty.means.columns = empty.means.columns.astype(str)

@@ -9,11 +9,12 @@ import plotly.express as px
 import plotly.graph_objects as go
 import plotly.subplots as sp
 import seaborn as sns
+from matplotlib.figure import Figure
 
 
 def _create_histogram(
     data: pd.DataFrame, cell_line: str, position: str, backend: str
-) -> Union[go.Figure, plt.Figure]:
+) -> Union[go.Figure, Figure]:
     """Generate a graph figure showing fractional methylation in
     a given cell line at a given site.
 
@@ -24,7 +25,7 @@ def _create_histogram(
         backend (str): which plotting backend to use
 
     Returns:
-        Union[go.Figure, plt.Figure]: plotly or matplotlib figure object
+        Union[go.Figure, Figure]: plotly or matplotlib figure object
 
     Raises:
         ValueError: invalid plotting backend provided
@@ -72,7 +73,7 @@ def _create_heatmap(
     height: int,
     title_type: str,
     backend: str,
-) -> Union[go.Figure, plt.Figure]:
+) -> Union[go.Figure, Figure]:
     """Generate a graph figure showing heatmap of mean methylation across
     cell lines.
 
@@ -85,7 +86,7 @@ def _create_heatmap(
         backend (str): which plotting backend to use
 
     Returns:
-        Union[go.Figure, plt.Figure]: plotly or matplotlib figure object
+        Union[go.Figure, Figure]: plotly or matplotlib figure object
 
     Raises:
         ValueError: invalid plotting backend
@@ -137,7 +138,7 @@ def _create_heatmap(
 
 def _create_methylation_diffs_bar_graph(
     df: pd.DataFrame, backend: str
-) -> Union[go.Figure, plt.Figure]:
+) -> Union[go.Figure, Figure]:
     """Generate a graph figure showing bar graph of significant methylation across
     cell lines.
 
@@ -146,7 +147,7 @@ def _create_methylation_diffs_bar_graph(
         backend (str): which plotting backend to use
 
     Returns:
-        Union[go.Figure, plt.Figure]: plotly or matplotlib figure object
+        Union[go.Figure, Figure]: plotly or matplotlib figure object
 
     Raises:
         ValueError: invalid plotting backend
@@ -187,7 +188,7 @@ def _create_methylation_diffs_bar_graph(
     raise ValueError("Invalid plotting backend")
 
 
-def _make_stacked_fig(df: pd.DataFrame, backend: str) -> Union[go.Figure, plt.Figure]:
+def _make_stacked_fig(df: pd.DataFrame, backend: str) -> Union[go.Figure, Figure]:
     """Generate a graph figure showing methylated and unmethylated reads across
     cell lines.
 
@@ -196,7 +197,7 @@ def _make_stacked_fig(df: pd.DataFrame, backend: str) -> Union[go.Figure, plt.Fi
         backend (str): plotting backend to use
 
     Returns:
-        Union[go.Figure, plt.Figure]: plotly or matplotlib figure
+        Union[go.Figure, Figure]: plotly or matplotlib figure
 
     Raises:
         ValueError: invalid plotting backend
@@ -312,7 +313,7 @@ def _make_stacked_plotly_fig(df: pd.DataFrame) -> go.Figure:
     return this_figure
 
 
-def _make_stacked_mpl_fig(df: pd.DataFrame) -> plt.Figure:
+def _make_stacked_mpl_fig(df: pd.DataFrame) -> Figure:
     """Generate a graph figure showing methylated and unmethylated reads across
     cell lines.
 
@@ -320,7 +321,7 @@ def _make_stacked_mpl_fig(df: pd.DataFrame) -> plt.Figure:
         df (pd.DataFrame): dataframe of individual read data
 
     Returns:
-        plt.Figure: matplotlib figure
+        Figure: matplotlib figure
     """
     df2 = df.applymap(_make_binary)
     df_dict = {}
