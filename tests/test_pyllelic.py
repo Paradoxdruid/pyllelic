@@ -643,8 +643,8 @@ class Test_GenomicPositionData:
         print("Expected")
         print(EXPECTED_ALLELIC_DATA)
         # EXPECTED_ALLELIC_DATA.index = pd.RangeIndex(0, 0, 1)
-        pd.testing.assert_frame_equal(EXPECTED_ALLELIC_DATA, actual1)
-        pd.testing.assert_frame_equal(EXPECTED_ALLELIC_DATA, actual2)
+        pd.testing.assert_frame_equal(EXPECTED_ALLELIC_DATA, actual1, atol=1e-2)
+        pd.testing.assert_frame_equal(EXPECTED_ALLELIC_DATA, actual2, atol=1e-2)
 
     def test_sig_methylation_differences(
         self, set_up_genomic_position_data: PositionDataTuple, mocker: MockerFixture

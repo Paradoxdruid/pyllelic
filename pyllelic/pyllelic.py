@@ -857,7 +857,7 @@ class GenomicPositionData:
         return AD_stats(False, np.nan, [np.nan])
 
     @staticmethod
-    def _barnard_test(data_list: List[int], cutoff: float = 1e-4) -> Optional[float]:
+    def _barnard_test(data_list: List[int], cutoff: float = 0.5) -> Optional[float]:
         """Perform Barnard's exact analysis of a set of methylation calls.
 
         Args:

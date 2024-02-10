@@ -253,7 +253,7 @@ def _make_stacked_plotly_fig(df: pd.DataFrame) -> go.Figure:
             fig.update_yaxes(visible=False)
             return fig
 
-        df2 = df.applymap(_make_binary)
+        df2 = df.map(_make_binary)
         fig_dict = {}
         for each in df2.index:
             methyl_df = _make_methyl_df(df2, each)
@@ -323,7 +323,7 @@ def _make_stacked_mpl_fig(df: pd.DataFrame) -> Figure:
     Returns:
         Figure: matplotlib figure
     """
-    df2 = df.applymap(_make_binary)
+    df2 = df.map(_make_binary)
     df_dict = {}
     for each in df2.index:
         methyl_df = _make_methyl_df(df2, each)
