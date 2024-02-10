@@ -340,9 +340,9 @@ class GenomicPositionData:
         """Dict[str, QumaResult]: list of QumaResults."""
 
         with tqdm(total=6, desc="Summary Statistics") as pbar:
-            self._individual_position_data: Dict[
-                str, pd.DataFrame
-            ] = self._create_individual_position_df_dict()
+            self._individual_position_data: Dict[str, pd.DataFrame] = (
+                self._create_individual_position_df_dict()
+            )
             pbar.update(1)
 
             self.means: pd.DataFrame = self._process_means()
@@ -553,7 +553,7 @@ class GenomicPositionData:
         Returns:
             pd.DataFrame: Chi-squared p-values for each position in each cell line
         """
-        return self.individual_data.applymap(self._barnard_test)
+        return self.individual_data.map(self._barnard_test)
 
     @staticmethod
     def _find_diffs(means_df: pd.DataFrame, modes_df: pd.DataFrame) -> pd.DataFrame:
@@ -794,7 +794,7 @@ class GenomicPositionData:
         """
         np.seterr(divide="ignore", invalid="ignore")  # ignore divide-by-zero errors
         df = self.individual_data
-        df2 = df.applymap(self._anderson_darling_test)
+        df2 = df.map(self._anderson_darling_test)
         return df2
 
     def summarize_allelic_data(
@@ -857,13 +857,13 @@ class GenomicPositionData:
         return AD_stats(False, np.nan, [np.nan])
 
     @staticmethod
-    def _barnard_test(data_list: List[int], cutoff: float = 0.6) -> Optional[float]:
+    def _barnard_test(data_list: List[int], cutoff: float = 1e-4) -> Optional[float]:
         """Perform Barnard's exact analysis of a set of methylation calls.
 
         Args:
             data_list (List[int]): list of methylated (1)
                                     and unmethylated (0) values for a read.
-            cutoff (float): pvalue cuttoff, defaults to 0.6
+            cutoff (float): pvalue cuttoff, defaults to 1e-4
 
         Returns:
             Optional[float]: Barnard p-value if below cutoff, or None

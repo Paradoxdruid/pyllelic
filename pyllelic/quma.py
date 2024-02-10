@@ -41,7 +41,7 @@ MAT: str = """    A   T   G   C   S   W   R   Y   K   M   B   V   H   D   N   U
     N  -2  -2  -2  -2  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -1  -2
     U  -4   5  -4  -4  -4   1  -4   1   1  -4  -1  -4  -1  -1  -2   5
     """
-MATRIX: substitution_matrices.Array = substitution_matrices.read(StringIO(MAT))
+MATRIX: substitution_matrices.Array = substitution_matrices.read(StringIO(MAT))  # type: ignore[no-untyped-call]
 
 ALPHABET: str = "ACGTURYMWSKDHBVNacgturymwskdhbvn"
 
@@ -376,11 +376,11 @@ class Quma:
         return new
 
     @staticmethod
-    def _matching_substrings(alignment: Align.PairwiseAlignment) -> Tuple[str, str]:
+    def _matching_substrings(alignment: Align.Alignment) -> Tuple[str, str]:
         """Find pairwise alignment substrings.
 
         Args:
-            alignment (Align.PairwiseAlignment): pairwise alignment
+            alignment (Align.Alignment): pairwise alignment
 
         Returns:
             Tuple[str, str]: query and genomic aligned substrings
@@ -432,11 +432,11 @@ class Quma:
             substitution_matrix=MATRIX,
             open_gap_score=-10,
             extend_gap_score=-0.5,
-        )
+        )  # type: ignore[no-untyped-call]
         bio_alignments: Align.PairwiseAlignments = list(
-            aligner.align(bio_qseq, bio_gseq)
-        )
-        bio_alignment: Align.PairwiseAlignment = bio_alignments[0]
+            aligner.align(bio_qseq, bio_gseq)  # type: ignore[no-untyped-call]
+        )  # type: ignore[assignment]
+        bio_alignment: Align.Alignment = bio_alignments[0]
 
         query_ali: str
         genome_ali: str
