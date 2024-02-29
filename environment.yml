@@ -5,7 +5,8 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.9
+  - pandas>=2.1.0
+  - python=3.10
   - biopython
   - pyllelic
   - ipywidgets
