@@ -140,3 +140,8 @@ Untitled.ipynb
 report_gen.ipynb
 example.pdf
 polars_test.ipynb
+batch.ipynb
+
+# Ignore numpy array outputs
+*.npy
+*.npz
